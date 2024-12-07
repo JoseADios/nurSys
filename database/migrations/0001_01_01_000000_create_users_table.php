@@ -14,10 +14,15 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->integer('identification_card')->unique()->after('last_name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->string('phone')->nullable()->after('identification_card');
+            $table->dateTime('birth_date')->nullable()->after('phone');
+            $table->text('comment')->nullable()->after('position');
+            $table->boolean('active')->default(true)->after('comment');
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
@@ -39,6 +44,7 @@ return new class extends Migration
         });
     }
 
+
     /**
      * Reverse the migrations.
      */
@@ -47,5 +53,6 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        $table->dropColumn(['last_name', 'identification_card', 'phone', 'birth_date', 'position', 'comment', 'active']);
     }
 };

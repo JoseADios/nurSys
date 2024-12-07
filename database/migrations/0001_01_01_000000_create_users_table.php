@@ -11,29 +11,32 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Modificar la tabla 'users'
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('identification_card')->unique()->after('last_name');
-            $table->string('email')->unique();
+            $table->string('name'); // Nombre
+            $table->string('last_name'); // Apellido
+            $table->integer('identification_card')->unique(); // Cédula
+            $table->string('phone')->nullable(); // Teléfono
+            $table->dateTime('birth_date')->nullable(); // Fecha de nacimiento
+            $table->string('email')->unique(); // Usuario (email)
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password'); // Contraseña
+            $table->string('position')->nullable(); // Cargo
+            $table->text('comment')->nullable(); // Comentario
+            $table->boolean('active')->default(true); // Activo/Inactivo
             $table->rememberToken();
-            $table->string('phone')->nullable()->after('identification_card');
-            $table->dateTime('birth_date')->nullable()->after('phone');
-            $table->text('comment')->nullable()->after('position');
-            $table->boolean('active')->default(true)->after('comment');
-            $table->foreignId('current_team_id')->nullable();
-            $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
         });
 
+        // Migración para tabla de tokens de restablecimiento de contraseñas
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        // Migración para tabla de sesiones
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
@@ -44,7 +47,6 @@ return new class extends Migration
         });
     }
 
-
     /**
      * Reverse the migrations.
      */
@@ -53,6 +55,5 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
-        $table->dropColumn(['last_name', 'identification_card', 'phone', 'birth_date', 'position', 'comment', 'active']);
     }
 };

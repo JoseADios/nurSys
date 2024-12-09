@@ -20,11 +20,11 @@ return new class extends Migration
             $table->string('password');
 
             // campos agregados
-            $table->string('identification_card');
-            $table->string('exequatur');
-            $table->string('speciality');
-            $table->string('area');
-            $table->string('phone');
+            $table->string('identification_card')->nullable();
+            $table->string('exequatur')->nullable();
+            $table->string('speciality')->nullable();
+            $table->string('area')->nullable();
+            $table->string('phone')->nullable();
             $table->date('birthdate')->nullable();
             $table->date('position')->nullable();
             $table->string('comment')->nullable();

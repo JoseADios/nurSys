@@ -36,6 +36,13 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
+            // new fields
+            'last_name' => fake()->lastName(),
+            'identification_card' => fake()->randomNumber(10),
+            'phone' => fake()->phoneNumber(),
+            'birthdate' => fake()->date(),
+            'position' => fake()->word(),
+            'comment' => fake()->sentence(),
         ];
     }
 

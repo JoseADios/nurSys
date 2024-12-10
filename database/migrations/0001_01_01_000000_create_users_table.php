@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('area')->nullable();
             $table->string('phone')->nullable();
             $table->date('birthdate')->nullable();
-            $table->date('position')->nullable();
+            $table->string('position')->nullable();
             $table->string('comment')->nullable();
             $table->string('active')->default(true);
 

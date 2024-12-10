@@ -38,7 +38,7 @@ class UserFactory extends Factory
             'current_team_id' => null,
             // new fields
             'last_name' => fake()->lastName(),
-            'identification_card' => fake()->randomNumber(10),
+            'identification_card' => fake()->numerify('###########'),
             'phone' => fake()->phoneNumber(),
             'birthdate' => fake()->date(),
             'position' => fake()->word(),

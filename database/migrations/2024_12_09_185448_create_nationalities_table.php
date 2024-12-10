@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('nationalities', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean('active');
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

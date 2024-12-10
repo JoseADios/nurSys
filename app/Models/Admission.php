@@ -13,7 +13,7 @@ class Admission extends Model
         'bed_id',
         'patient_id',
         'recepcionist_id',
-        'doctor-id',
+        'doctor_id',
         'admission_dx',
         'final_dx',
         'created_at',

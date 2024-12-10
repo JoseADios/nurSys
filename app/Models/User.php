@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -66,5 +67,35 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function medical_orders(): HasMany
+    {
+        return $this->hasMany(Medical_order::class);
+    }
+
+    public function admissions(): HasMany
+    {
+        return $this->hasMany(Admission::class);
+    }
+
+    public function nurse_records(): HasMany
+    {
+        return $this->hasMany(Nurse_record::class);
+    }
+
+    public function temperature_details(): HasMany
+    {
+        return $this->hasMany(Temperature_detail::class);
+    }
+
+    public function medication_notifications(): HasMany
+    {
+        return $this->hasMany(Medication_notification::class);
+    }
+
+    public function metication_records(): HasMany
+    {
+        return $this->hasMany(MedicationRecord::class);
     }
 }

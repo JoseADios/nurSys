@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('admissions', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_bed');
-            $table->integer('id_patient');
-            $table->integer('id_recepcionist');
-            $table->integer('id_doctor');
+            $table->integer('bed_id');
+            $table->integer('patient_id');
+            $table->integer('recepcionist_id');
+            $table->integer('doctor_id');
             $table->string('admission_dx');
             $table->string('final_dx')->nullable();
             $table->datetime('created_at');

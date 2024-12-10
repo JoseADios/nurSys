@@ -10,10 +10,10 @@ class Admission extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id_bed',
-        'id_patient',
-        'id_recepcionist',
-        'id_doctor',
+        'bed_id',
+        'patient_id',
+        'recepcionist_id',
+        'doctor-id',
         'admission_dx',
         'final_dx',
         'created_at',

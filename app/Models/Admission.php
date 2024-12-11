@@ -52,5 +52,10 @@ class Admission extends Model
     {
         return $this->hasMany(TemperatureRecord::class);
     }
+
+    public function patient(): BelongsTo
+    {
+        return $this->belongsTo(Patient::class);
+    }
 }
 

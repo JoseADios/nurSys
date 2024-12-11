@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MedicationRecordDetail extends Model
 {
@@ -16,5 +18,13 @@ class MedicationRecordDetail extends Model
         'active',
     ];
 
+    public function medicationRecord(): BelongsTo
+    {
+        return $this->belongsTo(medicationRecord::class);
+    }
 
+    public function medicationNotification(): HasMany
+    {
+        return $this->hasMany(medicationNotification::class);
+    }
 }

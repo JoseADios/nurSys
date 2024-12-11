@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Medication_notification extends Model
 {
@@ -14,4 +15,9 @@ class Medication_notification extends Model
         'nurse_sign',
         'active'
     ];
+
+    public function nurse(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

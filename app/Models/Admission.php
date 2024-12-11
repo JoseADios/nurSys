@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Admission extends Model
 {
@@ -20,4 +21,14 @@ class Admission extends Model
         'comment',
         'active',
     ];
+
+    public function recepcionist(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function doctor(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

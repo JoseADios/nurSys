@@ -33,8 +33,13 @@ class Admission extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function medical_orders(): HasMany
+    public function medicalOrders(): HasMany
     {
         return $this->hasMany(Medical_order::class);
+    }
+
+    public function medicationRecord(): HasMany
+    {
+        return $this->hasMany(MedicationRecord::class);
     }
 }

@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Nurse_record extends Model
+class MedicationNotification extends Model
 {
     protected $fillable = [
-        'admission_id',
+        'medication_detail_id',
         'nurse_id',
+        'applied',
+        'administered_time',
         'nurse_sign',
         'active'
     ];

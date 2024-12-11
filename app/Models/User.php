@@ -71,7 +71,7 @@ class User extends Authenticatable
 
     public function medicalOrder(): HasMany
     {
-        return $this->hasMany(Medical_order::class);
+        return $this->hasMany(MedicalOrder::class);
     }
 
     public function admission(): HasMany
@@ -81,17 +81,17 @@ class User extends Authenticatable
 
     public function nurseRecord(): HasMany
     {
-        return $this->hasMany(Nurse_record::class);
+        return $this->hasMany(NurseRecord::class);
     }
 
     public function temperatureDetail(): HasMany
     {
-        return $this->hasMany(Temperature_detail::class);
+        return $this->hasMany(TemperatureDetail::class);
     }
 
     public function medicationNotification(): HasMany
     {
-        return $this->hasMany(Medication_notification::class);
+        return $this->hasMany(MedicationNotification::class);
     }
 
     public function medicationRecord(): HasMany

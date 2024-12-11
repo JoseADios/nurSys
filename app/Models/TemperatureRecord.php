@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Temperature_record extends Model
+class TemperatureRecord extends Model
 {
     protected $fillable = [
         'admission_id',

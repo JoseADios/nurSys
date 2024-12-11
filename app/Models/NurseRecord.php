@@ -5,14 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Temperature_detail extends Model
+class NurseRecord extends Model
 {
     protected $fillable = [
-        'temperature_record_id',
+        'admission_id',
         'nurse_id',
-        'temperature',
-        'evacuations',
-        'urinations',
+        'nurse_sign',
         'active'
     ];
 

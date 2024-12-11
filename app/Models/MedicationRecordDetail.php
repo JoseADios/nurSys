@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MedicationDetail extends Model
+class MedicationRecordDetail extends Model
 {
     protected $fillable = [
         'medication_record_id',
@@ -15,4 +15,6 @@ class MedicationDetail extends Model
         'frequency',
         'active',
     ];
+
+
 }

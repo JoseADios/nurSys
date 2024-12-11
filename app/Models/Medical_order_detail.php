@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Medical_order_detail extends Model
 {
@@ -13,4 +14,9 @@ class Medical_order_detail extends Model
         'suspended',
         'active'
     ];
+
+    public function medical_order(): BelongsTo
+    {
+        return $this->belongsTo(Medical_order::class);
+    }
 }

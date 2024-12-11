@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Medical_order extends Model
 {
@@ -12,4 +14,14 @@ class Medical_order extends Model
         'doctor_sign',
         'active'
     ];
+
+    public function doctor(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function medical_order_detail(): HasMany
+    {
+        return $this->hasMany(Medical_order_detail::class);
+    }
 }

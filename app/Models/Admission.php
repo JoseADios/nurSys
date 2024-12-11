@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Admission extends Model
 {
@@ -51,6 +52,11 @@ class Admission extends Model
     public function TemperatureRecord(): HasMany
     {
         return $this->hasMany(TemperatureRecord::class);
+    }
+
+    public function bed(): HasOne
+    {
+        return $this->hasOne(bed::class);
     }
 }
 

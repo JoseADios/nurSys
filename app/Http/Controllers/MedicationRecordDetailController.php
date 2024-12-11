@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MedicationDetail;
+use App\Models\MedicationRecordDetail;
 use Illuminate\Http\Request;
 
-class MedicationDetailController extends Controller
+class Controller extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class MedicationDetailController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MedicationDetail $medicationDetail)
+    public function show(MedicationRecordDetail $medicationRecordDetail)
     {
         //
     }
@@ -42,7 +42,7 @@ class MedicationDetailController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MedicationDetail $medicationDetail)
+    public function edit(MedicationRecordDetail $medicationRecordDetail)
     {
         //
     }
@@ -50,7 +50,7 @@ class MedicationDetailController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, MedicationDetail $medicationDetail)
+    public function update(Request $request, MedicationRecordDetail  $medicationRecordDetail)
     {
         //
     }
@@ -58,7 +58,7 @@ class MedicationDetailController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MedicationDetail $medicationDetail)
+    public function destroy(MedicationRecordDetail $medicationRecordDetail)
     {
         //
     }

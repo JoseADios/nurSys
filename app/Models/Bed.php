@@ -17,6 +17,6 @@ class Bed extends Model
 
     public function admission(): HasOne
     {
-        return $this->hasOne(admission::class);
+        return $this->hasOne(Admission::class);
     }
 }

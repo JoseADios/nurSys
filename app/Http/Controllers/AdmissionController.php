@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Admission;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
 
 class AdmissionController extends Controller
 {
@@ -12,7 +14,11 @@ class AdmissionController extends Controller
      */
     public function index()
     {
-        //
+
+        $admissions = Admission::with('bed', 'patient')->get();
+        return Inertia::render('Admissions/Index', [
+            'admissions' => $admissions,
+        ]);
     }
 
     /**
@@ -20,7 +26,7 @@ class AdmissionController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Admissions/Create');
     }
 
     /**
@@ -28,7 +34,13 @@ class AdmissionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'patient_id' => 'required',
+            'recepcionist_id' => 'required',
+        ]);
+
+        Admission::create($request->all());
+        return Redirect::route('admissions.index');
     }
 
     /**
@@ -37,6 +49,9 @@ class AdmissionController extends Controller
     public function show(Admission $admission)
     {
         //
+        return Inertia::render('Admissions/Show', [
+            'admission' => $admission,
+        ]);
     }
 
     /**
@@ -44,7 +59,9 @@ class AdmissionController extends Controller
      */
     public function edit(Admission $admission)
     {
-        //
+        return Inertia::render('Admissions/Edit', [
+            'admission' => $admission,
+        ]);
     }
 
     /**
@@ -52,7 +69,13 @@ class AdmissionController extends Controller
      */
     public function update(Request $request, Admission $admission)
     {
-        //
+        $request->validate([
+            'patient_id' => 'required',
+            'recepcionist_id' => 'required',
+        ]);
+
+        $admission->update($request->all());
+        return Redirect::route('admissions.index');
     }
 
     /**

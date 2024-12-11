@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Medical_order_detail extends Model
+class MedicalOrderDetail extends Model
 {
     protected $fillable = [
         'medical_order_id',
@@ -15,8 +15,8 @@ class Medical_order_detail extends Model
         'active'
     ];
 
-    public function medical_order(): BelongsTo
+    public function medicalOrder(): BelongsTo
     {
-        return $this->belongsTo(Medical_order::class);
+        return $this->belongsTo(MedicalOrder::class);
     }
 }

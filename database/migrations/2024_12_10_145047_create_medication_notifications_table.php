@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('medication_notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('medication_detail_id')
+            $table->foreignId('medication_record_detail_id')
                 ->constrained()->onDelete('restrict');
             $table->foreignId('nurse_id')
                 ->constrained(table:'users')->onDelete('restrict');

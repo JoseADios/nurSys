@@ -57,6 +57,10 @@ class Admission extends Model
     public function bed(): HasOne
     {
         return $this->hasOne(bed::class);
+
+    public function patient(): BelongsTo
+    {
+        return $this->belongsTo(Patient::class);
     }
 }
 

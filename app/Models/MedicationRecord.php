@@ -24,7 +24,7 @@ class MedicationRecord extends Model
         return $this->belongsTo(Admission::class);
     }
 
-    public function medicationDetail(): HasMany
+    public function medicationRecordDetail(): HasMany
     {
         return $this->hasMany(MedicationRecordDetail::class);
     }

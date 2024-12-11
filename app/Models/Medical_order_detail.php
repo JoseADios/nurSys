@@ -15,7 +15,7 @@ class Medical_order_detail extends Model
         'active'
     ];
 
-    public function medical_order(): BelongsTo
+    public function medicalOrder(): BelongsTo
     {
         return $this->belongsTo(Medical_order::class);
     }

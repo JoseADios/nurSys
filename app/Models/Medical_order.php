@@ -20,7 +20,7 @@ class Medical_order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function medical_order_detail(): HasMany
+    public function medicalOrderDetail(): HasMany
     {
         return $this->hasMany(Medical_order_detail::class);
     }

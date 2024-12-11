@@ -69,7 +69,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function medical_order(): HasMany
+    public function medicalOrder(): HasMany
     {
         return $this->hasMany(Medical_order::class);
     }
@@ -79,22 +79,22 @@ class User extends Authenticatable
         return $this->hasMany(Admission::class);
     }
 
-    public function nurse_record(): HasMany
+    public function nurseRecord(): HasMany
     {
         return $this->hasMany(Nurse_record::class);
     }
 
-    public function temperature_detail(): HasMany
+    public function temperatureDetail(): HasMany
     {
         return $this->hasMany(Temperature_detail::class);
     }
 
-    public function medication_notification(): HasMany
+    public function medicationNotification(): HasMany
     {
         return $this->hasMany(Medication_notification::class);
     }
 
-    public function medication_record(): HasMany
+    public function medicationRecord(): HasMany
     {
         return $this->hasMany(MedicationRecord::class);
     }

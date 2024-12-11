@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MedicationRecordDetail;
 use Illuminate\Http\Request;
 
-class Controller extends Controller
+class MedicationRecordDetailController extends Controller
 {
     /**
      * Display a listing of the resource.

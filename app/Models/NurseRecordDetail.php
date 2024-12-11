@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class NurseRecordDetail extends Model
 {
@@ -12,4 +13,11 @@ class NurseRecordDetail extends Model
         'comment',
         'active'
     ];
+
+    public function NurseRecordDetail(): BelongsTo
+    {
+        return $this->belongsTo(NurseRecord::class);
+    }
+
+
 }

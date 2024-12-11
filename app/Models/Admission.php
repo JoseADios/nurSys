@@ -42,4 +42,10 @@ class Admission extends Model
     {
         return $this->hasMany(MedicationRecord::class);
     }
+
+    public function nurseRecord(): HasMany
+    {
+        return $this->hasMany(NurseRecord::class);
+    }
 }
+

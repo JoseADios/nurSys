@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TemperatureRecord extends Model
 {
@@ -12,4 +13,9 @@ class TemperatureRecord extends Model
         'nurse_sign',
         'active'
     ];
+
+    public function admission(): BelongsTo
+    {
+        return $this->belongsTo(Admission::class);
+    }
 }

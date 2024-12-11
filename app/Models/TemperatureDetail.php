@@ -20,4 +20,10 @@ class TemperatureDetail extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function TemperatureDetail(): BelongsTo
+    {
+        return $this->belongsTo(TemperatureRecord::class);
+    }
+
 }

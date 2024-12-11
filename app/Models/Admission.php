@@ -47,5 +47,10 @@ class Admission extends Model
     {
         return $this->hasMany(NurseRecord::class);
     }
+
+    public function TemperatureRecord(): HasMany
+    {
+        return $this->hasMany(TemperatureRecord::class);
+    }
 }
 

@@ -24,4 +24,9 @@ class Medical_order extends Model
     {
         return $this->hasMany(Medical_order_detail::class);
     }
+
+    public function admission(): BelongsTo
+    {
+        return $this->belongsTo(Admission::class);
+    }
 }

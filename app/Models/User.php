@@ -69,32 +69,32 @@ class User extends Authenticatable
         ];
     }
 
-    public function medical_orders(): HasMany
+    public function medical_order(): HasMany
     {
         return $this->hasMany(Medical_order::class);
     }
 
-    public function admissions(): HasMany
+    public function admission(): HasMany
     {
         return $this->hasMany(Admission::class);
     }
 
-    public function nurse_records(): HasMany
+    public function nurse_record(): HasMany
     {
         return $this->hasMany(Nurse_record::class);
     }
 
-    public function temperature_details(): HasMany
+    public function temperature_detail(): HasMany
     {
         return $this->hasMany(Temperature_detail::class);
     }
 
-    public function medication_notifications(): HasMany
+    public function medication_notification(): HasMany
     {
         return $this->hasMany(Medication_notification::class);
     }
 
-    public function metication_records(): HasMany
+    public function medication_record(): HasMany
     {
         return $this->hasMany(MedicationRecord::class);
     }

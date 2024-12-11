@@ -18,4 +18,12 @@ class NurseRecord extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function admission(): BelongsTo
+    {
+    return $this->belongsTo(Admission::class);
+    }
 }
+
+
+

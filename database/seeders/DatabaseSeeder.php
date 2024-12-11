@@ -28,5 +28,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(BedSeeder::class);
         $this->call(PatientSeeder::class);
+        $this->call(AdmissionSeeder::class);
     }
 }

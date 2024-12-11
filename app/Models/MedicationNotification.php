@@ -20,4 +20,9 @@ class MedicationNotification extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function medicationRecordDetail(): BelongsTo
+    {
+        return $this->belongsTo(medicationRecordDetail::class);
+    }
 }

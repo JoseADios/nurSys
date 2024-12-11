@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('beds', function (Blueprint $table) {
             $table->id();
-            $table->integer('number');
+            $table->integer('number')->unique();
             $table->string('room');
             $table->string('status');
             $table->boolean('active')->default(true);

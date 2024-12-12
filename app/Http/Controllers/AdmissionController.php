@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admission;
+use App\Models\Bed;
+use App\Models\Patient;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 
@@ -26,7 +30,15 @@ class AdmissionController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admissions/Create');
+        $doctors = User::all();
+        $beds = Bed::all();
+        $patients = Patient::all();
+
+        return Inertia::render('Admissions/Create', [
+            'doctors' => $doctors,
+            'beds' => $beds,
+            'patients' => $patients,
+        ]);
     }
 
     /**
@@ -34,12 +46,25 @@ class AdmissionController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'patient_id' => 'required',
-            'recepcionist_id' => 'required',
-        ]);
+        // $request->validate([
+        //     'patient_id' => 'required',
+        //     'recepcionist_id' => 'required',
+        // ]);
 
-        Admission::create($request->all());
+        $recepcionist_id = Auth::id();
+
+        Admission::create(
+            [
+                'bed_id' => $request->bed_id,
+                'patient_id' => $request->patient_id,
+                'recepcionist_id' => $recepcionist_id,
+                'doctor_id' => $request->doctor_id,
+                'admission_dx' => $request->admission_dx,
+                'final_dx' => $request->final_dx,
+                'comment' => $request->comment,
+                'created_at' => now(),
+            ]
+        );
         return Redirect::route('admissions.index');
     }
 

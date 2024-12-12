@@ -6,6 +6,12 @@
             </h2>
         </template>
 
+        <div class="flex flex-col items-center justify-center mt-10">
+            <Link :href="route('admissions.create')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                Crear nueva admision
+            </Link>
+        </div>
+
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -50,6 +56,7 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
@@ -57,6 +64,7 @@ export default {
     },
     components: {
         AppLayout,
+        Link,
     },
 }
 </script>

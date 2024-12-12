@@ -7,15 +7,15 @@
         </template>
 
         <div class="flex flex-col items-center justify-center mt-10">
-            <Link :href="route('admissions.create')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-                Crear nueva admision
+            <Link :href="route('admissions.create')"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+            Crear nueva admision
             </Link>
         </div>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <!-- si la tabla ocupa el ancho completo de la ventana, para ponerlo al 80% de ancho de la ventana modificar la clase "w-full" por "w-1/2" -->
                     <tr>
                         <th scope="col" class="px-6 py-3">
                             Paciente
@@ -28,6 +28,9 @@
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Fecha de ingreso
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Acciones
                         </th>
                     </tr>
                 </thead>
@@ -45,6 +48,16 @@
                         </td>
                         <td class="px-6 py-4">
                             {{ admission.created_at }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <Link class="text-blue-500 hover:text-blue-800"
+                                :href="route('admissions.edit', admission.id)">
+                            Editar
+                            </Link>
+                            <Link method="delete" class="ml-2 text-blue-500 hover:text-blue-800"
+                                :href="route('admissions.destroy', admission.id)" as="button">
+                            Eliminar
+                            </Link>
                         </td>
                     </tr>
                 </tbody>
@@ -66,5 +79,8 @@ export default {
         AppLayout,
         Link,
     },
+
 }
+
+
 </script>

@@ -19,7 +19,7 @@ class AdmissionController extends Controller
     public function index()
     {
 
-        $admissions = Admission::with('bed', 'patient')->get();
+        $admissions = Admission::with(['bed', 'patient'])->where('active', '=', 1)->get();
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
         ]);
@@ -46,18 +46,21 @@ class AdmissionController extends Controller
      */
     public function store(Request $request)
     {
-        // $request->validate([
-        //     'patient_id' => 'required',
-        //     'recepcionist_id' => 'required',
-        // ]);
+        $request->validate([
+            'patient_id' => 'required',
+            'admission_dx' => 'required',
+        ]);
 
-        $recepcionist_id = Auth::id();
+        // show errors
+        if ($request->has('errors')) {
+            return back()->withErrors($request->get('errors'));
+        }
 
         Admission::create(
             [
                 'bed_id' => $request->bed_id,
                 'patient_id' => $request->patient_id,
-                'recepcionist_id' => $recepcionist_id,
+                'recepcionist_id' => Auth::id(),
                 'doctor_id' => $request->doctor_id,
                 'admission_dx' => $request->admission_dx,
                 'final_dx' => $request->final_dx,
@@ -96,8 +99,12 @@ class AdmissionController extends Controller
     {
         $request->validate([
             'patient_id' => 'required',
-            'recepcionist_id' => 'required',
         ]);
+
+        // show errors
+        if ($request->has('errors')) {
+            return back()->withErrors($request->get('errors'));
+        }
 
         $admission->update($request->all());
         return Redirect::route('admissions.index');
@@ -108,6 +115,9 @@ class AdmissionController extends Controller
      */
     public function destroy(Admission $admission)
     {
-        //
+        // set active to false
+        $admission->update(['active' => 0]);
+
+        return Redirect::route('admissions.index')->with('success', 'Admision eliminada exitosamente');
     }
 }

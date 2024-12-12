@@ -13,6 +13,13 @@
             </Link>
         </div>
 
+        <!-- show errors -->
+            <div v-if="errors.length > 0" class="mb-4 flex flex-col items-center">
+                <div class="mb-4 text-red-500" v-for="error in errors" :key="error">
+                    {{ error }}
+                </div>
+            </div>
+
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
@@ -89,10 +96,11 @@ import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
-        admissions: Array,
+        admission: Array,
         doctors: Array,
         beds: Array,
         patients: Array,
+        errors: Array,
     },
     components: {
         AppLayout,

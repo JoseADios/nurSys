@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admission;
+use App\Models\Bed;
+use App\Models\Patient;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 
@@ -15,7 +19,7 @@ class AdmissionController extends Controller
     public function index()
     {
 
-        $admissions = Admission::with('bed', 'patient')->get();
+        $admissions = Admission::with(['bed', 'patient'])->where('active', '=', 1)->get();
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
         ]);
@@ -26,7 +30,15 @@ class AdmissionController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admissions/Create');
+        $doctors = User::all();
+        $beds = Bed::all();
+        $patients = Patient::all();
+
+        return Inertia::render('Admissions/Create', [
+            'doctors' => $doctors,
+            'beds' => $beds,
+            'patients' => $patients,
+        ]);
     }
 
     /**
@@ -36,10 +48,26 @@ class AdmissionController extends Controller
     {
         $request->validate([
             'patient_id' => 'required',
-            'recepcionist_id' => 'required',
+            'admission_dx' => 'required',
         ]);
 
-        Admission::create($request->all());
+        // show errors
+        if ($request->has('errors')) {
+            return back()->withErrors($request->get('errors'));
+        }
+
+        Admission::create(
+            [
+                'bed_id' => $request->bed_id,
+                'patient_id' => $request->patient_id,
+                'recepcionist_id' => Auth::id(),
+                'doctor_id' => $request->doctor_id,
+                'admission_dx' => $request->admission_dx,
+                'final_dx' => $request->final_dx,
+                'comment' => $request->comment,
+                'created_at' => now(),
+            ]
+        );
         return Redirect::route('admissions.index');
     }
 
@@ -71,8 +99,12 @@ class AdmissionController extends Controller
     {
         $request->validate([
             'patient_id' => 'required',
-            'recepcionist_id' => 'required',
         ]);
+
+        // show errors
+        if ($request->has('errors')) {
+            return back()->withErrors($request->get('errors'));
+        }
 
         $admission->update($request->all());
         return Redirect::route('admissions.index');
@@ -83,6 +115,9 @@ class AdmissionController extends Controller
      */
     public function destroy(Admission $admission)
     {
-        //
+        // set active to false
+        $admission->update(['active' => 0]);
+
+        return Redirect::route('admissions.index')->with('success', 'Admision eliminada exitosamente');
     }
 }

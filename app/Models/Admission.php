@@ -24,6 +24,14 @@ class Admission extends Model
         'active',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'datetime:Y-m-d h:i',
+            'active' => 'boolean',
+        ];
+    }
+
     public function recepcionist(): BelongsTo
     {
         return $this->belongsTo(User::class);

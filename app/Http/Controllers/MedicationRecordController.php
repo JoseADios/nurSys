@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\MedicationRecord;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,10 @@ class MedicationRecordController extends Controller
      */
     public function index()
     {
-        //
+        $medicationRecords = MedicationRecord::with('admission')->get();
+        return Inertia::render('MedicationRecords/Index', [
+            'medicationRecords' => $medicationRecords,
+        ]);
     }
 
     /**

@@ -115,9 +115,8 @@ class AdmissionController extends Controller
      */
     public function destroy(Admission $admission)
     {
-        // set active to false
         $admission->update(['active' => 0]);
 
-        return Redirect::route('admissions.index')->with('success', 'Admision eliminada exitosamente');
+        return Redirect::route('admissions.index');
     }
 }

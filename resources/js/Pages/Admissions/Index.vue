@@ -54,7 +54,7 @@
                                 :href="route('admissions.edit', admission.id)">
                             Editar
                             </Link>
-                            <Link method="delete" class="ml-2 text-blue-500 hover:text-blue-800"
+                            <Link method="delete" class="ml-2 text-red-500 hover:text-red-800"
                                 :href="route('admissions.destroy', admission.id)" as="button">
                             Eliminar
                             </Link>

@@ -2,7 +2,7 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Admisiones
+                Editar ingreso
             </h2>
         </template>
 
@@ -26,11 +26,11 @@
                 <label for="bed" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Cama</label>
                 <select id="bed" v-model="form.bed_id"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <!-- <option v-for="bed in beds" :key="bed.id">
-                        {{ bed.number }}
-                    </option> -->
-                    <option :value="admission.bed_id">
-                        {{ admission.bed_id }}
+
+                    <option :value="bed.id" v-for="bed in beds"
+                        :key="bed.id"
+                        :selected="bed.id === admission.bed_id">
+                        Cama {{ bed.number }} - Cuarto {{ bed.room }}
                     </option>
                 </select>
 
@@ -39,11 +39,11 @@
                 <select required id="patient"
                     v-model="form.patient_id"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <!-- <option :value="patient.id" v-for="patient in patients" :key="patient.id">
+
+                    <option :value="patient.id" v-for="patient in patients"
+                        :key="patient.id"
+                        :selected="patient.id === admission.patient_id">
                         {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
-                    </option> -->
-                    <option :value="admission.patient_id">
-                        {{ admission.patient_id }}
                     </option>
                 </select>
 
@@ -52,11 +52,10 @@
                 <select required id="doctor"
                     v-model="form.doctor_id"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <!-- <option :value="doctor.id" v-for="doctor in doctors" :key="doctor.id">
+
+                    <option :value="doctor.id" v-for="doctor in doctors" :key="doctor.id"
+                    :selected="doctor.id === admission.doctor_id">
                         {{ doctor.name }} {{ doctor.last_name }}
-                    </option> -->
-                    <option :value="admission.doctor_id">
-                        {{ admission.doctor_id }}
                     </option>
                 </select>
 
@@ -108,6 +107,9 @@ export default {
     props: {
         admission: Object,
         errors: Array,
+        patients: Array,
+        doctors: Array,
+        beds: Array,
     },
     components: {
         AppLayout,

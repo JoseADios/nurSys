@@ -2,14 +2,14 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Admisiones
+                Ingresos
             </h2>
         </template>
 
         <div class="flex flex-col items-center justify-center mt-10">
             <Link :href="route('admissions.create')"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear nueva admision
+            Crear nuevo ingreso
             </Link>
         </div>
 
@@ -22,6 +22,9 @@
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Cama
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Doctor
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Diagnostico de ingreso
@@ -38,10 +41,13 @@
                     <tr v-for="admission in admissions" :key="admission.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ admission.patient.first_name }}
+                            {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{ admission.patient.second_surname }}
                         </th>
                         <td class="px-6 py-4">
                             {{ admission.bed.number }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ admission.doctor.name }} {{ admission.doctor.last_name }}
                         </td>
                         <td class="px-6 py-4">
                             {{ admission.admission_dx }}
@@ -73,7 +79,7 @@ import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
-        admissions: Array
+        admissions: Array,
     },
     components: {
         AppLayout,

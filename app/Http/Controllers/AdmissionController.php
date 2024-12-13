@@ -18,8 +18,11 @@ class AdmissionController extends Controller
      */
     public function index()
     {
+        $admissions = Admission::with(['bed', 'patient', 'doctor'])
+        ->where('active', '=', 1)
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        $admissions = Admission::with(['bed', 'patient'])->where('active', '=', 1)->get();
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
         ]);
@@ -87,8 +90,15 @@ class AdmissionController extends Controller
      */
     public function edit(Admission $admission)
     {
+        $patients = Patient::all();
+        $doctors = User::all();
+        $beds = Bed::all();
+
         return Inertia::render('Admissions/Edit', [
             'admission' => $admission,
+            'patients' => $patients,
+            'doctors' => $doctors,
+            'beds' => $beds,
         ]);
     }
 

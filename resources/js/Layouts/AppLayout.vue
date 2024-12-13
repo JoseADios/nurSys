@@ -54,7 +54,7 @@ const logout = () => {
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('admissions.index')" :active="route().current('admissions.index')">
-                                    Admisiones
+                                    Ingresos
                                 </NavLink>
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">

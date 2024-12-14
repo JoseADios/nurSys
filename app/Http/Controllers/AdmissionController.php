@@ -79,9 +79,15 @@ class AdmissionController extends Controller
      */
     public function show(Admission $admission)
     {
-        //
+        $patient = $admission->patient;
+        $bed = $admission->bed;
+        $doctor = $admission->doctor;
+
         return Inertia::render('Admissions/Show', [
             'admission' => $admission,
+            'patient' => $patient,
+            'bed' => $bed,
+            'doctor' => $doctor,
         ]);
     }
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Nurse_record_detail;
+use App\Models\NurseRecordDetail;
 use Illuminate\Http\Request;
 
 class NurseRecordDetailController extends Controller
@@ -28,13 +28,21 @@ class NurseRecordDetailController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        NurseRecordDetail::create([
+            'nurse_record_id' => $request->nurse_record_id,
+            'medication' =>  $request->medication,
+            'comment' => $request->comment,
+            'active' => true,
+            'created_at' => now()
+        ]);
+
+        return back()->with('success', 'Detalle agregado exitosamente');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Nurse_record_detail $nurse_record_detail)
+    public function show(NurseRecordDetail $nurse_record_detail)
     {
         //
     }
@@ -42,7 +50,7 @@ class NurseRecordDetailController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Nurse_record_detail $nurse_record_detail)
+    public function edit(NurseRecordDetail $nurse_record_detail)
     {
         //
     }
@@ -50,7 +58,7 @@ class NurseRecordDetailController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Nurse_record_detail $nurse_record_detail)
+    public function update(Request $request, NurseRecordDetail $nurse_record_detail)
     {
         //
     }
@@ -58,7 +66,7 @@ class NurseRecordDetailController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Nurse_record_detail $nurse_record_detail)
+    public function destroy(NurseRecordDetail $nurse_record_detail)
     {
         //
     }

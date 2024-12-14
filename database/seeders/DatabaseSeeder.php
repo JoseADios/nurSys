@@ -26,7 +26,6 @@ class DatabaseSeeder extends Seeder
 
         ]);
 
-
         $this->call(BedSeeder::class);
         $this->call(PatientSeeder::class);
         $this->call(AdmissionSeeder::class);
@@ -42,6 +41,7 @@ class DatabaseSeeder extends Seeder
         $this->call(NationalitySeeder::class);
         $this->call(RegimeSeeder::class);
         $this->call(RoomSeeder::class);
-
+        $this->call(NurseRecordSeeder::class);
+        $this->call(NurseRecordDetailSeeder::class);
     }
 }

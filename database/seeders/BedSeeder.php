@@ -16,7 +16,7 @@ class BedSeeder extends Seeder
         foreach (range(1, 10) as $number) {
             DB::table('beds')->insert([
                 'number' => $number,
-                'room' => '1',
+                'room' => '310',
                 'status' => 'free',
                 'active' => true,
             ]);

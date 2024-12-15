@@ -20,10 +20,9 @@ class NurseRecordController extends Controller
 
         if ($request->has('admission_id')) {
 
-            $nurseRecords = NurseRecord::with('nurse')
-            ->where('admission_id', $request->admission_id)
-            ->get();
-
+            $nurseRecords = NurseRecord::with('nurse', 'admission.patient')
+                ->where('admission_id', $request->admission_id)
+                ->get();
         } else {
             $nurseRecords = NurseRecord::with('nurse', 'admission.patient')->get();
         }
@@ -45,10 +44,7 @@ class NurseRecordController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-
-    }
+    public function store(Request $request) {}
 
     /**
      * Display the specified resource.
@@ -66,7 +62,7 @@ class NurseRecordController extends Controller
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
-        $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'asc')->get();
+        $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('NurseRecords/Edit', [
             'nurseRecord' => $nurseRecord,

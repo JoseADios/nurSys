@@ -112,9 +112,22 @@
                             <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
                                 {{ detail.comment }}
                             </div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                {{ detail.created_at }}
+                            </div>
                         </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">
-                            {{ detail.created_at }}
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            <!-- Editar -->
+                            <Link :href="route('nurseRecordDetails.edit', detail.id )"
+                                class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="font-medium">Editar</span>
+                            </Link>
                         </div>
                     </div>
 

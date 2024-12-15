@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\NurseRecordDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
+
+use function PHPUnit\Framework\returnSelf;
 
 class NurseRecordDetailController extends Controller
 {
@@ -42,7 +46,7 @@ class NurseRecordDetailController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(NurseRecordDetail $nurse_record_detail)
+    public function show(NurseRecordDetail $nurseRecordDetail)
     {
         //
     }
@@ -50,23 +54,26 @@ class NurseRecordDetailController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(NurseRecordDetail $nurse_record_detail)
+    public function edit(NurseRecordDetail $nurseRecordDetail)
     {
-        //
+        return Inertia::render('NurseRecordDetail/Edit', [
+            'nurseRecordDetail' => $nurseRecordDetail
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, NurseRecordDetail $nurse_record_detail)
+    public function update(Request $request, NurseRecordDetail $nurseRecordDetail)
     {
-        //
+        $nurseRecordDetail->update($request->all());
+        return Redirect::route('nurseRecords.edit', $nurseRecordDetail->nurse_record_id);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(NurseRecordDetail $nurse_record_detail)
+    public function destroy(NurseRecordDetail $nurseRecordDetail)
     {
         //
     }

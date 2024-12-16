@@ -62,10 +62,12 @@ class NurseRecordController extends Controller
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
+        $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
         $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('NurseRecords/Edit', [
             'nurseRecord' => $nurseRecord,
+            'admissions' => $admissions,
             'patient' => $patient,
             'nurse' => $nurse,
             'bed' => $bed,
@@ -79,7 +81,12 @@ class NurseRecordController extends Controller
      */
     public function update(Request $request, NurseRecord $nurseRecord)
     {
-        //
+        $nurseRecord->update($request->all());
+
+        return Redirect::route('nurseRecords.edit', [
+            'nurseRecord' => $nurseRecord->id,
+            // 'datos' => 'hola'
+        ]);
     }
 
     /**

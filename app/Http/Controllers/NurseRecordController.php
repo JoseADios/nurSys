@@ -7,6 +7,7 @@ use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
 use App\Models\Patient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -22,6 +23,8 @@ class NurseRecordController extends Controller
 
             $nurseRecords = NurseRecord::with('nurse', 'admission.patient')
                 ->where('admission_id', $request->admission_id)
+                ->orderBy('updated_at', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->get();
         } else {
             $nurseRecords = NurseRecord::with('nurse', 'admission.patient')->get();
@@ -36,15 +39,35 @@ class NurseRecordController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        if ($request->has('admission_id')) {
+            $admission_id = $request->admission_id;
+        } else {
+            $admission_id = null;
+        }
+
+        $admissions = Admission::where('active', true)
+        ->with('patient', 'bed')
+        ->get();
+        return Inertia::render('NurseRecords/Create',[
+            'admissions' => $admissions,
+            'admission_id' => $admission_id
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {}
+    public function store(Request $request) {
+        $nurseRecord = NurseRecord::create([
+            'admission_id' => $request->admission_id,
+            'nurse_id' => Auth::id(),
+            'created_at' => now(),
+        ]);
+
+        return Redirect::route('nurseRecords.edit', $nurseRecord->id);
+    }
 
     /**
      * Display the specified resource.
@@ -85,7 +108,6 @@ class NurseRecordController extends Controller
 
         return Redirect::route('nurseRecords.edit', [
             'nurseRecord' => $nurseRecord->id,
-            // 'datos' => 'hola'
         ]);
     }
 

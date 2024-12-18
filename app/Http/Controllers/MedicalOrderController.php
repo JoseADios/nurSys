@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admission;
 use App\Models\MedicalOrder;
+use App\Models\MedicalOrderDetail;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,7 +17,7 @@ class MedicalOrderController extends Controller
     public function index()
     {
         $medicalOrders = MedicalOrder::where('active', true)
-            ->with('admission.patient', 'admission.bed')
+            ->with('admission.patient', 'admission.bed', 'doctor')
             ->orderBy('created_at', 'desc')
             ->orderBy('updated_at', 'desc')->get();
 
@@ -52,7 +55,23 @@ class MedicalOrderController extends Controller
      */
     public function edit(MedicalOrder $medicalOrder)
     {
-        //
+        $admissions = Admission::where('active', true);
+        $patient = $medicalOrder->admission->patient;
+        $bed = $medicalOrder->admission->bed;
+        $doctor = $medicalOrder->admission->doctor;
+        $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
+            ->where('active', true)
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('created_at', 'desc');
+
+        return Inertia::render('MedicalOrders/Edit', [
+            'medicalOrder' => $medicalOrder,
+            'details' => $details,
+            'admissions' => $admissions,
+            'patient' => $patient,
+            'bed' => $bed,
+            'doctor' => $doctor,
+        ]);
     }
 
     /**

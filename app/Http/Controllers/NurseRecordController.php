@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
-use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -20,7 +19,6 @@ class NurseRecordController extends Controller
     {
 
         if ($request->has('admission_id')) {
-
             $nurseRecords = NurseRecord::with('nurse', 'admission.patient')
                 ->where('admission_id', $request->admission_id)
                 ->orderBy('updated_at', 'desc')
@@ -33,6 +31,7 @@ class NurseRecordController extends Controller
 
         return Inertia::render('NurseRecords/Index', [
             'nurseRecords' => $nurseRecords,
+            'admission_id' => intval($request->admission_id),
         ]);
     }
 
@@ -48,9 +47,9 @@ class NurseRecordController extends Controller
         }
 
         $admissions = Admission::where('active', true)
-        ->with('patient', 'bed')
-        ->get();
-        return Inertia::render('NurseRecords/Create',[
+            ->with('patient', 'bed')
+            ->get();
+        return Inertia::render('NurseRecords/Create', [
             'admissions' => $admissions,
             'admission_id' => $admission_id
         ]);
@@ -59,7 +58,8 @@ class NurseRecordController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $nurseRecord = NurseRecord::create([
             'admission_id' => $request->admission_id,
             'nurse_id' => Auth::id(),

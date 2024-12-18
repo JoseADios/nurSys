@@ -6,13 +6,13 @@
             </h2>
         </template>
 
-        <!-- <div class="text-white">{{ datos }}</div> -->
+        <div class="text-white">Datos {{ adm_id }}</div>
 
         <div class="container mx-auto px-4 py-8">
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('admissions.show', nurseRecord.admission_id)"
+                    <Link :href="route('nurseRecords.index', nurseRecord.admission_id)"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
@@ -104,7 +104,7 @@
                 <!-- Form -->
                 <!-- Formulario para agregar nuevo detalle -->
                 <div class="p-8 ">
-                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Eventos</h3>
 
                     <form @submit.prevent="submit" class="space-y-4">
                         <div class="grid md:grid-cols-2 gap-4">
@@ -133,7 +133,7 @@
                             <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                            hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                            transition-colors duration-300">
-                                Agregar Detalle
+                                Agregar Evento
                             </button>
                         </div>
                     </form>
@@ -141,7 +141,7 @@
 
                 <!-- Nurse Record Details -->
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
-                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro</h3>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Eventos del Registro</h3>
 
                     <div v-for="detail in details" :key="detail.id"
                         class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
@@ -172,7 +172,7 @@
                     </div>
 
                     <div v-if="details.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">
-                        No hay detalles de registro disponibles
+                        No hay eventos de registro disponibles
                     </div>
                 </div>
 
@@ -189,6 +189,7 @@ import { Link } from '@inertiajs/vue3';
 export default {
     props: {
         nurseRecord: Object,
+        adm_id: Number,
         errors: {
             type: Array,
             default: () => []

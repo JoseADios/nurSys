@@ -6,6 +6,8 @@
             </h2>
         </template>
 
+        <!-- <div class="text-white">Datos: {{ admission_id }}</div> -->
+
         <div class="flex flex-col items-center justify-center mt-10">
             <Link :href="route('nurseRecords.create')"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
@@ -34,7 +36,8 @@
                     <tr v-for="nurseRecord in nurseRecords" :key="nurseRecord.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ nurseRecord.admission.patient.first_name }} {{ nurseRecord.admission.patient.first_surname }} {{
+                            {{ nurseRecord.admission.patient.first_name }} {{
+                                nurseRecord.admission.patient.first_surname }} {{
                                 nurseRecord.admission.patient.second_surname }}
                         </th>
                         <td class="px-6 py-4">
@@ -44,8 +47,11 @@
                             {{ nurseRecord.created_at }}
                         </td>
                         <td class="px-6 py-4">
-                            <Link class="ml-2 text-green-500 hover:text-green-800"
-                                :href="route('nurseRecords.edit', nurseRecord.id)" as="button">
+                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('nurseRecords.edit',
+                                {
+                                    'id': nurseRecord.id,
+                                    'adm_id': admission_id
+                                })" as="button">
                             Abrir
                             </Link>
                         </td>

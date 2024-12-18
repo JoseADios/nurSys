@@ -158,7 +158,7 @@
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             <!-- Editar -->
-                            <Link :href="route('medicalOrderDetails.edit', detail.id)"
+                            <Link :href="route('admissions.edit', detail.id)"
                                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                 fill="currentColor">

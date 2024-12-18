@@ -55,14 +55,14 @@ class MedicalOrderController extends Controller
      */
     public function edit(MedicalOrder $medicalOrder)
     {
-        $admissions = Admission::where('active', true);
+        $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
         $patient = $medicalOrder->admission->patient;
         $bed = $medicalOrder->admission->bed;
         $doctor = $medicalOrder->admission->doctor;
         $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
             ->where('active', true)
             ->orderBy('updated_at', 'desc')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('MedicalOrders/Edit', [
             'medicalOrder' => $medicalOrder,
@@ -79,7 +79,9 @@ class MedicalOrderController extends Controller
      */
     public function update(Request $request, MedicalOrder $medicalOrder)
     {
-        //
+        $medicalOrder->update($request->all());
+
+        return back()->with('succes', 'Registro actualizado correctamente');
     }
 
     /**

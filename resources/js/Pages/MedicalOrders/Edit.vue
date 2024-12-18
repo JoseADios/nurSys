@@ -12,7 +12,7 @@
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('nurseRecords.index', nurseRecord.admission_id)"
+                    <Link :href="route('medicalOrders.index', medicalOrder.admission_id)"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
@@ -31,7 +31,7 @@
                             <div class="">
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                    {{ nurseRecord.admission_id }}
+                                    {{ medicalOrder.admission_id }}
                                 </p>
                             </div>
                             <button @click="toggleEditAdmission" class="text-blue-500 mr-3">Edit</button>
@@ -82,13 +82,13 @@
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ nurse.name }} {{ patient.last_name }}
+                                {{ doctor.name }} {{ patient.last_name }}
                             </p>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Registro</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ nurseRecord.created_at }}
+                                {{ medicalOrder.created_at }}
                             </p>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                             <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                            hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                            transition-colors duration-300">
-                                Agregar Evento
+                                Agregar Detalle
                             </button>
                         </div>
                     </form>
@@ -141,7 +141,7 @@
 
                 <!-- Nurse Record Details -->
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
-                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Eventos del Registro</h3>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro</h3>
 
                     <div v-for="detail in details" :key="detail.id"
                         class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
@@ -158,7 +158,7 @@
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             <!-- Editar -->
-                            <Link :href="route('nurseRecordDetails.edit', detail.id)"
+                            <Link :href="route('medicalOrderDetails.edit', detail.id)"
                                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                 fill="currentColor">
@@ -172,7 +172,7 @@
                     </div>
 
                     <div v-if="details.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">
-                        No hay eventos de registro disponibles
+                        No hay eventos de ordenes disponibles
                     </div>
                 </div>
 
@@ -188,15 +188,14 @@ import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
-        nurseRecord: Object,
-        adm_id: Number,
+        medicalOrder: Object,
         errors: {
             type: Array,
             default: () => []
         },
         admissions: Array,
         patient: Object,
-        nurse: Object,
+        doctor: Object,
         bed: Object,
         details: Array,
         // datos: Object
@@ -209,10 +208,10 @@ export default {
         return {
             isVisible: false,
             formAdmission: {
-                admission_id: this.nurseRecord.admission_id
+                admission_id: this.medicalOrder.admission_id
             },
             formDetail: {
-                nurse_record_id: this.nurseRecord.id,
+                medicalOrder_id: this.medicalOrder.id,
                 medication: null,
                 comment: null,
             }
@@ -223,16 +222,16 @@ export default {
             this.isVisible = !this.isVisible;
         },
         submitAdmission() {
-            this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formAdmission)
+            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formAdmission)
             this.toggleEditAdmission()
         },
         submit() {
-            this.$inertia.post(route('nurseRecordDetails.store'),
+            this.$inertia.post(route('medicalOrderDetails.store'),
                 this.formDetail,
                 {
                     onSuccess: () => {
                         this.formDetail = {
-                            nurse_record_id: this.nurseRecord.id,
+                            medicalOrder_id: this.medicalOrder.id,
                             medication: '',
                             comment: '',
                         };

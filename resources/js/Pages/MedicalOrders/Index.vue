@@ -79,7 +79,7 @@ import { Link } from '@inertiajs/vue3';
 export default {
     props: {
         medicalOrders: Array,
-        // admission_id: Number,
+        admission_id: Number,
     },
     components: {
         AppLayout,

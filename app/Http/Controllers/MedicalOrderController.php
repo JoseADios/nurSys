@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Medical_order;
+use App\Models\MedicalOrder;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class MedicalOrderController extends Controller
 {
@@ -12,7 +13,14 @@ class MedicalOrderController extends Controller
      */
     public function index()
     {
-        //
+        $medicalOrders = MedicalOrder::where('active', true)
+            ->with('admission.patient', 'admission.bed')
+            ->orderBy('created_at', 'desc')
+            ->orderBy('updated_at', 'desc')->get();
+
+        return Inertia::render('MedicalOrders/Index', [
+            'medicalOrders' => $medicalOrders,
+        ]);
     }
 
     /**
@@ -34,7 +42,7 @@ class MedicalOrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Medical_order $medical_order)
+    public function show(MedicalOrder $medicalOrder)
     {
         //
     }
@@ -42,7 +50,7 @@ class MedicalOrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Medical_order $medical_order)
+    public function edit(MedicalOrder $medicalOrder)
     {
         //
     }
@@ -50,7 +58,7 @@ class MedicalOrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Medical_order $medical_order)
+    public function update(Request $request, MedicalOrder $medicalOrder)
     {
         //
     }
@@ -58,7 +66,7 @@ class MedicalOrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Medical_order $medical_order)
+    public function destroy(MedicalOrder $medicalOrder)
     {
         //
     }

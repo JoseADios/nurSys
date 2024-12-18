@@ -60,7 +60,7 @@
                             {{ medicalOrder.created_at }}
                         </td>
                         <td class="px-6 py-4">
-                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('medicalOrders.edit',medicalOrder.id)" as="button">
+                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('medicalOrders.edit', medicalOrder.id)" as="button">
                             Abrir
                             </Link>
                         </td>

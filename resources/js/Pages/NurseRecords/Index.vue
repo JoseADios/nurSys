@@ -24,7 +24,7 @@
         <div class="flex flex-col items-center justify-center mt-10">
             <Link :href="route('nurseRecords.create')"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear nueva orden médica
+            Crear nuevo Registro de Enfermería
             </Link>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">

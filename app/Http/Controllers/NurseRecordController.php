@@ -18,7 +18,6 @@ class NurseRecordController extends Controller
     public function index(Request $request)
     {
         $query = NurseRecord::with('nurse', 'admission.patient')
-        ->where('admission_id', $request->admission_id)
         ->orderBy('updated_at', 'desc')
         ->orderBy('created_at', 'desc');
 

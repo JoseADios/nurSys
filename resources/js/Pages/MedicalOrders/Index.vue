@@ -22,7 +22,7 @@
         </div>
 
         <div class="flex flex-col items-center justify-center mt-10">
-            <Link :href="route('medicalOrders.create')"
+            <Link :href="route('medicalOrders.create', { admission_id: admission_id })"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
             Crear nueva Orden Medica
             </Link>

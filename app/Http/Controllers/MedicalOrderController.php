@@ -79,9 +79,7 @@ class MedicalOrderController extends Controller
     public function edit(MedicalOrder $medicalOrder)
     {
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
-        $patient = $medicalOrder->admission->patient;
-        $bed = $medicalOrder->admission->bed;
-        $doctor = $medicalOrder->admission->doctor;
+        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor']);
         $regimes = Regime::all();
         $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
             ->where('active', true)
@@ -92,9 +90,6 @@ class MedicalOrderController extends Controller
             'medicalOrder' => $medicalOrder,
             'details' => $details,
             'admissions' => $admissions,
-            'patient' => $patient,
-            'bed' => $bed,
-            'doctor' => $doctor,
             'regimes' => $regimes,
         ]);
     }

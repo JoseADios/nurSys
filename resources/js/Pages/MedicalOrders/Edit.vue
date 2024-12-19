@@ -67,13 +67,13 @@
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
+                                {{ medicalOrder.admission.patient.first_name }} {{ medicalOrder.admission.patient.first_surname }} {{ medicalOrder.admission.patient.second_surname }}
                             </p>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Sala</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                Sala {{ bed.room }}, Cama {{ bed.number }}
+                                Sala {{ medicalOrder.admission.bed.room }}, Cama {{ medicalOrder.admission.bed.number }}
                             </p>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ doctor.name }} {{ patient.last_name }}
+                                {{ medicalOrder.admission.doctor.name }} {{ medicalOrder.admission.doctor.last_name }}
                             </p>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
@@ -282,9 +282,6 @@ export default {
             default: () => []
         },
         admissions: Array,
-        patient: Object,
-        doctor: Object,
-        bed: Object,
         details: Array,
         regimes: Array,
         // datos: Object

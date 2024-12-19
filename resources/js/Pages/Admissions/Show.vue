@@ -113,7 +113,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
-                                Planes de Tratamiento
+                                Hojas de Temperatura
                                 </Link>
                                 <Link :href="route('admissions.create', { admission_id: admission.id })"
                                     class="flex w-24 items-center justify-center bg-purple-400 text-white font-semibold rounded-lg p-2 hover:bg-purple-500 transition duration-300 ease-in-out">

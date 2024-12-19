@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdmissionController;
 use App\Http\Controllers\MedicalOrderController;
+use App\Http\Controllers\MedicalOrderDetailController;
 use App\Http\Controllers\MedicationRecordController;
 use App\Http\Controllers\NurseRecordController;
 use App\Http\Controllers\NurseRecordDetailController;
@@ -32,5 +33,6 @@ Route::middleware([
     Route::resource('nurseRecords', NurseRecordController::class);
     Route::resource('nurseRecordDetails', NurseRecordDetailController::class);
     Route::resource('medicalOrders', MedicalOrderController::class);
+    Route::resource('medicalOrderDetails', MedicalOrderDetailController::class);
 
 });

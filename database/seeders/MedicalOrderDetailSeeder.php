@@ -24,7 +24,7 @@ class MedicalOrderDetailSeeder extends Seeder
                 'medical_order_id' => $medicalOrders->first()->id,
                 'order' => 'Administrar antibióticos cada 8 horas',
                 'regime' => 'Tratamiento intensivo',
-                'suspended' => null,
+                'suspended_at' => null,
                 'active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -33,7 +33,7 @@ class MedicalOrderDetailSeeder extends Seeder
                 'medical_order_id' => $medicalOrders->skip(1)->first()->id,
                 'order' => 'Reposo absoluto por 48 horas',
                 'regime' => 'Recuperación',
-                'suspended' => null,
+                'suspended_at' => null,
                 'active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -42,7 +42,7 @@ class MedicalOrderDetailSeeder extends Seeder
                 'medical_order_id' => $medicalOrders->skip(2)->first()->id,
                 'order' => 'Suspender medicación anterior',
                 'regime' => 'Cambio de tratamiento',
-                'suspended' => Carbon::now()->addDays(3),
+                'suspended_at' => Carbon::now()->addDays(3),
                 'active' => false,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -51,7 +51,7 @@ class MedicalOrderDetailSeeder extends Seeder
                 'medical_order_id' => $medicalOrders->first()->id,
                 'order' => 'Control de signos vitales cada 4 horas',
                 'regime' => 'Monitoreo',
-                'suspended' => null,
+                'suspended_at' => now(),
                 'active' => true,
                 'created_at' => now(),
                 'updated_at' => now()

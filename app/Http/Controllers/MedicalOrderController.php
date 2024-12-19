@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\MedicalOrder;
 use App\Models\MedicalOrderDetail;
-use App\Models\Patient;
+use App\Models\Regime;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -59,6 +59,7 @@ class MedicalOrderController extends Controller
         $patient = $medicalOrder->admission->patient;
         $bed = $medicalOrder->admission->bed;
         $doctor = $medicalOrder->admission->doctor;
+        $regimes = Regime::all();
         $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
             ->where('active', true)
             ->orderBy('updated_at', 'desc')
@@ -71,6 +72,7 @@ class MedicalOrderController extends Controller
             'patient' => $patient,
             'bed' => $bed,
             'doctor' => $doctor,
+            'regimes' => $regimes,
         ]);
     }
 

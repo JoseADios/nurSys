@@ -2,7 +2,7 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Editar registro de Enfermería
+                Editar Orden Médica
             </h2>
         </template>
 
@@ -104,35 +104,37 @@
                 <!-- Form -->
                 <!-- Formulario para agregar nuevo detalle -->
                 <div class="p-8 ">
-                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Eventos</h3>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Detalles</h3>
 
                     <form @submit.prevent="submit" class="space-y-4">
-                        <div class="grid md:grid-cols-2 gap-4">
+                        <div class="grid md:grid-cols-[2fr_1fr] gap-4">
                             <div>
-                                <label for="medication"
+                                <label for="orden"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Medicamento
+                                    Órden
                                 </label>
-                                <input type="text" id="medication" v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
-                               focus:outline-none focus:ring-2 focus:ring-blue-500
-                               dark:bg-gray-800 dark:text-white" placeholder="Nombre del medicamento" />
+                                <input type="text" id="order" v-model="formDetail.order" required
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                                    placeholder="Orden médica" />
                             </div>
 
                             <div>
-                                <label for="comment"
+                                <label for="regime"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Comentario
+                                    Régimen
                                 </label>
-                                <input type="text" id="comment" v-model="formDetail.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
-                               focus:outline-none focus:ring-2 focus:ring-blue-500
-                               dark:bg-gray-800 dark:text-white" placeholder="Comentarios adicionales" />
+                                <select id="regime" v-model="formDetail.regime"
+                                    class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option :value="regime.name" v-for="regime in regimes" :key="regime.id">
+                                        {{ regime.name }}
+                                    </option>
+                                </select>
                             </div>
                         </div>
 
                         <div class="pt-4">
-                            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
-                           hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                           transition-colors duration-300">
+                            <button type="submit"
+                                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-300">
                                 Agregar Detalle
                             </button>
                         </div>
@@ -143,31 +145,44 @@
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro</h3>
 
-                    <div v-for="detail in details" :key="detail.id"
-                        class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
+                    <div v-for="detail in details" :key="detail.id" :class="[
+                        'rounded-lg p-4 shadow-md flex justify-between items-center transition-colors',
+                        detail.suspended_at
+                            ? 'bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-900/30'
+                            : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900'
+                    ]">
                         <div class="flex-grow">
                             <div class="font-semibold text-gray-900 dark:text-white">
-                                {{ detail.medication }}
+                                {{ detail.order }}
                             </div>
                             <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                                {{ detail.comment }}
+                                {{ detail.regime }}
+                            </div>
+                            <div v-if="detail.suspended_at"
+                                class="text-sm text-red-600 dark:text-red-400 mt-1 font-medium flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Suspendido: {{ detail.suspended_at }}
                             </div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                 {{ detail.created_at }}
                             </div>
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            <!-- Editar -->
-                            <Link :href="route('admissions.edit', detail.id)"
+                            <button @click="openEditModal(detail)"
                                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <span class="font-medium">Editar</span>
-                            </Link>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <span class="font-medium">Editar</span>
+                            </button>
                         </div>
                     </div>
 
@@ -179,14 +194,87 @@
 
             </div>
         </div>
+
+
+        <DialogModal :show="isOpen" @close="isOpen = false">
+            <!-- Header del modal -->
+            <template #title>
+                Editar orden
+            </template>
+
+            <!-- Contenido del modal -->
+            <template #content>
+                <div class="">
+                    <form>
+                        <div class="grid md:grid-cols-[2fr_1fr] gap-4">
+                            <div>
+                                <label for="orden"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Órden
+                                </label>
+                                <input type="text" id="order" v-model="selectedDetail.order" required
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                                    placeholder="Orden médica" />
+                            </div>
+
+                            <div>
+                                <label for="regime"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Régimen
+                                </label>
+                                <select id="regime" v-model="selectedDetail.regime"
+                                    class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option :value="regime.name" v-for="regime in regimes" :key="regime.id">
+                                        {{ regime.name }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div v-if="!originalSuspendedState">
+                                <div class="flex items-center me-4">
+                                    <input :checked="!!selectedDetail.suspended_at"
+                                        @change="selectedDetail.suspended_at = $event.target.checked ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null"
+                                        id="suspended_at" type="checkbox" value=""
+                                        class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="red-checkbox"
+                                        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Suspender</label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </template>
+
+            <!-- Footer del modal -->
+            <template #footer>
+                <button @click="submitUpdateDetail"
+                    class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                    Actualizar
+                </button>
+                <button @click="isOpen = false"
+                    class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    Cerrar
+                </button>
+            </template>
+        </DialogModal>
+
     </AppLayout>
 </template>
 
 <script>
+import DialogModal from '@/Components/DialogModal.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
 
 export default {
+    components: {
+        AppLayout,
+        Link,
+        DialogModal,
+    },
     props: {
         medicalOrder: Object,
         errors: {
@@ -198,22 +286,23 @@ export default {
         doctor: Object,
         bed: Object,
         details: Array,
+        regimes: Array,
         // datos: Object
-    },
-    components: {
-        AppLayout,
-        Link,
     },
     data() {
         return {
+            selectedDetail: ref(null),
+            isOpen: ref(false),
+            originalSuspendedState: ref(null),
+
             isVisible: false,
             formAdmission: {
                 admission_id: this.medicalOrder.admission_id
             },
             formDetail: {
-                medicalOrder_id: this.medicalOrder.id,
-                medication: null,
-                comment: null,
+                medical_order_id: this.medicalOrder.id,
+                order: null,
+                regime: null,
             }
         }
     },
@@ -231,14 +320,26 @@ export default {
                 {
                     onSuccess: () => {
                         this.formDetail = {
-                            medicalOrder_id: this.medicalOrder.id,
+                            medical_order_id: this.medicalOrder.id,
                             medication: '',
                             comment: '',
                         };
                     }
                 });
         },
+        submitUpdateDetail() {
+            this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail)
+            this.isVisible = false
+            this.isOpen = false
 
+        },
+        openEditModal(detail) {
+            this.selectedDetail = { ...detail };
+            this.originalSuspendedState = detail.suspended_at;
+            this.isOpen = true;
+        },
     }
+
+
 }
 </script>

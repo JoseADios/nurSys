@@ -17,17 +17,16 @@ class NurseRecordController extends Controller
      */
     public function index(Request $request)
     {
+        $query = NurseRecord::with('nurse', 'admission.patient')
+        ->where('admission_id', $request->admission_id)
+        ->orderBy('updated_at', 'desc')
+        ->orderBy('created_at', 'desc');
 
         if ($request->has('admission_id')) {
-            $nurseRecords = NurseRecord::with('nurse', 'admission.patient')
-                ->where('admission_id', $request->admission_id)
-                ->orderBy('updated_at', 'desc')
-                ->orderBy('created_at', 'desc')
-                ->get();
-        } else {
-            $nurseRecords = NurseRecord::with('nurse', 'admission.patient')->get();
+            $query->where('admission_id', $request->admission_id);
         }
 
+        $nurseRecords = $query->get();
 
         return Inertia::render('NurseRecords/Index', [
             'nurseRecords' => $nurseRecords,
@@ -40,11 +39,7 @@ class NurseRecordController extends Controller
      */
     public function create(Request $request)
     {
-        if ($request->has('admission_id')) {
-            $admission_id = $request->admission_id;
-        } else {
-            $admission_id = null;
-        }
+        $admission_id = $request->has('admission_id') ? $request->admission_id : null;
 
         $admissions = Admission::where('active', true)
             ->with('patient', 'bed')

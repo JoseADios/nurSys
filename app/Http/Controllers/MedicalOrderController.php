@@ -7,6 +7,8 @@ use App\Models\MedicalOrder;
 use App\Models\MedicalOrderDetail;
 use App\Models\Regime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class MedicalOrderController extends Controller
@@ -14,12 +16,18 @@ class MedicalOrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $medicalOrders = MedicalOrder::where('active', true)
+        $query = MedicalOrder::where('active', true)
             ->with('admission.patient', 'admission.bed', 'doctor')
             ->orderBy('created_at', 'desc')
-            ->orderBy('updated_at', 'desc')->get();
+            ->orderBy('updated_at', 'desc');
+
+        if ($request->has('admission_id')) {
+            $query->where('admission_id', $request->admission_id);
+        }
+
+        $medicalOrders = $query->get();
 
         return Inertia::render('MedicalOrders/Index', [
             'medicalOrders' => $medicalOrders,
@@ -29,9 +37,17 @@ class MedicalOrderController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $admission_id = $request->has('admission_id') ? $request->admission_id : null;
+
+        $admissions = Admission::where('active', true)
+            ->with('patient', 'bed')
+            ->get();
+        return Inertia::render('MedicalOrders/Create', [
+            'admissions' => $admissions,
+            'admission_id' => $admission_id
+        ]);
     }
 
     /**
@@ -39,7 +55,14 @@ class MedicalOrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $medicalOrder = MedicalOrder::create([
+            'admission_id' => $request->admission_id,
+            'doctor_id' => Auth::id(),
+            'created_at' => now(),
+        ]);
+
+        return Redirect::route('medicalOrders.edit', $medicalOrder->id);
+
     }
 
     /**

@@ -6,7 +6,7 @@
             </h2>
         </template>
 
-        <div class="text-white">Datos {{ adm_id }}</div>
+        <!-- <div class="text-white">Datos {{ adm_id }}</div> -->
 
         <div class="container mx-auto px-4 py-8">
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">

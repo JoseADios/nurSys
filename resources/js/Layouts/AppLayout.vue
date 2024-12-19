@@ -69,6 +69,18 @@ const logout = () => {
                                 </NavLink>
                             </div>
 
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('medicalOrders.index')" :active="route().current('medicalOrders.index')">
+                                    Órdenes Médicas
+                                </NavLink>
+                            </div>
+
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('temperatureRecords.index')" :active="route().current('temperatureRecords.index')">
+                                    Hojas de Temperatura
+                                </NavLink>
+                            </div>
+
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -245,6 +257,14 @@ const logout = () => {
 
                             <ResponsiveNavLink :href="route('nurseRecords.index')" :active="route().current('nurseRecords.index')">
                                 Registros de Enfermería
+                            </ResponsiveNavLink>
+
+                            <ResponsiveNavLink :href="route('medicalOrders.index')" :active="route().current('medicalOrders.index')">
+                                Órdenes Médicas
+                            </ResponsiveNavLink>
+
+                            <ResponsiveNavLink :href="route('temperatureRecords.index')" :active="route().current('temperatureRecords.index')">
+                                Hojas de Temperatura
                             </ResponsiveNavLink>
 
                             <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">

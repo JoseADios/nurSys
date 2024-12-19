@@ -36,7 +36,6 @@ class NurseRecordDetailController extends Controller
             'nurse_record_id' => $request->nurse_record_id,
             'medication' =>  $request->medication,
             'comment' => $request->comment,
-            'active' => true,
             'created_at' => now()
         ]);
 

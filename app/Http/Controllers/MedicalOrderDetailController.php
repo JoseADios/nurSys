@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Medical_order_detail;
+use App\Models\MedicalOrderDetail;
 use Illuminate\Http\Request;
 
 class MedicalOrderDetailController extends Controller
@@ -28,13 +28,20 @@ class MedicalOrderDetailController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        MedicalOrderDetail::create([
+            'medical_order_id' => $request->medical_order_id,
+            'order' =>  $request->order,
+            'regime' => $request->regime,
+            'created_at' => now()
+        ]);
+
+        return back()->with('success', 'Detalle agregado exitosamente');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Medical_order_detail $medical_order_detail)
+    public function show(MedicalOrderDetail $medicalOrderDetail)
     {
         //
     }
@@ -42,7 +49,7 @@ class MedicalOrderDetailController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Medical_order_detail $medical_order_detail)
+    public function edit(MedicalOrderDetail $medicalOrderDetail)
     {
         //
     }
@@ -50,15 +57,17 @@ class MedicalOrderDetailController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Medical_order_detail $medical_order_detail)
+    public function update(Request $request, MedicalOrderDetail $medicalOrderDetail)
     {
-        //
+
+        $medicalOrderDetail->update($request->all());
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Medical_order_detail $medical_order_detail)
+    public function destroy(MedicalOrderDetail $medicalOrderDetail)
     {
         //
     }

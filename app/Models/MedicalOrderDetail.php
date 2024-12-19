@@ -11,7 +11,7 @@ class MedicalOrderDetail extends Model
         'medical_order_id',
         'order',
         'regime',
-        'suspended',
+        'suspended_at',
         'active'
     ];
 

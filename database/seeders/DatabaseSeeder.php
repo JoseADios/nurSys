@@ -47,5 +47,6 @@ class DatabaseSeeder extends Seeder
         $this->call(MedicalOrderSeeder::class);
         $this->call(MedicalOrderDetailSeeder::class);
         $this->call(TemperatureRecordSeeder::class);
+        $this->call(TemperatureDetailSeeder::class);
     }
 }

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('nurse_id')->constrained(table:'users')->onDelete('restrict');
             $table->integer('temperature');
             $table->integer('evacuations');
-            $table->integer('urinations');
+            $table->string('urinations', 2);
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

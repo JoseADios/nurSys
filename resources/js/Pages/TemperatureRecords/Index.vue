@@ -63,7 +63,7 @@
                         </td>
                         <td class="px-6 py-4">
                             <Link class="ml-2 text-green-500 hover:text-green-800"
-                                :href="route('temperatureRecords.edit', temperatureRecord.id)" as="button">
+                                :href="route('temperatureRecords.show', temperatureRecord.id)" as="button">
                             Abrir
                             </Link>
                         </td>

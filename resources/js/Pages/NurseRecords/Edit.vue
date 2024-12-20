@@ -82,7 +82,7 @@
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ nurse.name }} {{ patient.last_name }}
+                                {{ patient.first_name }} {{ patient.last_name }}
                             </p>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">

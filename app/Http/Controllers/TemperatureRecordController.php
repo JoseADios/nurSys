@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admission;
+use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -50,7 +52,15 @@ class TemperatureRecordController extends Controller
      */
     public function show(TemperatureRecord $temperatureRecord)
     {
-        //
+        $temperatureRecord->load(['admission.bed', 'admission.patient']);
+        $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
+        $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->get();
+
+        return Inertia::render('TemperatureRecords/Show', [
+            'temperatureRecord' => $temperatureRecord,
+            'admissions' => $admissions,
+            'details' => $details,
+        ]);
     }
 
     /**

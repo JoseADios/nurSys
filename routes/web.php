@@ -6,6 +6,7 @@ use App\Http\Controllers\MedicalOrderDetailController;
 use App\Http\Controllers\MedicationRecordController;
 use App\Http\Controllers\NurseRecordController;
 use App\Http\Controllers\NurseRecordDetailController;
+use App\Http\Controllers\TemperatureDetailController;
 use App\Http\Controllers\TemperatureRecordController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -36,5 +37,6 @@ Route::middleware([
     Route::resource('medicalOrders', MedicalOrderController::class);
     Route::resource('medicalOrderDetails', MedicalOrderDetailController::class);
     Route::resource('temperatureRecords', TemperatureRecordController::class);
+    Route::resource('temperatureDetails', TemperatureDetailController::class);
 
 });

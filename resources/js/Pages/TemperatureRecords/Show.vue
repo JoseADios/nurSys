@@ -73,33 +73,42 @@
 
                 <!-- Chart -->
                 <div class="p-4 mx-8 my-4">
-                    <TemperatureChart :temperatureData="details" :height="100" />
+                    <TemperatureChart :temperatureData="details" :key="chartKey" :height="100" />
                 </div>
 
                 <!-- Formulario para agregar nuevo detalle -->
-                <div hidden class="p-8 ">
+                <div class="p-8 ">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura</h3>
 
                     <form @submit.prevent="submit" class="space-y-4">
-                        <div class="grid md:grid-cols-2 gap-4">
+                        <div class="grid md:grid-cols-3 gap-4">
                             <div>
-                                <label for="medication"
+                                <label for="temperature"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Medicamento
+                                    Temperatura
                                 </label>
-                                <input type="text" id="medication" v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                <input type="number" id="temperature" v-model="formDetail.temperature" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
                                focus:outline-none focus:ring-2 focus:ring-blue-500
-                               dark:bg-gray-800 dark:text-white" placeholder="Nombre del medicamento" />
+                               dark:bg-gray-800 dark:text-white" placeholder="Temperatura del paciente (°C)" />
                             </div>
 
                             <div>
-                                <label for="comment"
+                                <label for="evacuations"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Comentario
+                                    Evacuaciones
                                 </label>
-                                <input type="text" id="comment" v-model="formDetail.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                <input type="number" id="evacuations" v-model="formDetail.evacuations" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
                                focus:outline-none focus:ring-2 focus:ring-blue-500
-                               dark:bg-gray-800 dark:text-white" placeholder="Comentarios adicionales" />
+                               dark:bg-gray-800 dark:text-white" placeholder="Num. de evacuaciones del paciente" />
+                            </div>
+                            <div>
+                                <label for="urinations"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Micciones
+                                </label>
+                                <input type="text" id="urinations" v-model="formDetail.urinations" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                               focus:outline-none focus:ring-2 focus:ring-blue-500
+                               dark:bg-gray-800 dark:text-white" placeholder="Num. de micciones del paciente" />
                             </div>
                         </div>
 
@@ -107,7 +116,7 @@
                             <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                            hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                            transition-colors duration-300">
-                                Agregar Evento
+                                Agregar Temperatura
                             </button>
                         </div>
                     </form>
@@ -141,23 +150,27 @@ export default {
     data() {
         return {
             formDetail: {
-                nurse_record_id: this.temperatureRecord.id,
-                medication: null,
-                comment: null,
-            }
+                temperature_record_id: this.temperatureRecord.id,
+                temperature: 37,
+                evacuations: null,
+                urinations: null,
+            },
+            chartKey: 0,
         }
     },
     methods: {
         submit() {
-            this.$inertia.post(route('temperatureRecordDetails.store'),
+            this.$inertia.post(route('temperatureDetails.store'),
                 this.formDetail,
                 {
                     onSuccess: () => {
                         this.formDetail = {
-                            nurse_record_id: this.temperatureRecord.id,
-                            medication: '',
-                            comment: '',
+                            temperature_record_id: this.temperatureRecord.id,
+                            temperature: 37,
+                            evacuations: '',
+                            urinations: '',
                         };
+                        this.chartKey++;
                     }
                 });
         },

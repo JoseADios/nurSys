@@ -25,17 +25,16 @@
                             </p>
                         </div>
 
-                        <!-- Enfermera -->
+                        <!-- Doctor -->
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 <!-- Verifica que la relación drug esté definida -->
-                                    {{ medicationRecord.nurse.name }} {{ medicationRecord.drug.last_name }}
+                                    {{ medicationRecord.doctor.name }} {{ medicationRecord.doctor.last_name }}
 
                             </p>
                         </div>
 
-                        <!-- Todo lo que depende de medication_record_detail va a explotar porque no tienen valores en la tabla -->
                         <!-- Dosis -->
                         <!-- <div v-for="detail in details" :key="detail.id" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Dosis</h3>

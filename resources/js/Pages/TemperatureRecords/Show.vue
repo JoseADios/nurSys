@@ -12,7 +12,7 @@
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('temperatureRecords.index', temperatureRecord.admission_id)"
+                    <button @click="goBack"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
@@ -20,7 +20,7 @@
                             clip-rule="evenodd" />
                     </svg>
                     <span class="font-medium">Volver</span>
-                    </Link>
+                    </button>
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -75,13 +75,6 @@
                                 {{ temperatureRecord.impression_diagnosis }}
                             </p>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Errors -->
-                <div v-if="errors.length > 0" class="bg-red-50 border-l-4 border-red-500 p-4 mx-8 my-4">
-                    <div class="text-red-700" v-for="error in errors" :key="error">
-                        {{ error }}
                     </div>
                 </div>
 
@@ -151,10 +144,6 @@ export default {
         temperatureRecord: Object,
         admissions: Array,
         details: Array,
-        errors: {
-            type: Array,
-            default: () => []
-        },
     },
     components: {
         AppLayout,

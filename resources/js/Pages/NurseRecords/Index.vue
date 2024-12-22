@@ -6,7 +6,7 @@
             </h2>
         </template>
 
-        <!-- <div class="text-white">Datos: {{ admission_id }}</div> -->
+        <!-- <div class="text-white">Datos: {{ nurseRecords }}</div> -->
 
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
@@ -54,7 +54,7 @@
                                 nurseRecord.admission.patient.second_surname }}
                         </th>
                         <td class="px-6 py-4">
-                            {{ nurseRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
+                            {{ nurseRecord.nurse.name }} {{ nurseRecord.nurse.last_name }}
                         </td>
                         <td class="px-6 py-4">
                             {{ nurseRecord.created_at }}

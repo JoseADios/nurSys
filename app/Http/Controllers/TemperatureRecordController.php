@@ -17,18 +17,6 @@ class TemperatureRecordController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('admission_id')) {
-            $temperatureRecord = TemperatureRecord::where('admission_id', $request->admission_id)->first();
-
-            if ($temperatureRecord) {
-                return Redirect::route('temperatureRecords.show', $temperatureRecord->id);
-            } else {
-                return Redirect::route('temperatureRecords.create', [
-                    'admission_id' => $request->admission_id
-                ]);
-            }
-
-        }
 
         $query = TemperatureRecord::with( 'admission.patient', 'admission.bed', 'nurse')
         ->orderBy('updated_at', 'desc')
@@ -71,8 +59,15 @@ class TemperatureRecordController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(TemperatureRecord $temperatureRecord, Request $request)
+    public function show($admission_id  )
     {
+        $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)->first();
+
+        if (!$temperatureRecord) {
+            return Redirect::route('temperatureRecords.create', [
+                'admission_id' => $admission_id
+            ]);
+        }
 
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();

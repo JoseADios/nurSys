@@ -31,7 +31,7 @@ class MedicationRecordDetailSeeder extends Seeder
             'dose' => '200cc',
             'route' => 'Intra Venosa',
             'fc' => 1,
-            'interval_in_hours' => 12,
+            'interval_in_hours' => 2,
             'active' => true,
         ]);
     }

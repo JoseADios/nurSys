@@ -75,7 +75,7 @@ class MedicationRecordController extends Controller
     public function show(MedicationRecord $medicationRecord)
     {
         try{
-        $medicationRecord = MedicationRecord::where('id',$medicationRecord->id)->with(['admission.patient','doctor','medicationRecordDetail'])->first();
+        $medicationRecord = MedicationRecord::where('id',$medicationRecord->id)->with(['admission.patient','admission.bed','doctor','medicationRecordDetail'])->first();
         $details = MedicationRecordDetail::where('medication_record_id', operator: $medicationRecord->id)->orderBy('created_at', 'desc')->get();
 
 

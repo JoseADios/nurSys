@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdmissionController;
 use App\Http\Controllers\MedicationRecordController;
+use App\Http\Controllers\MedicationRecordDetailController;
 use App\Http\Controllers\NurseRecordController;
 use App\Http\Controllers\NurseRecordDetailController;
 use Illuminate\Foundation\Application;
@@ -28,6 +29,7 @@ Route::middleware([
 
     Route::resource('admissions', AdmissionController::class);
     Route::resource('medicationRecords', MedicationRecordController::class);
+    Route::resource('medicationRecordDetails', MedicationRecordDetailController::class);
     Route::resource('nurseRecords', NurseRecordController::class);
     Route::resource('nurseRecordDetails', NurseRecordDetailController::class);
 

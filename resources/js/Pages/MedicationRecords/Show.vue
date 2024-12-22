@@ -2,9 +2,9 @@
     <AppLayout>
         <div class="container mx-auto px-4 py-8">
             <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-xl overflow-hidden">
-                <div class="bg-gradient-to-r from-green-500 to-green-600 p-6">
+                <div class="bg-gradient-to-r from-blue-600 to-blue-600 p-6">
                     <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold text-white">Detalles del Registro de Medicamentos</h2>
+                        <h2 class="text-2xl font-bold text-white">Ficha Medicamentos</h2>
                         <Link :href="route('medicationRecords.index')"
                             class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out">
                             Volver
@@ -31,65 +31,102 @@
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 <!-- Verifica que la relación drug esté definida -->
                                     {{ medicationRecord.doctor.name }} {{ medicationRecord.doctor.last_name }}
-
                             </p>
                         </div>
 
-                        <!-- Dosis -->
-                        <!-- <div v-for="detail in details" :key="detail.id" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Dosis</h3>
+                        <!-- Diagnostico -->
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnostico</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ medicationRecord.medication_record_detail.d }}
+                                {{ medicationRecord.diagnosis }}
                             </p>
-                        </div> -->
+                        </div>
 
-                        <!-- Frecuencia -->
-                        <!-- <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Frecuencia</h3>
+                        <!-- bed -->
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ medicationRecord.medication_record_detail[0].fc }}
+                               Cama {{ medicationRecord.admission.bed.number }} Habitacion {{ medicationRecord.admission.bed.room }}
                             </p>
-                        </div> -->
+                        </div>
+
+                        <!-- Dieta -->
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Dieta</h3>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ medicationRecord.diet}}
+                                </p>
+                            </div>
+                       <!-- Fecha Admission -->
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha Ficha de Medicamentos</h3>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ medicationRecord.created_at}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div v-if="errors.length > 0" class="bg-red-50 border-l-4 border-red-500 p-4 mx-8 my-4">
+                    <div class="text-red-700" v-for="error in errors" :key="error">
+                        {{ error }}
+                    </div>
+                </div> -->
+                <div class="p-8 ">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
+                    <div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                         hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                        transition-colors duration-300">
+                            Agregar Detalle
+                        </button>
+                    </div>
+                </div>
+                <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro</h3>
+
+                    <div v-for="detail in details" :key="detail.id"
+                        class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
+                        <div class="flex-grow">
+                            <div class="font-semibold text-gray-900 dark:text-white">
+                               Medicamento: {{ detail.drug }}
+                            </div>
+                            <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                               Dosis: {{ detail.dose }}
+                            </div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                               Via: {{ detail.route }}
+                            </div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                               Frecuencia: {{ detail.fc }}
+                            </div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                               Intervarlo en Horas: {{ detail.interval_in_hours }}
+                            </div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                               Fecha: {{ detail.created_at }}
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            <!-- Editar -->
+                            <Link :href="route('medicationRecordDetails.edit', detail.id )"
+                                class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="font-medium">Editar</span>
+                            </Link>
+                        </div>
                     </div>
 
-                    <!-- Observaciones -->
-                    <!-- <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Intervalos y Horas</h3>
-                        <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
-                            {{ medicationRecord.medication_record_detail[0].interval_in_hours || 'No hay observaciones' }}
-                        </p>
-                    </div> -->
-                </div>
-
-                <!-- Botones de Acción -->
-                <div class="flex justify-end space-x-4 p-6">
-                    <Link
-                        :href="route('medicationRecords.edit', medicationRecord.id)"
-                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
-                    >
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
-                        Editar
-                    </Link>
-
-                    <button
-                        @click="confirmDelete"
-                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold rounded-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
-                    >
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4h4"></path>
-                        </svg>
-                        Eliminar
-                    </button>
+                    <div v-if="details.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">
+                        No hay detalles de registro disponibles
+                    </div>
                 </div>
             </div>
         </div>
-
     </AppLayout>
 </template>
 
@@ -107,6 +144,21 @@ export default{
         Link,
     },
 
+    methods: {
+        submit() {
+            this.$inertia.post(route('medicationRecordDetails.store'),
+                this.form,
+                {
+                    onSuccess: () => {
+                        this.form = {
+                            medication_record_id: this.medicationRecord.id,
+                            drug: '',
+                            dose: '',
+                        };
+                    }
+                });
+            }
+        }
 }
 
 </script>

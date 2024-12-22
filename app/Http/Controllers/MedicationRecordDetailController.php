@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\MedicationRecordDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
 
 class MedicationRecordDetailController extends Controller
 {
@@ -28,7 +30,15 @@ class MedicationRecordDetailController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        MedicationRecordDetail::create([
+            'medication_record_id' => $request->medication_record_id,
+            'drug' =>  $request->drug,
+            'dose' => $request->dose,
+            'active' => true,
+            'created_at' => now()
+        ]);
+
+        return back()->with('success', 'Detalle agregado exitosamente');
     }
 
     /**
@@ -44,7 +54,9 @@ class MedicationRecordDetailController extends Controller
      */
     public function edit(MedicationRecordDetail $medicationRecordDetail)
     {
-        //
+        return Inertia::render('MedicationRecordDetail/Edit', [
+            'medicationRecordDetail' => $medicationRecordDetail
+        ]);
     }
 
     /**
@@ -52,7 +64,8 @@ class MedicationRecordDetailController extends Controller
      */
     public function update(Request $request, MedicationRecordDetail  $medicationRecordDetail)
     {
-        //
+        $medicationRecordDetail->update($request->all());
+        return Redirect::route('medicationRecordDetails.edit', $medicationRecordDetail->medication_record_id);
     }
 
     /**

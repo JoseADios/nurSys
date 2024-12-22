@@ -43,6 +43,13 @@
                                     temperatureRecord.admission.patient.second_surname }}
                             </p>
                         </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                 {{ temperatureRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
+                            </p>
+                        </div>
                     </div>
 
                     <div class="space-y-4">
@@ -59,6 +66,13 @@
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Registro</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ temperatureRecord.created_at.toLocaleString() }}
+                            </p>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de impresión</h3>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ temperatureRecord.impression_diagnosis }}
                             </p>
                         </div>
                     </div>
@@ -87,7 +101,7 @@
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Temperatura
                                 </label>
-                                <input type="number" id="temperature" v-model="formDetail.temperature" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                <input type="number" step="0.1" id="temperature" v-model="formDetail.temperature" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
                                focus:outline-none focus:ring-2 focus:ring-blue-500
                                dark:bg-gray-800 dark:text-white" placeholder="Temperatura del paciente (°C)" />
                             </div>
@@ -152,7 +166,7 @@ export default {
             formDetail: {
                 temperature_record_id: this.temperatureRecord.id,
                 temperature: 37,
-                evacuations: null,
+                evacuations: 1,
                 urinations: null,
             },
             chartKey: 0,
@@ -167,7 +181,7 @@ export default {
                         this.formDetail = {
                             temperature_record_id: this.temperatureRecord.id,
                             temperature: 37,
-                            evacuations: '',
+                            evacuations: 1,
                             urinations: '',
                         };
                         this.chartKey++;

@@ -89,7 +89,7 @@
                             </div>
 
                             <div class="flex flex-col space-y-2 items-center">
-                                <Link :href="route('temperatureRecords.show', { id: admission.id })"
+                                <Link :href="route('temperatureRecords.customShow', { id: admission.id, admission_id: admission.id })"
                                     class="flex w-full items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                 <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                     xmlns="http://www.w3.org/2000/svg">

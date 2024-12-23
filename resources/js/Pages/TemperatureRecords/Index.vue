@@ -55,10 +55,10 @@
                             {{ temperatureRecord.created_at }}
                         </td>
                         <td class="px-6 py-4">
-                            <Link class="ml-2 text-green-500 hover:text-green-800"
-                                :href="route('temperatureRecords.show', temperatureRecord.id)" as="button">
-                            Abrir
-                            </Link>
+                            <button class="ml-2 text-green-500 hover:text-green-800"
+                                @click="temperatureRecordShow(temperatureRecord.id)">
+                                Abrir
+                            </button>
                         </td>
                     </tr>
                 </tbody>
@@ -84,6 +84,9 @@ export default {
     methods: {
         goBack() {
             window.history.back()
+        },
+        temperatureRecordShow(id) {
+            this.$inertia.get(route('temperatureRecords.customShow', {id: id, admission_id: null}));
         }
     }
 }

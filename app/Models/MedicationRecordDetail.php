@@ -14,7 +14,7 @@ class MedicationRecordDetail extends Model
         'dose',
         'route',
         'fc',
-        'frequency',
+        'interval_in_hours',
         'active',
     ];
 

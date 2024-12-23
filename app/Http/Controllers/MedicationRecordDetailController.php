@@ -22,7 +22,9 @@ class MedicationRecordDetailController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('MedicationRecordDetail/Create', [
+            ''=>MedicationRecordDetail::all(),
+        ]);
     }
 
     /**
@@ -34,6 +36,9 @@ class MedicationRecordDetailController extends Controller
             'medication_record_id' => $request->medication_record_id,
             'drug' =>  $request->drug,
             'dose' => $request->dose,
+            'route'=> $request->route,
+            'fc'=> $request->fc,
+            'interval_in_hours'=> $request->interval_in_hours,
             'active' => true,
             'created_at' => now()
         ]);
@@ -48,6 +53,7 @@ class MedicationRecordDetailController extends Controller
     {
         //
     }
+
 
     /**
      * Show the form for editing the specified resource.

@@ -7,6 +7,7 @@ use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -59,11 +60,16 @@ class TemperatureRecordController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($admission_id  )
+    public function show($id, $admission_id = null)
     {
-        $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)->first();
+        if ($admission_id) {
+            $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)->first();
+        } else {
+            $temperatureRecord = TemperatureRecord::find($id);
+        }
 
         if (!$temperatureRecord) {
+            Log::info('Redireccionando a: ', ['route' => route('temperatureRecords.create', ['id' => $id, 'admission_id' => $admission_id])]);
             return Redirect::route('temperatureRecords.create', [
                 'admission_id' => $admission_id
             ]);

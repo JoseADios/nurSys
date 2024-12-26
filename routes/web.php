@@ -30,6 +30,7 @@ Route::middleware([
     Route::resource('admissions', AdmissionController::class);
     Route::resource('medicationRecords', MedicationRecordController::class);
     Route::resource('medicationRecordDetails', MedicationRecordDetailController::class);
+    Route::get('medicationRecordDetails/createdetail/{medicationRecord}',[MedicationRecordDetailController::class,'createdetail'])->name('createdetail');
     Route::resource('nurseRecords', NurseRecordController::class);
     Route::resource('nurseRecordDetails', NurseRecordDetailController::class);
 

@@ -2,7 +2,7 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Editar Ficha Medicamentos
+                Editar Ficha de Medicamentos
             </h2>
         </template>
 
@@ -19,6 +19,7 @@
                 {{ error }}
             </div>
         </div>
+
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">

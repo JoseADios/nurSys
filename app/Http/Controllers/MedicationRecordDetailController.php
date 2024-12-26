@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MedicationRecord;
 use App\Models\MedicationRecordDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -20,10 +21,12 @@ class MedicationRecordDetailController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function createdetail($medicationRecordId)
     {
+        $medicationRecord = MedicationRecord::findOrFail($medicationRecordId);
         return Inertia::render('MedicationRecordDetail/Create', [
-            ''=>MedicationRecordDetail::all(),
+            'medicationRecord' => $medicationRecord,
+            'id' => $medicationRecord->id
         ]);
     }
 
@@ -43,7 +46,7 @@ class MedicationRecordDetailController extends Controller
             'created_at' => now()
         ]);
 
-        return back()->with('success', 'Detalle agregado exitosamente');
+       return redirect()->route('medicationRecords.show',$request->medication_record_id)->with('success', 'Detalle agregado exitosamente');
     }
 
     /**

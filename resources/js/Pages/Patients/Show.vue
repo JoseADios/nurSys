@@ -11,7 +11,7 @@
                 <!-- Encabezado del perfil -->
                 <div class="mb-6 flex justify-between items-center">
                     <div class="flex items-center space-x-4">
-                        <div class="h-16 w-16 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center">
+                        <div class="size-16 rounded-full bg-blue-500 flex items-center justify-center">
                             <span class="text-2xl text-white font-bold">
                                 {{ getInitials(patient.first_name, patient.first_surname) }}
                             </span>
@@ -20,12 +20,12 @@
                             <h1 class="text-2xl font-bold text-white">
                                 {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
                             </h1>
-                            <p class="text-gray-400">ID: {{ patient.identification_card }}</p>
+                            <p class="text-gray-400">Cédula: {{ patient.identification_card }}</p>
                         </div>
                     </div>
                     <div class="flex space-x-3">
                         <Link :href="route('patients.edit', patient.id)"
-                            class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
+                            class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />

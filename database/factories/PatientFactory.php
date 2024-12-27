@@ -22,7 +22,7 @@ class PatientFactory extends Factory
             'second_surname' => $this->faker->lastName(),
             'phone' => $this->faker->phoneNumber(),
             'identification_card' => $this->faker->phoneNumber(),
-            'nacionality' => $this->faker->country(),
+            'nationality' => $this->faker->country(),
             'email' => $this->faker->email(),
             'birthdate' => $this->faker->date(),
             'position' => $this->faker->jobTitle(),

@@ -50,7 +50,7 @@
                             {{ patient.phone }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ patient.idenfitication_card }}
+                            {{ patient.identification_card }}
                         </td>
                         <td class="px-6 py-4">
                             {{ patient.nationality }}

@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ars;
+use App\Models\MaritalStatus;
+use App\Models\Nationality;
 use App\Models\Patient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class PatientController extends Controller
@@ -24,7 +28,15 @@ class PatientController extends Controller
      */
     public function create()
     {
-        //
+        $nationalities = Nationality::all();
+        $maritalSatuses = MaritalStatus::all();
+        $arss = Ars::all();
+
+        return Inertia::render('Patients/Create', [
+            'nationalities' => $nationalities,
+            'maritalSatuses' => $maritalSatuses,
+            'arss' => $arss,
+        ]);
     }
 
     /**
@@ -32,7 +44,24 @@ class PatientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'first_surname' => 'required|string|max:255',
+            'second_surname' => 'required|string|max:255',
+            'phone' => 'required|string',
+            'identification_card' => 'required|string|max:255',
+            'nationality' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'birthdate' => 'required|date',
+            'position' => 'required|string|max:255',
+            'marital_status' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'ars' => 'nullable|string|max:255',
+        ]);
+
+        Patient::create($validated);
+
+        return Redirect::route('patients.index');
     }
 
     /**

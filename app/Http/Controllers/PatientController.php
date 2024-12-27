@@ -77,7 +77,17 @@ class PatientController extends Controller
      */
     public function edit(Patient $patient)
     {
-        //
+        $nationalities = Nationality::all();
+        $maritalSatuses = MaritalStatus::all();
+        $arss = Ars::all();
+
+        return Inertia::render('Patients/Edit', [
+            'patient' => $patient,
+            'nationalities' => $nationalities,
+            'maritalSatuses' => $maritalSatuses,
+            'arss' => $arss,
+        ]);
+
     }
 
     /**
@@ -85,7 +95,24 @@ class PatientController extends Controller
      */
     public function update(Request $request, Patient $patient)
     {
-        //
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'first_surname' => 'required|string|max:255',
+            'second_surname' => 'required|string|max:255',
+            'phone' => 'required|string',
+            'identification_card' => 'required|string|max:255',
+            'nationality' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'birthdate' => 'required|date',
+            'position' => 'required|string|max:255',
+            'marital_status' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'ars' => 'nullable|string|max:255',
+        ]);
+
+        $patient->update($validated);
+
+        return Redirect::route('patients.index');
     }
 
     /**

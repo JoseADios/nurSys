@@ -6,6 +6,7 @@ use App\Http\Controllers\MedicalOrderDetailController;
 use App\Http\Controllers\MedicationRecordController;
 use App\Http\Controllers\NurseRecordController;
 use App\Http\Controllers\NurseRecordDetailController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\TemperatureDetailController;
 use App\Http\Controllers\TemperatureRecordController;
 use Illuminate\Foundation\Application;
@@ -40,4 +41,5 @@ Route::middleware([
     Route::get('temperatureRecords/{id}/{admission_id?}', [TemperatureRecordController::class, 'show'])
         ->name('temperatureRecords.customShow');
     Route::resource('temperatureDetails', TemperatureDetailController::class);
+    Route::resource('patients', PatientController::class);
 });

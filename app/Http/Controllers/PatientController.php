@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Patient;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PatientController extends Controller
 {
@@ -12,7 +13,10 @@ class PatientController extends Controller
      */
     public function index()
     {
-        //
+        $patients = Patient::orderBy('updated_at', 'desc')->get();
+        return Inertia::render('Patients/Index', [
+            'patients'=>$patients,
+        ]);
     }
 
     /**

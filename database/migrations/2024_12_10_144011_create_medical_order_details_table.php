@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('medical_order_id')->constrained()->onDelete('restrict');
             $table->string('order');
             $table->string('regime')->nullable();
-            $table->dateTime('suspended')->nullable();
+            $table->dateTime('suspended_at')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

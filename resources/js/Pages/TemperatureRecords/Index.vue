@@ -2,7 +2,7 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Registros de Enfermería
+                Hojas de Temperatura
             </h2>
         </template>
 
@@ -22,9 +22,9 @@
         </div>
 
         <div class="flex flex-col items-center justify-center mt-10">
-            <Link :href="route('nurseRecords.create')"
+            <Link :href="route('temperatureRecords.create')"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear nuevo Registro de Enfermería
+            Crear nueva hoja de temperatura
             </Link>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
@@ -32,10 +32,10 @@
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
-                            Paciente
+                            Ingreso
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Enfermera
+                            Paciente
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Fecha
@@ -46,21 +46,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="nurseRecord in nurseRecords" :key="nurseRecord.id"
+                    <tr v-for="temperatureRecord in temperatureRecords" :key="temperatureRecord.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ nurseRecord.admission.patient.first_name }} {{
-                                nurseRecord.admission.patient.first_surname }} {{
-                                nurseRecord.admission.patient.second_surname }}
-                        </th>
                         <td class="px-6 py-4">
-                            {{ nurseRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
+                            {{ temperatureRecord.admission.created_at }}
+                            Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
+                            temperatureRecord.admission.bed.room }}
+                        </td>
+                        <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ temperatureRecord.admission.patient.first_name }} {{
+                                temperatureRecord.admission.patient.first_surname }} {{
+                                temperatureRecord.admission.patient.second_surname }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ nurseRecord.created_at }}
+                            {{ temperatureRecord.created_at }}
                         </td>
                         <td class="px-6 py-4">
-                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('nurseRecords.edit',nurseRecord.id)" as="button">
+                            <Link class="ml-2 text-green-500 hover:text-green-800"
+                                :href="route('temperatureRecords.edit', temperatureRecord.id)" as="button">
                             Abrir
                             </Link>
                         </td>
@@ -68,9 +71,9 @@
                 </tbody>
             </table>
         </div>
-
     </AppLayout>
 </template>
+
 <script>
 
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -78,7 +81,7 @@ import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
-        nurseRecords: Array,
+        temperatureRecords: Array,
         admission_id: Number,
     },
     components: {

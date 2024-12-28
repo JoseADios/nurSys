@@ -2,17 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Temperature_record;
+use App\Models\TemperatureRecord;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TemperatureRecordController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = TemperatureRecord::with( 'admission.patient', 'admission.bed')
+        ->orderBy('updated_at', 'desc')
+        ->orderBy('created_at', 'desc');
+
+        if ($request->has('admission_id')) {
+            $query->where('admission_id', $request->admission_id);
+        }
+
+        $temperatureRecords = $query->get();
+
+        return Inertia::render('TemperatureRecords/Index', [
+            'temperatureRecords' => $temperatureRecords,
+            'admission_id' => intval($request->admission_id),
+        ]);
     }
 
     /**
@@ -34,7 +48,7 @@ class TemperatureRecordController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Temperature_record $temperature_record)
+    public function show(TemperatureRecord $temperatureRecord)
     {
         //
     }
@@ -42,7 +56,7 @@ class TemperatureRecordController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Temperature_record $temperature_record)
+    public function edit(TemperatureRecord $temperatureRecord)
     {
         //
     }
@@ -50,7 +64,7 @@ class TemperatureRecordController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Temperature_record $temperature_record)
+    public function update(Request $request, TemperatureRecord $temperatureRecord)
     {
         //
     }
@@ -58,7 +72,7 @@ class TemperatureRecordController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Temperature_record $temperature_record)
+    public function destroy(TemperatureRecord $temperatureRecord)
     {
         //
     }

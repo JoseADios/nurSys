@@ -2,7 +2,7 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Nuevo Registro de Enfermería
+                Nuevas Órdenes Médicas
             </h2>
         </template>
 
@@ -53,7 +53,7 @@ export default {
     },
     methods: {
         submit() {
-            this.$inertia.post(route('nurseRecords.store'), this.form)
+            this.$inertia.post(route('medicalOrders.store'), this.form)
         },
         goBack() {
             window.history.back()

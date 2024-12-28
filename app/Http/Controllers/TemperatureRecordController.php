@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admission;
+use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class TemperatureRecordController extends Controller
@@ -13,13 +18,10 @@ class TemperatureRecordController extends Controller
      */
     public function index(Request $request)
     {
-        $query = TemperatureRecord::with( 'admission.patient', 'admission.bed')
+
+        $query = TemperatureRecord::with( 'admission.patient', 'admission.bed', 'nurse')
         ->orderBy('updated_at', 'desc')
         ->orderBy('created_at', 'desc');
-
-        if ($request->has('admission_id')) {
-            $query->where('admission_id', $request->admission_id);
-        }
 
         $temperatureRecords = $query->get();
 
@@ -32,9 +34,13 @@ class TemperatureRecordController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $admission_id = $request->has('admission_id') ? $request->admission_id : null;
+
+        return Inertia::render('TemperatureRecords/Create', [
+            'admission_id' => $admission_id,
+        ]);
     }
 
     /**
@@ -42,15 +48,42 @@ class TemperatureRecordController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $temperatureRecord = TemperatureRecord::create([
+            'admission_id' => $request->admission_id,
+            'nurse_id' => Auth::id(),
+            'impression_diagnosis' => $request->impression_diagnosis,
+        ]);
+
+        return Redirect::route('temperatureRecords.show', $temperatureRecord->id);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(TemperatureRecord $temperatureRecord)
+    public function show($id, $admission_id = null)
     {
-        //
+        if ($admission_id) {
+            $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)->first();
+        } else {
+            $temperatureRecord = TemperatureRecord::find($id);
+        }
+
+        if (!$temperatureRecord) {
+            Log::info('Redireccionando a: ', ['route' => route('temperatureRecords.create', ['id' => $id, 'admission_id' => $admission_id])]);
+            return Redirect::route('temperatureRecords.create', [
+                'admission_id' => $admission_id
+            ]);
+        }
+
+        $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
+        $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
+        $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->get();
+
+        return Inertia::render('TemperatureRecords/Show', [
+            'temperatureRecord' => $temperatureRecord,
+            'admissions' => $admissions,
+            'details' => $details,
+        ]);
     }
 
     /**

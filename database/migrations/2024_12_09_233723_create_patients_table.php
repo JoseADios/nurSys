@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('second_surname')->nullable();
             $table->string('phone');
             $table->string('identification_card');
-            $table->string('nacionality');
+            $table->string('nationality');
             $table->string('email')->nullable();
             $table->date('birthdate');
             $table->string('position')->nullable();

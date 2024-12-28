@@ -89,6 +89,18 @@
                             </div>
 
                             <div class="flex flex-col space-y-2 items-center">
+                                <Link :href="route('temperatureRecords.customShow', { id: admission.id, admission_id: admission.id })"
+                                    class="flex w-full items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Hoja de Temperatura
+                                </Link>
+                            </div>
+
+                            <div class="flex flex-col space-y-2 items-center">
                                 <Link :href="route('medicalOrders.index', { admission_id: admission.id })"
                                     class="flex w-full items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg p-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                 <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -101,22 +113,6 @@
                                 </Link>
                                 <Link :href="route('medicalOrders.create', { admission_id: admission.id })"
                                     class="flex w-24 items-center justify-center bg-blue-400 text-white font-semibold rounded-lg p-2 hover:bg-blue-500 transition duration-300 ease-in-out">
-                                Nuevo +
-                                </Link>
-                            </div>
-
-                            <div class="flex flex-col space-y-2 items-center">
-                                <Link :href="route('admissions.index', { admission_id: admission.id })"
-                                    class="flex w-full items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Hojas de Temperatura
-                                </Link>
-                                <Link :href="route('admissions.create', { admission_id: admission.id })"
-                                    class="flex w-24 items-center justify-center bg-purple-400 text-white font-semibold rounded-lg p-2 hover:bg-purple-500 transition duration-300 ease-in-out">
                                 Nuevo +
                                 </Link>
                             </div>

@@ -12,6 +12,7 @@ class TemperatureRecord extends Model
 
     protected $fillable = [
         'admission_id',
+        'nurse_id',
         'impression_diagnosis',
         'nurse_sign',
         'active',
@@ -22,5 +23,10 @@ class TemperatureRecord extends Model
     public function admission(): BelongsTo
     {
         return $this->belongsTo(Admission::class);
+    }
+
+    public function nurse(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

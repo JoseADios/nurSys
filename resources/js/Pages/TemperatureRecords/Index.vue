@@ -10,7 +10,7 @@
 
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-            <Link :href="route('admissions.show', admission_id)"
+            <button @click="goBack"
                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
@@ -18,14 +18,7 @@
                     clip-rule="evenodd" />
             </svg>
             <span class="font-medium">Volver</span>
-            </Link>
-        </div>
-
-        <div class="flex flex-col items-center justify-center mt-10">
-            <Link :href="route('temperatureRecords.create')"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear nueva hoja de temperatura
-            </Link>
+            </button>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -62,10 +55,10 @@
                             {{ temperatureRecord.created_at }}
                         </td>
                         <td class="px-6 py-4">
-                            <Link class="ml-2 text-green-500 hover:text-green-800"
-                                :href="route('temperatureRecords.edit', temperatureRecord.id)" as="button">
-                            Abrir
-                            </Link>
+                            <button class="ml-2 text-green-500 hover:text-green-800"
+                                @click="temperatureRecordShow(temperatureRecord.id)">
+                                Abrir
+                            </button>
                         </td>
                     </tr>
                 </tbody>
@@ -88,6 +81,13 @@ export default {
         AppLayout,
         Link,
     },
-
+    methods: {
+        goBack() {
+            window.history.back()
+        },
+        temperatureRecordShow(id) {
+            this.$inertia.get(route('temperatureRecords.customShow', {id: id, admission_id: null}));
+        }
+    }
 }
 </script>

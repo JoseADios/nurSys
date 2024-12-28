@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MedicationRecord;
 use App\Models\MedicationRecordDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
 
 class MedicationRecordDetailController extends Controller
 {
@@ -18,9 +21,13 @@ class MedicationRecordDetailController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($medicationRecordId)
     {
-        //
+        $medicationRecord = MedicationRecord::findOrFail($medicationRecordId);
+        return Inertia::render('MedicationRecordDetail/Create', [
+            'medicationRecord' => $medicationRecord,
+            'id' => $medicationRecord->id
+        ]);
     }
 
     /**
@@ -28,7 +35,18 @@ class MedicationRecordDetailController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        MedicationRecordDetail::create([
+            'medication_record_id' => $request->medication_record_id,
+            'drug' =>  $request->drug,
+            'dose' => $request->dose,
+            'route'=> $request->route,
+            'fc'=> $request->fc,
+            'interval_in_hours'=> $request->interval_in_hours,
+            'active' => true,
+            'created_at' => now()
+        ]);
+
+       return redirect()->route('medicationRecords.show',$request->medication_record_id)->with('success', 'Detalle agregado exitosamente');
     }
 
     /**
@@ -39,12 +57,15 @@ class MedicationRecordDetailController extends Controller
         //
     }
 
+
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(MedicationRecordDetail $medicationRecordDetail)
     {
-        //
+        return Inertia::render('MedicationRecordDetail/Edit', [
+            'medicationRecordDetail' => $medicationRecordDetail
+        ]);
     }
 
     /**
@@ -52,7 +73,8 @@ class MedicationRecordDetailController extends Controller
      */
     public function update(Request $request, MedicationRecordDetail  $medicationRecordDetail)
     {
-        //
+        $medicationRecordDetail->update($request->all());
+        return Redirect::route('medicationRecordDetails.edit', $medicationRecordDetail->medication_record_id);
     }
 
     /**

@@ -4,6 +4,7 @@ use App\Http\Controllers\AdmissionController;
 use App\Http\Controllers\MedicalOrderController;
 use App\Http\Controllers\MedicalOrderDetailController;
 use App\Http\Controllers\MedicationRecordController;
+use App\Http\Controllers\MedicationRecordDetailController;
 use App\Http\Controllers\NurseRecordController;
 use App\Http\Controllers\NurseRecordDetailController;
 use App\Http\Controllers\TemperatureRecordController;
@@ -31,6 +32,8 @@ Route::middleware([
 
     Route::resource('admissions', AdmissionController::class);
     Route::resource('medicationRecords', MedicationRecordController::class);
+    Route::resource('medicationRecordDetails', MedicationRecordDetailController::class);
+    Route::get('medicationRecordDetails/create/{medicationRecord}',[MedicationRecordDetailController::class,'create'])->name('create');
     Route::resource('nurseRecords', NurseRecordController::class);
     Route::resource('nurseRecordDetails', NurseRecordDetailController::class);
     Route::resource('medicalOrders', MedicalOrderController::class);

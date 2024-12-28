@@ -2,7 +2,7 @@
     <AppLayout>
         <template #header>
             <h2 class="font-bold text-2xl text-white leading-tight text-center">
-                Nuevo Ingreso de Paciente
+                Editar Ingreso de Paciente
             </h2>
         </template>
 

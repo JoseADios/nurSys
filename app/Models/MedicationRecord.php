@@ -27,15 +27,7 @@ class MedicationRecord extends Model
     {
         return $this->belongsTo(Admission::class);
     }
-    public function drug(): BelongsTo
-    {
-        return $this->belongsTo(Drug::class);
-    }
 
-    public function drugDose(): BelongsTo
-    {
-        return $this->belongsTo(DrugDose::class);
-    }
     public function medicationRecordDetail(): HasMany
     {
         return $this->hasMany(MedicationRecordDetail::class);

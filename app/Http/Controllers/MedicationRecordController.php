@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admission;
-use App\Models\Drug;
-use App\Models\DrugDose;
 use App\Models\MedicationRecordDetail;
 use Inertia\Inertia;
 use App\Models\MedicationRecord;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+
 
 class MedicationRecordController extends Controller
 {
@@ -124,9 +124,8 @@ class MedicationRecordController extends Controller
      */
     public function destroy(MedicationRecord $medicationRecord)
     {
-        $medicationRecord->delete();
+        $medicationRecord->update(['active' => 0]);
 
-        return redirect()->route('medication-records.index')
-                         ->with('success', 'Medication record deleted successfully.');
+    return Redirect::route('medicationRecords.index');
     }
 }

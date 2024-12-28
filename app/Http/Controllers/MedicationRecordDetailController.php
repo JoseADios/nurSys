@@ -21,7 +21,7 @@ class MedicationRecordDetailController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function createdetail($medicationRecordId)
+    public function create($medicationRecordId)
     {
         $medicationRecord = MedicationRecord::findOrFail($medicationRecordId);
         return Inertia::render('MedicationRecordDetail/Create', [

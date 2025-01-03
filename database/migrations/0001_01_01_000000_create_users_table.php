@@ -22,11 +22,12 @@ return new class extends Migration
             // campos agregados
             $table->string('identification_card')->nullable();
             $table->string('exequatur')->nullable();
-            $table->string('speciality')->nullable();
+            $table->string('specialty')->nullable();
             $table->string('area')->nullable();
             $table->string('phone')->nullable();
             $table->date('birthdate')->nullable();
             $table->string('position')->nullable();
+            $table->string('address')->nullable();
             $table->string('comment')->nullable();
             $table->string('active')->default(true);
 

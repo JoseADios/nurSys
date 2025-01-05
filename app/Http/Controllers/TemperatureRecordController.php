@@ -86,6 +86,8 @@ class TemperatureRecordController extends Controller
             '16-24' => [16, 24],
         ];
 
+        $canCreate = true;
+
         $currentHour = Carbon::now()->hour;
 
         $currentTurn = null;
@@ -102,19 +104,29 @@ class TemperatureRecordController extends Controller
                 Carbon::now()->startOfDay()->addHours($turns[$currentTurn][0]),
                 Carbon::now()->startOfDay()->addHours($turns[$currentTurn][1]),
             ])
-            ->where('nurse_id', Auth::id())
             ->first();
+
+        if ($lastTemperature) {
+            $canCreate = false;
+
+            if ($lastTemperature->nurse_id != Auth::id()) {
+                $lastTemperature = null;
+            }
+        }
 
 
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
-        $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->get();
+        $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+            ->orderBy('created_at', 'asc')
+            ->get();
 
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,
             'admissions' => $admissions,
             'details' => $details,
             'lastTemperature' => $lastTemperature,
+            'canCreate' => $canCreate,
         ]);
     }
 

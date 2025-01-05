@@ -134,7 +134,7 @@
                 </div>
 
                 <!-- Formulario para agregar nuevo detalle -->
-                <div v-if="!lastTemperature" class="p-8 ">
+                <div v-if="canCreate" class="p-8 ">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura</h3>
 
                     <form @submit.prevent="submit" class="space-y-4">
@@ -196,6 +196,7 @@ export default {
         admissions: Array,
         details: Array,
         lastTemperature: Object,
+        canCreate: Boolean,
     },
     components: {
         AppLayout,

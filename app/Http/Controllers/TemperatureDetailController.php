@@ -64,8 +64,10 @@ class TemperatureDetailController extends Controller
      */
     public function update(Request $request, TemperatureDetail $temperatureDetail)
     {
-        // no permitir editar temperaturas de un turno que no sea el actual
-        // si hace 4 horas o mas no se puede editar
+        $temperatureDetail->update($request->all());
+
+        return back()->with('succes', 'Registro actualizado correctamente');
+
     }
 
     /**

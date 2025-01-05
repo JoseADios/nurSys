@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class TemperatureRecordController extends Controller
 {
@@ -74,6 +75,18 @@ class TemperatureRecordController extends Controller
             ]);
         }
 
+        // si el usuario actual es el que registro la ultima temperatura
+        // mostrarla
+        // si hace mas de 5 horas
+        $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+            ->latest()
+            ->first();
+
+        if ($lastTemperature->nurse_id != Auth::id() or
+            Carbon::parse($lastTemperature->created_at)->diffInHours(Carbon::parse(now())) > 5) {
+            $lastTemperature = null;
+        }
+
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
         $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->get();
@@ -82,6 +95,7 @@ class TemperatureRecordController extends Controller
             'temperatureRecord' => $temperatureRecord,
             'admissions' => $admissions,
             'details' => $details,
+            'lastTemperature' => $lastTemperature,
         ]);
     }
 

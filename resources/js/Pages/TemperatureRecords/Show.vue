@@ -14,12 +14,12 @@
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <button @click="goBack"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="font-medium">Volver</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-medium">Volver</span>
                     </button>
                 </div>
 
@@ -47,7 +47,7 @@
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                 {{ temperatureRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
+                                {{ temperatureRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
                             </p>
                         </div>
                     </div>
@@ -70,7 +70,8 @@
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de impresión</h3>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de
+                                impresión</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ temperatureRecord.impression_diagnosis }}
                             </p>
@@ -81,6 +82,55 @@
                 <!-- Chart -->
                 <div class="p-4 mx-8 my-4">
                     <TemperatureChart :temperatureData="details" :key="chartKey" :height="100" />
+                </div>
+
+                <!-- ultima temperatura -->
+
+                <!-- Formulario para actualizar ultimo detalle -->
+                <div v-if="lastTemperature" class="p-8 ">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Ultima temperatura</h3>
+                    <form @submit.prevent="updateDetail" class="space-y-4">
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="temperature"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Temperatura
+                                </label>
+                                <input type="number" step="0.1" id="temperature" v-model="formDetailUpdate.temperature"
+                                    required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                               focus:outline-none focus:ring-2 focus:ring-blue-500
+                               dark:bg-gray-800 dark:text-white" placeholder="Temperatura del paciente (°C)" />
+                            </div>
+
+                            <div>
+                                <label for="evacuations"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Evacuaciones
+                                </label>
+                                <input type="number" id="evacuations" v-model="formDetailUpdate.evacuations" required
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                               focus:outline-none focus:ring-2 focus:ring-blue-500
+                               dark:bg-gray-800 dark:text-white" placeholder="Num. de evacuaciones del paciente" />
+                            </div>
+                            <div>
+                                <label for="urinations"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Micciones
+                                </label>
+                                <input type="text" id="urinations" v-model="formDetailUpdate.urinations" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                               focus:outline-none focus:ring-2 focus:ring-blue-500
+                               dark:bg-gray-800 dark:text-white" placeholder="Num. de micciones del paciente" />
+                            </div>
+                        </div>
+
+                        <div class="pt-4">
+                            <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
+                           hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
+                           transition-colors duration-300">
+                                Actualizar Temperatura
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Formulario para agregar nuevo detalle -->
@@ -94,7 +144,8 @@
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Temperatura
                                 </label>
-                                <input type="number" step="0.1" id="temperature" v-model="formDetail.temperature" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                <input type="number" step="0.1" id="temperature" v-model="formDetail.temperature"
+                                    required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
                                focus:outline-none focus:ring-2 focus:ring-blue-500
                                dark:bg-gray-800 dark:text-white" placeholder="Temperatura del paciente (°C)" />
                             </div>
@@ -144,6 +195,7 @@ export default {
         temperatureRecord: Object,
         admissions: Array,
         details: Array,
+        lastTemperature: Object,
     },
     components: {
         AppLayout,
@@ -156,10 +208,20 @@ export default {
                 temperature_record_id: this.temperatureRecord.id,
                 temperature: 37,
                 evacuations: 1,
-                urinations: null,
+                urinations: 1,
             },
             chartKey: 0,
         }
+    },
+    computed: {
+        formDetailUpdate() {
+            return {
+                temperature_record_id: this.temperatureRecord.id,
+                temperature: this.lastTemperature ? this.lastTemperature.temperature : null,
+                evacuations: this.lastTemperature ? this.lastTemperature.evacuations : null,
+                urinations: this.lastTemperature ? this.lastTemperature.urinations : null,
+            };
+        },
     },
     methods: {
         submit() {
@@ -171,11 +233,15 @@ export default {
                             temperature_record_id: this.temperatureRecord.id,
                             temperature: 37,
                             evacuations: 1,
-                            urinations: '',
+                            urinations: 1,
                         };
                         this.chartKey++;
+
                     }
                 });
+        },
+        updateDetail() {
+            this.$inertia.put(route('temperatureDetails.update', this.lastTemperature.id), this.formDetailUpdate);
         },
         goBack() {
             window.history.back()

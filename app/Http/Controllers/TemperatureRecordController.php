@@ -20,9 +20,9 @@ class TemperatureRecordController extends Controller
     public function index(Request $request)
     {
 
-        $query = TemperatureRecord::with( 'admission.patient', 'admission.bed', 'nurse')
-        ->orderBy('updated_at', 'desc')
-        ->orderBy('created_at', 'desc');
+        $query = TemperatureRecord::with('admission.patient', 'admission.bed', 'nurse')
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('created_at', 'desc');
 
         $temperatureRecords = $query->get();
 
@@ -76,16 +76,35 @@ class TemperatureRecordController extends Controller
         }
 
         // si el usuario actual es el que registro la ultima temperatura
+        // si esta en el mismo turno
         // mostrarla
-        // si hace mas de 5 horas
+
+
+        $turns = [
+            '24-8' => [24, 8],
+            '8-16' => [8, 16],
+            '16-24' => [16, 24],
+        ];
+
+        $currentHour = Carbon::now()->hour;
+
+        $currentTurn = null;
+
+        foreach ($turns as $key => $turn) {
+            if ($currentHour >= $turn[0] and $currentHour < $turn[1]) {
+                $currentTurn = $key;
+                break;
+            }
+        }
+
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-            ->latest()
+            ->whereBetween('created_at', [
+                Carbon::now()->startOfDay()->addHours($turns[$currentTurn][0]),
+                Carbon::now()->startOfDay()->addHours($turns[$currentTurn][1]),
+            ])
+            ->where('nurse_id', Auth::id())
             ->first();
 
-        if ($lastTemperature->nurse_id != Auth::id() or
-            Carbon::parse($lastTemperature->created_at)->diffInHours(Carbon::parse(now())) > 5) {
-            $lastTemperature = null;
-        }
 
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();

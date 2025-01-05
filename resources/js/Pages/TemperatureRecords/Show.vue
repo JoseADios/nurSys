@@ -134,7 +134,7 @@
                 </div>
 
                 <!-- Formulario para agregar nuevo detalle -->
-                <div class="p-8 ">
+                <div v-if="!lastTemperature" class="p-8 ">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura</h3>
 
                     <form @submit.prevent="submit" class="space-y-4">
@@ -236,12 +236,16 @@ export default {
                             urinations: 1,
                         };
                         this.chartKey++;
-
                     }
                 });
         },
         updateDetail() {
-            this.$inertia.put(route('temperatureDetails.update', this.lastTemperature.id), this.formDetailUpdate);
+            this.$inertia.put(route('temperatureDetails.update', this.lastTemperature.id), this.formDetailUpdate, {
+                onSuccess: () => {
+                    this.chartKey++;
+                }
+            });
+
         },
         goBack() {
             window.history.back()

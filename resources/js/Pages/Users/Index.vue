@@ -8,23 +8,11 @@
 
         <!-- <div class="text-white">Datos: {{ admission_id }}</div> -->
 
-        <!-- Navigation -->
-        <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-            <Link :href="route('admissions.show', admission_id)"
-                class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                    clip-rule="evenodd" />
-            </svg>
-            <span class="font-medium">Volver</span>
-            </Link>
-        </div>
 
         <div class="flex flex-col items-center justify-center mt-10">
-            <Link :href="route('users.create', { admission_id: admission_id })"
+            <Link :href="route('users.create')"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear nueva Orden Medica
+            Crear Usuario
             </Link>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
@@ -70,7 +58,7 @@
                             {{ user.area }}
                         </td>
                         <td class="px-6 py-4">
-                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('users.edit', user.id)"
+                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('users.show', user.id)"
                                 as="button">
                             Abrir
                             </Link>
@@ -95,6 +83,11 @@ export default {
         AppLayout,
         Link,
     },
+    methods: {
+        goBack() {
+            window.history.back()
+        }
+    }
 
 }
 </script>

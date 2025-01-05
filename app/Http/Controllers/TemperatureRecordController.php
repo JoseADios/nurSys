@@ -69,7 +69,6 @@ class TemperatureRecordController extends Controller
         }
 
         if (!$temperatureRecord) {
-            Log::info('Redireccionando a: ', ['route' => route('temperatureRecords.create', ['id' => $id, 'admission_id' => $admission_id])]);
             return Redirect::route('temperatureRecords.create', [
                 'admission_id' => $admission_id
             ]);

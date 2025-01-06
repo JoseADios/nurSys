@@ -12,7 +12,7 @@
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('medicalOrders.index', medicalOrder.admission_id)"
+                    <button @click="goBack"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
@@ -20,7 +20,7 @@
                             clip-rule="evenodd" />
                     </svg>
                     <span class="font-medium">Volver</span>
-                    </Link>
+                    </button>
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -334,6 +334,9 @@ export default {
             this.selectedDetail = { ...detail };
             this.originalSuspendedState = detail.suspended_at;
             this.isOpen = true;
+        },
+        goBack() {
+            window.history.back()
         },
     }
 

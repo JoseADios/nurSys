@@ -3,15 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\TemperatureDetail;
+use App\Services\TurnService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TemperatureDetailController extends Controller
 {
+    protected $turnService;
     /**
      * Display a listing of the resource.
      */
+    public function __construct(TurnService $turnService) {
+        $this->turnService = $turnService;
+    }
+
     public function index()
     {
         //
@@ -30,48 +36,12 @@ class TemperatureDetailController extends Controller
      */
     public function store(Request $request)
     {
-        // validar que en un mismo turno no se ingresen dos temperaturas
-
-        // obtener la ultima temperatura por fecha de creacion
-
-        // $lastTemperature = TemperatureDetail::where('temperature_record_id', $request->temperature_record_id)
-        //     ->orderBy('created_at', 'desc')->first();
-
-        // if (Carbon::parse($lastTemperature->created_at)->diffInHours(Carbon::parse(now())) > 5) {
-        //     return back()->with('error', 'Ya hay una temperatura creada en el mismo turno');
-        // }
-
-        // modificar para ver turnos por hora y no diferencia entre fechas de creacion de los registros
-
-        /*
-        1. tener las horas de los turnos 24-8, 8-16, 16-24
-        2. calcular el turno actual
-        3. hacer una consulta que me devuelva el registro que se encuentre con el created_at dentro del turno actual
-        4. Si existe uno no permitir crear otro y permitir la actualizacion del mismo
-        5. So no existe ninguno permitir la creacion
-        */
-
-        $turns = [
-            '24-8' => [24, 8],
-            '8-16' => [8, 16],
-            '16-24' => [16, 24],
-        ];
-
-        $currentHour = Carbon::now()->hour;
-
-        $currentTurn = null;
-
-        foreach ($turns as $key => $turn) {
-            if ($currentHour >= $turn[0] and $currentHour < $turn[1]) {
-                $currentTurn = $key;
-                break;
-            }
-        }
+        $currentTurn = $this->turnService->getCurrentTurn();
 
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $request->temperature_record_id)
             ->whereBetween('created_at', [
-                Carbon::now()->startOfDay()->addHours($turns[$currentTurn][0]),
-                Carbon::now()->startOfDay()->addHours($turns[$currentTurn][1]),
+                Carbon::now()->startOfDay()->addHours($currentTurn[0]),
+                Carbon::now()->startOfDay()->addHours($currentTurn[1]),
             ])
             ->first();
 

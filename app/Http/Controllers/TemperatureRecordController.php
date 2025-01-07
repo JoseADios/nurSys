@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
+use App\Services\TurnService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -14,12 +15,16 @@ use Carbon\Carbon;
 
 class TemperatureRecordController extends Controller
 {
+    protected $turnService;
     /**
      * Display a listing of the resource.
      */
+    public function __construct(TurnService $turnService) {
+        $this->turnService = $turnService;
+    }
+
     public function index(Request $request)
     {
-
         $query = TemperatureRecord::with('admission.patient', 'admission.bed', 'nurse')
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc');
@@ -75,30 +80,14 @@ class TemperatureRecordController extends Controller
             ]);
         }
 
-        // verificar el turno actual
-        $turns = [
-            '0-8' => [0, 8],
-            '8-16' => [8, 16],
-            '16-24' => [16, 24],
-        ];
         $canCreate = true;
-        $currentHour = Carbon::now()->hour;
-        $currentTurn = null;
-
-        foreach ($turns as $key => $turn) {
-            if ($turn[0] <= $turn[1]) {
-                if ($currentHour >= $turn[0] && $currentHour < $turn[1]) {
-                    $currentTurn = $key;
-                    break;
-                }
-            }
-        }
+        $currentTurn = $this->turnService->getCurrentTurn();
 
         try {
             $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
                 ->whereBetween('created_at', [
-                    Carbon::now()->startOfDay()->addHours($turns[$currentTurn][0]),
-                    Carbon::now()->startOfDay()->addHours($turns[$currentTurn][1]),
+                    Carbon::now()->startOfDay()->addHours($currentTurn[0]),
+                    Carbon::now()->startOfDay()->addHours($currentTurn[1]),
                 ])
                 ->first();
         } catch (\Exception $e) {

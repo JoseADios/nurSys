@@ -75,36 +75,36 @@ class TemperatureRecordController extends Controller
             ]);
         }
 
-        // si el usuario actual es el que registro la ultima temperatura
-        // si esta en el mismo turno
-        // mostrarla
-
-
+        // verificar el turno actual
         $turns = [
-            '24-8' => [24, 8],
+            '0-8' => [0, 8],
             '8-16' => [8, 16],
             '16-24' => [16, 24],
         ];
-
         $canCreate = true;
-
         $currentHour = Carbon::now()->hour;
-
         $currentTurn = null;
 
         foreach ($turns as $key => $turn) {
-            if ($currentHour >= $turn[0] and $currentHour < $turn[1]) {
-                $currentTurn = $key;
-                break;
+            if ($turn[0] <= $turn[1]) {
+                if ($currentHour >= $turn[0] && $currentHour < $turn[1]) {
+                    $currentTurn = $key;
+                    break;
+                }
             }
         }
 
-        $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-            ->whereBetween('created_at', [
-                Carbon::now()->startOfDay()->addHours($turns[$currentTurn][0]),
-                Carbon::now()->startOfDay()->addHours($turns[$currentTurn][1]),
-            ])
-            ->first();
+        try {
+            $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+                ->whereBetween('created_at', [
+                    Carbon::now()->startOfDay()->addHours($turns[$currentTurn][0]),
+                    Carbon::now()->startOfDay()->addHours($turns[$currentTurn][1]),
+                ])
+                ->first();
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            $lastTemperature = null;
+        }
 
         if ($lastTemperature) {
             $canCreate = false;
@@ -113,7 +113,6 @@ class TemperatureRecordController extends Controller
                 $lastTemperature = null;
             }
         }
-
 
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();

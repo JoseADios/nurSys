@@ -6,8 +6,10 @@ use App\Models\Admission;
 use App\Models\Bed;
 use App\Models\Patient;
 use App\Models\User;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 
@@ -34,7 +36,8 @@ class AdmissionController extends Controller
     public function create()
     {
         $doctors = User::all();
-        $beds = Bed::all();
+        $bedsFilled = Admission::where('in_process', 1)->pluck('bed_id');
+        $beds = Bed::whereNotIn('id', $bedsFilled)->get();
         $patients = Patient::all();
 
         return Inertia::render('Admissions/Create', [

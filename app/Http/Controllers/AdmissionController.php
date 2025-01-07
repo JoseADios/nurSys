@@ -157,7 +157,7 @@ class AdmissionController extends Controller
      */
     public function destroy(Admission $admission)
     {
-        $admission->update(['active' => 0]);
+        $admission->update(['active' => 0, 'in_process' => 0]);
 
         // desactivar todas las ordenes médicas relacionadas
         DB::table('medical_orders')

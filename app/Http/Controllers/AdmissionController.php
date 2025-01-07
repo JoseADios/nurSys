@@ -36,9 +36,13 @@ class AdmissionController extends Controller
     public function create()
     {
         $doctors = User::all();
-        $bedsFilled = Admission::where('in_process', 1)->pluck('bed_id');
+        $admissions = Admission::where('in_process', 1);
+        $bedsFilled = $admissions->pluck('bed_id')->toArray();
+        $patientsAct = $admissions->pluck('patient_id')->toArray();
+
         $beds = Bed::whereNotIn('id', $bedsFilled)->get();
-        $patients = Patient::all();
+
+        $patients = Patient::whereNotIn('id', $patientsAct)->get();
 
         return Inertia::render('Admissions/Create', [
             'doctors' => $doctors,
@@ -66,7 +70,8 @@ class AdmissionController extends Controller
         $admissionExist = Admission::where('patient_id', $request->patient_id)
             ->where('in_process', 1)->get();
 
-        if ($admissionExist) {
+        if (!$admissionExist->isEmpty()) {
+            dd($admissionExist);
             return back()->with('error', 'Ya existe un ingreso en proceso para este paciente');
         }
 

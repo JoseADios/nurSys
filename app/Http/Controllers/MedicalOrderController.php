@@ -2,25 +2,52 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Medical_order;
+use App\Models\Admission;
+use App\Models\MedicalOrder;
+use App\Models\MedicalOrderDetail;
+use App\Models\Regime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
 
 class MedicalOrderController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = MedicalOrder::where('active', true)
+            ->with('admission.patient', 'admission.bed', 'doctor')
+            ->orderBy('created_at', 'desc')
+            ->orderBy('updated_at', 'desc');
+
+        if ($request->has('admission_id')) {
+            $query->where('admission_id', $request->admission_id);
+        }
+
+        $medicalOrders = $query->get();
+
+        return Inertia::render('MedicalOrders/Index', [
+            'medicalOrders' => $medicalOrders,
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $admission_id = $request->has('admission_id') ? $request->admission_id : null;
+
+        $admissions = Admission::where('active', true)
+            ->with('patient', 'bed')
+            ->get();
+        return Inertia::render('MedicalOrders/Create', [
+            'admissions' => $admissions,
+            'admission_id' => $admission_id
+        ]);
     }
 
     /**
@@ -28,13 +55,20 @@ class MedicalOrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $medicalOrder = MedicalOrder::create([
+            'admission_id' => $request->admission_id,
+            'doctor_id' => Auth::id(),
+            'created_at' => now(),
+        ]);
+
+        return Redirect::route('medicalOrders.edit', $medicalOrder->id);
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Medical_order $medical_order)
+    public function show(MedicalOrder $medicalOrder)
     {
         //
     }
@@ -42,23 +76,38 @@ class MedicalOrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Medical_order $medical_order)
+    public function edit(MedicalOrder $medicalOrder)
     {
-        //
+        $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
+        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor']);
+        $regimes = Regime::all();
+        $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
+            ->where('active', true)
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('created_at', 'desc')->get();
+
+        return Inertia::render('MedicalOrders/Edit', [
+            'medicalOrder' => $medicalOrder,
+            'details' => $details,
+            'admissions' => $admissions,
+            'regimes' => $regimes,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Medical_order $medical_order)
+    public function update(Request $request, MedicalOrder $medicalOrder)
     {
-        //
+        $medicalOrder->update($request->all());
+
+        return back()->with('succes', 'Registro actualizado correctamente');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Medical_order $medical_order)
+    public function destroy(MedicalOrder $medicalOrder)
     {
         //
     }

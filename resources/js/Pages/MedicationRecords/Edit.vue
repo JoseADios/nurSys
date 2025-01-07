@@ -2,6 +2,7 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
+
                 Editar Ficha de Medicamentos
             </h2>
         </template>
@@ -80,6 +81,7 @@ import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
+
         medicationRecord: Object,
         errors: Array,
     },

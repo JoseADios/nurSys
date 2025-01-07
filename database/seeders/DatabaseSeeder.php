@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Patient;
+use App\Models\TemperatureRecord;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -44,5 +45,10 @@ class DatabaseSeeder extends Seeder
         $this->call(NurseRecordSeeder::class);
         $this->call(NurseRecordDetailSeeder::class);
         $this->call(MedicationRecordDetailSeeder::class);
+        $this->call(MedicalOrderSeeder::class);
+        $this->call(MedicalOrderDetailSeeder::class);
+        $this->call(TemperatureRecordSeeder::class);
+        $this->call(TemperatureDetailSeeder::class);
+        $this->call(MaritalStatusSeeder::class);
     }
 }

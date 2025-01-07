@@ -6,11 +6,13 @@
             </h2>
         </template>
 
+        <!-- <div class="text-white">Datos {{ adm_id }}</div> -->
+
         <div class="container mx-auto px-4 py-8">
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('nurseRecords.index')"
+                    <Link :href="route('nurseRecords.index', nurseRecord.admission_id)"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
@@ -24,6 +26,44 @@
                 <!-- Patient and Record Information -->
                 <div class="grid md:grid-cols-2 gap-6 p-8 bg-gray-50 dark:bg-gray-700">
                     <div class="space-y-4">
+                        <div v-if="!isVisible"
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
+                            <div class="">
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ nurseRecord.admission_id }}
+                                </p>
+                            </div>
+                            <button @click="toggleEditAdmission" class="text-blue-500 mr-3">Edit</button>
+                        </div>
+
+                        <div v-if="isVisible" class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            <form @submit.prevent="submitAdmission">
+
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Seleccionar
+                                    Ingreso</h3>
+                                <select v-model="formAdmission.admission_id"
+                                    class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option :value="admission.id" v-for="admission in admissions" :key="admission.id">
+                                        {{ admission.created_at }}
+                                        {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
+                                            admission.patient.second_surname }}
+                                        Cama {{ admission.bed.number }}, Sala {{ admission.bed.room }}
+                                    </option>
+                                </select>
+                                <div class="mt-3">
+                                    <button
+                                        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                        @click="toggleEditAdmission">Cancelar</button>
+
+                                    <button type="submit"
+                                        class="focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+                                        Aceptar</button>
+                                </div>
+
+                            </form>
+
+                        </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -42,7 +82,7 @@
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ nurse.name }} {{ patient.last_name }}
+                                {{ patient.first_name }} {{ patient.last_name }}
                             </p>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
@@ -64,7 +104,7 @@
                 <!-- Form -->
                 <!-- Formulario para agregar nuevo detalle -->
                 <div class="p-8 ">
-                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Eventos</h3>
 
                     <form @submit.prevent="submit" class="space-y-4">
                         <div class="grid md:grid-cols-2 gap-4">
@@ -73,7 +113,7 @@
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Medicamento
                                 </label>
-                                <input type="text" id="medication" v-model="form.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                <input type="text" id="medication" v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
                                focus:outline-none focus:ring-2 focus:ring-blue-500
                                dark:bg-gray-800 dark:text-white" placeholder="Nombre del medicamento" />
                             </div>
@@ -83,7 +123,7 @@
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Comentario
                                 </label>
-                                <input type="text" id="comment" v-model="form.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                <input type="text" id="comment" v-model="formDetail.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
                                focus:outline-none focus:ring-2 focus:ring-blue-500
                                dark:bg-gray-800 dark:text-white" placeholder="Comentarios adicionales" />
                             </div>
@@ -93,7 +133,7 @@
                             <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                            hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                            transition-colors duration-300">
-                                Agregar Detalle
+                                Agregar Evento
                             </button>
                         </div>
                     </form>
@@ -101,7 +141,7 @@
 
                 <!-- Nurse Record Details -->
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
-                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro</h3>
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Eventos del Registro</h3>
 
                     <div v-for="detail in details" :key="detail.id"
                         class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
@@ -118,7 +158,7 @@
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             <!-- Editar -->
-                            <Link :href="route('nurseRecordDetails.edit', detail.id )"
+                            <Link :href="route('nurseRecordDetails.edit', detail.id)"
                                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                 fill="currentColor">
@@ -132,7 +172,7 @@
                     </div>
 
                     <div v-if="details.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">
-                        No hay detalles de registro disponibles
+                        No hay eventos de registro disponibles
                     </div>
                 </div>
 
@@ -149,14 +189,17 @@ import { Link } from '@inertiajs/vue3';
 export default {
     props: {
         nurseRecord: Object,
+        adm_id: Number,
         errors: {
             type: Array,
             default: () => []
         },
+        admissions: Array,
         patient: Object,
         nurse: Object,
         bed: Object,
-        details: Array
+        details: Array,
+        // datos: Object
     },
     components: {
         AppLayout,
@@ -164,7 +207,11 @@ export default {
     },
     data() {
         return {
-            form: {
+            isVisible: false,
+            formAdmission: {
+                admission_id: this.nurseRecord.admission_id
+            },
+            formDetail: {
                 nurse_record_id: this.nurseRecord.id,
                 medication: null,
                 comment: null,
@@ -172,19 +219,27 @@ export default {
         }
     },
     methods: {
+        toggleEditAdmission() {
+            this.isVisible = !this.isVisible;
+        },
+        submitAdmission() {
+            this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formAdmission)
+            this.toggleEditAdmission()
+        },
         submit() {
             this.$inertia.post(route('nurseRecordDetails.store'),
-                this.form,
+                this.formDetail,
                 {
                     onSuccess: () => {
-                        this.form = {
+                        this.formDetail = {
                             nurse_record_id: this.nurseRecord.id,
                             medication: '',
                             comment: '',
                         };
                     }
                 });
-        }
+        },
+
     }
 }
 </script>

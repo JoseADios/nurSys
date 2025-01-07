@@ -6,7 +6,7 @@
             </h2>
         </template>
 
-        <!-- <div class="text-white">Datos: {{ nurseRecords }}</div> -->
+        <!-- <div class="text-white">Datos: {{ admission_id }}</div> -->
 
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
@@ -22,9 +22,9 @@
         </div>
 
         <div class="flex flex-col items-center justify-center mt-10">
-            <Link :href="route('nurseRecords.create')"
+            <Link :href="route('medicalOrders.create', { admission_id: admission_id })"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear nuevo Registro de Enfermería
+            Crear nueva Orden Medica
             </Link>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
@@ -35,7 +35,7 @@
                             Paciente
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Enfermera
+                            Doctor
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Fecha
@@ -46,21 +46,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="nurseRecord in nurseRecords" :key="nurseRecord.id"
+                    <tr v-for="medicalOrder in medicalOrders" :key="medicalOrder.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ nurseRecord.admission.patient.first_name }} {{
-                                nurseRecord.admission.patient.first_surname }} {{
-                                nurseRecord.admission.patient.second_surname }}
+                            {{ medicalOrder.admission.patient.first_name }} {{
+                                medicalOrder.admission.patient.first_surname }} {{
+                                medicalOrder.admission.patient.second_surname }}
                         </th>
                         <td class="px-6 py-4">
-                            {{ nurseRecord.nurse.name }} {{ nurseRecord.nurse.last_name }}
+                            {{ medicalOrder.doctor.name }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ nurseRecord.created_at }}
+                            {{ medicalOrder.created_at }}
                         </td>
                         <td class="px-6 py-4">
-                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('nurseRecords.edit',nurseRecord.id)" as="button">
+                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('medicalOrders.edit', medicalOrder.id)" as="button">
                             Abrir
                             </Link>
                         </td>
@@ -78,7 +78,7 @@ import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
-        nurseRecords: Array,
+        medicalOrders: Array,
         admission_id: Number,
     },
     components: {

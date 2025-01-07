@@ -2,15 +2,15 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Registros de Enfermería
+                Hojas de Temperatura
             </h2>
         </template>
 
-        <!-- <div class="text-white">Datos: {{ nurseRecords }}</div> -->
+        <!-- <div class="text-white">Datos: {{ admission_id }}</div> -->
 
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-            <Link :href="route('admissions.show', admission_id)"
+            <button @click="goBack"
                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
@@ -18,24 +18,17 @@
                     clip-rule="evenodd" />
             </svg>
             <span class="font-medium">Volver</span>
-            </Link>
-        </div>
-
-        <div class="flex flex-col items-center justify-center mt-10">
-            <Link :href="route('nurseRecords.create')"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear nuevo Registro de Enfermería
-            </Link>
+            </button>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
-                            Paciente
+                            Ingreso
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Enfermera
+                            Paciente
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Fecha
@@ -46,31 +39,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="nurseRecord in nurseRecords" :key="nurseRecord.id"
+                    <tr v-for="temperatureRecord in temperatureRecords" :key="temperatureRecord.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ nurseRecord.admission.patient.first_name }} {{
-                                nurseRecord.admission.patient.first_surname }} {{
-                                nurseRecord.admission.patient.second_surname }}
-                        </th>
                         <td class="px-6 py-4">
-                            {{ nurseRecord.nurse.name }} {{ nurseRecord.nurse.last_name }}
+                            {{ temperatureRecord.admission.created_at }}
+                            Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
+                            temperatureRecord.admission.bed.room }}
+                        </td>
+                        <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ temperatureRecord.admission.patient.first_name }} {{
+                                temperatureRecord.admission.patient.first_surname }} {{
+                                temperatureRecord.admission.patient.second_surname }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ nurseRecord.created_at }}
+                            {{ temperatureRecord.created_at }}
                         </td>
                         <td class="px-6 py-4">
-                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('nurseRecords.edit',nurseRecord.id)" as="button">
-                            Abrir
-                            </Link>
+                            <button class="ml-2 text-green-500 hover:text-green-800"
+                                @click="temperatureRecordShow(temperatureRecord.id)">
+                                Abrir
+                            </button>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
     </AppLayout>
 </template>
+
 <script>
 
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -78,13 +74,20 @@ import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
-        nurseRecords: Array,
+        temperatureRecords: Array,
         admission_id: Number,
     },
     components: {
         AppLayout,
         Link,
     },
-
+    methods: {
+        goBack() {
+            window.history.back()
+        },
+        temperatureRecordShow(id) {
+            this.$inertia.get(route('temperatureRecords.customShow', {id: id, admission_id: null}));
+        }
+    }
 }
 </script>

@@ -16,7 +16,7 @@ class Patient extends Model
         'second_surname',
         'phone',
         'identification_card',
-        'nacionality',
+        'nationality',
         'email',
         'birthdate',
         'position',

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
+use Symfony\Component\HttpKernel\HttpCache\Ssi;
 
 class AdmissionController extends Controller
 {
@@ -115,6 +116,8 @@ class AdmissionController extends Controller
         $doctors = User::all();
         $bedsFilled = Admission::where('in_process', 1)->pluck('bed_id');
         $beds = Bed::whereNotIn('id', $bedsFilled)->get();
+        $bedSelected = Bed::where('id', $admission->bed_id)->first();
+        $beds->add($bedSelected);
 
         return Inertia::render('Admissions/Edit', [
             'admission' => $admission,
@@ -142,7 +145,8 @@ class AdmissionController extends Controller
             $admissionExist = Admission::where('patient_id', $request->patient_id)
                 ->where('in_process', 1)->get();
 
-            if ($admissionExist) {
+
+            if (!$admissionExist->isEmpty()) {
                 return back()->with('error', 'Ya existe otro registro de ingreso en proceso para otro paciente, de el alta al otro para activar este.');
             }
         }

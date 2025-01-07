@@ -19,9 +19,9 @@ class AdmissionController extends Controller
     public function index()
     {
         $admissions = Admission::with(['bed', 'patient', 'doctor'])
-        ->where('active', '=', 1)
-        ->orderBy('created_at', 'desc')
-        ->get();
+            ->where('active', '=', 1)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
@@ -57,6 +57,14 @@ class AdmissionController extends Controller
         // show errors
         if ($request->has('errors')) {
             return back()->withErrors($request->get('errors'));
+        }
+
+        // validar que no exista, patient, in_process
+        $admissionExist = Admission::where('patient_id', $request->patient_id)
+        ->where('in_process', 1)->get();
+
+        if ($admissionExist) {
+            return back()->with('error', 'Ya existe un ingreso en proceso para este paciente');
         }
 
         Admission::create(
@@ -117,13 +125,12 @@ class AdmissionController extends Controller
             'patient_id' => 'required',
         ]);
 
-        // show errors
         if ($request->has('errors')) {
             return back()->withErrors($request->get('errors'));
         }
 
         $admission->update($request->all());
-        return Redirect::route('admissions.index');
+        return back();
     }
 
     /**

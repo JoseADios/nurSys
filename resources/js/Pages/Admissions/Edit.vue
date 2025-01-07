@@ -6,42 +6,52 @@
             </h2>
         </template>
 
-        <div class="ml-10 mt-4 lg:mx-10">
-            <Link :href="route('admissions.index')"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+        <div class="ml-10 mt-4 lg:mx-10 flex justify-between">
+            <button @click="goBack"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full">
             Volver
-            </Link>
+            </button>
+
+            <div v-if="admission.in_process">
+                <button type="button" @click="discharge"
+                    class="self-end focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+                    Dar de Alta
+                </button>
+            </div>
+            <div v-if="!admission.in_process">
+                <button type="button" @click="charge"
+                    class="self-end focus:outline-none text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-900">
+                    Poner en progreso
+                </button>
+            </div>
         </div>
 
         <!-- show errors -->
-            <div class="mb-4 flex flex-col items-center">
-                <div class="mb-4 text-red-500" v-for="error in errors" :key="error">
-                    {{ error }}
-                </div>
+        <div class="mb-4 flex flex-col items-center">
+            <div class="mb-4 text-red-500" v-for="error in errors" :key="error">
+                {{ error }}
             </div>
+        </div>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
-                <label for="bed" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Ubicación</label>
+                <label for="bed"
+                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Ubicación</label>
                 <select id="bed" v-model="form.bed_id"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 
-                    <option :value="bed.id" v-for="bed in beds"
-                        :key="bed.id"
-                        :selected="bed.id === admission.bed_id">
+                    <option :value="bed.id" v-for="bed in beds" :key="bed.id" :selected="bed.id === admission.bed_id">
                         Cama {{ bed.number }} - Cuarto {{ bed.room }}
                     </option>
                 </select>
 
                 <label for="patient"
                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Paciente</label>
-                <select required id="patient"
-                    v-model="form.patient_id"
+                <select required id="patient" v-model="form.patient_id"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 
-                    <option :value="patient.id" v-for="patient in patients"
-                        :key="patient.id"
+                    <option :value="patient.id" v-for="patient in patients" :key="patient.id"
                         :selected="patient.id === admission.patient_id">
                         {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
                     </option>
@@ -49,12 +59,11 @@
 
                 <label for="doctor"
                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Doctor</label>
-                <select required id="doctor"
-                    v-model="form.doctor_id"
+                <select required id="doctor" v-model="form.doctor_id"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 
                     <option :value="doctor.id" v-for="doctor in doctors" :key="doctor.id"
-                    :selected="doctor.id === admission.doctor_id">
+                        :selected="doctor.id === admission.doctor_id">
                         {{ doctor.name }} {{ doctor.last_name }}
                     </option>
                 </select>
@@ -63,23 +72,20 @@
                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico
                     de
                     ingreso</label>
-                <textarea required id="admission_dx" rows="4"
-                    v-model="form.admission_dx"
+                <textarea required id="admission_dx" rows="4" v-model="form.admission_dx"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Escribe el diagnóstico de ingreso..."></textarea>
 
                 <label for="final_dx"
                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico
                     final</label>
-                <textarea id="final_dx" rows="4"
-                    v-model="form.final_dx"
+                <textarea id="final_dx" rows="4" v-model="form.final_dx"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Escribe el diagnóstico final..."></textarea>
 
                 <label for="comment"
                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Observaciones</label>
-                <textarea id="comment" rows="4"
-                    v-model="form.comment"
+                <textarea id="comment" rows="4" v-model="form.comment"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Escribe las observaciones..."></textarea>
 
@@ -124,13 +130,25 @@ export default {
                 admission_dx: this.admission.admission_dx,
                 final_dx: this.admission.final_dx,
                 comment: this.admission.comment,
+                in_process: this.admission.in_process,
             }
         }
     },
     methods: {
         submit() {
             this.$inertia.put(route('admissions.update', this.admission.id), this.form)
+        },
+        discharge() {
+            this.form.in_process = 0
+            this.submit()
+        },
+        charge() {
+            this.form.in_process = 1
+            this.submit()
+        },
+        goBack() {
+            window.history.back()
         }
-    }
+    },
 }
 </script>

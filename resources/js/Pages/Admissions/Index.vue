@@ -30,6 +30,9 @@
                             Diagnostico de ingreso
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Estado
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Fecha de ingreso
                         </th>
                         <th scope="col" class="px-6 py-3">
@@ -41,7 +44,8 @@
                     <tr v-for="admission in admissions" :key="admission.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{ admission.patient.second_surname }}
+                            {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
+                                admission.patient.second_surname }}
                         </th>
                         <td class="px-6 py-4">
                             {{ admission.bed.number }}
@@ -51,6 +55,14 @@
                         </td>
                         <td class="px-6 py-4">
                             {{ admission.admission_dx }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <div v-if="admission.in_process">
+                                <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">En proceso</span>
+                            </div>
+                            <div v-else>
+                                <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">Alta</span>
+                            </div>
                         </td>
                         <td class="px-6 py-4">
                             {{ admission.created_at }}

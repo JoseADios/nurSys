@@ -172,7 +172,7 @@ export default {
             this.$inertia.put(route('users.update', this.user.id), this.form)
         },
         goBack() {
-            window.history.back()
+            this.$inertia.visit(document.referrer)
         }
     }
 }

@@ -38,6 +38,10 @@
             </div>
         </div>
 
+        <!-- <div class="text-white">
+            {{ admission }}
+        </div> -->
+
         <!-- show errors -->
         <div class="mb-4 flex flex-col items-center">
             <div class="mb-4 text-red-500" v-for="error in errors" :key="error">
@@ -52,8 +56,8 @@
                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Ubicación</label>
                 <select id="bed" v-model="form.bed_id"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-
-                    <option :value="bed.id" v-for="bed in beds" :key="bed.id" :selected="bed.id === admission.bed_id">
+                    <option :value="bed.id" v-for="bed in beds" :key="bed.id"
+                    :selected="bed.id === admission.bed_id">
                         Cama {{ bed.number }} - Cuarto {{ bed.room }}
                     </option>
                 </select>
@@ -161,7 +165,7 @@ export default {
             this.submit()
         },
         goBack() {
-            window.history.back()
+            this.$inertia.visit(document.referrer)
         },
         confirmDelete() {
             if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {

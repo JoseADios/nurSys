@@ -240,7 +240,7 @@ export default {
                 });
         },
         goBack() {
-            window.history.back()
+            this.$inertia.visit(document.referrer)
         },
 
     }

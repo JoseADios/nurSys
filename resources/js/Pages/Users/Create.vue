@@ -242,7 +242,7 @@ export default {
             this.submit()
         },
         goBack() {
-            window.history.back()
+            this.$inertia.visit(document.referrer)
         },
     }
 }

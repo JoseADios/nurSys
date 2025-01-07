@@ -85,7 +85,7 @@ export default {
     },
     methods: {
         goBack() {
-            window.history.back()
+            this.$inertia.visit(document.referrer)
         }
     }
 

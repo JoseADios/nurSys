@@ -114,7 +114,7 @@ export default {
             this.$inertia.post(route('admissions.store'), this.form)
         },
         goBack() {
-            window.history.back()
+            this.$inertia.visit(document.referrer)
         }
     }
 }

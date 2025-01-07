@@ -248,7 +248,7 @@ export default {
             this.$inertia.put(route('patients.update', this.patient.id), this.form)
         },
         goBack() {
-            window.history.back()
+            this.$inertia.visit(document.referrer)
         }
     }
 }

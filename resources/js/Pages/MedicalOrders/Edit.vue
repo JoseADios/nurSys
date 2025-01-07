@@ -336,7 +336,7 @@ export default {
             this.isOpen = true;
         },
         goBack() {
-            window.history.back()
+            this.$inertia.visit(document.referrer)
         },
     }
 

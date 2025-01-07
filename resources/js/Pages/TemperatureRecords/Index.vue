@@ -83,7 +83,7 @@ export default {
     },
     methods: {
         goBack() {
-            window.history.back()
+            this.$inertia.visit(document.referrer)
         },
         temperatureRecordShow(id) {
             this.$inertia.get(route('temperatureRecords.customShow', {id: id, admission_id: null}));

@@ -7,21 +7,33 @@
         </template>
 
         <div class="ml-10 mt-4 lg:mx-10 flex justify-between">
-            <button @click="goBack"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full">
-            Volver
+            <button @click="goBack" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full">
+                Volver
             </button>
 
-            <div v-if="admission.in_process">
-                <button type="button" @click="discharge"
-                    class="self-end focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
-                    Dar de Alta
-                </button>
-            </div>
-            <div v-if="!admission.in_process">
-                <button type="button" @click="charge"
-                    class="self-end focus:outline-none text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-900">
-                    Poner en progreso
+            <div class="flex">
+                <div v-if="admission.in_process">
+                    <button type="button" @click="discharge"
+                        class="self-end focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+                        Dar de Alta
+                    </button>
+                </div>
+                <div v-if="!admission.in_process">
+                    <button type="button" @click="charge"
+                        class="self-end focus:outline-none text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-900">
+                        Poner en progreso
+                    </button>
+                </div>
+
+                <button @click="confirmDelete"
+                    class="self-end flex ml-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
+                    </svg>
+                    Eliminar
                 </button>
             </div>
         </div>
@@ -89,7 +101,9 @@
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Escribe las observaciones..."></textarea>
 
+
                 <div class="flex justify-end mt-6 mb-2">
+
                     <Link :href="route('admissions.index')"
                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                     Cancelar
@@ -148,7 +162,12 @@ export default {
         },
         goBack() {
             window.history.back()
-        }
+        },
+        confirmDelete() {
+            if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
+                this.$inertia.delete(route('admissions.destroy', this.admission.id));
+            }
+        },
     },
 }
 </script>

@@ -71,7 +71,6 @@ class AdmissionController extends Controller
             ->where('in_process', 1)->get();
 
         if (!$admissionExist->isEmpty()) {
-            dd($admissionExist);
             return back()->with('error', 'Ya existe un ingreso en proceso para este paciente');
         }
 

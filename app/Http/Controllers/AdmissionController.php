@@ -61,7 +61,7 @@ class AdmissionController extends Controller
 
         // validar que no exista, patient, in_process
         $admissionExist = Admission::where('patient_id', $request->patient_id)
-        ->where('in_process', 1)->get();
+            ->where('in_process', 1)->get();
 
         if ($admissionExist) {
             return back()->with('error', 'Ya existe un ingreso en proceso para este paciente');
@@ -127,6 +127,16 @@ class AdmissionController extends Controller
 
         if ($request->has('errors')) {
             return back()->withErrors($request->get('errors'));
+        }
+
+        if ($request->in_process) {
+            // validar que no exista otro patient con el process active
+            $admissionExist = Admission::where('patient_id', $request->patient_id)
+                ->where('in_process', 1)->get();
+
+            if ($admissionExist) {
+                return back()->with('error', 'Ya existe otro registro de ingreso en proceso para otro paciente, de el alta al otro para activar este.');
+            }
         }
 
         $admission->update($request->all());

@@ -41,7 +41,7 @@ class MedicalOrderSeeder extends Seeder
                 'admission_id' => $admissions->skip(2)->first()->id,
                 'doctor_id' => $doctors->skip(2)->first()->id,
                 'doctor_sign' => 'Dr. Williams Electronic Sign',
-                'active' => false,
+                'active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ]

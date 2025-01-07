@@ -154,6 +154,26 @@ class AdmissionController extends Controller
     {
         $admission->update(['active' => 0]);
 
+        // desactivar todas las ordenes médicas relacionadas
+        DB::table('medical_orders')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => 0]);
+
+        // medication records
+        DB::table('medication_records')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => 0]);
+
+        // temperature record
+        DB::table('temperature_records')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => 0]);
+
+        // nurse record
+        DB::table('nurse_records')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => 0]);
+
         return Redirect::route('admissions.index');
     }
 }

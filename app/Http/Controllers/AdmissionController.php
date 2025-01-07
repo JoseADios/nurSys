@@ -109,7 +109,8 @@ class AdmissionController extends Controller
     {
         $patients = Patient::all();
         $doctors = User::all();
-        $beds = Bed::all();
+        $bedsFilled = Admission::where('in_process', 1)->pluck('bed_id');
+        $beds = Bed::whereNotIn('id', $bedsFilled)->get();
 
         return Inertia::render('Admissions/Edit', [
             'admission' => $admission,

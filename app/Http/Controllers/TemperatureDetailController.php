@@ -3,14 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\TemperatureDetail;
+use App\Services\TurnService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TemperatureDetailController extends Controller
 {
+    protected $turnService;
     /**
      * Display a listing of the resource.
      */
+    public function __construct(TurnService $turnService) {
+        $this->turnService = $turnService;
+    }
+
     public function index()
     {
         //
@@ -29,7 +36,19 @@ class TemperatureDetailController extends Controller
      */
     public function store(Request $request)
     {
-        // validar que en un mismo turno no se ingresen dos temperaturas
+        $currentTurn = $this->turnService->getCurrentTurn();
+
+        $lastTemperature = TemperatureDetail::where('temperature_record_id', $request->temperature_record_id)
+            ->whereBetween('created_at', [
+                Carbon::now()->startOfDay()->addHours($currentTurn[0]),
+                Carbon::now()->startOfDay()->addHours($currentTurn[1]),
+            ])
+            ->first();
+
+        if ($lastTemperature) {
+            return back()->with('error', 'Ya hay una temperatura creada en el mismo turno');
+        }
+
 
         TemperatureDetail::create([
             'temperature_record_id' => $request->temperature_record_id,
@@ -64,8 +83,9 @@ class TemperatureDetailController extends Controller
      */
     public function update(Request $request, TemperatureDetail $temperatureDetail)
     {
-        // no permitir editar temperaturas de un turno que no sea el actual
-        // si hace 4 horas o mas no se puede editar
+        $temperatureDetail->update($request->all());
+
+        return back()->with('succes', 'Registro actualizado correctamente');
     }
 
     /**

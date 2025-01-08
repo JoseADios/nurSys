@@ -6,10 +6,13 @@ use App\Models\Admission;
 use App\Models\Bed;
 use App\Models\Patient;
 use App\Models\User;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
+use Symfony\Component\HttpKernel\HttpCache\Ssi;
 
 class AdmissionController extends Controller
 {
@@ -19,9 +22,9 @@ class AdmissionController extends Controller
     public function index()
     {
         $admissions = Admission::with(['bed', 'patient', 'doctor'])
-        ->where('active', '=', 1)
-        ->orderBy('created_at', 'desc')
-        ->get();
+            ->where('active', '=', 1)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
@@ -34,8 +37,13 @@ class AdmissionController extends Controller
     public function create()
     {
         $doctors = User::all();
-        $beds = Bed::all();
-        $patients = Patient::all();
+        $admissions = Admission::where('in_process', 1);
+        $bedsFilled = $admissions->pluck('bed_id')->toArray();
+        $patientsAct = $admissions->pluck('patient_id')->toArray();
+
+        $beds = Bed::whereNotIn('id', $bedsFilled)->get();
+
+        $patients = Patient::whereNotIn('id', $patientsAct)->get();
 
         return Inertia::render('Admissions/Create', [
             'doctors' => $doctors,
@@ -57,6 +65,14 @@ class AdmissionController extends Controller
         // show errors
         if ($request->has('errors')) {
             return back()->withErrors($request->get('errors'));
+        }
+
+        // validar que no exista, patient, in_process
+        $admissionExist = Admission::where('patient_id', $request->patient_id)
+            ->where('in_process', 1)->get();
+
+        if (!$admissionExist->isEmpty()) {
+            return back()->with('error', 'Ya existe un ingreso en proceso para este paciente');
         }
 
         Admission::create(
@@ -98,7 +114,10 @@ class AdmissionController extends Controller
     {
         $patients = Patient::all();
         $doctors = User::all();
-        $beds = Bed::all();
+        $bedsFilled = Admission::where('in_process', 1)->pluck('bed_id');
+        $beds = Bed::whereNotIn('id', $bedsFilled)->get();
+        $bedSelected = Bed::where('id', $admission->bed_id)->first();
+        $beds->add($bedSelected);
 
         return Inertia::render('Admissions/Edit', [
             'admission' => $admission,
@@ -117,13 +136,23 @@ class AdmissionController extends Controller
             'patient_id' => 'required',
         ]);
 
-        // show errors
         if ($request->has('errors')) {
             return back()->withErrors($request->get('errors'));
         }
 
+        if ($request->in_process) {
+            // validar que no exista otro patient con el process active
+            $admissionExist = Admission::where('patient_id', $request->patient_id)
+                ->where('in_process', 1)->get();
+
+
+            if (!$admissionExist->isEmpty()) {
+                return back()->with('error', 'Ya existe otro registro de ingreso en proceso para otro paciente, de el alta al otro para activar este.');
+            }
+        }
+
         $admission->update($request->all());
-        return Redirect::route('admissions.index');
+        return back();
     }
 
     /**
@@ -131,7 +160,27 @@ class AdmissionController extends Controller
      */
     public function destroy(Admission $admission)
     {
-        $admission->update(['active' => 0]);
+        $admission->update(['active' => 0, 'in_process' => 0]);
+
+        // desactivar todas las ordenes médicas relacionadas
+        DB::table('medical_orders')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => 0]);
+
+        // medication records
+        DB::table('medication_records')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => 0]);
+
+        // temperature record
+        DB::table('temperature_records')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => 0]);
+
+        // nurse record
+        DB::table('nurse_records')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => 0]);
 
         return Redirect::route('admissions.index');
     }

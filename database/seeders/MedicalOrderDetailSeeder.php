@@ -43,7 +43,7 @@ class MedicalOrderDetailSeeder extends Seeder
                 'order' => 'Suspender medicación anterior',
                 'regime' => 'Cambio de tratamiento',
                 'suspended_at' => Carbon::now()->addDays(3),
-                'active' => false,
+                'active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ],

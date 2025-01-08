@@ -31,6 +31,7 @@ class MedicalOrderController extends Controller
 
         return Inertia::render('MedicalOrders/Index', [
             'medicalOrders' => $medicalOrders,
+            'admission_id' => $request->admission_id,
         ]);
     }
 

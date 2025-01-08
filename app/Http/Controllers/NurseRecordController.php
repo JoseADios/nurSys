@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
+use App\Services\TurnService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -12,14 +14,19 @@ use Inertia\Inertia;
 
 class NurseRecordController extends Controller
 {
+    protected $turnService;
     /**
      * Display a listing of the resource.
      */
+    public function __construct(TurnService $turnService)
+    {
+        $this->turnService = $turnService;
+    }
     public function index(Request $request)
     {
         $query = NurseRecord::with('nurse', 'admission.patient')
-        ->orderBy('updated_at', 'desc')
-        ->orderBy('created_at', 'desc');
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('created_at', 'desc');
 
         if ($request->has('admission_id')) {
             $query->where('admission_id', $request->admission_id);
@@ -54,6 +61,21 @@ class NurseRecordController extends Controller
      */
     public function store(Request $request)
     {
+        // validar que en este turno no exista una hoja del mismo usuario
+        $currentTurn = $this->turnService->getCurrentTurn();
+
+        $nurseRecordsInTurn = NurseRecord::where('nurse_id', Auth::id())
+            ->whereBetween('created_at', [
+                Carbon::now()->startOfDay()->addHours($currentTurn[0]),
+                Carbon::now()->startOfDay()->addHours($currentTurn[1]),
+            ])
+            ->first();
+
+        if ($nurseRecordsInTurn) {
+            dd('Ya existe una hoja en este turno por el mismo usuario, abrir >>>', $nurseRecordsInTurn);
+            return back()->with('error', 'Ya hay una temperatura creada en el mismo turno');
+        }
+
         $nurseRecord = NurseRecord::create([
             'admission_id' => $request->admission_id,
             'nurse_id' => Auth::id(),

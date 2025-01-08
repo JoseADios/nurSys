@@ -86,6 +86,12 @@ const logout = () => {
                                 </NavLink>
                             </div>
 
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                                    Usuarios
+                                </NavLink>
+                            </div>
+
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -274,6 +280,10 @@ const logout = () => {
 
                             <ResponsiveNavLink :href="route('patients.index')" :active="route().current('patients.index')">
                                 Pacientes
+                            </ResponsiveNavLink>
+
+                            <ResponsiveNavLink :href="route('users.index')" :active="route().current('users.index')">
+                                Usuarios
                             </ResponsiveNavLink>
 
                             <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">

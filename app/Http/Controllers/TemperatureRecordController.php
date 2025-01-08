@@ -19,7 +19,8 @@ class TemperatureRecordController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function __construct(TurnService $turnService) {
+    public function __construct(TurnService $turnService)
+    {
         $this->turnService = $turnService;
     }
 
@@ -54,6 +55,11 @@ class TemperatureRecordController extends Controller
      */
     public function store(Request $request)
     {
+        $existingRecord = TemperatureRecord::where('admission_id', $request->admission_id)->first();
+        if ($existingRecord) {
+            return Redirect::back()->withErrors(['admission_id' => 'A temperature record for this admission already exists.']);
+        }
+
         $temperatureRecord = TemperatureRecord::create([
             'admission_id' => $request->admission_id,
             'nurse_id' => Auth::id(),

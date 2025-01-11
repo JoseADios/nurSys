@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('medical_order_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('medical_order_id')->constrained()->onDelete('restrict');
-            $table->time('start_date');
             $table->string('order');
             $table->string('regime')->nullable();
             $table->dateTime('suspended_at')->nullable();

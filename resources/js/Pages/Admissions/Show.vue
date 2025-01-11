@@ -5,10 +5,21 @@
                 <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
                     <div class="flex justify-between items-center">
                         <h2 class="text-2xl font-bold text-white">Detalles del Ingreso</h2>
-                        <Link :href="route('admissions.index')"
+                        <button @click="goBack"
                             class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out">
                         Volver
-                        </Link>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Estado de Ingreso -->
+                <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md mb-6">
+                    <div class="flex items-center space-x-2">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Estado:</h3>
+                        <span v-bind:class="admission.in_process ? 'bg-blue-500' : 'bg-green-500'"
+                            class="text-white text-sm font-semibold px-2 py-1 rounded-full">
+                            {{ admission.in_process ? 'En progreso' : 'Completado' }}
+                        </span>
                     </div>
                 </div>
 
@@ -174,6 +185,9 @@ export default {
             if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
                 this.$inertia.delete(route('admissions.destroy', this.admission.id));
             }
+        },
+        goBack() {
+            this.$inertia.visit(document.referrer)
         }
     }
 }

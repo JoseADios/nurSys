@@ -5,23 +5,30 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
+use App\Services\TurnService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class TemperatureRecordController extends Controller
 {
+    protected $turnService;
     /**
      * Display a listing of the resource.
      */
+    public function __construct(TurnService $turnService)
+    {
+        $this->turnService = $turnService;
+    }
+
     public function index(Request $request)
     {
-
-        $query = TemperatureRecord::with( 'admission.patient', 'admission.bed', 'nurse')
-        ->orderBy('updated_at', 'desc')
-        ->orderBy('created_at', 'desc');
+        $query = TemperatureRecord::with('admission.patient', 'admission.bed', 'nurse')
+            ->orderBy('updated_at', 'desc')
+            ->orderBy('created_at', 'desc');
 
         $temperatureRecords = $query->get();
 
@@ -48,6 +55,11 @@ class TemperatureRecordController extends Controller
      */
     public function store(Request $request)
     {
+        $existingRecord = TemperatureRecord::where('admission_id', $request->admission_id)->first();
+        if ($existingRecord) {
+            return Redirect::back()->withErrors(['admission_id' => 'A temperature record for this admission already exists.']);
+        }
+
         $temperatureRecord = TemperatureRecord::create([
             'admission_id' => $request->admission_id,
             'nurse_id' => Auth::id(),
@@ -69,20 +81,46 @@ class TemperatureRecordController extends Controller
         }
 
         if (!$temperatureRecord) {
-            Log::info('Redireccionando a: ', ['route' => route('temperatureRecords.create', ['id' => $id, 'admission_id' => $admission_id])]);
             return Redirect::route('temperatureRecords.create', [
                 'admission_id' => $admission_id
             ]);
         }
 
+        $canCreate = true;
+        $currentTurn = $this->turnService->getCurrentTurn();
+
+        try {
+            $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+                ->whereBetween('created_at', [
+                    Carbon::now()->startOfDay()->addHours($currentTurn[0]),
+                    Carbon::now()->startOfDay()->addHours($currentTurn[1]),
+                ])
+                ->first();
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            $lastTemperature = null;
+        }
+
+        if ($lastTemperature) {
+            $canCreate = false;
+
+            if ($lastTemperature->nurse_id != Auth::id()) {
+                $lastTemperature = null;
+            }
+        }
+
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
-        $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->get();
+        $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+            ->orderBy('created_at', 'asc')
+            ->get();
 
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,
             'admissions' => $admissions,
             'details' => $details,
+            'lastTemperature' => $lastTemperature,
+            'canCreate' => $canCreate,
         ]);
     }
 

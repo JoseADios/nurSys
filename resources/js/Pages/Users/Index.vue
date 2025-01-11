@@ -2,38 +2,37 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Ingresos
+                Usuarios
             </h2>
         </template>
 
+        <!-- <div class="text-white">Datos: {{ admission_id }}</div> -->
+
+
         <div class="flex flex-col items-center justify-center mt-10">
-            <Link :href="route('admissions.create')"
+            <Link :href="route('users.create')"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear nuevo ingreso
+            Crear Usuario
             </Link>
         </div>
-
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
-                            Paciente
+                            Nombre
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Cama
+                            Rol
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Doctor
+                            Especialidad
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Diagnostico de ingreso
+                            Position
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Estado
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Fecha de ingreso
+                            Area
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Acciones
@@ -41,45 +40,28 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="admission in admissions" :key="admission.id"
+                    <tr v-for="user in users" :key="user.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
-                                admission.patient.second_surname }}
+                            {{ user.name }} {{ user.last_name }}
                         </th>
                         <td class="px-6 py-4">
-                            {{ admission.bed.number }}
+                            Role
                         </td>
                         <td class="px-6 py-4">
-                            {{ admission.doctor.name }} {{ admission.doctor.last_name }}
+                            {{ user.specialty }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ admission.admission_dx }}
+                            {{ user.position }}
                         </td>
                         <td class="px-6 py-4">
-                            <div v-if="admission.in_process">
-                                <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">En proceso</span>
-                            </div>
-                            <div v-else>
-                                <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">Alta</span>
-                            </div>
+                            {{ user.area }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ admission.created_at }}
-                        </td>
-                        <td class="px-6 py-4">
-                            <Link class="ml-2 text-blue-500 hover:text-blue-800"
-                                :href="route('admissions.show', admission.id)">
-                            Ver
+                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('users.show', user.id)"
+                                as="button">
+                            Abrir
                             </Link>
-                            <Link class="text-green-500 hover:text-green-800"
-                                :href="route('admissions.edit', admission.id)">
-                            Editar
-                            </Link>
-                            <!-- <Link method="delete" class="ml-2 text-red-500 hover:text-red-800"
-                                :href="route('admissions.destroy', admission.id)" as="button">
-                            Eliminar
-                            </Link> -->
                         </td>
                     </tr>
                 </tbody>
@@ -88,21 +70,24 @@
 
     </AppLayout>
 </template>
-
 <script>
+
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
-        admissions: Array,
+        users: Array,
     },
     components: {
         AppLayout,
         Link,
     },
+    methods: {
+        goBack() {
+            this.$inertia.visit(document.referrer)
+        }
+    }
 
 }
-
-
 </script>

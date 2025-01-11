@@ -40,8 +40,12 @@ class UserFactory extends Factory
             'last_name' => fake()->lastName(),
             'identification_card' => fake()->numerify('###########'),
             'phone' => fake()->phoneNumber(),
+            'area' => fake()->word(),
+            'exequatur' => fake()->numerify('###########'),
             'birthdate' => fake()->date(),
             'position' => fake()->word(),
+            'specialty' => fake()->word(),
+            'address' => fake()->address(),
             'comment' => fake()->sentence(),
         ];
     }

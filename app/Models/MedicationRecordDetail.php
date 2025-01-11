@@ -16,6 +16,7 @@ class MedicationRecordDetail extends Model
         'fc',
         'interval_in_hours',
         'active',
+        'start_time'
     ];
 
     public function medicationRecord(): BelongsTo

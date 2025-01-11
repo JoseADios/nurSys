@@ -40,6 +40,15 @@
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Escribe el diagnóstico final..."></input>
 
+
+                     <!-- Hora de Inicio -->
+                <label for="start_time" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
+                    Hora de Inicio
+                </label>
+                <input required id="start_time" type="time" v-model="form.start_time"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Hora de Inicio..." />
+
                 <div class="flex justify-end mt-6 mb-2">
                     <Link :href="route('medicationRecords.show', medicationRecordDetail.medication_record_id)"
                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
@@ -75,6 +84,7 @@ export default {
                 route: this.medicationRecordDetail.route,
                 fc: this.medicationRecordDetail.fc,
                 interval_in_hours: this.medicationRecordDetail.interval_in_hours,
+                start_time: this.medicationRecordDetail.start_time
             }
         }
     },

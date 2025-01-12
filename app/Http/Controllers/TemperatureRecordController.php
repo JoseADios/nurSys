@@ -55,7 +55,9 @@ class TemperatureRecordController extends Controller
      */
     public function store(Request $request)
     {
-        $existingRecord = TemperatureRecord::where('admission_id', $request->admission_id)->first();
+        $existingRecord = TemperatureRecord::where('admission_id', $request->admission_id)
+            ->where('active', 1)
+            ->first();
         if ($existingRecord) {
             return Redirect::back()->withErrors(['admission_id' => 'A temperature record for this admission already exists.']);
         }
@@ -75,7 +77,9 @@ class TemperatureRecordController extends Controller
     public function show($id, $admission_id = null)
     {
         if ($admission_id) {
-            $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)->first();
+            $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)
+                ->where('active', 1)
+                ->first();
         } else {
             $temperatureRecord = TemperatureRecord::find($id);
         }
@@ -137,7 +141,9 @@ class TemperatureRecordController extends Controller
      */
     public function update(Request $request, TemperatureRecord $temperatureRecord)
     {
-        //
+        $temperatureRecord->update($request->all());
+
+        return back()->with('succes', 'Registro actualizado correctamente');
     }
 
     /**

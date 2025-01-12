@@ -69,12 +69,36 @@
                             </p>
                         </div>
 
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de
-                                impresión</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ temperatureRecord.impression_diagnosis }}
-                            </p>
+                        <div v-if="!isVisible"
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
+                            <div class="">
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ temperatureRecord.impression_diagnosis }}
+                                </p>
+                            </div>
+                            <button @click="toggleEditRecord" class="text-blue-500 mr-3">Edit</button>
+                        </div>
+
+                        <div v-if="isVisible" class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            <form @submit.prevent="submitUpdateRecord">
+
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de
+                                    impresión
+                                </h3>
+                                <textarea v-model="formRecord.impression_diagnosis"
+                                    class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </textarea>
+                                <div class="mt-3">
+                                    <button
+                                        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                        @click="toggleEditRecord">Cancelar</button>
+
+                                    <button type="submit"
+                                        class="focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+                                        Aceptar</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -205,6 +229,7 @@ export default {
     },
     data() {
         return {
+            isVisible: false,
             formDetail: {
                 temperature_record_id: this.temperatureRecord.id,
                 temperature: 37,
@@ -212,6 +237,9 @@ export default {
                 urinations: 1,
             },
             chartKey: 0,
+            formRecord: {
+                impression_diagnosis: this.temperatureRecord.impression_diagnosis
+            },
         }
     },
     computed: {
@@ -247,6 +275,13 @@ export default {
                 }
             });
 
+        },
+        submitUpdateRecord() {
+            this.$inertia.put(route('temperatureRecords.update', this.temperatureRecord.id), this.formRecord)
+            this.isVisible = false
+        },
+        toggleEditRecord() {
+            this.isVisible = !this.isVisible
         },
         goBack() {
             this.$inertia.visit(document.referrer)

@@ -6,7 +6,7 @@
             </h2>
         </template>
 
-        <!-- <div class="text-white">Datos: {{ nurseRecords }}</div> -->
+        <!-- <div class="text-white">{{ admission_id }}</div> -->
 
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
@@ -79,7 +79,10 @@ import { Link } from '@inertiajs/vue3';
 export default {
     props: {
         nurseRecords: Array,
-        admission_id: Number,
+        admission_id: {
+            type: Number,
+            default: null
+        }
     },
     components: {
         AppLayout,

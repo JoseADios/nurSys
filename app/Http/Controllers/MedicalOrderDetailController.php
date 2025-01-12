@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MedicalOrderDetail;
+use App\Models\MedicationNotification;
 use Illuminate\Http\Request;
 
 class MedicalOrderDetailController extends Controller
@@ -34,6 +35,7 @@ class MedicalOrderDetailController extends Controller
             'regime' => $request->regime,
             'created_at' => now()
         ]);
+
 
         return back()->with('success', 'Detalle agregado exitosamente');
     }

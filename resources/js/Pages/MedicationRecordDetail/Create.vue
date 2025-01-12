@@ -54,7 +54,15 @@
                 </label>
                 <input required id="interval_in_hours" type="text" v-model="form.interval_in_hours"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Firma del doctor..." />
+                    placeholder="Intervalo en Horas..." />
+
+                     <!-- Hora de Inicio -->
+                <label for="start_time" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
+                    Hora de Inicio
+                </label>
+                <input required id="start_time" type="time" v-model="form.start_time"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Hora de Inicio..." />
 
                 <!-- Botones -->
                 <div class="flex justify-end mt-6 mb-2">
@@ -97,6 +105,7 @@ export default {
                 route: '',
                 fc: '',
                 interval_in_hours: '',
+                start_time: '',
             },
         };
     },

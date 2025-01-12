@@ -108,6 +108,7 @@ class MedicationRecordController extends Controller
     {
         $validated = $request->validate([
             'diagnosis' => 'required|string|max:255',
+            //crear doctor id = con auth ID
             'diet' => 'required|string|max:255',
             'referrals' => 'required|string|max:255',
             'pending_studies' => 'required|string|max:255',

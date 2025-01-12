@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('medication_record_detail_id')
                 ->constrained()->onDelete('restrict');
             $table->foreignId('nurse_id')
-                ->constrained(table:'users')->onDelete('restrict');
+                ->constrained(table:'users')->onDelete('restrict')->nullable();
             $table->boolean('applied')->default(false);
             $table->dateTime('scheduled_time');
             $table->dateTime('administered_time')->nullable();

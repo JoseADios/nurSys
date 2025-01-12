@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdmissionController;
 use App\Http\Controllers\MedicalOrderController;
 use App\Http\Controllers\MedicalOrderDetailController;
+use App\Http\Controllers\MedicationNotificationController;
 use App\Http\Controllers\MedicationRecordController;
 use App\Http\Controllers\MedicationRecordDetailController;
 use App\Http\Controllers\NurseRecordController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\NurseRecordDetailController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\TemperatureDetailController;
 use App\Http\Controllers\TemperatureRecordController;
+use App\Models\MedicationNotification;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +39,7 @@ Route::middleware([
     Route::resource('medicationRecords', MedicationRecordController::class);
     Route::resource('medicationRecordDetails', MedicationRecordDetailController::class);
     Route::get('medicationRecordDetails/create/{medicationRecord}',[MedicationRecordDetailController::class,'create'])->name('create');
+    Route::resource('medicationNotification', MedicationNotificationController::class);
     Route::resource('nurseRecords', NurseRecordController::class);
     Route::resource('nurseRecordDetails', NurseRecordDetailController::class);
     Route::resource('medicalOrders', MedicalOrderController::class);

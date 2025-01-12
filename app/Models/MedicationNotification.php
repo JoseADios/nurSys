@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class MedicationNotification extends Model
 {
     protected $fillable = [
-        'medication_detail_id',
+        'medication_record_detail_id',
         'nurse_id',
         'applied',
         'administered_time',
+        'scheduled_time',
         'nurse_sign',
         'active'
     ];

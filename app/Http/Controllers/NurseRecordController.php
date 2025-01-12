@@ -52,7 +52,7 @@ class NurseRecordController extends Controller
             ->get();
         return Inertia::render('NurseRecords/Create', [
             'admissions' => $admissions,
-            'admission_id' => $admission_id
+            'admission_id' => intval($admission_id)
         ]);
     }
 

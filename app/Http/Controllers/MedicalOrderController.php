@@ -47,7 +47,7 @@ class MedicalOrderController extends Controller
             ->get();
         return Inertia::render('MedicalOrders/Create', [
             'admissions' => $admissions,
-            'admission_id' => $admission_id
+            'admission_id' => intval($admission_id)
         ]);
     }
 

@@ -56,7 +56,7 @@ export default {
             this.$inertia.post(route('medicalOrders.store'), this.form)
         },
         goBack() {
-            this.$inertia.visit(document.referrer)
+            window.history.back()
         }
     }
 }

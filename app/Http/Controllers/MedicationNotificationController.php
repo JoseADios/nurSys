@@ -77,7 +77,15 @@ class MedicationNotificationController extends Controller
 
             //dd('entro al if',$medication_notification);
 
-        }
+        } elseif($request->has('revert')){
+
+                $medication_notification->update([
+                    'nurse_id' => Auth::id(),
+                    'administered_time' =>now(),
+                    'applied'=>false
+                ]);
+
+                }
         else {
             $medication_notification->update($request->all());
         }

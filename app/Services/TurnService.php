@@ -22,11 +22,11 @@ class TurnService
         foreach ($this->turns as $key => $turn) {
             if ($turn[0] < $turn[1]) {
                 if ($currentHour >= $turn[0] && $currentHour < $turn[1]) {
-                    return $key;
+                    return $turn;
                 }
             } else {
                 if ($currentHour >= $turn[0] || $currentHour < $turn[1]) {
-                    return $key;
+                    return $turn;
                 }
             }
         }

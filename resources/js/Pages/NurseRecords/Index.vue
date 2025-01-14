@@ -6,7 +6,7 @@
             </h2>
         </template>
 
-        <div class="text-white">{{ typeof(admission_id) }}</div>
+        <!-- <div class="text-white">{{ typeof(admission_id) }}</div> -->
 
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">

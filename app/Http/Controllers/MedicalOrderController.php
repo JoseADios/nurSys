@@ -6,15 +6,19 @@ use App\Models\Admission;
 use App\Models\MedicalOrder;
 use App\Models\MedicalOrderDetail;
 use App\Models\Regime;
+use App\Services\FirmService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class MedicalOrderController extends Controller
 {
+    protected $firmService;
+    public function __construct(FirmService $firmService)
+    {
+        $this->firmService = $firmService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -107,21 +111,9 @@ class MedicalOrderController extends Controller
         ]);
 
         if ($request->signature) {
-            if ($medicalOrder->doctor_sign && Storage::disk('public')->exists($medicalOrder->doctor_sign)) {
-                Storage::disk('public')->delete($medicalOrder->doctor_sign);
-            }
-
-            if ($request->doctor_sign) {
-                $firm = str_replace('data:image/png;base64,', '', $request->doctor_sign);
-                $firm = str_replace(' ', '+', $firm);
-                $decodedImage = base64_decode($firm);
-
-                $fileName = 'signatures/' . Str::uuid() . '.png';
-                Storage::disk('public')->put($fileName, $decodedImage);
-                $validated['doctor_sign'] = $fileName;
-            } else {
-                $validated['doctor_sign'] = null;
-            }
+            $fileName = $this->firmService
+                ->createImag($request->doctor_sign, $medicalOrder->doctor_sign);
+            $validated['doctor_sign'] = $fileName;
         }
 
         $medicalOrder->update($validated);

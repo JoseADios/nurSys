@@ -67,16 +67,27 @@
                         <div id="applied" class="text-sm text-green-500 dark:text-green-400 mt-1">
                         APLICADO
                     </div>
+                    <button class="text-white" @click="revert(notification.id)">
+                        Revertir
+                    </button>
                     </div>
                     <div v-else>
                         <div id="no-applied" class="text-sm text-red-500 dark:text-red-400 mt-1">
                        NO APLICADO
-                    </div>
-                    </div>
 
+
+                    </div>
+                    <div v-if="Firstnoapplied(notification)">
                         <button class="text-white" @click="markAsAdministered(notification.id)">
                         administrar
                     </button>
+                    </div>
+
+
+
+                    </div>
+
+
                 </div>
             </div>
         </div>
@@ -99,27 +110,44 @@ export default {
         AppLayout,
         Link,
     },
+
     methods: {
+        Firstnoapplied(notification){
+            const firstNotApplied = this.notifications.find((n) => n.applied === 0);
+      return firstNotApplied && firstNotApplied.id === notification.id;
+
+        },
     markAsAdministered(id) {
 
         const notification = this.notifications;
-
-
         if (notification) {
-
-            const newAppliedValue = notification.applied === 1 ? 0 : 1;
-
-
+           const newAppliedValue = notification.applied === 1 ? 0 : 1;
             notification.applied = newAppliedValue;
-
-
             this.$inertia.put(route('medicationNotification.update', id), {
                 markAsAdministered: true
             })
         }
-    }
-}
+    },
+        revert(id) {
 
+    const notification = this.notifications;
+
+
+    if (notification) {
+
+        const newAppliedValue = notification.applied === 0 ? 0 : 1;
+
+
+        notification.applied = newAppliedValue;
+
+
+        this.$inertia.put(route('medicationNotification.update', id), {
+            revert: true
+        })
+    }
+    }
+
+}
 
 
 }

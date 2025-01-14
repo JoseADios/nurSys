@@ -14,19 +14,19 @@
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <button @click="goBack"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="font-medium">Volver</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-medium">Volver</span>
                     </button>
                 </div>
 
                 <!-- Patient and Record Information -->
                 <div class="grid md:grid-cols-2 gap-6 p-8 bg-gray-50 dark:bg-gray-700">
                     <div class="space-y-4">
-                        <div v-if="!isVisible"
+                        <div v-if="!isVisibleAdm"
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
                             <div class="">
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
@@ -37,7 +37,7 @@
                             <button @click="toggleEditAdmission" class="text-blue-500 mr-3">Edit</button>
                         </div>
 
-                        <div v-if="isVisible" class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div v-if="isVisibleAdm" class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <form @submit.prevent="submitAdmission">
 
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Seleccionar
@@ -67,7 +67,9 @@
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ medicalOrder.admission.patient.first_name }} {{ medicalOrder.admission.patient.first_surname }} {{ medicalOrder.admission.patient.second_surname }}
+                                {{ medicalOrder.admission.patient.first_name }} {{
+                                    medicalOrder.admission.patient.first_surname
+                                }} {{ medicalOrder.admission.patient.second_surname }}
                             </p>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
@@ -191,12 +193,48 @@
                     </div>
                 </div>
 
+                <!-- mostrar imagen firma -->
+                <div v-show="!isVisibleEditSign" class="my-4 flex items-center flex-col justify-center">
+                    <div>
+                        <h2 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Firma
+                        </h2>
+                        <img v-if="medicalOrder.doctor_sign" :src="`/storage/${medicalOrder.doctor_sign}`" alt="Firma">
+                        <div v-else>
+                            <div class="text-gray-500 dark:text-gray-400 my-16">
+                                No hay firma disponible
+                            </div>
+                        </div>
+                    </div>
+                    <button @click="isVisibleEditSign = true"
+                        class="mt-4 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                        Editar</button>
+                </div>
+                <!-- Campo de firma -->
+                <div v-show="isVisibleEditSign" class="my-4">
+                    <form @submit.prevent="submitSignature" class=" flex items-center flex-col justify-center">
+                        <label for="doctor_sign"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Firma
+                        </label>
 
+                        <SignaturePad v-model="formSignature.doctor_sign" input-name="doctor_sign" />
+                        <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
+
+                        <div class="my-4">
+                            <button type="button"
+                                class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                @click="isVisibleEditSign = false">Cancelar</button>
+                            <button
+                                class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
+                                type="submit">Guardar firma</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
-
-        <DialogModal :show="isOpen" @close="isOpen = false">
+        <DialogModal :show="isVisibleDetail" @close="isVisibleDetail = false">
             <!-- Header del modal -->
             <template #title>
                 Editar orden
@@ -252,7 +290,7 @@
                     class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
                     Actualizar
                 </button>
-                <button @click="isOpen = false"
+                <button @click="isVisibleDetail = false"
                     class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                     Cerrar
                 </button>
@@ -267,6 +305,7 @@ import DialogModal from '@/Components/DialogModal.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue'
 
 
 export default {
@@ -274,6 +313,7 @@ export default {
         AppLayout,
         Link,
         DialogModal,
+        SignaturePad,
     },
     props: {
         medicalOrder: Object,
@@ -284,28 +324,33 @@ export default {
         admissions: Array,
         details: Array,
         regimes: Array,
-        // datos: Object
     },
     data() {
         return {
             selectedDetail: ref(null),
-            isOpen: ref(false),
+            isVisibleDetail: ref(false),
             originalSuspendedState: ref(null),
+            isVisibleEditSign: ref(null),
+            signatureError: false,
 
-            isVisible: false,
+            isVisibleAdm: false,
             formAdmission: {
-                admission_id: this.medicalOrder.admission_id
+                admission_id: this.medicalOrder.admission_id,
             },
             formDetail: {
                 medical_order_id: this.medicalOrder.id,
                 order: null,
                 regime: null,
+            },
+            formSignature: {
+                doctor_sign: this.medicalOrder.doctor_sign,
+                signature: true,
             }
         }
     },
     methods: {
         toggleEditAdmission() {
-            this.isVisible = !this.isVisible;
+            this.isVisibleAdm = !this.isVisibleAdm;
         },
         submitAdmission() {
             this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formAdmission)
@@ -326,20 +371,26 @@ export default {
         },
         submitUpdateDetail() {
             this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail)
-            this.isVisible = false
-            this.isOpen = false
-
+            this.isVisibleAdm = false
+            this.isVisibleDetail = false
+        },
+        submitSignature() {
+            if (!this.formSignature.doctor_sign) {
+                this.signatureError = true;
+                return;
+            }
+            this.signatureError = false;
+            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formSignature);
+            this.isVisibleEditSign = false
         },
         openEditModal(detail) {
             this.selectedDetail = { ...detail };
             this.originalSuspendedState = detail.suspended_at;
-            this.isOpen = true;
+            this.isVisibleDetail = true;
         },
         goBack() {
             this.$inertia.visit(document.referrer)
         },
     }
-
-
 }
 </script>

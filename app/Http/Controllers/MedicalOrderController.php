@@ -9,6 +9,8 @@ use App\Models\Regime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class MedicalOrderController extends Controller
@@ -63,7 +65,6 @@ class MedicalOrderController extends Controller
         ]);
 
         return Redirect::route('medicalOrders.edit', $medicalOrder->id);
-
     }
 
     /**
@@ -100,7 +101,30 @@ class MedicalOrderController extends Controller
      */
     public function update(Request $request, MedicalOrder $medicalOrder)
     {
-        $medicalOrder->update($request->all());
+        $validated = $request->validate([
+            'admission_id' => 'numeric',
+            'doctor_sign' => 'string',
+        ]);
+
+        if ($request->signature) {
+            if ($medicalOrder->doctor_sign && Storage::disk('public')->exists($medicalOrder->doctor_sign)) {
+                Storage::disk('public')->delete($medicalOrder->doctor_sign);
+            }
+
+            if ($request->doctor_sign) {
+                $firm = str_replace('data:image/png;base64,', '', $request->doctor_sign);
+                $firm = str_replace(' ', '+', $firm);
+                $decodedImage = base64_decode($firm);
+
+                $fileName = 'signatures/' . Str::uuid() . '.png';
+                Storage::disk('public')->put($fileName, $decodedImage);
+                $validated['doctor_sign'] = $fileName;
+            } else {
+                $validated['doctor_sign'] = null;
+            }
+        }
+
+        $medicalOrder->update($validated);
 
         return back()->with('succes', 'Registro actualizado correctamente');
     }

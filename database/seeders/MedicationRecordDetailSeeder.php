@@ -22,7 +22,6 @@ class MedicationRecordDetailSeeder extends Seeder
             'fc' => 2,
             'start_time' => now(),
             'interval_in_hours' => 8,
-            'interval_in_hours' => 4,
             'active' => true,
         ]);
 

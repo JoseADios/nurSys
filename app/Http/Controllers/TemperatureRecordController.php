@@ -124,7 +124,7 @@ class TemperatureRecordController extends Controller
                 $query->select('id', 'name', 'last_name');
             }])
             ->orderBy('created_at', 'asc')
-            ->get(['temperature', 'evacuations', 'urinations', 'nurse_id']);
+            ->get(['temperature', 'evacuations', 'urinations', 'nurse_id', 'created_at']);
 
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,

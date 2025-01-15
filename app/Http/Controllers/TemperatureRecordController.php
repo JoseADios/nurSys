@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
+use App\Services\FirmService;
 use App\Services\TurnService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,14 +17,17 @@ use Carbon\Carbon;
 class TemperatureRecordController extends Controller
 {
     protected $turnService;
+    protected $firmService;
+
+    public function __construct(TurnService $turnService, FirmService $firmService)
+    {
+        $this->turnService = $turnService;
+        $this->firmService = $firmService;
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function __construct(TurnService $turnService)
-    {
-        $this->turnService = $turnService;
-    }
-
     public function index(Request $request)
     {
         $query = TemperatureRecord::with('admission.patient', 'admission.bed', 'nurse')
@@ -55,7 +59,9 @@ class TemperatureRecordController extends Controller
      */
     public function store(Request $request)
     {
-        $existingRecord = TemperatureRecord::where('admission_id', $request->admission_id)->first();
+        $existingRecord = TemperatureRecord::where('admission_id', $request->admission_id)
+            ->where('active', 1)
+            ->first();
         if ($existingRecord) {
             return Redirect::back()->withErrors(['admission_id' => 'A temperature record for this admission already exists.']);
         }
@@ -75,7 +81,9 @@ class TemperatureRecordController extends Controller
     public function show($id, $admission_id = null)
     {
         if ($admission_id) {
-            $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)->first();
+            $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)
+                ->where('active', 1)
+                ->first();
         } else {
             $temperatureRecord = TemperatureRecord::find($id);
         }
@@ -137,7 +145,22 @@ class TemperatureRecordController extends Controller
      */
     public function update(Request $request, TemperatureRecord $temperatureRecord)
     {
-        //
+        $validated = $request->validate([
+            'admission_id' => 'numeric',
+            'impression_diagnosis' => 'string',
+            'nurse_sign' => 'string',
+        ]);
+
+        if ($request->signature) {
+            $fileName = $this->firmService
+                ->createImag($request->nurse_sign, $temperatureRecord->nurse_sign);
+            $validated['nurse_sign'] = $fileName;
+        }
+
+        $temperatureRecord->update($validated);
+
+
+        return back()->with('succes', 'Registro actualizado correctamente');
     }
 
     /**

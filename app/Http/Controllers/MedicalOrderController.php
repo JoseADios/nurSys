@@ -6,6 +6,7 @@ use App\Models\Admission;
 use App\Models\MedicalOrder;
 use App\Models\MedicalOrderDetail;
 use App\Models\Regime;
+use App\Services\FirmService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -13,6 +14,11 @@ use Inertia\Inertia;
 
 class MedicalOrderController extends Controller
 {
+    protected $firmService;
+    public function __construct(FirmService $firmService)
+    {
+        $this->firmService = $firmService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -47,7 +53,7 @@ class MedicalOrderController extends Controller
             ->get();
         return Inertia::render('MedicalOrders/Create', [
             'admissions' => $admissions,
-            'admission_id' => $admission_id
+            'admission_id' => intval($admission_id)
         ]);
     }
 
@@ -63,7 +69,6 @@ class MedicalOrderController extends Controller
         ]);
 
         return Redirect::route('medicalOrders.edit', $medicalOrder->id);
-
     }
 
     /**
@@ -100,7 +105,18 @@ class MedicalOrderController extends Controller
      */
     public function update(Request $request, MedicalOrder $medicalOrder)
     {
-        $medicalOrder->update($request->all());
+        $validated = $request->validate([
+            'admission_id' => 'numeric',
+            'doctor_sign' => 'string',
+        ]);
+
+        if ($request->signature) {
+            $fileName = $this->firmService
+                ->createImag($request->doctor_sign, $medicalOrder->doctor_sign);
+            $validated['doctor_sign'] = $fileName;
+        }
+
+        $medicalOrder->update($validated);
 
         return back()->with('succes', 'Registro actualizado correctamente');
     }

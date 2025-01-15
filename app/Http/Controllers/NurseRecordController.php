@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
+use App\Services\FirmService;
 use App\Services\TurnService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,13 +16,17 @@ use Inertia\Inertia;
 class NurseRecordController extends Controller
 {
     protected $turnService;
+    protected $firmService;
+
+    public function __construct(TurnService $turnService, FirmService $firmService)
+    {
+        $this->turnService = $turnService;
+        $this->firmService = $firmService;
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function __construct(TurnService $turnService)
-    {
-        $this->turnService = $turnService;
-    }
     public function index(Request $request)
     {
         $query = NurseRecord::with('nurse', 'admission.patient')
@@ -52,7 +57,7 @@ class NurseRecordController extends Controller
             ->get();
         return Inertia::render('NurseRecords/Create', [
             'admissions' => $admissions,
-            'admission_id' => $admission_id
+            'admission_id' => intval($admission_id)
         ]);
     }
 
@@ -71,10 +76,13 @@ class NurseRecordController extends Controller
             ])
             ->first();
 
+
         if ($nurseRecordsInTurn) {
             dd('Ya existe una hoja en este turno por el mismo usuario, abrir >>>', $nurseRecordsInTurn);
             return back()->with('error', 'Ya hay una temperatura creada en el mismo turno');
         }
+
+        dd($request->admission_id);
 
         $nurseRecord = NurseRecord::create([
             'admission_id' => $request->admission_id,
@@ -120,11 +128,19 @@ class NurseRecordController extends Controller
      */
     public function update(Request $request, NurseRecord $nurseRecord)
     {
-        $nurseRecord->update($request->all());
-
-        return Redirect::route('nurseRecords.edit', [
-            'nurseRecord' => $nurseRecord->id,
+        $validated = $request->validate([
+            'admission_id' => 'numeric',
+            'nurse_sign' => 'string',
         ]);
+
+        if ($request->signature) {
+            $fileName = $this->firmService
+                ->createImag($request->nurse_sign, $nurseRecord->nurse_sign);
+            $validated['nurse_sign'] = $fileName;
+        }
+
+        $nurseRecord->update($validated);
+
     }
 
     /**

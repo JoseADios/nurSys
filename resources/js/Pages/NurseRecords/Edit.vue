@@ -14,12 +14,12 @@
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <button @click="goBack"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="font-medium">Volver</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-medium">Volver</span>
                     </button>
                 </div>
 
@@ -177,6 +177,48 @@
                 </div>
 
 
+                <section class=" p-8 space-y-4 ">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Firma</h3>
+
+                    <!-- mostrar imagen firma -->
+                    <div v-show="!isVisibleEditSign">
+                        <div class="flex items-center flex-col justify-center">
+
+                            <img v-if="nurseRecord.nurse_sign" :src="`/storage/${nurseRecord.nurse_sign}`" alt="Firma">
+                            <div v-else>
+                                <div class="text-gray-500 dark:text-gray-400 my-16">
+                                    No hay firma disponible
+                                </div>
+                            </div>
+                            <button @click="isVisibleEditSign = true"
+                                class="mt-4 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                                Editar</button>
+                        </div>
+                    </div>
+                    <!-- Campo de firma -->
+                    <div v-show="isVisibleEditSign" class="my-4">
+                        <form @submit.prevent="submitSignature" class="flex items-center flex-col justify-center">
+                            <!-- <label for="nurse_sign"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Firma
+                            </label> -->
+
+                            <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" />
+                            <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
+
+                            <div class="my-4">
+                                <button type="button"
+                                    class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                    @click="isVisibleEditSign = false">Cancelar</button>
+                                <button
+                                    class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
+                                    type="submit">Guardar firma</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+
             </div>
         </div>
     </AppLayout>
@@ -185,6 +227,8 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
+import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue'
+import { ref } from 'vue';
 
 export default {
     props: {
@@ -204,10 +248,14 @@ export default {
     components: {
         AppLayout,
         Link,
+        SignaturePad,
     },
     data() {
         return {
             isVisible: false,
+            isVisibleEditSign: ref(null),
+            signatureError: false,
+
             formAdmission: {
                 admission_id: this.nurseRecord.admission_id
             },
@@ -215,6 +263,10 @@ export default {
                 nurse_record_id: this.nurseRecord.id,
                 medication: null,
                 comment: null,
+            },
+            formSignature: {
+                nurse_sign: this.nurseRecord.nurse_sign,
+                signature: true,
             }
         }
     },
@@ -238,6 +290,15 @@ export default {
                         };
                     }
                 });
+        },
+        submitSignature() {
+            if (!this.formSignature.nurse_sign) {
+                this.signatureError = true;
+                return;
+            }
+            this.signatureError = false;
+            this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formSignature);
+            this.isVisibleEditSign = false
         },
         goBack() {
             this.$inertia.visit(document.referrer)

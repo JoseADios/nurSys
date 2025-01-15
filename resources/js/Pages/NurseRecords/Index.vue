@@ -6,7 +6,7 @@
             </h2>
         </template>
 
-        <!-- <div class="text-white">Datos: {{ nurseRecords }}</div> -->
+        <!-- <div class="text-white">{{ typeof(admission_id) }}</div> -->
 
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
@@ -60,7 +60,8 @@
                             {{ nurseRecord.created_at }}
                         </td>
                         <td class="px-6 py-4">
-                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('nurseRecords.edit',nurseRecord.id)" as="button">
+                            <Link class="ml-2 text-green-500 hover:text-green-800"
+                                :href="route('nurseRecords.edit', nurseRecord.id)" as="button">
                             Abrir
                             </Link>
                         </td>
@@ -79,7 +80,10 @@ import { Link } from '@inertiajs/vue3';
 export default {
     props: {
         nurseRecords: Array,
-        admission_id: Number,
+        admission_id: {
+            type: Number,
+            default: null
+        }
     },
     components: {
         AppLayout,

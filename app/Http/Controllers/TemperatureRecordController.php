@@ -120,8 +120,11 @@ class TemperatureRecordController extends Controller
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
         $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+            ->with(['nurse' => function ($query) {
+                $query->select('id', 'name', 'last_name');
+            }])
             ->orderBy('created_at', 'asc')
-            ->get();
+            ->get(['temperature', 'evacuations', 'urinations', 'nurse_id']);
 
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,

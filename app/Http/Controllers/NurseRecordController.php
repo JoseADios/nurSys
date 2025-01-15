@@ -78,11 +78,8 @@ class NurseRecordController extends Controller
 
 
         if ($nurseRecordsInTurn) {
-            dd('Ya existe una hoja en este turno por el mismo usuario, abrir >>>', $nurseRecordsInTurn);
-            return back()->with('error', 'Ya hay una temperatura creada en el mismo turno');
+            return back()->with('error', 'Ya tienes un registro creado en este mismo turno');
         }
-
-        dd($request->admission_id);
 
         $nurseRecord = NurseRecord::create([
             'admission_id' => $request->admission_id,

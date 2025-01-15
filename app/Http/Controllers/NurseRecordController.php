@@ -15,13 +15,6 @@ use Inertia\Inertia;
 
 class NurseRecordController extends Controller
 {
-    protected $firmService;
-
-    public function __construct(FirmService $firmService)
-    {
-        $this->firmService = $firmService;
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -125,13 +118,15 @@ class NurseRecordController extends Controller
      */
     public function update(Request $request, NurseRecord $nurseRecord)
     {
+        $firmService = new FirmService;
+
         $validated = $request->validate([
             'admission_id' => 'numeric',
             'nurse_sign' => 'string',
         ]);
 
         if ($request->signature) {
-            $fileName = $this->firmService
+            $fileName = $firmService
                 ->createImag($request->nurse_sign, $nurseRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
         }

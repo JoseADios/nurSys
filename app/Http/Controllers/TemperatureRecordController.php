@@ -16,12 +16,6 @@ use Carbon\Carbon;
 
 class TemperatureRecordController extends Controller
 {
-    protected $firmService;
-
-    public function __construct(FirmService $firmService)
-    {
-        $this->firmService = $firmService;
-    }
 
     /**
      * Display a listing of the resource.
@@ -146,6 +140,7 @@ class TemperatureRecordController extends Controller
      */
     public function update(Request $request, TemperatureRecord $temperatureRecord)
     {
+        $firmService = new FirmService;
         $validated = $request->validate([
             'admission_id' => 'numeric',
             'impression_diagnosis' => 'string',
@@ -153,7 +148,7 @@ class TemperatureRecordController extends Controller
         ]);
 
         if ($request->signature) {
-            $fileName = $this->firmService
+            $fileName = $firmService
                 ->createImag($request->nurse_sign, $temperatureRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
         }

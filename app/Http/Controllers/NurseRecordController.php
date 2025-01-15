@@ -15,15 +15,6 @@ use Inertia\Inertia;
 
 class NurseRecordController extends Controller
 {
-    protected $turnService;
-    protected $firmService;
-
-    public function __construct(TurnService $turnService, FirmService $firmService)
-    {
-        $this->turnService = $turnService;
-        $this->firmService = $firmService;
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -67,22 +58,21 @@ class NurseRecordController extends Controller
     public function store(Request $request)
     {
         // validar que en este turno no exista una hoja del mismo usuario
-        $currentTurn = $this->turnService->getCurrentTurn();
+        $turnService = new TurnService();
+        $currentTurn = $turnService->getCurrentTurn();
+        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
 
         $nurseRecordsInTurn = NurseRecord::where('nurse_id', Auth::id())
             ->whereBetween('created_at', [
-                Carbon::now()->startOfDay()->addHours($currentTurn[0]),
-                Carbon::now()->startOfDay()->addHours($currentTurn[1]),
+                $dateRange['start'],
+                $dateRange['end']
             ])
             ->first();
 
 
         if ($nurseRecordsInTurn) {
-            dd('Ya existe una hoja en este turno por el mismo usuario, abrir >>>', $nurseRecordsInTurn);
-            return back()->with('error', 'Ya hay una temperatura creada en el mismo turno');
+            return back()->with('error', 'Ya tienes un registro creado en este mismo turno');
         }
-
-        dd($request->admission_id);
 
         $nurseRecord = NurseRecord::create([
             'admission_id' => $request->admission_id,
@@ -128,13 +118,15 @@ class NurseRecordController extends Controller
      */
     public function update(Request $request, NurseRecord $nurseRecord)
     {
+        $firmService = new FirmService;
+
         $validated = $request->validate([
             'admission_id' => 'numeric',
             'nurse_sign' => 'string',
         ]);
 
         if ($request->signature) {
-            $fileName = $this->firmService
+            $fileName = $firmService
                 ->createImag($request->nurse_sign, $nurseRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
         }

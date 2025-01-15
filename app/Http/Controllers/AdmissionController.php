@@ -26,6 +26,10 @@ class AdmissionController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $admissions->each(function ($admission) {
+            $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
+        });
+
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
         ]);

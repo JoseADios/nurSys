@@ -20,7 +20,8 @@ class MedicationRecordDetailSeeder extends Seeder
             'dose' => '100cc',
             'route' => 'Oral',
             'fc' => 2,
-            'start_time'=> '',
+            'start_time' => now(),
+            'interval_in_hours' => 8,
             'interval_in_hours' => 4,
             'active' => true,
         ]);
@@ -32,7 +33,7 @@ class MedicationRecordDetailSeeder extends Seeder
             'dose' => '200cc',
             'route' => 'Intra Venosa',
             'fc' => 1,
-            'start_time'=> '',
+            'start_time' => now(),
             'interval_in_hours' => 2,
             'active' => true,
         ]);

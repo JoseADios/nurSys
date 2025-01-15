@@ -10,13 +10,11 @@ use Illuminate\Support\Facades\Auth;
 
 class TemperatureDetailController extends Controller
 {
-    protected $turnService;
+
     /**
      * Display a listing of the resource.
      */
-    public function __construct(TurnService $turnService) {
-        $this->turnService = $turnService;
-    }
+
 
     public function index()
     {
@@ -36,19 +34,20 @@ class TemperatureDetailController extends Controller
      */
     public function store(Request $request)
     {
-        $currentTurn = $this->turnService->getCurrentTurn();
+        $turnService = new TurnService();
+        $currentTurn = $turnService->getCurrentTurn();
+        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
 
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $request->temperature_record_id)
             ->whereBetween('created_at', [
-                Carbon::now()->startOfDay()->addHours($currentTurn[0]),
-                Carbon::now()->startOfDay()->addHours($currentTurn[1]),
+                $dateRange['start'],
+                $dateRange['end']
             ])
             ->first();
 
         if ($lastTemperature) {
             return back()->with('error', 'Ya hay una temperatura creada en el mismo turno');
         }
-
 
         TemperatureDetail::create([
             'temperature_record_id' => $request->temperature_record_id,

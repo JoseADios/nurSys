@@ -106,7 +106,9 @@ export default defineComponent({
                         formatter: (value, { dataPointIndex }) => {
                             const evacuation = this.temperatureData[dataPointIndex].evacuations;
                             const urination = this.temperatureData[dataPointIndex].urinations;
-                            return `Temperatura: ${value} °C<br>Evacuaciones: ${evacuation}<br>Micciones: ${urination}`;
+                            const nurse = this.temperatureData[dataPointIndex].nurse;
+                            const nurseName = `${nurse.name} ${nurse.last_name}`;
+                            return `Temperatura: ${value} °C<br>Evacuaciones: ${evacuation}<br>Micciones: ${urination}<br>Enfermero: ${nurseName}`;
                         }
                     }
                 },

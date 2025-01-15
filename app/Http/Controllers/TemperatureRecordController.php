@@ -16,14 +16,6 @@ use Carbon\Carbon;
 
 class TemperatureRecordController extends Controller
 {
-    protected $turnService;
-    protected $firmService;
-
-    public function __construct(TurnService $turnService, FirmService $firmService)
-    {
-        $this->turnService = $turnService;
-        $this->firmService = $firmService;
-    }
 
     /**
      * Display a listing of the resource.
@@ -80,6 +72,10 @@ class TemperatureRecordController extends Controller
      */
     public function show($id, $admission_id = null)
     {
+        $turnService = new TurnService();
+        $currentTurn = $turnService->getCurrentTurn();
+        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+
         if ($admission_id) {
             $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)
                 ->where('active', 1)
@@ -95,19 +91,14 @@ class TemperatureRecordController extends Controller
         }
 
         $canCreate = true;
-        $currentTurn = $this->turnService->getCurrentTurn();
 
-        try {
-            $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-                ->whereBetween('created_at', [
-                    Carbon::now()->startOfDay()->addHours($currentTurn[0]),
-                    Carbon::now()->startOfDay()->addHours($currentTurn[1]),
-                ])
-                ->first();
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            $lastTemperature = null;
-        }
+        $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+            ->whereBetween('created_at', [
+                $dateRange['start'],
+                $dateRange['end']
+            ])
+            ->first();
+
 
         if ($lastTemperature) {
             $canCreate = false;
@@ -120,8 +111,11 @@ class TemperatureRecordController extends Controller
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
         $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+            ->with(['nurse' => function ($query) {
+                $query->select('id', 'name', 'last_name');
+            }])
             ->orderBy('created_at', 'asc')
-            ->get();
+            ->get(['temperature', 'evacuations', 'urinations', 'nurse_id', 'created_at']);
 
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,
@@ -145,6 +139,7 @@ class TemperatureRecordController extends Controller
      */
     public function update(Request $request, TemperatureRecord $temperatureRecord)
     {
+        $firmService = new FirmService;
         $validated = $request->validate([
             'admission_id' => 'numeric',
             'impression_diagnosis' => 'string',
@@ -152,7 +147,7 @@ class TemperatureRecordController extends Controller
         ]);
 
         if ($request->signature) {
-            $fileName = $this->firmService
+            $fileName = $firmService
                 ->createImag($request->nurse_sign, $temperatureRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
         }

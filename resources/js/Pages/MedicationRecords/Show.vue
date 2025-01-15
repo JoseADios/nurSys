@@ -91,6 +91,7 @@
                         <div class="flex-grow">
                             <div class="font-semibold text-gray-900 dark:text-white">
                                Medicamento: {{ detail.drug }}
+
                             </div>
                             <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
                                Dosis: {{ detail.dose }}
@@ -110,7 +111,7 @@
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             <!-- Editar -->
-                            <Link :href="route('medicationRecordDetails.edit', detail.id )"
+                            <Link  v-if="!hasApplied(detail)":href="route('medicationRecordDetails.edit', detail.id )"
                                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                 fill="currentColor">
@@ -174,6 +175,9 @@ export default{
                         };
                     }
                 });
+            },
+            hasApplied(detail){
+                return detail.medication_notification?.some(item => item.applied === 1) ?? false;
             }
         }
 }

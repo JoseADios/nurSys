@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admission;
+use App\Models\MedicationNotification;
 use App\Models\MedicationRecordDetail;
 use Inertia\Inertia;
 use App\Models\MedicationRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-
+use Illuminate\Support\Facades\Log;
 
 class MedicationRecordController extends Controller
 {
@@ -76,13 +77,13 @@ class MedicationRecordController extends Controller
     {
         try{
         $medicationRecord = MedicationRecord::where('id',$medicationRecord->id)->with(['admission.patient','admission.bed','doctor','medicationRecordDetail'])->first();
-        $details = MedicationRecordDetail::where('medication_record_id', operator: $medicationRecord->id)->orderBy('created_at', 'desc')->get();
-
+        $details = MedicationRecordDetail::where('medication_record_id', operator: $medicationRecord->id)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
 
 
         return Inertia::render('MedicationRecords/Show', [
             'medicationRecord' => $medicationRecord,
             'details' => $details,
+
 
 
         ]);

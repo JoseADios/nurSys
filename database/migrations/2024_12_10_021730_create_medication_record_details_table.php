@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('dose');
             $table->string('route');
             $table->integer('fc');
+            $table->time('start_time');
             $table->integer('interval_in_hours');
             $table->boolean('active')->default(true);
             $table->timestamps();

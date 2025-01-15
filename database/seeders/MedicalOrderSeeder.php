@@ -24,7 +24,6 @@ class MedicalOrderSeeder extends Seeder
             [
                 'admission_id' => $admissions->first()->id,
                 'doctor_id' => $doctors->first()->id,
-                'doctor_sign' => 'Dr. Smith Signature',
                 'active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -32,7 +31,6 @@ class MedicalOrderSeeder extends Seeder
             [
                 'admission_id' => $admissions->skip(1)->first()->id,
                 'doctor_id' => $doctors->skip(1)->first()->id,
-                'doctor_sign' => 'Dr. Johnson Digital Sign',
                 'active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -40,7 +38,6 @@ class MedicalOrderSeeder extends Seeder
             [
                 'admission_id' => $admissions->skip(2)->first()->id,
                 'doctor_id' => $doctors->skip(2)->first()->id,
-                'doctor_sign' => 'Dr. Williams Electronic Sign',
                 'active' => true,
                 'created_at' => now(),
                 'updated_at' => now()

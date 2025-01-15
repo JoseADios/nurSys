@@ -27,7 +27,7 @@
                             Doctor
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Diagnostico de ingreso
+                            Dias ingresado
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Estado
@@ -54,7 +54,7 @@
                             {{ admission.doctor.name }} {{ admission.doctor.last_name }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ admission.admission_dx }}
+                            {{ admission.days_admitted }}
                         </td>
                         <td class="px-6 py-4">
                             <div v-if="admission.in_process">

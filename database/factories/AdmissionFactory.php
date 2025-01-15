@@ -23,7 +23,7 @@ class AdmissionFactory extends Factory
             'doctor_id' => $this->faker->randomElement(range(1, 10)),
             'admission_dx' => $this->faker->sentence(),
             'final_dx' => $this->faker->sentence(),
-            'created_at' => $this->faker->date(),
+            'created_at' => now(),
             'comment' => $this->faker->sentence(),
             'active' => true,
         ];

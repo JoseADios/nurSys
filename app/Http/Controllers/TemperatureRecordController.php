@@ -92,7 +92,6 @@ class TemperatureRecordController extends Controller
 
         $canCreate = true;
 
-
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->whereBetween('created_at', [
                 $dateRange['start'],

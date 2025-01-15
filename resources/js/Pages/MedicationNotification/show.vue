@@ -67,9 +67,13 @@
                         <div id="applied" class="text-sm text-green-500 dark:text-green-400 mt-1">
                         APLICADO
                     </div>
+                    <div v-if="lastApplied(notification)">
                     <button class="text-white" @click="revert(notification.id)">
                         Revertir
                     </button>
+                </div>
+
+
                     </div>
                     <div v-else>
                         <div id="no-applied" class="text-sm text-red-500 dark:text-red-400 mt-1">
@@ -117,6 +121,12 @@ export default {
       return firstNotApplied && firstNotApplied.id === notification.id;
 
         },
+        lastApplied(notification) {
+    const lastApplied = this.notifications.reduceRight((acc, n) => {
+        return acc || (n.applied === 1 ? n : null);
+    }, null);
+    return lastApplied && lastApplied.id === notification.id;
+},
     markAsAdministered(id) {
 
         const notification = this.notifications;

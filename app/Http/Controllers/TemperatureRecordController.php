@@ -16,12 +16,10 @@ use Carbon\Carbon;
 
 class TemperatureRecordController extends Controller
 {
-    protected $turnService;
     protected $firmService;
 
-    public function __construct(TurnService $turnService, FirmService $firmService)
+    public function __construct(FirmService $firmService)
     {
-        $this->turnService = $turnService;
         $this->firmService = $firmService;
     }
 
@@ -80,6 +78,10 @@ class TemperatureRecordController extends Controller
      */
     public function show($id, $admission_id = null)
     {
+        $turnService = new TurnService();
+        $currentTurn = $turnService->getCurrentTurn();
+        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+
         if ($admission_id) {
             $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)
                 ->where('active', 1)
@@ -95,19 +97,15 @@ class TemperatureRecordController extends Controller
         }
 
         $canCreate = true;
-        $currentTurn = $this->turnService->getCurrentTurn();
 
-        try {
-            $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-                ->whereBetween('created_at', [
-                    Carbon::now()->startOfDay()->addHours($currentTurn[0]),
-                    Carbon::now()->startOfDay()->addHours($currentTurn[1]),
-                ])
-                ->first();
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            $lastTemperature = null;
-        }
+
+        $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+            ->whereBetween('created_at', [
+                $dateRange['start'],
+                $dateRange['end']
+            ])
+            ->first();
+
 
         if ($lastTemperature) {
             $canCreate = false;

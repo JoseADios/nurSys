@@ -15,12 +15,10 @@ use Inertia\Inertia;
 
 class NurseRecordController extends Controller
 {
-    protected $turnService;
     protected $firmService;
 
-    public function __construct(TurnService $turnService, FirmService $firmService)
+    public function __construct(FirmService $firmService)
     {
-        $this->turnService = $turnService;
         $this->firmService = $firmService;
     }
 
@@ -67,12 +65,14 @@ class NurseRecordController extends Controller
     public function store(Request $request)
     {
         // validar que en este turno no exista una hoja del mismo usuario
-        $currentTurn = $this->turnService->getCurrentTurn();
+        $turnService = new TurnService();
+        $currentTurn = $turnService->getCurrentTurn();
+        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
 
         $nurseRecordsInTurn = NurseRecord::where('nurse_id', Auth::id())
             ->whereBetween('created_at', [
-                Carbon::now()->startOfDay()->addHours($currentTurn[0]),
-                Carbon::now()->startOfDay()->addHours($currentTurn[1]),
+                $dateRange['start'],
+                $dateRange['end']
             ])
             ->first();
 

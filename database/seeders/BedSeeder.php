@@ -17,7 +17,6 @@ class BedSeeder extends Seeder
             DB::table('beds')->insert([
                 'number' => $number,
                 'room' => '310',
-                'status' => 'free',
                 'active' => true,
             ]);
         }

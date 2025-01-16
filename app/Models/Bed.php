@@ -10,12 +10,16 @@ class Bed extends Model
     protected $fillable = [
         'number',
         'room',
-        'status',
         'active',
     ];
 
     public function admission(): HasOne
     {
         return $this->hasOne(Admission::class);
+    }
+
+    public function isAvailable(): bool
+    {
+        return !$this->admission()->where('in_process', true)->exists();
     }
 }

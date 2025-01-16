@@ -102,11 +102,13 @@ class AdmissionController extends Controller
         $patient = $admission->patient;
         $bed = $admission->bed;
         $doctor = $admission->doctor;
+        $daysIngressed = intval($admission->created_at->diffInDays(now()));
 
         return Inertia::render('Admissions/Show', [
             'admission' => $admission,
             'patient' => $patient,
             'bed' => $bed,
+            'daysIngressed' => $daysIngressed,
             'doctor' => $doctor,
         ]);
     }

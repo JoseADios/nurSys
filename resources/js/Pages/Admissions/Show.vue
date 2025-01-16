@@ -13,22 +13,30 @@
                 </div>
 
                 <!-- Estado de Ingreso -->
-                <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md mb-6">
-                    <div class="flex items-center space-x-2">
-                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Estado:</h3>
-                        <span v-bind:class="admission.in_process ? 'bg-blue-500' : 'bg-green-500'"
-                            class="text-white text-sm font-semibold px-2 py-1 rounded-full">
-                            {{ admission.in_process ? 'En progreso' : 'Completado' }}
-                        </span>
+                <div class="m-8 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md mb-6">
+                    <div class="flex items-center justify-evenly space-x-2">
+                        <div class="flex space-x-2 items-center">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Estado:</h3>
+                            <span v-bind:class="admission.in_process ? 'bg-green-500' : 'bg-gray-500'"
+                                class="text-white text-sm font-semibold px-2 py-1 rounded-full">
+                                {{ admission.in_process ? 'Ingresado' : 'Dado de alta' }}
+                            </span>
+                        </div>
+                        <div v-if="admission.in_process" class="flex space-x-2 items-center">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Días ingresado:</h3>
+                            <span class="text-gray-900 dark:text-white text-sm font-semibold">
+                                {{ daysIngressed }}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="p-8 space-y-8">
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Cama</h3>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ admission.bed.number }}
+                                Sala: {{ admission.bed.room }}, Cama: {{ admission.bed.number }}
                             </p>
                         </div>
 
@@ -166,6 +174,7 @@ import { Link } from '@inertiajs/vue3';
 export default {
     props: {
         admission: Object,
+        daysIngressed: Number,
     },
     components: {
         AppLayout,

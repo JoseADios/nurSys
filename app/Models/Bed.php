@@ -17,4 +17,9 @@ class Bed extends Model
     {
         return $this->hasOne(Admission::class);
     }
+
+    public function isAvailable(): bool
+    {
+        return !$this->admission()->where('in_process', true)->exists();
+    }
 }

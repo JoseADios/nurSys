@@ -19,7 +19,7 @@ export default defineComponent({
         },
         height: {
             type: Number,
-            default: 250, // altura por defecto más pequeña
+            default: 250,
         }
     },
     data() {
@@ -31,14 +31,14 @@ export default defineComponent({
                     background: 'transparent',
                     foreColor: '#e5e7eb',
                     toolbar: {
-                        show: false // oculta la barra de herramientas para ahorrar espacio
+                        show: false
                     }
                 },
                 title: {
                     text: 'Temperaturas Registradas',
                     align: 'center',
                     style: {
-                        fontSize: '18px', // título más pequeño
+                        fontSize: '18px',
                         fontWeight: 'bold',
                         color: '#f3f4f6',
                     },
@@ -52,20 +52,10 @@ export default defineComponent({
                     borderColor: '#374151',
                     strokeDashArray: 5,
                     padding: {
-                        top: 0,
+                        top: 20,
                         right: 10,
                         bottom: 0,
                         left: 10
-                    },
-                    xaxis: {
-                        lines: {
-                            show: true
-                        }
-                    },
-                    yaxis: {
-                        lines: {
-                            show: true
-                        }
                     },
                 },
                 xaxis: {
@@ -73,7 +63,7 @@ export default defineComponent({
                     labels: {
                         style: {
                             colors: '#e5e7eb',
-                            fontSize: '11px', // texto más pequeño
+                            fontSize: '11px',
                         },
                         rotate: -45,
                         rotateAlways: false,
@@ -90,15 +80,20 @@ export default defineComponent({
                         text: 'Temperatura (°C)',
                         style: {
                             color: '#e5e7eb',
-                            fontSize: '12px', // texto más pequeño
+                            fontSize: '12px',
                         },
                     },
                     labels: {
                         style: {
                             colors: '#e5e7eb',
-                            fontSize: '11px', // texto más pequeño
+                            fontSize: '11px',
                         },
                     },
+                },
+                annotations: {
+                    position: 'back',
+                    yaxis: [],
+                    xaxis: []
                 },
                 tooltip: {
                     theme: 'dark',
@@ -113,7 +108,7 @@ export default defineComponent({
                     }
                 },
                 markers: {
-                    size: 4, // marcadores más pequeños
+                    size: 4,
                     colors: ['#3b82f6'],
                     strokeColors: '#fff',
                     strokeWidth: 2,
@@ -133,14 +128,54 @@ export default defineComponent({
     methods: {
         processTemperatureData() {
             this.chartOptions.xaxis.categories = this.temperatureData.map(item =>
-                new Date(item.created_at).toLocaleString('es-ES', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })
+                new Date(item.created_at).toLocaleString('es-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })
             );
             this.chartSeries[0].data = this.temperatureData.map(item => item.temperature);
+
+            const xAxisAnnotations = [];
+            let currentDay = '';
+            let dayCounter = 0;
+
+            this.temperatureData.forEach((item, index) => {
+                const date = new Date(item.created_at);
+                const dayStr = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+
+                if (dayStr !== currentDay) {
+                    if (index > 0) {
+                        // Colocar la anotación en el índice medio entre los días
+                        const midIndex = index - Math.floor((index - (this.temperatureData.findIndex(d => d.created_at === item.created_at) + 1)) / 2);
+
+                        xAxisAnnotations.push({
+                            x : this.chartOptions.xaxis.categories[midIndex],
+                            strokeDashArray : 0,
+                            borderColor : 'rgba(255, 255, 255, 0.15)',
+                            label : {
+                                borderColor : 'transparent',
+                                style : {
+                                    color : '#e5e7eb',
+                                    background : '#374151',
+                                    padding : { left : 10, right : 10, top : 2, bottom : 2 }
+                                },
+                                text : `Día ${dayCounter}`,
+                                position : 'top',
+                                text : dayCounter === 0 ? 'I N G' : `Día ${dayCounter}`,
+                                position : 'top',
+                                orientation : 'horizontal'
+                            }
+                        });
+
+                        // Incrementar el contador de días
+                        dayCounter++;
+
+                        // Ajustar la posición Y para centrar la etiqueta
+                        xAxisAnnotations[xAxisAnnotations.length - 1].label.offsetY = -15; // Ajusta este valor según sea necesario
+                    }
+
+                    currentDay = dayStr;
+                }
+            });
+
+            this.chartOptions.annotations.xaxis = xAxisAnnotations;
         },
     },
 });

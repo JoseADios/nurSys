@@ -99,7 +99,6 @@ class TemperatureRecordController extends Controller
             ])
             ->first();
 
-
         if ($lastTemperature) {
             $canCreate = false;
 

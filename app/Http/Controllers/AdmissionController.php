@@ -112,11 +112,11 @@ class AdmissionController extends Controller
      */
     public function edit(Admission $admission)
     {
-        $patients = Patient::all();
+        $patients = Patient::all()->filter->isAvailable();
+        $patients->add(Patient::find($admission->patient_id));
         $doctors = User::all();
         $beds = Bed::all()->filter->isAvailable();
-        $bedSelected = Bed::find($admission->bed_id);
-        $beds->add($bedSelected);
+        $beds->add(Bed::find($admission->bed_id));
 
         return Inertia::render('Admissions/Edit', [
             'admission' => $admission,
@@ -135,18 +135,11 @@ class AdmissionController extends Controller
             'patient_id' => 'required',
         ]);
 
-        if ($request->has('errors')) {
-            return back()->withErrors($request->get('errors'));
-        }
-
         if ($request->in_process) {
-            // validar que no exista otro patient con el process active
-            $admissionExist = Admission::where('patient_id', $request->patient_id)
-                ->where('in_process', 1)->get();
+            $patient = Patient::find($request->patient_id);
 
-
-            if (!$admissionExist->isEmpty()) {
-                return back()->with('error', 'Ya existe otro registro de ingreso en proceso para otro paciente, de el alta al otro para activar este.');
+            if (!$patient->isAvailable()) {
+            return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente, de el alta al otro para activar este.');
             }
         }
 

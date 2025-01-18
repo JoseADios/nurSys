@@ -50,5 +50,6 @@ class DatabaseSeeder extends Seeder
         $this->call(TemperatureRecordSeeder::class);
         $this->call(TemperatureDetailSeeder::class);
         $this->call(MaritalStatusSeeder::class);
+        $this->call(PermissionSeeder::class);
     }
 }

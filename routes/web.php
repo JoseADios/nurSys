@@ -48,5 +48,8 @@ Route::middleware([
         ->name('temperatureRecords.customShow');
     Route::resource('temperatureDetails', TemperatureDetailController::class);
     Route::resource('patients', PatientController::class);
-    Route::resource('users', UserController::class);
+
+    Route::group(['middleware' => ['role:admin']], function () {
+        Route::resource('users', UserController::class);
+    });
 });

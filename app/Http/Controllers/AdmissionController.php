@@ -38,7 +38,6 @@ class AdmissionController extends Controller
             'admissions' => $admissions,
             'can' => [
                 'create' => Gate::allows('create', Admission::class),
-                'edit' => Gate::allows('edit', Admission::class),
             ]
         ]);
     }
@@ -106,6 +105,7 @@ class AdmissionController extends Controller
     public function show(Admission $admission)
     {
         $this->authorize('view', $admission);
+        $user = User::find(Auth::id());
 
         $patient = $admission->patient;
         $bed = $admission->bed;
@@ -120,8 +120,9 @@ class AdmissionController extends Controller
             'doctor' => $doctor,
             'can' => [
                 'create' => Gate::allows('create', Admission::class),
-                'edit' => Gate::allows('edit', Admission::class),
+                'update' => Gate::allows('update', $admission),
                 'delete' => Gate::allows('delete', $admission),
+                'createOrder' => $user->hasRole(['doctor', 'admin']) && $admission->doctor_id == $user->id,
             ]
         ]);
     }
@@ -132,7 +133,7 @@ class AdmissionController extends Controller
     public function edit(Admission $admission)
     {
 
-        $this->authorize('edit', Admission::class);
+        $this->authorize('update', $admission);
 
         $patients = Patient::all()->filter->isAvailable();
         $patients->add(Patient::find($admission->patient_id));
@@ -153,7 +154,7 @@ class AdmissionController extends Controller
      */
     public function update(Request $request, Admission $admission)
     {
-        $this->authorize('edit', Admission::class);
+        $this->authorize('update', $admission);
 
         $request->validate([
             'patient_id' => 'required',

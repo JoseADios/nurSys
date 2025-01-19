@@ -101,10 +101,12 @@
                                 </svg>
                                 Hojas de Enfermería
                                 </Link>
-                                <Link :href="route('nurseRecords.create', { admission_id: admission.id })"
-                                    class="flex w-24 items-center justify-center bg-green-400 text-white font-semibold rounded-lg p-2 hover:bg-green-500 transition duration-300 ease-in-out">
-                                    Nuevo +
-                                </Link>
+                                <AccessGate>
+                                    <Link :href="route('nurseRecords.create', { admission_id: admission.id })"
+                                        class="flex w-24 items-center justify-center bg-green-400 text-white font-semibold rounded-lg p-2 hover:bg-green-500 transition duration-300 ease-in-out">
+                                        Nuevo +
+                                    </Link>
+                                </AccessGate>
                             </div>
 
                             <div class="flex flex-col space-y-2 items-center">
@@ -130,7 +132,7 @@
                                 </svg>
                                 Órdenes Médicas
                                 </Link>
-                                <Link :href="route('medicalOrders.create', { admission_id: admission.id })"
+                                <Link v-if="can.createOrder" :href="route('medicalOrders.create', { admission_id: admission.id })"
                                     class="flex w-24 items-center justify-center bg-blue-400 text-white font-semibold rounded-lg p-2 hover:bg-blue-500 transition duration-300 ease-in-out">
                                 Nuevo +
                                 </Link>
@@ -139,7 +141,7 @@
                     </div>
 
                     <div class="flex justify-end space-x-4">
-                        <Link v-if="can.edit" :href="route('admissions.edit', admission.id)"
+                        <Link v-if="can.update" :href="route('admissions.edit', admission.id)"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
@@ -168,6 +170,7 @@
 </template>
 
 <script>
+import AccessGate from '@/Components/Access/AccessGate.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
@@ -180,6 +183,7 @@ export default {
     components: {
         AppLayout,
         Link,
+        AccessGate,
     },
     methods: {
         formatDate(dateString) {

@@ -17,6 +17,10 @@
                     </ul>
                 </div>
 
+                <!-- <div class="text-white">
+                    {{ hasRoles[0] }}
+                </div> -->
+
                 <form @submit.prevent="submit" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Left Column -->
@@ -43,18 +47,8 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="role" class="block text-sm font-medium text-white">Role</label>
-                                <select id="role" v-model="form.role"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
-                                    <option value="enfermero">Enfermero</option>
-                                    <option value="administrador">Administrador</option>
-                                    <option value="doctor">Doctor</option>
-                                    <option value="recepcionista">Recepcionista</option>
-                                </select>
-                            </div>
-
-                            <div class="space-y-2">
-                                <label for="identification_card" class="block text-sm font-medium text-white">Cédula</label>
+                                <label for="identification_card"
+                                    class="block text-sm font-medium text-white">Cédula</label>
                                 <input type="text" id="identification_card" v-model="form.identification_card"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
@@ -65,6 +59,21 @@
                                 <input type="text" id="exequatur" v-model="form.exequatur"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label for="role" class="block text-sm font-medium text-white">Role</label>
+                                <select id="role" v-model="form.role" name="role"
+                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
+                                    <option v-for="role in roles" :key="role.id" :value="role.name">{{ role.name }}</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label for="address" class="block text-sm font-medium text-white">Dirección</label>
+                                <textarea id="address" v-model="form.address" rows="4"
+                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+                                    required></textarea>
                             </div>
                         </div>
 
@@ -92,7 +101,8 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="birthdate" class="block text-sm font-medium text-white">Fecha de Nacimiento</label>
+                                <label for="birthdate" class="block text-sm font-medium text-white">Fecha de
+                                    Nacimiento</label>
                                 <input type="date" id="birthdate" v-model="form.birthdate"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
@@ -111,21 +121,17 @@
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"></textarea>
                             </div>
 
-                            <div class="space-y-2">
-                                <label for="address" class="block text-sm font-medium text-white">Dirección</label>
-                                <textarea id="address" v-model="form.address" rows="4"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required></textarea>
-                            </div>
+
                         </div>
+
                     </div>
 
                     <!-- Buttons -->
                     <div class="flex justify-end space-x-4 pt-4">
-                        <button @click="goBack" type="button"
+                        <Link :href="route('users.index')" type="button"
                             class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
                             Cancelar
-                        </button>
+                        </Link>
                         <button type="submit"
                             class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
                             Actualizar
@@ -139,14 +145,18 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
         user: Object,
+        roles: Array,
+        hasRoles: Array,
         errors: Object,
     },
     components: {
         AppLayout,
+        Link
     },
     data() {
         return {
@@ -154,7 +164,7 @@ export default {
                 name: this.user.name,
                 last_name: this.user.last_name,
                 email: this.user.email,
-                role: this.user.role,
+                role: this.hasRoles[0],
                 identification_card: this.user.identification_card,
                 exequatur: this.user.exequatur,
                 specialty: this.user.specialty,

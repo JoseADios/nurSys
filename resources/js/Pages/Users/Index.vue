@@ -46,7 +46,7 @@
                             {{ user.name }} {{ user.last_name }}
                         </th>
                         <td class="px-6 py-4">
-                            Role
+                            {{ user.roles[0] ? user.roles[0].name : 'N/A' }}
                         </td>
                         <td class="px-6 py-4">
                             {{ user.specialty }}
@@ -61,6 +61,10 @@
                             <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('users.show', user.id)"
                                 as="button">
                             Abrir
+                            </Link>
+                            <Link class="text-blue-500 hover:text-blue-800"
+                                :href="route('users.edit', user.id)">
+                                Editar
                             </Link>
                         </td>
                     </tr>

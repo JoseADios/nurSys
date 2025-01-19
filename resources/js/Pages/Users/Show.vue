@@ -26,10 +26,10 @@
                             <p class="text-white">{{ user.email }}</p>
                         </div>
 
-                        <!-- <div class="space-y-2">
+                        <div class="space-y-2">
                             <h3 class="text-sm font-medium text-gray-400">Role</h3>
-                            <p class="text-white">{{ user.role }}</p>
-                        </div> -->
+                            <p class="text-white">{{ user.roles[0] ? user.roles[0].name : 'N/A' }}</p>
+                        </div>
 
                         <div class="space-y-2">
                             <h3 class="text-sm font-medium text-gray-400">Cédula</h3>
@@ -83,10 +83,10 @@
 
                 <!-- Action Buttons -->
                 <div class="flex justify-end space-x-4 pt-6">
-                    <button @click="goBack" type="button"
+                    <Link :href="route('users.index')" type="button"
                         class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
                         Volver
-                    </button>
+                </Link>
                     <Link :href="route('users.edit', user.id)"
                         class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
                         Editar

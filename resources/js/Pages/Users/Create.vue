@@ -26,7 +26,7 @@
                     <span class="block sm:inline">{{ success }}</span>
                 </div>
 
-                <div class="text-white">{{ reset }}</div>
+                <!-- <div class="text-white">{{ reset }}</div> -->
 
                 <!-- Form -->
                 <form @submit.prevent="submit" class="space-y-6">
@@ -56,17 +56,6 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="role" class="block text-sm font-medium text-white">Role</label>
-                                <select id="role" v-model="form.role"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
-                                    <option value="enfermero">Enfermero</option>
-                                    <option value="administrador">Administrador</option>
-                                    <option value="doctor">Doctor</option>
-                                    <option value="recepcionista">Recepcionista</option>
-                                </select>
-                            </div>
-
-                            <div class="space-y-2">
                                 <label for="password" class="block text-sm font-medium text-white">Contraseña</label>
                                 <input type="password" id="password" v-model="form.password"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
@@ -83,6 +72,14 @@
                             </div>
 
                             <div class="space-y-2">
+                                <label for="role" class="block text-sm font-medium text-white">Role</label>
+                                <select id="role" v-model="form.role"
+                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
+                                    <option v-for="role in roles" :key="role" :value="role.id">{{ role.name }}</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
                                 <label for="identification_card"
                                     class="block text-sm font-medium text-white">Cédula</label>
                                 <input type="text" id="identification_card" v-model="form.identification_card"
@@ -96,6 +93,7 @@
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
                             </div>
+
                         </div>
 
                         <!-- Right Column -->
@@ -150,6 +148,7 @@
                             </div>
 
                         </div>
+
                     </div>
 
                     <!-- Buttons -->
@@ -178,6 +177,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 
 export default {
     props: {
+        roles: Array,
         errors: {
             type: Object,
             default: () => ({})

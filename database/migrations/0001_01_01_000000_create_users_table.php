@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('password');
 
             // campos agregados
-            $table->string('identification_card')->nullable();
-            $table->string('exequatur')->nullable();
+            $table->string('identification_card')->nullable()->unique();
+            $table->string('exequatur')->nullable()->unique();
             $table->string('specialty')->nullable();
             $table->string('area')->nullable();
             $table->string('phone')->nullable();

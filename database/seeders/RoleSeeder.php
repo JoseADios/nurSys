@@ -36,7 +36,7 @@ class RoleSeeder extends Seeder
         $role->syncPermissions(['view medicalOrders', 'create medicalOrders']);
 
         $user = User::where('name', 'Test User')->first();
-        $user->assignRole('doctor');
+        $user->assignRole('admin');
     }
 
 }

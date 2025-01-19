@@ -139,7 +139,7 @@
                     </div>
 
                     <div class="flex justify-end space-x-4">
-                        <Link :href="route('admissions.edit', admission.id)"
+                        <Link v-if="can.edit" :href="route('admissions.edit', admission.id)"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
@@ -150,7 +150,7 @@
                         Editar
                         </Link>
 
-                        <button @click="confirmDelete"
+                        <button v-if="can.delete" @click="confirmDelete"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold rounded-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -175,6 +175,7 @@ export default {
     props: {
         admission: Object,
         daysIngressed: Number,
+        can: Array,
     },
     components: {
         AppLayout,

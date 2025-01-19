@@ -6,21 +6,25 @@ use App\Models\Admission;
 use App\Models\Bed;
 use App\Models\Patient;
 use App\Models\User;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
-use Symfony\Component\HttpKernel\HttpCache\Ssi;
 
 class AdmissionController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $this->authorize('viewAny', Admission::class);
+
         $admissions = Admission::with(['bed', 'patient', 'doctor'])
             ->where('active', '=', 1)
             ->orderBy('created_at', 'desc')
@@ -32,6 +36,10 @@ class AdmissionController extends Controller
 
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
+            'can' => [
+                'create' => Gate::allows('create', Admission::class),
+                'edit' => Gate::allows('edit', Admission::class),
+            ]
         ]);
     }
 
@@ -40,6 +48,8 @@ class AdmissionController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Admission::class);
+
         $doctors = User::all();
         $beds = Bed::all()->filter->isAvailable();
         $patients = Patient::all()->filter->isAvailable();
@@ -56,6 +66,8 @@ class AdmissionController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('store', Admission::class);
+
         $request->validate([
             'patient_id' => 'required',
             'admission_dx' => 'required',
@@ -93,6 +105,8 @@ class AdmissionController extends Controller
      */
     public function show(Admission $admission)
     {
+        $this->authorize('view', $admission);
+
         $patient = $admission->patient;
         $bed = $admission->bed;
         $doctor = $admission->doctor;
@@ -104,6 +118,11 @@ class AdmissionController extends Controller
             'bed' => $bed,
             'daysIngressed' => $daysIngressed,
             'doctor' => $doctor,
+            'can' => [
+                'create' => Gate::allows('create', Admission::class),
+                'edit' => Gate::allows('edit', Admission::class),
+                'delete' => Gate::allows('delete', $admission),
+            ]
         ]);
     }
 
@@ -112,6 +131,9 @@ class AdmissionController extends Controller
      */
     public function edit(Admission $admission)
     {
+
+        $this->authorize('edit', Admission::class);
+
         $patients = Patient::all()->filter->isAvailable();
         $patients->add(Patient::find($admission->patient_id));
         $doctors = User::all();
@@ -131,6 +153,8 @@ class AdmissionController extends Controller
      */
     public function update(Request $request, Admission $admission)
     {
+        $this->authorize('edit', Admission::class);
+
         $request->validate([
             'patient_id' => 'required',
         ]);
@@ -139,7 +163,7 @@ class AdmissionController extends Controller
             $patient = Patient::find($request->patient_id);
 
             if (!$patient->isAvailable()) {
-            return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente, de el alta al otro para activar este.');
+                return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente, de el alta al otro para activar este.');
             }
         }
 
@@ -152,6 +176,8 @@ class AdmissionController extends Controller
      */
     public function destroy(Admission $admission)
     {
+        $this->authorize('delete', $admission);
+
         $admission->update(['active' => 0, 'in_process' => 0]);
 
         // desactivar todas las ordenes médicas relacionadas

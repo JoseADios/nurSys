@@ -26,6 +26,15 @@ class DatabaseSeeder extends Seeder
             'phone' => '8094563245',
 
         ]);
+        User::factory()->create([
+            'name' => 'San',
+            'last_name' => 'Pedro',
+            'email' => 'spedro@example.com',
+            'password' => '12345678',
+            'identification_card' => '6548443131',
+            'phone' => '8093563245',
+
+        ]);
 
         $this->call(PermissionSeeder::class);
         $this->call(RoleSeeder::class);

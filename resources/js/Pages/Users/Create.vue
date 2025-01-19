@@ -73,7 +73,7 @@
 
                             <div class="space-y-2">
                                 <label for="role" class="block text-sm font-medium text-white">Role</label>
-                                <select id="role" v-model="form.role"
+                                <select required id="role" v-model="form.role"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                                     <option v-for="role in roles" :key="role" :value="role.id">{{ role.name }}</option>
                                 </select>

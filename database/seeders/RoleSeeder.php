@@ -33,7 +33,7 @@ class RoleSeeder extends Seeder
         $role->syncPermissions($permissions);
 
         $role = Role::findByName('doctor');
-        $role->syncPermissions($permissions);
+        $role->syncPermissions(['view medicalOrders', 'create medicalOrders']);
 
         $user = User::where('name', 'Test User')->first();
         $user->assignRole('doctor');

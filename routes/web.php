@@ -11,7 +11,6 @@ use App\Http\Controllers\NurseRecordDetailController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\TemperatureDetailController;
 use App\Http\Controllers\TemperatureRecordController;
-use App\Models\MedicationNotification;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;

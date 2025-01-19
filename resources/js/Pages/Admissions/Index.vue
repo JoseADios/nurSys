@@ -21,7 +21,7 @@
                             Paciente
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Cama
+                            Ubicación
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Doctor
@@ -48,7 +48,7 @@
                                 admission.patient.second_surname }}
                         </th>
                         <td class="px-6 py-4">
-                            {{ admission.bed.number }}
+                           Sala: {{ admission.bed.room }}, Cama: {{ admission.bed.number }}
                         </td>
                         <td class="px-6 py-4">
                             {{ admission.doctor.name }} {{ admission.doctor.last_name }}

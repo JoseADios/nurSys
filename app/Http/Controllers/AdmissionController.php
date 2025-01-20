@@ -122,7 +122,8 @@ class AdmissionController extends Controller
                 'create' => Gate::allows('create', Admission::class),
                 'update' => Gate::allows('update', $admission),
                 'delete' => Gate::allows('delete', $admission),
-                'createOrder' => $user->hasRole(['doctor', 'admin']) && $admission->doctor_id == $user->id,
+                'createOrder' => $user->hasRole(['admin']) || ($user->hasRole(['doctor']) && $admission->doctor_id == $user->id),
+                'createNurseRecord' => $user->hasRole(['nurse', 'admin']),
             ]
         ]);
     }
@@ -135,7 +136,7 @@ class AdmissionController extends Controller
 
         $this->authorize('update', $admission);
 
-        $patients = Patient::all()->filter->isAvailable();
+        $patients = Patient::all()->filter->isAvailable(); // TODO: REVISAR esto, esta mandando data inconsistente
         $patients->add(Patient::find($admission->patient_id));
         $doctors = User::all();
         $beds = Bed::all()->filter->isAvailable();
@@ -160,7 +161,7 @@ class AdmissionController extends Controller
             'patient_id' => 'required',
         ]);
 
-        if ($request->in_process) {
+        if ($request->in_process && $admission->in_process == false) {
             $patient = Patient::find($request->patient_id);
 
             if (!$patient->isAvailable()) {

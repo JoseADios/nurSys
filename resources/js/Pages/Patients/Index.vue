@@ -65,7 +65,7 @@
                             {{ patient.ars }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ patient.admission_id || 'N' }}
+                            {{ patient.admission_id || 'N/A' }}
                         </td>
                         <td class="px-6 py-4">
                             <Link class="ml-2 text-blue-500 hover:text-blue-800"

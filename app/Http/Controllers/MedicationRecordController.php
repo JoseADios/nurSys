@@ -25,7 +25,7 @@ class MedicationRecordController extends Controller
             'medicationRecords' => $medicationRecords,
         ]);
     }
-
+//
     /**
      * Show the form for creating a new resource.
      */

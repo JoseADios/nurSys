@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Actions\Fortify\PasswordValidationRules;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
@@ -49,7 +51,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            // 'password' => $this->passwordRules(),
+            'password' => $this->passwordRules(),
             'identification_card' => ['required', 'string', 'max:255', 'unique:users'],
             'exequatur' => ['required', 'string', 'max:255', 'unique:users'],
             'specialty' => ['required', 'string', 'max:255'],
@@ -62,29 +64,34 @@ class UserController extends Controller
 
         ])->validate();
 
-        $user = User::create([
-            'name' => $request['name'],
-            'last_name' => $request['last_name'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
-            'identification_card' => $request['identification_card'],
-            'exequatur' => $request['exequatur'],
-            'specialty' => $request['specialty'],
-            'area' => $request['area'],
-            'phone' => $request['phone'],
-            'address' => $request['address'],
-            'birthdate' => $request['birthdate'],
-            'position' => $request['position'],
-            'comments' => $request['comments'],
-        ]);
+        try {
+            $user = User::create([
+                'name' => $request['name'],
+                'last_name' => $request['last_name'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
+                'identification_card' => $request['identification_card'],
+                'exequatur' => $request['exequatur'],
+                'specialty' => $request['specialty'],
+                'area' => $request['area'],
+                'phone' => $request['phone'],
+                'address' => $request['address'],
+                'birthdate' => $request['birthdate'],
+                'position' => $request['position'],
+                'comments' => $request['comments'],
+            ]);
 
-        $user->syncRoles($request->role);
+            $user->syncRoles($request->role);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
 
         if ($request['saveAndNew'] == True) {
             return Redirect::route('users.create', [
                 'reset' => true,
             ])->with('success', 'User created successfully.');
-
         } else {
             return Redirect::route('users.show', $user->id);
         }

@@ -136,7 +136,7 @@ class AdmissionController extends Controller
 
         $this->authorize('update', $admission);
 
-        $patients = Patient::all()->filter->isAvailable(); // TODO: REVISAR esto, esta mandando data inconsistente
+        $patients = Patient::all()->filter->isAvailable();
         $patients->add(Patient::find($admission->patient_id));
         $doctors = User::all();
         $beds = Bed::all()->filter->isAvailable();
@@ -162,15 +162,17 @@ class AdmissionController extends Controller
         ]);
 
         if ($request->in_process && $admission->in_process == false) {
+            dd('Falta el patient id');
             $patient = Patient::find($request->patient_id);
+            $bed = Bed::find($admission->bed_id);
 
-            if (!$patient->isAvailable()) {
-                return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente, de el alta al otro para activar este.');
+            if (!$patient->isAvailable() || !$bed->isAvailable()) {
+                return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente o la cama seleccionada esta ocupada, dé el alta al otro para activar este.');
             }
         }
 
         $admission->update($request->all());
-        return back();
+        return Redirect::route('admissions.show', $admission->id);
     }
 
     /**

@@ -14,7 +14,7 @@
 
                 <!-- Estado de Ingreso -->
                 <div class="m-8 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md mb-6">
-                    <div class="flex items-center justify-evenly space-x-2">
+                    <div class="flex items-center justify-between space-x-2">
                         <div class="flex space-x-2 items-center">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Estado:</h3>
                             <span v-bind:class="admission.in_process ? 'bg-green-500' : 'bg-gray-500'"
@@ -87,7 +87,8 @@
                         </div>
                     </div>
 
-                    <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 shadow-md">
+                    <AccessGate :except-role="['recepcionist']"
+                        class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 shadow-md">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Acciones Adicionales</h3>
                         <div class="grid md:grid-cols-3 gap-4">
                             <div class="flex flex-col space-y-2 items-center">
@@ -140,9 +141,24 @@
                                 </Link>
                             </div>
                         </div>
-                    </div>
+                    </AccessGate>
 
                     <div class="flex justify-end space-x-4">
+                        <div v-if="can.update">
+                            <div v-if="admission.in_process">
+                                <button type="button" @click="discharge"
+                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                    Dar de Alta
+                                </button>
+                            </div>
+                            <div v-if="!admission.in_process">
+                                <button type="button" @click="charge"
+                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                    Poner en progreso
+                                </button>
+                            </div>
+                        </div>
+
                         <Link v-if="can.update" :href="route('admissions.edit', admission.id)"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -180,14 +196,33 @@ export default {
     props: {
         admission: Object,
         daysIngressed: Number,
-        can: Array,
+        can: [Array, Object],
     },
     components: {
         AppLayout,
         Link,
         AccessGate,
     },
+    data() {
+        return {
+            form: {
+                patient_id: this.admission.patient_id,
+                in_process: this.admission.in_process
+            }
+        }
+    },
     methods: {
+        submit() {
+            this.$inertia.put(route('admissions.update', this.admission.id), this.form)
+        },
+        discharge() {
+            this.form.in_process = 0
+            this.submit()
+        },
+        charge() {
+            this.form.in_process = 1
+            this.submit()
+        },
         formatDate(dateString) {
             return new Date(dateString).toLocaleDateString('es-ES', {
                 year: 'numeric',

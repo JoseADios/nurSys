@@ -100,7 +100,7 @@ import { Link } from '@inertiajs/vue3';
 export default {
     props: {
         admissions: Array,
-        can: Array,
+        can: [Array, Object],
     },
     components: {
         AppLayout,

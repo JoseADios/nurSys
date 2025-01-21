@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\MedicationRecord;
 use App\Models\MedicationNotification;
 use App\Models\MedicationRecordDetail;
+use App\Models\Drug;
+use App\Models\DrugDose;
+use App\Models\DrugRoute;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+
 
 class MedicationRecordDetailController extends Controller
 {
@@ -28,9 +32,18 @@ class MedicationRecordDetailController extends Controller
     public function create($medicationRecordId)
     {
         $medicationRecord = MedicationRecord::findOrFail($medicationRecordId);
+
+        $drug = Drug::all();
+        $dose = DrugDose::all();
+        $route = DrugRoute::all();
+
+
         return Inertia::render('MedicationRecordDetail/Create', [
             'medicationRecord' => $medicationRecord,
-            'id' => $medicationRecord->id
+            'id' => $medicationRecord->id,
+            'drug' => $drug,
+            'dose' => $dose,
+            'routeOptions' => $route
         ]);
     }
 

@@ -16,29 +16,82 @@
                     placeholder="Escribe la dieta asignada..." />
 
 
-                <label for="drug" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                    Medicamento
-                </label>
-                <input required id="drug" type="text" v-model="form.drug"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Escribe la dieta asignada..." />
+             <!-- Contenedor para la Medicamento y el selector -->
+             <div class="flex items-center space-x-4 mt-6">
+                    <!-- Medicamento -->
+                    <div class="flex-1">
+                        <label for="drug" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Medicamento
+                        </label>
+                        <input  id="drug" type="text" v-model="form.drug"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Escribe la Medicamento asignada..." />
+                    </div>
+                    <!-- Selector -->
+                    <div class="flex-1">
+                        <label for="drug-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Medicamento
+                        </label>
+                        <select id="drug-select" v-model="form.drug"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option v-for="drugs in drug" :key="drugs.id" :value="drugs.description">
+                            {{ drugs.name }} - {{ drugs.description }}
+                        </option>
+                    </select>
 
+                    </div>
+                </div>
 
-                <!-- Dosis -->
-                <label for="dose" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                    Dosis
-                </label>
-                <input required id="dose" type="text" v-model="form.dose"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Escribe la dosis asignada..." />
+                  <!-- Contenedor para la Via y el selector -->
+                  <div class="flex items-center space-x-4 mt-6">
+                    <!-- Via -->
+                    <div class="flex-1">
+                        <label for="route" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Via
+                        </label>
+                        <input  id="route" type="text" v-model="form.route"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Escribe la Via asignada..." />
+                    </div>
+                    <!-- Selector -->
+                    <div class="flex-1">
+                        <label for="route-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Via
+                        </label>
+                        <select id="route-select" v-model="form.route"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option v-for="routes in routeOptions" :key="routes.id" :value="routes.description">
+                            {{ routes.name }} - {{ routes.description }}
+                        </option>
+                    </select>
 
-                <!-- Referencias -->
-                <label for="route" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                    Via
-                </label>
-                <input required id="route" type="text" v-model="form.route"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Escribe las referencias..." />
+                    </div>
+                </div>
+                 <!-- Contenedor para la Dosis y el selector -->
+                 <div class="flex items-center space-x-4 mt-6">
+                    <!-- Dosis -->
+                    <div class="flex-1">
+                        <label for="dose" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Dosis
+                        </label>
+                        <input  id="dose" type="text" v-model="form.dose"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Escribe la Dosis asignada..." />
+                    </div>
+                    <!-- Selector -->
+                    <div class="flex-1">
+                        <label for="dose-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Dosis
+                        </label>
+                        <select id="dose-select" v-model="form.dose"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option v-for="doses in dose" :key="doses.id" :value="doses.description">
+                            {{ doses.name }} - {{ doses.description }}
+                        </option>
+                    </select>
+
+                    </div>
+                </div>
 
                 <!-- Estudios Pendientes -->
                 <label for="fc" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
@@ -90,7 +143,10 @@ export default {
         errors: Array,
         details: Array,
         medicationRecord: Object,
-        id: Number
+        id: Number,
+        drug: Array,
+        dose: Array,
+        routeOptions: Array,
     },
     components: {
         AppLayout,

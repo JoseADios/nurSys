@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\MedicationNotification;
 use App\Models\MedicationRecordDetail;
+use App\Models\Diet;
 use Inertia\Inertia;
 use App\Models\MedicationRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class MedicationRecordController extends Controller
 {
@@ -23,17 +25,19 @@ class MedicationRecordController extends Controller
             'medicationRecords' => $medicationRecords,
         ]);
     }
-
+//
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         $admissions = Admission::all();
+        $diet = Diet::all();
 
         // Pasar los datos a la vista
         return Inertia::render('MedicationRecords/Create', [
             'admissions' => $admissions,  // Enviar todos los registros de Admission
+            'diet' => $diet,
         ]);
 
     }
@@ -43,10 +47,9 @@ class MedicationRecordController extends Controller
      */
     public function store(Request $request)
     {
-        // Validación
+        // Validación de los datos de entrada
         $request->validate([
-            'admission_id' => 'required',
-            'doctor_id' => 'required', // Validamos que admission_id exista en la tabla admissions
+            'admission_id' => 'required|exists:admissions,id', // Validamos que exista en la tabla admissions
             'diagnosis' => 'required|string',
             'diet' => 'required|string',
             'referrals' => 'nullable|string',
@@ -54,10 +57,20 @@ class MedicationRecordController extends Controller
             'doctor_sign' => 'required|string',
         ]);
 
+        // Verificar si ya existe un MedicationRecord para la admisión especificada
+        $existingRecord = MedicationRecord::where('admission_id', $request->admission_id)->first();
+
+        if ($existingRecord) {
+            // Si ya existe, redirigir con un mensaje de error
+            return redirect()->back()->withErrors([
+                'admission_id' => 'Ya Existe una ficha de Medicamentos con ese numero de Admision.',
+            ])->withInput();
+        }
+
         // Crear el MedicationRecord usando los datos validados
         $medicationRecord = MedicationRecord::create([
             'admission_id' => $request->admission_id,
-            'doctor_id' => $request->doctor_id,
+            'doctor_id' => Auth::id(),
             'diagnosis' => $request->diagnosis,
             'diet' => $request->diet,
             'referrals' => $request->referrals,
@@ -65,9 +78,10 @@ class MedicationRecordController extends Controller
             'doctor_sign' => $request->doctor_sign,
         ]);
 
-        // Redirigir o retornar una respuesta
+        // Redirigir o retornar una respuesta exitosa
         return redirect()->route('medicationRecords.index')->with('success', 'Medication Record created successfully');
     }
+
 
 
     /**

@@ -133,45 +133,65 @@ export default defineComponent({
             this.chartSeries[0].data = this.temperatureData.map(item => item.temperature);
 
             const xAxisAnnotations = [];
+            let dayBoundaries = [];
             let currentDay = '';
-            let dayCounter = 0;
 
+            // Primero, identificamos todas las fronteras de los días
             this.temperatureData.forEach((item, index) => {
                 const date = new Date(item.created_at);
                 const dayStr = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
 
                 if (dayStr !== currentDay) {
-                    if (index > 0) {
-                        // Colocar la anotación en el índice medio entre los días
-                        const midIndex = index - Math.floor((index - (this.temperatureData.findIndex(d => d.created_at === item.created_at) + 1)) / 2);
-
-                        xAxisAnnotations.push({
-                            x : this.chartOptions.xaxis.categories[midIndex],
-                            strokeDashArray : 0,
-                            borderColor : 'rgba(255, 255, 255, 0.15)',
-                            label : {
-                                borderColor : 'transparent',
-                                style : {
-                                    color : '#e5e7eb',
-                                    background : '#374151',
-                                    padding : { left : 10, right : 10, top : 2, bottom : 2 }
-                                },
-                                text : `Día ${dayCounter}`,
-                                position : 'top',
-                                text : dayCounter === 0 ? 'I N G' : `Día ${dayCounter}`,
-                                position : 'top',
-                                orientation : 'horizontal'
-                            }
-                        });
-
-                        // Incrementar el contador de días
-                        dayCounter++;
-
-                        // Ajustar la posición Y para centrar la etiqueta
-                        xAxisAnnotations[xAxisAnnotations.length - 1].label.offsetY = -15; // Ajusta este valor según sea necesario
+                    if (currentDay !== '') {
+                        dayBoundaries.push(index);
                     }
-
                     currentDay = dayStr;
+                }
+            });
+            dayBoundaries.push(this.temperatureData.length);
+
+            // Ahora creamos las anotaciones entre las fronteras
+            let previousBoundary = 0;
+            dayBoundaries.forEach((boundary, index) => {
+                const midPoint = previousBoundary + Math.floor((boundary - previousBoundary) / 2);
+
+                if (index < dayBoundaries.length) {
+                    xAxisAnnotations.push({
+                        x: this.chartOptions.xaxis.categories[midPoint],
+                        strokeDashArray: 0,
+                        borderColor: 'transparent', // Quitamos la línea vertical
+                        label: {
+                            borderColor: 'transparent',
+                            style: {
+                                color: '#e5e7eb',
+                                background: '#374151',
+                                padding: { left: 10, right: 10, top: 2, bottom: 2 }
+                            },
+                            text: index === 0 ? 'I N G' : `Día ${index}`,
+                            position: 'top',
+                            orientation: 'horizontal',
+                            offsetY: -15
+                        }
+                    });
+                }
+                previousBoundary = boundary;
+            });
+
+            // Añadimos las líneas verticales divisorias por separado
+            dayBoundaries.forEach((boundary, index) => {
+                if (boundary < this.temperatureData.length) {
+                    xAxisAnnotations.push({
+                        x: this.chartOptions.xaxis.categories[boundary],
+                        strokeDashArray: 0,
+                        borderColor: 'rgba(255, 255, 255, 0.15)',
+                        label: {
+                            borderColor: 'transparent',
+                            style: {
+                                background: 'transparent'
+                            },
+                            text: '',
+                        }
+                    });
                 }
             });
 

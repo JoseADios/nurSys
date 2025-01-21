@@ -7,7 +7,7 @@
                         <h2 class="text-2xl font-bold text-white">Detalles del Ingreso</h2>
                         <button @click="goBack"
                             class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out">
-                        Volver
+                            Volver
                         </button>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
-                                admission.patient.second_surname }}
+                                    admission.patient.second_surname }}
                             </p>
                         </div>
 
@@ -101,14 +101,17 @@
                                 </svg>
                                 Hojas de Enfermería
                                 </Link>
-                                <Link :href="route('nurseRecords.create', { admission_id: admission.id })"
-                                    class="flex w-24 items-center justify-center bg-green-400 text-white font-semibold rounded-lg p-2 hover:bg-green-500 transition duration-300 ease-in-out">
+                                <AccessGate :role="['admin', 'nurse']">
+                                    <Link :href="route('nurseRecords.create', { admission_id: admission.id })"
+                                        class="flex w-24 items-center justify-center bg-green-400 text-white font-semibold rounded-lg p-2 hover:bg-green-500 transition duration-300 ease-in-out">
                                     Nuevo +
-                                </Link>
+                                    </Link>
+                                </AccessGate>
                             </div>
 
                             <div class="flex flex-col space-y-2 items-center">
-                                <Link :href="route('temperatureRecords.customShow', { id: admission.id, admission_id: admission.id })"
+                                <Link
+                                    :href="route('temperatureRecords.customShow', { id: admission.id, admission_id: admission.id })"
                                     class="flex w-full items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                 <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -130,7 +133,8 @@
                                 </svg>
                                 Órdenes Médicas
                                 </Link>
-                                <Link :href="route('medicalOrders.create', { admission_id: admission.id })"
+                                <Link v-if="can.createOrder"
+                                    :href="route('medicalOrders.create', { admission_id: admission.id })"
                                     class="flex w-24 items-center justify-center bg-blue-400 text-white font-semibold rounded-lg p-2 hover:bg-blue-500 transition duration-300 ease-in-out">
                                 Nuevo +
                                 </Link>
@@ -139,7 +143,7 @@
                     </div>
 
                     <div class="flex justify-end space-x-4">
-                        <Link :href="route('admissions.edit', admission.id)"
+                        <Link v-if="can.update" :href="route('admissions.edit', admission.id)"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
@@ -150,7 +154,7 @@
                         Editar
                         </Link>
 
-                        <button @click="confirmDelete"
+                        <button v-if="can.delete" @click="confirmDelete"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold rounded-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -168,6 +172,7 @@
 </template>
 
 <script>
+import AccessGate from '@/Components/Access/AccessGate.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
@@ -175,10 +180,12 @@ export default {
     props: {
         admission: Object,
         daysIngressed: Number,
+        can: Array,
     },
     components: {
         AppLayout,
         Link,
+        AccessGate,
     },
     methods: {
         formatDate(dateString) {

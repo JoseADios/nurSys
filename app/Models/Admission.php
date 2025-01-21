@@ -48,9 +48,9 @@ class Admission extends Model
         return $this->hasMany(MedicalOrder::class);
     }
 
-    public function medicationRecord(): HasMany
+    public function medicationRecord(): HasOne
     {
-        return $this->hasMany(MedicationRecord::class);
+        return $this->HasOne(MedicationRecord::class);
     }
 
     public function nurseRecord(): HasMany

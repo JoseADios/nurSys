@@ -108,6 +108,14 @@
                             <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                Fecha: {{ detail.created_at }}
                             </div>
+                            <div v-for="notifications in detail.medication_notification " :key=notifications.id class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                               <div v-if="notifications.applied === 1">
+                                 Medicamento  Administrado: {{ notifications.administered_time }}
+                                </div>
+                                <div v-if="Firstnoapplied(notifications)" >
+                                    Siguiente: {{ notifications.scheduled_time }}
+                                </div>
+                            </div>
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             <!-- Editar -->
@@ -178,7 +186,28 @@ export default{
             },
             hasApplied(detail){
                 return detail.medication_notification?.some(item => item.applied === 1) ?? false;
+            },
+            Firstnoapplied(notifications) {
+    console.log(this.details);
+
+
+    for (const detail of this.details) {
+        if (Array.isArray(detail.medication_notification)) {
+
+            const firstNotApplied = detail.medication_notification.find(
+                (n) => n.applied === 0
+            );
+
+
+            if (firstNotApplied && firstNotApplied.id === notifications.id) {
+                return true;
             }
+        }
+    }
+
+
+    return false;
+},
         }
 }
 

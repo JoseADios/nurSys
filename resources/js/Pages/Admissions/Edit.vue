@@ -130,10 +130,10 @@ import { Link } from '@inertiajs/vue3';
 export default {
     props: {
         admission: Object,
-        errors: Array,
-        patients: Array,
-        doctors: Array,
-        beds: Array,
+        errors: [Array, Object],
+        patients: [Array, Object],
+        doctors: [Array, Object],
+        beds: [Array, Object],
     },
     components: {
         AppLayout,

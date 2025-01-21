@@ -14,7 +14,7 @@
 
                 <!-- Estado de Ingreso -->
                 <div class="m-8 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md mb-6">
-                    <div class="flex items-center justify-evenly space-x-2">
+                    <div class="flex items-center justify-between space-x-2">
                         <div class="flex space-x-2 items-center">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Estado:</h3>
                             <span v-bind:class="admission.in_process ? 'bg-green-500' : 'bg-gray-500'"

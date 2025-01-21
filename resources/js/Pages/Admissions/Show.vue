@@ -87,7 +87,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 shadow-md">
+                    <AccessGate :except-role="['recepcionist']" class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 shadow-md">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Acciones Adicionales</h3>
                         <div class="grid md:grid-cols-3 gap-4">
                             <div class="flex flex-col space-y-2 items-center">
@@ -140,7 +140,7 @@
                                 </Link>
                             </div>
                         </div>
-                    </div>
+                    </AccessGate>
 
                     <div class="flex justify-end space-x-4">
                         <Link v-if="can.update" :href="route('admissions.edit', admission.id)"

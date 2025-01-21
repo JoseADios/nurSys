@@ -18,6 +18,14 @@ const props = defineProps({
         type: [String, Array],
         default: null
     },
+    exceptRole: {
+        type: [String, Array],
+        default: null
+    },
+    exceptPermission: {
+        type: [String, Array],
+        default: null
+    },
     requireAll: {
         type: Boolean,
         default: false
@@ -31,8 +39,30 @@ const hasAccess = computed(() => {
     const roles = user.roles || [];
     const permissions = user.permissions || [];
 
-    // Si no se especifica ni rol ni permiso, no debería mostrar el contenido
-    if (!props.role && !props.permission) return false;
+    // Verificar roles excluidos primero
+    if (props.exceptRole) {
+        const excludedRoles = Array.isArray(props.exceptRole)
+            ? props.exceptRole
+            : [props.exceptRole];
+
+        if (excludedRoles.some(r => roles.includes(r))) {
+            return false;
+        }
+    }
+
+    // Verificar permisos excluidos
+    if (props.exceptPermission) {
+        const excludedPermissions = Array.isArray(props.exceptPermission)
+            ? props.exceptPermission
+            : [props.exceptPermission];
+
+        if (excludedPermissions.some(p => permissions.includes(p))) {
+            return false;
+        }
+    }
+
+    // Si no hay roles o permisos requeridos después de verificar exclusiones
+    if (!props.role && !props.permission) return true;
 
     const hasRole = props.role ? (Array.isArray(props.role)
         ? props.role.some(r => roles.includes(r))

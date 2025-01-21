@@ -15,70 +15,81 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [
             // admission
-            'create-admission',
-            'update-admission',
-            'view-admission',
-            'delete-admission',
+            'admission.*',
+            'admission.create',
+            'admission.update',
+            'admission.view',
+            'admission.delete',
 
             // medical orders
-            'create-medicalOrder',
-            'update-medicalOrder',
-            'view-medicalOrder',
-            'delete-medicalOrder',
+            'medicalOrder.*',
+            'medicalOrder.create',
+            'medicalOrder.update',
+            'medicalOrder.view',
+            'medicalOrder.delete',
 
             // medical order detail
-            'create-medicalOrderDetail',
-            'update-medicalOrderDetail',
-            'view-medicalOrderDetail',
-            'delete-medicalOrderDetail',
+            'medicalOrderDetail.*',
+            'medicalOrderDetail.create',
+            'medicalOrderDetail.update',
+            'medicalOrderDetail.view',
+            'medicalOrderDetail.delete',
 
             // medication notification
-            'create-medicationNotification',
-            'update-medicationNotification',
-            'view-medicationNotification',
-            'delete-medicationNotification',
+            'medicationNotification.*',
+            'medicationNotification.create',
+            'medicationNotification.update',
+            'medicationNotification.view',
+            'medicationNotification.delete',
 
             // medication Record
-            'create-medicationRecord',
-            'update-medicationRecord',
-            'view-medicationRecord',
-            'delete-medicationRecord',
+            'medicationRecord.*',
+            'medicationRecord.create',
+            'medicationRecord.update',
+            'medicationRecord.view',
+            'medicationRecord.delete',
 
             // medication Record Detail
-            'create-medicationRecordDetail',
-            'update-medicationRecordDetail',
-            'view-medicationRecordDetail',
-            'delete-medicationRecordDetail',
+            'medicationRecordDetail.*',
+            'medicationRecordDetail.create',
+            'medicationRecordDetail.update',
+            'medicationRecordDetail.view',
+            'medicationRecordDetail.delete',
 
             // nurse record
-            'create-nurseRecord',
-            'update-nurseRecord',
-            'view-nurseRecord',
-            'delete-nurseRecord',
+            'nurseRecord.*',
+            'nurseRecord.create',
+            'nurseRecord.update',
+            'nurseRecord.view',
+            'nurseRecord.delete',
 
             // recordDetail
-            'create-nurseRecordDetail',
-            'update-nurseRecordDetail',
-            'view-nurseRecordDetail',
-            'delete-nurseRecordDetail',
+            'nurseRecordDetail.*',
+            'nurseRecordDetail.create',
+            'nurseRecordDetail.update',
+            'nurseRecordDetail.view',
+            'nurseRecordDetail.delete',
 
             // patient
-            'create-patient',
-            'update-patient',
-            'view-patient',
-            'delete-patient',
+            'patient.*',
+            'patient.create',
+            'patient.update',
+            'patient.view',
+            'patient.delete',
 
             // temperatureDetail
-            'create-temperatureDetail',
-            'update-temperatureDetail',
-            'view-temperatureDetail',
-            'delete-temperatureDetail',
+            'temperatureDetail.*',
+            'temperatureDetail.create',
+            'temperatureDetail.update',
+            'temperatureDetail.view',
+            'temperatureDetail.delete',
 
             // temperatureRecord
-            'create-temperatureRecord',
-            'update-temperatureRecord',
-            'view-temperatureRecord',
-            'delete-temperatureRecord',
+            'temperatureRecord.*',
+            'temperatureRecord.create',
+            'temperatureRecord.update',
+            'temperatureRecord.view',
+            'temperatureRecord.delete',
         ];
 
         foreach ($permissions as $permission) {

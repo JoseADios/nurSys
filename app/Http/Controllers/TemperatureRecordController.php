@@ -91,7 +91,7 @@ class TemperatureRecordController extends Controller
             ]);
         }
 
-        $canCreate = true;
+        $canCreateDetail = true;
 
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->whereBetween('created_at', [
@@ -103,7 +103,7 @@ class TemperatureRecordController extends Controller
 
 
         if ($lastTemperature) {
-            $canCreate = false;
+            $canCreateDetail = false;
 
             if ($lastTemperature->nurse_id != Auth::id()) {
                 $lastTemperature = null;
@@ -124,7 +124,7 @@ class TemperatureRecordController extends Controller
             'admissions' => $admissions,
             'details' => $details,
             'lastTemperature' => $lastTemperature,
-            'canCreate' => $canCreate,
+            'canCreateDetail' => $canCreateDetail,
         ]);
     }
 

@@ -173,7 +173,7 @@
                 </div>
 
                 <!-- Formulario para agregar nuevo detalle -->
-                <div v-if="canCreate" class="p-8 ">
+                <div v-if="canCreateDetail" class="p-8 ">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura</h3>
 
                     <form @submit.prevent="submit" class="space-y-4">
@@ -219,7 +219,7 @@
                     </form>
                 </div>
                 <!-- si no puede crear ni actualizar mostrar que ya otro enfermero ha registrado una firma en este turno que no puede hacer nada -->
-                <div v-if="!canCreate && !lastTemperature" class="p-8">
+                <div v-if="!canCreateDetail && !lastTemperature" class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Información</h3>
                     <p class="text-lg text-gray-700 dark:text-gray-300">
                         Ya otro enfermero ha registrado una firma en este turno. No puede realizar ninguna acción.
@@ -309,7 +309,7 @@ export default {
         admissions: Array,
         details: Array,
         lastTemperature: Object,
-        canCreate: Boolean,
+        canCreateDetail: Boolean,
     },
     components: {
         AppLayout,

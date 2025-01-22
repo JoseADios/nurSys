@@ -107,20 +107,37 @@ class PatientController extends Controller
      */
     public function update(Request $request, Patient $patient)
     {
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'first_surname' => 'required|string|max:255',
-            'second_surname' => 'required|string|max:255',
-            'phone' => 'required|string',
-            'identification_card' => 'required|string|max:255',
-            'nationality' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'birthdate' => 'required|date',
-            'position' => 'required|string|max:255',
-            'marital_status' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'ars' => 'nullable|string|max:255',
-        ]);
+        if ($request->has('active')) {
+
+            $validated = $request->validate([
+                'active' => 'boolean|required'
+            ]);
+
+            $admissions = Admission::where('patient_id', $patient->id)
+                ->where('active', false)
+                ->get();
+
+            if ($admissions->isNotEmpty()) {
+                foreach ($admissions as $admission) {
+                    app('App\Http\Controllers\AdmissionController')->restore($admission);
+                }
+            }
+        } else {
+            $validated = $request->validate([
+                'first_name' => 'required|string|max:255',
+                'first_surname' => 'required|string|max:255',
+                'second_surname' => 'required|string|max:255',
+                'phone' => 'required|string',
+                'identification_card' => 'required|string|max:255',
+                'nationality' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'birthdate' => 'required|date',
+                'position' => 'required|string|max:255',
+                'marital_status' => 'required|string|max:255',
+                'address' => 'required|string|max:255',
+                'ars' => 'nullable|string|max:255',
+            ]);
+        }
 
         $patient->update($validated);
 
@@ -132,6 +149,18 @@ class PatientController extends Controller
      */
     public function destroy(Patient $patient)
     {
-        //
+        $patient->update(['active' => 0]);
+
+        $admissions = Admission::where('patient_id', $patient->id)
+            ->where('active', true)
+            ->get();
+
+        if ($admissions->isNotEmpty()) {
+            foreach ($admissions as $admission) {
+                app('App\Http\Controllers\AdmissionController')->destroy($admission);
+            }
+        }
+
+        return Redirect::route('patients.index');
     }
 }

@@ -21,6 +21,7 @@ class NurseRecordController extends Controller
     public function index(Request $request)
     {
         $query = NurseRecord::with('nurse', 'admission.patient')
+            ->where('active', true)
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc');
 
@@ -100,7 +101,8 @@ class NurseRecordController extends Controller
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
-        $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')->get();
+        $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')
+            ->where('active', true)->get();
 
         return Inertia::render('NurseRecords/Edit', [
             'nurseRecord' => $nurseRecord,
@@ -132,7 +134,6 @@ class NurseRecordController extends Controller
         }
 
         $nurseRecord->update($validated);
-
     }
 
     /**
@@ -140,6 +141,7 @@ class NurseRecordController extends Controller
      */
     public function destroy(NurseRecord $nurseRecord)
     {
-        //
+        $nurseRecord->update(['active' => 0]);
+        return Redirect::route('nurseRecords.index');
     }
 }

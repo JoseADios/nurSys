@@ -24,6 +24,14 @@
                         </div>
                     </div>
                     <div class="flex space-x-3">
+                        <button v-if="patient.active == 1" @click="patientBeingDeleted = true"
+                            class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
+                            Eliminar
+                        </button>
+                        <button v-else @click="restorePatient"
+                            class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
+                            Restaurar
+                        </button>
                         <Link :href="route('patients.edit', patient.id)"
                             class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -139,7 +147,8 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="inProcessAdmssion" class="mt-6 bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700 flex items-center justify-center">
+                <div v-if="inProcessAdmssion"
+                    class="mt-6 bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700 flex items-center justify-center">
                     <strong class="text-white mr-4">Paciente ingresado</strong>
                     <Link
                         class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200"
@@ -147,12 +156,36 @@
                 </div>
             </div>
         </div>
+        <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="patientBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton class="ms-3" @click="deletePatient">
+                    Eliminar
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+
 
 export default {
     props: {
@@ -162,6 +195,14 @@ export default {
     components: {
         AppLayout,
         Link,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
+    },
+    data() {
+        return {
+            patientBeingDeleted: ref(null)
+        }
     },
     methods: {
         formatDate(date) {
@@ -176,6 +217,13 @@ export default {
         },
         getInitials(firstName, lastName) {
             return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+        },
+        deletePatient() {
+            this.patientBeingDeleted = false
+            this.$inertia.delete(route('patients.destroy', this.patient.id));
+        },
+        restorePatient() {
+            this.$inertia.put(route('patients.update', this.patient.id), {active: true});
         }
     }
 }

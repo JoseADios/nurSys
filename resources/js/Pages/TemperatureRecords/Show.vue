@@ -21,6 +21,19 @@
                         </svg>
                         <span class="font-medium">Volver</span>
                     </button>
+                    <button v-if="temperatureRecord.active" @click="recordBeingDeleted = true"
+                        class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-medium">Eliminar</span>
+                    </button>
+                    <button v-else @click="restoreRecord"
+                        class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                        <span class="font-medium">Restaurar</span>
+                    </button>
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -258,6 +271,25 @@
 
             </div>
         </div>
+        <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="recordBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton class="ms-3" @click="deleteRecord">
+                    Eliminar
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
@@ -267,6 +299,9 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue'
 import { ref } from 'vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 export default {
     props: {
@@ -281,9 +316,13 @@ export default {
         Link,
         TemperatureChart,
         SignaturePad,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
     },
     data() {
         return {
+            recordBeingDeleted: ref(null),
             isVisible: false,
             isVisibleEditSign: ref(null),
             signatureError: false,
@@ -300,7 +339,8 @@ export default {
                 signature: true,
             },
             formRecord: {
-                impression_diagnosis: this.temperatureRecord.impression_diagnosis
+                impression_diagnosis: this.temperatureRecord.impression_diagnosis,
+                active: this.temperatureRecord.active
             },
         }
     },
@@ -353,6 +393,14 @@ export default {
         },
         toggleEditRecord() {
             this.isVisible = !this.isVisible
+        },
+        deleteRecord() {
+            this.recordBeingDeleted = false
+            this.$inertia.delete(route('temperatureRecords.destroy', this.temperatureRecord.id));
+        },
+        restoreRecord() {
+            this.formRecord.active = true
+            this.submitUpdateRecord()
         },
         goBack() {
             this.$inertia.visit(document.referrer)

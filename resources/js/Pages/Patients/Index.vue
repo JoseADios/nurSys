@@ -65,7 +65,9 @@
                             {{ patient.ars }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ patient.admission_id || 'N/A' }}
+                            <span v-if="patient.admission_id"
+                                class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
+                            <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
                         </td>
                         <td class="px-6 py-4">
                             <Link class="ml-2 text-blue-500 hover:text-blue-800"

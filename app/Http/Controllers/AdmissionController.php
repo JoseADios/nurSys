@@ -162,7 +162,6 @@ class AdmissionController extends Controller
         ]);
 
         if ($request->in_process && $admission->in_process == false) {
-            dd('Falta el patient id');
             $patient = Patient::find($request->patient_id);
             $bed = Bed::find($admission->bed_id);
 

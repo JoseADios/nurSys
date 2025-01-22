@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admission;
 use App\Models\Ars;
 use App\Models\MaritalStatus;
 use App\Models\Nationality;
@@ -18,10 +19,10 @@ class PatientController extends Controller
     public function index()
     {
         $patients = Patient::orderBy('updated_at', 'desc')->get()->each(function ($patient) {
-            $patient->admission_id = $patient->isAvailable() || null;
+            $patient->admission_id = !$patient->isAvailable();
         });
         return Inertia::render('Patients/Index', [
-            'patients'=>$patients,
+            'patients' => $patients,
         ]);
     }
 
@@ -91,7 +92,6 @@ class PatientController extends Controller
             'maritalSatuses' => $maritalSatuses,
             'arss' => $arss,
         ]);
-
     }
 
     /**

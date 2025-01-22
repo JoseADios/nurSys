@@ -62,6 +62,35 @@ class DietController extends Controller
         return redirect()->route('Diet.index')->with('success', 'Medicamento creado correctamente');
 
     }
+    public function storemodal(Request $request)
+    {
+           // Validación de los datos de entrada
+           $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+        ]);
+
+        // Verificar si ya existe una Dieta con ese nombre
+        $existingdiet = Diet::where('name', $request->name)->first();
+
+        if ($existingdiet) {
+
+            return redirect()->back()->withErrors([
+                'name' => 'Ya Existe una Dieta con ese nombre.',
+            ])->withInput();
+        }
+
+
+        $Diet = Diet::create([
+            'name' => $request->name,
+            'description' => $request->description,
+
+        ]);
+
+
+        return redirect()->route('medicationRecords.create')->with('success', 'Medicamento creado correctamente');
+
+    }
 
     /**
      * Display the specified resource.

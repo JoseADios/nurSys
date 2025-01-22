@@ -17,7 +17,9 @@ class PatientController extends Controller
      */
     public function index()
     {
-        $patients = Patient::orderBy('updated_at', 'desc')->get();
+        $patients = Patient::orderBy('updated_at', 'desc')->get()->each(function ($patient) {
+            $patient->admission_id = $patient->isAvailable() || null;
+        });
         return Inertia::render('Patients/Index', [
             'patients'=>$patients,
         ]);

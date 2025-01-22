@@ -97,6 +97,7 @@ class TemperatureRecordController extends Controller
                 $dateRange['start'],
                 $dateRange['end']
             ])
+            ->orderBy('created_at', 'desc')
             ->first();
 
 

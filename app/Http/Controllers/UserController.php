@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Actions\Fortify\PasswordValidationRules;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-use Laravel\Jetstream\Jetstream;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -21,6 +25,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
+        $users->load('roles');
         return Inertia::render('Users/Index', [
             'users' => $users,
         ]);
@@ -31,7 +36,10 @@ class UserController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Users/Create', []);
+        $roles = Role::orderBy('name', 'asc')->get();
+        return Inertia::render('Users/Create', [
+            'roles' => $roles,
+        ]);
     }
 
     /**
@@ -44,8 +52,8 @@ class UserController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
-            'identification_card' => ['required', 'string', 'max:255'],
-            'exequatur' => ['required', 'string', 'max:255'],
+            'identification_card' => ['required', 'string', 'max:255', 'unique:users'],
+            'exequatur' => ['required', 'string', 'max:255', 'unique:users'],
             'specialty' => ['required', 'string', 'max:255'],
             'area' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:255'],
@@ -56,11 +64,90 @@ class UserController extends Controller
 
         ])->validate();
 
-        $user = User::create([
+        try {
+            $user = User::create([
+                'name' => $request['name'],
+                'last_name' => $request['last_name'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
+                'identification_card' => $request['identification_card'],
+                'exequatur' => $request['exequatur'],
+                'specialty' => $request['specialty'],
+                'area' => $request['area'],
+                'phone' => $request['phone'],
+                'address' => $request['address'],
+                'birthdate' => $request['birthdate'],
+                'position' => $request['position'],
+                'comments' => $request['comments'],
+            ]);
+
+            $user->syncRoles($request->role);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+
+        if ($request['saveAndNew'] == True) {
+            return Redirect::route('users.create', [
+                'reset' => true,
+            ])->with('success', 'User created successfully.');
+        } else {
+            return Redirect::route('users.show', $user->id);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(User $user)
+    {
+        $user->load('roles');
+        return Inertia::render('Users/Show', [
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(User $user)
+    {
+        $hasRoles = $user->getRoleNames();
+        $roles = Role::orderBy('name', 'asc')->get();
+        return Inertia::render('Users/Edit', [
+            'user' => $user,
+            'roles' => $roles,
+            'hasRoles' => $hasRoles,
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, User $user)
+    {
+        Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            // 'password' => $this->passwordRules(),
+            'identification_card' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'exequatur' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'specialty' => ['required', 'string', 'max:255'],
+            'area' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:255'],
+            'birthdate' => ['required', 'date'],
+            'position' => ['required', 'string', 'max:255'],
+            'comments' => ['string', 'max:255'],
+
+        ])->validate();
+
+        $user->update([
             'name' => $request['name'],
             'last_name' => $request['last_name'],
             'email' => $request['email'],
-            'password' => Hash::make($request['password']),
             'identification_card' => $request['identification_card'],
             'exequatur' => $request['exequatur'],
             'specialty' => $request['specialty'],
@@ -72,42 +159,9 @@ class UserController extends Controller
             'comments' => $request['comments'],
         ]);
 
-        if ($request['saveAndNew'] == True) {
-            return Redirect::route('users.create', [
-                'reset' => true,
-            ])->with('success', 'User created successfully.');
+        $user->syncRoles($request->role);
 
-        } else {
-            return Redirect::route('users.show', $user->id);
-        }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        return Inertia::render('Users/Show', [
-            'user' => $user,
-        ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        return Inertia::render('Users/Edit', [
-            'user' => $user,
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+        return Redirect::route('users.index', $user->id)->with('success', 'User updated successfully.');
     }
 
     /**

@@ -72,7 +72,9 @@
                         <div v-if="!isVisible"
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
                             <div class="">
-                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de impresión</h3>
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de
+                                    impresión
+                                </h3>
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                     {{ temperatureRecord.impression_diagnosis }}
                                 </p>
@@ -88,7 +90,7 @@
                                 </h3>
                                 <textarea v-model="formRecord.impression_diagnosis"
                                     class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                </textarea>
+                        </textarea>
                                 <div class="mt-3">
                                     <button
                                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
@@ -203,6 +205,13 @@
                         </div>
                     </form>
                 </div>
+                <!-- si no puede crear ni actualizar mostrar que ya otro enfermero ha registrado una firma en este turno que no puede hacer nada -->
+                <div v-if="!canCreate && !lastTemperature" class="p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Información</h3>
+                    <p class="text-lg text-gray-700 dark:text-gray-300">
+                        Ya otro enfermero ha registrado una firma en este turno. No puede realizar ninguna acción.
+                    </p>
+                </div>
 
 
                 <section class=" p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
@@ -212,7 +221,8 @@
                     <div v-show="!isVisibleEditSign">
                         <div class="flex items-center flex-col justify-center">
 
-                            <img v-if="temperatureRecord.nurse_sign" :src="`/storage/${temperatureRecord.nurse_sign}`" alt="Firma">
+                            <img v-if="temperatureRecord.nurse_sign" :src="`/storage/${temperatureRecord.nurse_sign}`"
+                                alt="Firma">
                             <div v-else>
                                 <div class="text-gray-500 dark:text-gray-400 my-16">
                                     No hay firma disponible

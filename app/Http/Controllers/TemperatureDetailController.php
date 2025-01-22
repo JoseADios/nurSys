@@ -43,6 +43,7 @@ class TemperatureDetailController extends Controller
                 $dateRange['start'],
                 $dateRange['end']
             ])
+            ->orderBy('created_at', 'asc')
             ->first();
 
         if ($lastTemperature) {
@@ -82,6 +83,11 @@ class TemperatureDetailController extends Controller
      */
     public function update(Request $request, TemperatureDetail $temperatureDetail)
     {
+        $request->validate([
+            'temperature' => 'required|numeric',
+            'evacuations' => 'required|integer',
+            'urinations' => 'required|string',
+        ]);
         $temperatureDetail->update($request->all());
 
         return back()->with('succes', 'Registro actualizado correctamente');

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->integer('number')->unique();
             $table->string('room');
-            $table->string('status');
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

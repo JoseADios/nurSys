@@ -42,6 +42,7 @@ class User extends Authenticatable
         'birthdate',
         'position',
         'comment',
+        'active'
     ];
 
     /**

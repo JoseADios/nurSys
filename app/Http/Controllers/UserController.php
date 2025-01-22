@@ -24,7 +24,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = User::where('active', true)->get();
         $users->load('roles');
         return Inertia::render('Users/Index', [
             'users' => $users,
@@ -127,37 +127,29 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            // 'password' => $this->passwordRules(),
-            'identification_card' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'exequatur' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'specialty' => ['required', 'string', 'max:255'],
-            'area' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:255'],
-            'birthdate' => ['required', 'date'],
-            'position' => ['required', 'string', 'max:255'],
-            'comments' => ['string', 'max:255'],
+        if ($request->has('active')) {
+            $validated = Validator::make($request->all(), [
+                'active' => 'boolean'
+            ])->validate();
+        } else {
+            $validated = Validator::make($request->all(), [
+                'name' => ['required', 'string', 'max:255'],
+                'last_name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+                // 'password' => $this->passwordRules(),
+                'identification_card' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+                'exequatur' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+                'specialty' => ['required', 'string', 'max:255'],
+                'area' => ['required', 'string', 'max:255'],
+                'phone' => ['required', 'string', 'max:255'],
+                'address' => ['required', 'string', 'max:255'],
+                'birthdate' => ['required', 'date'],
+                'position' => ['required', 'string', 'max:255'],
+                'comments' => ['string', 'max:255'],
+            ])->validate();
+        }
 
-        ])->validate();
-
-        $user->update([
-            'name' => $request['name'],
-            'last_name' => $request['last_name'],
-            'email' => $request['email'],
-            'identification_card' => $request['identification_card'],
-            'exequatur' => $request['exequatur'],
-            'specialty' => $request['specialty'],
-            'area' => $request['area'],
-            'phone' => $request['phone'],
-            'address' => $request['address'],
-            'birthdate' => $request['birthdate'],
-            'position' => $request['position'],
-            'comments' => $request['comments'],
-        ]);
+        $user->update($validated);
 
         $user->syncRoles($request->role);
 
@@ -167,8 +159,9 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        $user->update(['active' => false]);
+        return Redirect::route('users.index');
     }
 }

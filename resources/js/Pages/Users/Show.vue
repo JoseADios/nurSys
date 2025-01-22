@@ -83,23 +83,55 @@
 
                 <!-- Action Buttons -->
                 <div class="flex justify-end space-x-4 pt-6">
+                    <button v-if="user.active == 1" @click="userBeingDeleted = true"
+                        class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
+                        Eliminar
+                    </button>
+                    <button v-else @click="restoreUser"
+                        class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
+                        Restaurar
+                    </button>
+
                     <Link :href="route('users.index')" type="button"
                         class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
-                        Volver
-                </Link>
+                    Volver
+                    </Link>
                     <Link :href="route('users.edit', user.id)"
                         class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
-                        Editar
+                    Editar
                     </Link>
                 </div>
             </div>
         </div>
+        <ConfirmationModal :show="userBeingDeleted != null" @close="userBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="userBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton class="ms-3" @click="deleteUser">
+                    Eliminar
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 export default {
     props: {
@@ -107,9 +139,24 @@ export default {
     },
     components: {
         AppLayout,
-        Link
+        Link,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
+    },
+    data() {
+        return {
+            userBeingDeleted: ref(null)
+        }
     },
     methods: {
+        deleteUser() {
+            this.userBeingDeleted = false
+            this.$inertia.delete(route('users.destroy', this.user.id));
+        },
+        restoreUser() {
+            this.$inertia.put(route('users.update', this.user.id), { active: true });
+        },
         goBack() {
             this.$inertia.visit(document.referrer)
         }

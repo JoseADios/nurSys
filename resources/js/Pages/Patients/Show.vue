@@ -147,12 +147,21 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="inProcessAdmssion"
+                <div
                     class="mt-6 bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700 flex items-center justify-center">
-                    <strong class="text-white mr-4">Paciente ingresado</strong>
-                    <Link
-                        class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200"
-                        :href="route('admissions.show', inProcessAdmssion)">Ir al ingreso</Link>
+                    <div v-if="inProcessAdmssion">
+                        <strong class="text-white mr-4">Paciente ingresado</strong>
+                        <Link
+                            class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200"
+                            :href="route('admissions.show', inProcessAdmssion)">Ir al ingreso</Link>
+                    </div>
+                    <div v-else>
+                        <strong class="text-white mr-4">Paciente no ingresado</strong>
+                        <Link
+                            class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200"
+                            :href="route('admissions.create', { patient_id: patient.id })">Crear ingreso</Link>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -223,7 +232,7 @@ export default {
             this.$inertia.delete(route('patients.destroy', this.patient.id));
         },
         restorePatient() {
-            this.$inertia.put(route('patients.update', this.patient.id), {active: true});
+            this.$inertia.put(route('patients.update', this.patient.id), { active: true });
         }
     }
 }

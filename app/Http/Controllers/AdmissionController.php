@@ -45,9 +45,14 @@ class AdmissionController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $this->authorize('create', Admission::class);
+
+        $selectedPatient = null;
+        if ($request->query('patient_id')) {
+            $selectedPatient = $request->query('patient_id');
+        }
 
         $doctors = User::all();
         $beds = Bed::all()->filter->isAvailable();
@@ -57,6 +62,7 @@ class AdmissionController extends Controller
             'doctors' => $doctors,
             'beds' => $beds,
             'patients' => $patients,
+            'selectedPatient' => $selectedPatient,
         ]);
     }
 

@@ -182,8 +182,7 @@
                         <div>
                             <label for="ars" class="block text-sm font-medium text-white">ARS</label>
                             <select id="ars" v-model="form.ars"
-                            class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            >
+                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                 <option value="">Ninguno</option>
                                 <option v-for="ars in arss" :key="ars.id">
                                     {{ ars.name }}
@@ -195,6 +194,14 @@
 
                 <!-- Form Actions -->
                 <div class="px-6 py-4 bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
+                    <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
+                        class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
+                        Eliminar
+                    </button>
+                    <button type="button" v-else @click="restorePatient"
+                        class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
+                        Restaurar
+                    </button>
                     <button @click="goBack" type="button"
                         class="px-4 py-2 text-sm font-medium text-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Cancelar
@@ -206,12 +213,35 @@
                 </div>
             </form>
         </div>
+        <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="patientBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton class="ms-3" @click="deletePatient">
+                    Eliminar
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 export default {
     props: {
@@ -224,9 +254,13 @@ export default {
     components: {
         AppLayout,
         Link,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
     },
     data() {
         return {
+            patientBeingDeleted: ref(null),
             form: {
                 first_name: this.patient.first_name,
                 first_surname: this.patient.first_surname,
@@ -249,6 +283,13 @@ export default {
         },
         goBack() {
             this.$inertia.visit(document.referrer)
+        },
+        deletePatient() {
+            this.patientBeingDeleted = false
+            this.$inertia.delete(route('patients.destroy', this.patient.id));
+        },
+        restorePatient() {
+            this.$inertia.put(route('patients.update', this.patient.id), {active: true});
         }
     }
 }

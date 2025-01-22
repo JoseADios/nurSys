@@ -6,21 +6,25 @@ use App\Models\Admission;
 use App\Models\Bed;
 use App\Models\Patient;
 use App\Models\User;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
-use Symfony\Component\HttpKernel\HttpCache\Ssi;
 
 class AdmissionController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $this->authorize('viewAny', Admission::class);
+
         $admissions = Admission::with(['bed', 'patient', 'doctor'])
             ->where('active', '=', 1)
             ->orderBy('created_at', 'desc')
@@ -32,6 +36,9 @@ class AdmissionController extends Controller
 
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
+            'can' => [
+                'create' => Gate::allows('create', Admission::class),
+            ]
         ]);
     }
 
@@ -40,14 +47,11 @@ class AdmissionController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Admission::class);
+
         $doctors = User::all();
-        $admissions = Admission::where('in_process', 1);
-        $bedsFilled = $admissions->pluck('bed_id')->toArray();
-        $patientsAct = $admissions->pluck('patient_id')->toArray();
-
-        $beds = Bed::whereNotIn('id', $bedsFilled)->get();
-
-        $patients = Patient::whereNotIn('id', $patientsAct)->get();
+        $beds = Bed::all()->filter->isAvailable();
+        $patients = Patient::all()->filter->isAvailable();
 
         return Inertia::render('Admissions/Create', [
             'doctors' => $doctors,
@@ -61,6 +65,8 @@ class AdmissionController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('store', Admission::class);
+
         $request->validate([
             'patient_id' => 'required',
             'admission_dx' => 'required',
@@ -72,10 +78,9 @@ class AdmissionController extends Controller
         }
 
         // validar que no exista, patient, in_process
-        $admissionExist = Admission::where('patient_id', $request->patient_id)
-            ->where('in_process', 1)->get();
+        $patient = Patient::find($request->patient_id);
 
-        if (!$admissionExist->isEmpty()) {
+        if (!$patient->isAvailable()) {
             return back()->with('error', 'Ya existe un ingreso en proceso para este paciente');
         }
 
@@ -99,15 +104,27 @@ class AdmissionController extends Controller
      */
     public function show(Admission $admission)
     {
+        $this->authorize('view', $admission);
+        $user = User::find(Auth::id());
+
         $patient = $admission->patient;
         $bed = $admission->bed;
         $doctor = $admission->doctor;
+        $daysIngressed = intval($admission->created_at->diffInDays(now()));
 
         return Inertia::render('Admissions/Show', [
             'admission' => $admission,
             'patient' => $patient,
             'bed' => $bed,
+            'daysIngressed' => $daysIngressed,
             'doctor' => $doctor,
+            'can' => [
+                'create' => Gate::allows('create', Admission::class),
+                'update' => Gate::allows('update', $admission),
+                'delete' => Gate::allows('delete', $admission),
+                'createOrder' => $user->hasRole(['admin']) || ($user->hasRole(['doctor']) && $admission->doctor_id == $user->id),
+                'createNurseRecord' => $user->hasRole(['nurse', 'admin']),
+            ]
         ]);
     }
 
@@ -116,12 +133,14 @@ class AdmissionController extends Controller
      */
     public function edit(Admission $admission)
     {
-        $patients = Patient::all();
+
+        $this->authorize('update', $admission);
+
+        $patients = Patient::all()->filter->isAvailable();
+        $patients->add(Patient::find($admission->patient_id));
         $doctors = User::all();
-        $bedsFilled = Admission::where('in_process', 1)->pluck('bed_id');
-        $beds = Bed::whereNotIn('id', $bedsFilled)->get();
-        $bedSelected = Bed::where('id', $admission->bed_id)->first();
-        $beds->add($bedSelected);
+        $beds = Bed::all()->filter->isAvailable();
+        $beds->add(Bed::find($admission->bed_id));
 
         return Inertia::render('Admissions/Edit', [
             'admission' => $admission,
@@ -136,27 +155,24 @@ class AdmissionController extends Controller
      */
     public function update(Request $request, Admission $admission)
     {
+        $this->authorize('update', $admission);
+
         $request->validate([
             'patient_id' => 'required',
         ]);
 
-        if ($request->has('errors')) {
-            return back()->withErrors($request->get('errors'));
-        }
+        if ($request->in_process && $admission->in_process == false) {
+            dd('Falta el patient id');
+            $patient = Patient::find($request->patient_id);
+            $bed = Bed::find($admission->bed_id);
 
-        if ($request->in_process) {
-            // validar que no exista otro patient con el process active
-            $admissionExist = Admission::where('patient_id', $request->patient_id)
-                ->where('in_process', 1)->get();
-
-
-            if (!$admissionExist->isEmpty()) {
-                return back()->with('error', 'Ya existe otro registro de ingreso en proceso para otro paciente, de el alta al otro para activar este.');
+            if (!$patient->isAvailable() || !$bed->isAvailable()) {
+                return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente o la cama seleccionada esta ocupada, dé el alta al otro para activar este.');
             }
         }
 
         $admission->update($request->all());
-        return back();
+        return Redirect::route('admissions.show', $admission->id);
     }
 
     /**
@@ -164,6 +180,8 @@ class AdmissionController extends Controller
      */
     public function destroy(Admission $admission)
     {
+        $this->authorize('delete', $admission);
+
         $admission->update(['active' => 0, 'in_process' => 0]);
 
         // desactivar todas las ordenes médicas relacionadas

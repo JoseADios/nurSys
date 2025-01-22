@@ -11,7 +11,6 @@ use App\Http\Controllers\NurseRecordDetailController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\TemperatureDetailController;
 use App\Http\Controllers\TemperatureRecordController;
-use App\Models\MedicationNotification;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DrugController;
 use App\Http\Controllers\DietController;
@@ -54,5 +53,9 @@ Route::middleware([
     Route::resource('users', UserController::class);
     Route::resource('Drugs', DrugController::class);
     Route::resource('Diet', DietController::class);
+    Route::group(['middleware' => ['role:admin']], function () {
+        Route::resource('users', UserController::class);
+    });
+
     Route::post('StoreModal',[DietController::class,'StoreModal'])->name('Diet.StoreModal');
 });

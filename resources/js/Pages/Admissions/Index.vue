@@ -6,12 +6,16 @@
             </h2>
         </template>
 
-        <div class="flex flex-col items-center justify-center mt-10">
+        <div v-if="can.create" class="flex flex-col items-center justify-center mt-10">
             <Link :href="route('admissions.create')"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
             Crear nuevo ingreso
             </Link>
         </div>
+
+        <!-- <div class="text-white">
+
+        </div> -->
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -21,7 +25,7 @@
                             Paciente
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Cama
+                            Ubicación
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Doctor
@@ -48,7 +52,7 @@
                                 admission.patient.second_surname }}
                         </th>
                         <td class="px-6 py-4">
-                            {{ admission.bed.number }}
+                           Sala: {{ admission.bed.room }}, Cama: {{ admission.bed.number }}
                         </td>
                         <td class="px-6 py-4">
                             {{ admission.doctor.name }} {{ admission.doctor.last_name }}
@@ -58,10 +62,10 @@
                         </td>
                         <td class="px-6 py-4">
                             <div v-if="admission.in_process">
-                                <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">En proceso</span>
+                                <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Ingresado</span>
                             </div>
                             <div v-else>
-                                <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">Alta</span>
+                                <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">Dado de alta</span>
                             </div>
                         </td>
                         <td class="px-6 py-4">
@@ -72,7 +76,7 @@
                                 :href="route('admissions.show', admission.id)">
                             Ver
                             </Link>
-                            <Link class="text-green-500 hover:text-green-800"
+                            <Link v-if="can.edit" class="text-green-500 hover:text-green-800"
                                 :href="route('admissions.edit', admission.id)">
                             Editar
                             </Link>
@@ -96,6 +100,7 @@ import { Link } from '@inertiajs/vue3';
 export default {
     props: {
         admissions: Array,
+        can: [Array, Object],
     },
     components: {
         AppLayout,

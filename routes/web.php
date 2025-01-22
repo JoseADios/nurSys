@@ -54,4 +54,5 @@ Route::middleware([
     Route::resource('users', UserController::class);
     Route::resource('Drugs', DrugController::class);
     Route::resource('Diet', DietController::class);
+    Route::post('StoreModal',[DietController::class,'StoreModal'])->name('Diet.StoreModal');
 });

@@ -205,4 +205,32 @@ class AdmissionController extends Controller
 
         return Redirect::route('admissions.index');
     }
+
+    public function restore(Admission $admission) {
+        $this->authorize('delete', $admission);
+
+        $admission->update(['active' => true, 'in_process' => 0]);
+
+        // activar todas las ordenes médicas relacionadas
+        DB::table('medical_orders')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => true]);
+
+        // medication records
+        DB::table('medication_records')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => true]);
+
+        // temperature record
+        DB::table('temperature_records')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => true]);
+
+        // nurse record
+        DB::table('nurse_records')
+            ->where('admission_id', $admission->id)
+            ->update(['active' => true]);
+
+        return Redirect::route('admissions.index');
+    }
 }

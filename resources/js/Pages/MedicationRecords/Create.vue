@@ -214,7 +214,7 @@ export default {
 
             this.$inertia.post(route('Diet.StoreModal'), this.modalform);
             this.isVisible = false;
-            this.modalform = {
+            this.form = {
                 name: '',
                 description: '',
             };

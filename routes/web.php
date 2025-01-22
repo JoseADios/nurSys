@@ -58,4 +58,5 @@ Route::middleware([
     });
 
     Route::post('StoreModal',[DietController::class,'StoreModal'])->name('Diet.StoreModal');
+    Route::post('/drug/store-modal/{id}',[DrugController::class,'StoreModal'])->name('Drug.StoreModal');
 });

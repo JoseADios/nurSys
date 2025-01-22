@@ -62,6 +62,35 @@ class DrugController extends Controller
             return redirect()->route('Drugs.index')->with('success', 'Medicamento creado correctamente');
 
     }
+    public function storemodal(Request $request,$id)
+    {
+           // Validación de los datos de entrada
+           $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+        ]);
+
+        // Verificar si ya existe un Medicamento con ese nombre
+        $existingdrug = Drug::where('name', $request->name)->first();
+
+        if ($existingdrug) {
+
+            return redirect()->back()->withErrors([
+                'name' => 'Ya Existe un Medicamento con ese nombre.',
+            ])->withInput();
+        }
+
+
+        $Drug = Drug::create([
+            'name' => $request->name,
+            'description' => $request->description,
+
+        ]);
+
+
+        return redirect()->route('medicationRecordDetails.create',$id)->with('success', 'Medicamento creado correctamente');
+
+    }
 
     /**
      * Display the specified resource.

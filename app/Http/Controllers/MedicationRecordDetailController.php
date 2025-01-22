@@ -55,10 +55,13 @@ class MedicationRecordDetailController extends Controller
 
         $start_time_24 = Carbon::parse($request->start_time)->format("H:i");
         // Primero guarda el detalle y obtén su ID
+
+        $dose_formatted = $request->dose . $request->dose_metric;
+        Log::info($dose_formatted);
         $detail = MedicationRecordDetail::create([
             'medication_record_id' => $request->medication_record_id,
             'drug' => $request->drug,
-            'dose' => $request->dose,
+            'dose' => $dose_formatted,
             'route' => $request->route,
             'fc' => $request->fc,
             'interval_in_hours' => $request->interval_in_hours,
@@ -107,9 +110,14 @@ class MedicationRecordDetailController extends Controller
      */
     public function edit(MedicationRecordDetail $medicationRecordDetail)
     {
-        return Inertia::render('MedicationRecordDetail/Edit', [
-            'medicationRecordDetail' => $medicationRecordDetail
-        ]);
+        $details = MedicationRecordDetail::find($medicationRecordDetail)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+
+        if (condition) {
+            return Inertia::render('MedicationRecordDetail/Edit', [
+                'medicationRecordDetail' => $medicationRecordDetail
+            ]);
+        }
+
     }
 
     /**

@@ -14,6 +14,7 @@ use App\Http\Controllers\TemperatureRecordController;
 use App\Models\MedicationNotification;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DrugController;
+use App\Http\Controllers\DietController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -52,4 +53,5 @@ Route::middleware([
     Route::resource('patients', PatientController::class);
     Route::resource('users', UserController::class);
     Route::resource('Drugs', DrugController::class);
+    Route::resource('Diet', DietController::class);
 });

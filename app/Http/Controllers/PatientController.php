@@ -72,8 +72,16 @@ class PatientController extends Controller
      */
     public function show(Patient $patient)
     {
+        $inProcessAdmssion = null;
+        if (!$patient->isAvailable()) {
+            $inProcessAdmssion = Admission::where('patient_id', $patient->id)
+                ->where('in_process', true)
+                ->value('id');
+        }
+
         return Inertia::render('Patients/Show', [
             'patient' => $patient,
+            'inProcessAdmssion' => $inProcessAdmssion,
         ]);
     }
 

@@ -12,6 +12,8 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\TemperatureDetailController;
 use App\Http\Controllers\TemperatureRecordController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DrugController;
+use App\Http\Controllers\DietController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -48,8 +50,15 @@ Route::middleware([
         ->name('temperatureRecords.customShow');
     Route::resource('temperatureDetails', TemperatureDetailController::class);
     Route::resource('patients', PatientController::class);
-
+    Route::resource('users', UserController::class);
+    Route::resource('Drugs', DrugController::class);
+    Route::resource('Diet', DietController::class);
     Route::group(['middleware' => ['role:admin']], function () {
         Route::resource('users', UserController::class);
     });
+    Route::get('/medication-record-details/create/{medicationRecordId}', [MedicationRecordDetailController::class, 'create'])
+    ->name('medicationRecordDetails.create');
+
+    Route::post('StoreModal',[DietController::class,'StoreModal'])->name('Diet.StoreModal');
+    Route::post('/drug/store-modal/{id}', [DrugController::class, 'storemodal'])->name('Drug.StoreModal');
 });

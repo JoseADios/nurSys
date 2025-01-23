@@ -55,10 +55,15 @@ class MedicationRecordDetailController extends Controller
 
         $start_time_24 = Carbon::parse($request->start_time)->format("H:i");
         // Primero guarda el detalle y obtén su ID
+
+        $dose_formatted = $request->dose . $request->dose_metric;
+
+
+
         $detail = MedicationRecordDetail::create([
             'medication_record_id' => $request->medication_record_id,
             'drug' => $request->drug,
-            'dose' => $request->dose,
+            'dose' => $dose_formatted,
             'route' => $request->route,
             'fc' => $request->fc,
             'interval_in_hours' => $request->interval_in_hours,
@@ -107,9 +112,23 @@ class MedicationRecordDetailController extends Controller
      */
     public function edit(MedicationRecordDetail $medicationRecordDetail)
     {
-        return Inertia::render('MedicationRecordDetail/Edit', [
-            'medicationRecordDetail' => $medicationRecordDetail
-        ]);
+
+             // Verificar si Ya Existe una notifiacion con medicamentos administrados
+             $existingnotification = MedicationNotification::where('medication_record_detail_id', $medicationRecordDetail->id)->first();
+
+
+             $Applied = $existingnotification->applied;
+             if ($Applied == 1) {
+                 // Si ya existe, redirigir con un mensaje de error
+                 return redirect()->route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->withErrors([
+                     'medication_record_detail_id' => 'Ya Existe una notifiacion con medicamentos administrados.',
+                 ])->withInput();
+             }
+            return Inertia::render('MedicationRecordDetail/Edit', [
+                'medicationRecordDetail' => $medicationRecordDetail
+            ]);
+
+
     }
 
     /**

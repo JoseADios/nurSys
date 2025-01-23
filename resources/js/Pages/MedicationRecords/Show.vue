@@ -11,7 +11,12 @@
                         </Link>
                     </div>
                 </div>
-
+   <!-- Mostrar errores -->
+   <div class="mb-4 flex flex-col items-center">
+            <div class="mb-4 text-red-500" v-for="error in errors" :key="error">
+                {{ error }}
+            </div>
+        </div>
                 <!-- Información Principal -->
                 <div class="p-8 space-y-8">
                     <div class="grid md:grid-cols-2 gap-6">

@@ -56,7 +56,9 @@ Route::middleware([
     Route::group(['middleware' => ['role:admin']], function () {
         Route::resource('users', UserController::class);
     });
+    Route::get('/medication-record-details/create/{medicationRecordId}', [MedicationRecordDetailController::class, 'create'])
+    ->name('medicationRecordDetails.create');
 
     Route::post('StoreModal',[DietController::class,'StoreModal'])->name('Diet.StoreModal');
-    Route::post('/drug/store-modal/{id}',[DrugController::class,'StoreModal'])->name('Drug.StoreModal');
+    Route::post('/drug/store-modal/{id}', [DrugController::class, 'storemodal'])->name('Drug.StoreModal');
 });

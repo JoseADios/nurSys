@@ -62,7 +62,7 @@ class DrugController extends Controller
             return redirect()->route('Drugs.index')->with('success', 'Medicamento creado correctamente');
 
     }
-    public function storemodal(Request $request,$id)
+    public function storemodal(Request $request, $id)
     {
            // Validación de los datos de entrada
            $request->validate([
@@ -87,8 +87,10 @@ class DrugController extends Controller
 
         ]);
 
+        Log::info($id);
 
-        return redirect()->route('medicationRecordDetails.create',$id)->with('success', 'Medicamento creado correctamente');
+        return redirect()->route('medicationRecordDetails.create', ['medicationRecordId' => $id])
+        ->with('success', 'Medicamento creado correctamente');
 
     }
 

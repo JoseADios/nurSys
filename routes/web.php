@@ -37,6 +37,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::resource('admissions', AdmissionController::class);
+    Route::put('/admissions/{admission}/restore', [AdmissionController::class, 'restore'])->name('admissions.restore');
     Route::resource('medicationRecords', MedicationRecordController::class);
     Route::resource('medicationRecordDetails', MedicationRecordDetailController::class);
     Route::get('medicationRecordDetails/create/{medicationRecord}',[MedicationRecordDetailController::class,'create'])->name('create');

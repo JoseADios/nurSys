@@ -180,6 +180,10 @@
                             </svg>
                             Eliminar
                         </button>
+                        <button v-if="can.delete && !admission.active" @click="restoreAdmission"
+                            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                            Restaurar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -262,6 +266,9 @@ export default {
         confirmDelete() {
             this.$inertia.delete(route('admissions.destroy', this.admission.id));
             this.admissionBeingDeleted = false;
+        },
+        restoreAdmission() {
+            this.$inertia.put(route('admissions.restore', this.admission.id));
         },
         goBack() {
             this.$inertia.visit(document.referrer)

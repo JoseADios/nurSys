@@ -23,6 +23,7 @@ class TemperatureRecordController extends Controller
     public function index(Request $request)
     {
         $query = TemperatureRecord::with('admission.patient', 'admission.bed', 'nurse')
+            ->where('active', true)
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc');
 
@@ -90,7 +91,7 @@ class TemperatureRecordController extends Controller
             ]);
         }
 
-        $canCreate = true;
+        $canCreateDetail = true;
 
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->whereBetween('created_at', [
@@ -102,7 +103,7 @@ class TemperatureRecordController extends Controller
 
 
         if ($lastTemperature) {
-            $canCreate = false;
+            $canCreateDetail = false;
 
             if ($lastTemperature->nurse_id != Auth::id()) {
                 $lastTemperature = null;
@@ -123,7 +124,7 @@ class TemperatureRecordController extends Controller
             'admissions' => $admissions,
             'details' => $details,
             'lastTemperature' => $lastTemperature,
-            'canCreate' => $canCreate,
+            'canCreateDetail' => $canCreateDetail,
         ]);
     }
 
@@ -145,6 +146,7 @@ class TemperatureRecordController extends Controller
             'admission_id' => 'numeric',
             'impression_diagnosis' => 'string',
             'nurse_sign' => 'string',
+            'active' => 'boolean'
         ]);
 
         if ($request->signature) {
@@ -164,6 +166,7 @@ class TemperatureRecordController extends Controller
      */
     public function destroy(TemperatureRecord $temperatureRecord)
     {
-        //
+        $temperatureRecord->update(['active' => 0]);
+        return Redirect::route('temperatureRecords.index');
     }
 }

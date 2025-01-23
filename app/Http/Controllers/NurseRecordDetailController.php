@@ -74,6 +74,7 @@ class NurseRecordDetailController extends Controller
      */
     public function destroy(NurseRecordDetail $nurseRecordDetail)
     {
-        //
+        $nurseRecordDetail->update(['active' => 0]);
+        return Redirect::route('nurseRecords.edit', $nurseRecordDetail->nurse_record_id);
     }
 }

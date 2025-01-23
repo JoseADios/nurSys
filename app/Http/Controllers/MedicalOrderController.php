@@ -123,6 +123,7 @@ class MedicalOrderController extends Controller
      */
     public function destroy(MedicalOrder $medicalOrder)
     {
-        //
+        $medicalOrder->update(['active'=> 0]);
+        return Redirect::route('medicalOrders.index');
     }
 }

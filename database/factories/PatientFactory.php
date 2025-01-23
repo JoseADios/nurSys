@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Ars;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -28,7 +29,7 @@ class PatientFactory extends Factory
             'position' => $this->faker->jobTitle(),
             'marital_status' => $this->faker->randomElement(['Single', 'Married', 'Divorced']),
             'address' => $this->faker->address(),
-            'ars' => $this->faker->randomElement(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']),
+            'ars' => Ars::inRandomOrder()->first()->name,
             'active' => true,
         ];
     }

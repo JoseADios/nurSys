@@ -34,6 +34,9 @@ class Patient extends Model
 
     public function isAvailable(): bool
     {
-        return !$this->admission()->where('in_process', true)->exists();
+        return !$this->admission()
+            ->where('in_process', true)
+            ->where('active', true)
+            ->exists();
     }
 }

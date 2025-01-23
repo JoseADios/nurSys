@@ -21,6 +21,15 @@
                         </svg>
                         <span class="font-medium">Volver</span>
                     </button>
+                    <button v-if="medicalOrder.active" @click="recordBeingDeleted = true"
+                        class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-medium">Eliminar</span>
+                    </button>
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -268,15 +277,13 @@
                                 </select>
                             </div>
 
-                            <div v-if="!originalSuspendedState">
-                                <div class="flex items-center me-4">
-                                    <input :checked="!!selectedDetail.suspended_at"
-                                        @change="selectedDetail.suspended_at = $event.target.checked ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null"
-                                        id="suspended_at" type="checkbox" value=""
-                                        class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="red-checkbox"
-                                        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Suspender</label>
-                                </div>
+                            <div class="flex items-center me-4">
+                                <input :checked="!!selectedDetail.suspended_at"
+                                    @change="selectedDetail.suspended_at = $event.target.checked ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null"
+                                    id="suspended_at" type="checkbox" value=""
+                                    class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="red-checkbox"
+                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Suspender</label>
                             </div>
 
                         </div>
@@ -286,16 +293,50 @@
 
             <!-- Footer del modal -->
             <template #footer>
-                <button @click="submitUpdateDetail"
-                    class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                    Actualizar
+                <button v-if="selectedDetail.active" type="button" @click="detailBeingDeleted = true"
+                    class="mr-6 focus:outline-none text-white bg-red-800 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                    Eliminar
                 </button>
-                <button @click="isVisibleDetail = false"
+                <button v-if="!selectedDetail.active" type="button" @click="restoreDetail"
+                    class="mr-6 focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+                    Restaurar
+                </button>
+                <button type="button" @click="isVisibleDetail = false"
                     class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                     Cerrar
                 </button>
+                <button type="submit" @click="submitUpdateDetail"
+                    class="ml-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                    Actualizar
+                </button>
             </template>
         </DialogModal>
+        <ConfirmationModal :show="recordBeingDeleted != null || detailBeingDeleted != null"
+            @close="recordBeingDeleted = null; detailBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+
+            <template v-if="recordBeingDeleted" #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+            <template v-else #content>
+                ¿Estás seguro de que deseas eliminar este detalle?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="recordBeingDeleted = null; detailBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton v-if="recordBeingDeleted" class="ms-3" @click="deleteRecord">
+                    Eliminar registro
+                </DangerButton>
+                <DangerButton v-else class="ms-3" @click="deleteDetail(); detailBeingDeleted = null;">
+                    Eliminar detalle
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
 
     </AppLayout>
 </template>
@@ -306,6 +347,9 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue'
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 
 export default {
@@ -314,19 +358,21 @@ export default {
         Link,
         DialogModal,
         SignaturePad,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
     },
     props: {
         medicalOrder: Object,
-        errors: {
-            type: Array,
-            default: () => []
-        },
+        errors: [Array, Object],
         admissions: Array,
         details: Array,
         regimes: Array,
     },
     data() {
         return {
+            recordBeingDeleted: ref(null),
+            detailBeingDeleted: ref(null),
             selectedDetail: ref(null),
             isVisibleDetail: ref(false),
             originalSuspendedState: ref(null),
@@ -341,6 +387,7 @@ export default {
                 medical_order_id: this.medicalOrder.id,
                 order: null,
                 regime: null,
+                active: null,
             },
             formSignature: {
                 doctor_sign: this.medicalOrder.doctor_sign,
@@ -391,6 +438,20 @@ export default {
         goBack() {
             this.$inertia.visit(document.referrer)
         },
+        deleteRecord() {
+            this.recordBeingDeleted = false
+            this.$inertia.delete(route('medicalOrders.destroy', this.medicalOrder.id));
+        },
+        deleteDetail() {
+            this.detailBeingDeleted = false
+            this.isVisibleAdm = false
+            this.isVisibleDetail = false
+            this.$inertia.delete(route('medicalOrderDetails.destroy', this.selectedDetail.id));
+        },
+        restoreDetail() {
+            this.selectedDetail.active = true
+            this.submitUpdateDetail()
+        }
     }
 }
 </script>

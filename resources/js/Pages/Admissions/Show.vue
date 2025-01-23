@@ -170,7 +170,7 @@
                         Editar
                         </Link>
 
-                        <button v-if="can.delete" @click="confirmDelete"
+                        <button v-if="can.delete && admission.active" @click="admissionBeingDeleted = true"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold rounded-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -184,13 +184,36 @@
                 </div>
             </div>
         </div>
+        <ConfirmationModal :show="admissionBeingDeleted != null" @close="admissionBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="admissionBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton class="ms-3" @click="confirmDelete">
+                    Eliminar
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
 <script>
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 export default {
     props: {
@@ -202,9 +225,13 @@ export default {
         AppLayout,
         Link,
         AccessGate,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
     },
     data() {
         return {
+            admissionBeingDeleted: ref(null),
             form: {
                 patient_id: this.admission.patient_id,
                 in_process: this.admission.in_process
@@ -233,9 +260,8 @@ export default {
             });
         },
         confirmDelete() {
-            if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
-                this.$inertia.delete(route('admissions.destroy', this.admission.id));
-            }
+            this.$inertia.delete(route('admissions.destroy', this.admission.id));
+            this.admissionBeingDeleted = false;
         },
         goBack() {
             this.$inertia.visit(document.referrer)

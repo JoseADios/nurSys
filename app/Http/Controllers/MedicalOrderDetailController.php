@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MedicalOrderDetail;
 use App\Models\MedicationNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class MedicalOrderDetailController extends Controller
 {
@@ -61,7 +62,6 @@ class MedicalOrderDetailController extends Controller
      */
     public function update(Request $request, MedicalOrderDetail $medicalOrderDetail)
     {
-
         $medicalOrderDetail->update($request->all());
         return back();
     }
@@ -71,6 +71,7 @@ class MedicalOrderDetailController extends Controller
      */
     public function destroy(MedicalOrderDetail $medicalOrderDetail)
     {
-        //
+        $medicalOrderDetail->update(['active' => 0]);
+        return Redirect::route('medicalOrders.edit', $medicalOrderDetail->medical_order_id);
     }
 }

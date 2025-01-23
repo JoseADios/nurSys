@@ -75,7 +75,6 @@
                     <button type="submit"
                         class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Guardar</button>
                 </div>
-
             </form>
         </div>
     </AppLayout>
@@ -87,11 +86,11 @@ import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
-        admission: Array,
         doctors: Array,
-        beds: Array,
-        patients: Array,
-        errors: Array,
+        beds: Object,
+        patients: Object,
+        errors: [Array, Object],
+        selectedPatient: String,
     },
     components: {
         AppLayout,
@@ -101,7 +100,7 @@ export default {
         return {
             form: {
                 bed_id: null,
-                patient_id: null,
+                patient_id: this.selectedPatient,
                 doctor_id: null,
                 admission_dx: null,
                 final_dx: null,

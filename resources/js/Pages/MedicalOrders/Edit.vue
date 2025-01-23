@@ -30,6 +30,10 @@
                         </svg>
                         <span class="font-medium">Eliminar</span>
                     </button>
+                    <button v-else @click="restoreRecord"
+                        class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                        <span class="font-medium">Restaurar</span>
+                    </button>
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -382,6 +386,7 @@ export default {
             isVisibleAdm: false,
             formAdmission: {
                 admission_id: this.medicalOrder.admission_id,
+                active: this.medicalOrder.active
             },
             formDetail: {
                 medical_order_id: this.medicalOrder.id,
@@ -401,7 +406,7 @@ export default {
         },
         submitAdmission() {
             this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formAdmission)
-            this.toggleEditAdmission()
+            this.isVisibleAdm = false
         },
         submit() {
             this.$inertia.post(route('medicalOrderDetails.store'),
@@ -451,6 +456,10 @@ export default {
         restoreDetail() {
             this.selectedDetail.active = true
             this.submitUpdateDetail()
+        },
+        restoreRecord() {
+            this.formAdmission.active = true
+            this.submitAdmission()
         }
     }
 }

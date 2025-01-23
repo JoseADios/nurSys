@@ -30,6 +30,10 @@
                         </svg>
                         <span class="font-medium">Eliminar</span>
                     </button>
+                    <button v-else @click="restoreRecord"
+                        class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                        <span class="font-medium">Restaurar</span>
+                    </button>
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -290,7 +294,8 @@ export default {
             signatureError: false,
 
             formAdmission: {
-                admission_id: this.nurseRecord.admission_id
+                admission_id: this.nurseRecord.admission_id,
+                active: this.nurseRecord.active
             },
             formDetail: {
                 nurse_record_id: this.nurseRecord.id,
@@ -309,7 +314,7 @@ export default {
         },
         submitAdmission() {
             this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formAdmission)
-            this.toggleEditAdmission()
+            this.isVisible = false
         },
         submit() {
             this.$inertia.post(route('nurseRecordDetails.store'),
@@ -340,6 +345,10 @@ export default {
             this.recordBeingDeleted = false
             this.$inertia.delete(route('nurseRecords.destroy', this.nurseRecord.id));
         },
+        restoreRecord() {
+            this.formAdmission.active = true
+            this.submitAdmission();
+        }
     }
 }
 </script>

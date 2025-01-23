@@ -105,6 +105,7 @@ class MedicalOrderController extends Controller
         $validated = $request->validate([
             'admission_id' => 'numeric',
             'doctor_sign' => 'string',
+            'active' => 'boolean',
         ]);
 
         if ($request->signature) {

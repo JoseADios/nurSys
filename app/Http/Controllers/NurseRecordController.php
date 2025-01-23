@@ -122,14 +122,16 @@ class NurseRecordController extends Controller
     {
         $firmService = new FirmService;
 
+
         $validated = $request->validate([
             'admission_id' => 'numeric',
             'nurse_sign' => 'string',
+            'active' => 'boolean',
         ]);
 
         if ($request->signature) {
             $fileName = $firmService
-                ->createImag($request->nurse_sign, $nurseRecord->nurse_sign);
+            ->createImag($request->nurse_sign, $nurseRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
         }
 

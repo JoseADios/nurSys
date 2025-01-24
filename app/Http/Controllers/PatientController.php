@@ -9,6 +9,7 @@ use App\Models\Nationality;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
 class PatientController extends Controller
@@ -39,6 +40,7 @@ class PatientController extends Controller
             'nationalities' => $nationalities,
             'maritalSatuses' => $maritalSatuses,
             'arss' => $arss,
+            'previousUrl' => URL::previous(),
         ]);
     }
 
@@ -82,6 +84,7 @@ class PatientController extends Controller
         return Inertia::render('Patients/Show', [
             'patient' => $patient,
             'inProcessAdmssion' => $inProcessAdmssion,
+            'previousUrl' => URL::previous(),
         ]);
     }
 
@@ -99,6 +102,7 @@ class PatientController extends Controller
             'nationalities' => $nationalities,
             'maritalSatuses' => $maritalSatuses,
             'arss' => $arss,
+            'previousUrl' => URL::previous(),
         ]);
     }
 

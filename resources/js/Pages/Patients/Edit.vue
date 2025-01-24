@@ -250,6 +250,7 @@ export default {
         maritalSatuses: Array,
         arss: Array,
         errors: Array,
+        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -282,7 +283,11 @@ export default {
             this.$inertia.put(route('patients.update', this.patient.id), this.form)
         },
         goBack() {
-            this.$inertia.visit(document.referrer)
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
         },
         deletePatient() {
             this.patientBeingDeleted = false

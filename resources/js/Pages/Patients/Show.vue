@@ -200,6 +200,7 @@ export default {
     props: {
         patient: Object,
         inProcessAdmssion: Number,
+        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -222,7 +223,11 @@ export default {
             });
         },
         goBack() {
-            window.history.back();
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
         },
         getInitials(firstName, lastName) {
             return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();

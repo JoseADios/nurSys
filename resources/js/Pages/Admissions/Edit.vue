@@ -134,6 +134,7 @@ export default {
         patients: [Array, Object],
         doctors: [Array, Object],
         beds: [Array, Object],
+        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -166,7 +167,11 @@ export default {
             this.submit()
         },
         goBack() {
-            this.$inertia.visit(document.referrer)
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
         },
         confirmDelete() {
             if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {

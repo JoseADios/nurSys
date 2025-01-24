@@ -91,6 +91,7 @@ export default {
         patients: Object,
         errors: [Array, Object],
         selectedPatient: String,
+        previousUrl: String
     },
     components: {
         AppLayout,
@@ -113,7 +114,11 @@ export default {
             this.$inertia.post(route('admissions.store'), this.form)
         },
         goBack() {
-            this.$inertia.visit(document.referrer)
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
         }
     }
 }

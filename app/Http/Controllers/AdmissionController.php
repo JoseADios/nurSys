@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 
 class AdmissionController extends Controller
 {
@@ -63,6 +64,7 @@ class AdmissionController extends Controller
             'beds' => $beds,
             'patients' => $patients,
             'selectedPatient' => $selectedPatient,
+            'previousUrl' => URL::previous(),
         ]);
     }
 
@@ -130,7 +132,8 @@ class AdmissionController extends Controller
                 'delete' => Gate::allows('delete', $admission),
                 'createOrder' => $user->hasRole(['admin']) || ($user->hasRole(['doctor']) && $admission->doctor_id == $user->id),
                 'createNurseRecord' => $user->hasRole(['nurse', 'admin']),
-            ]
+            ],
+            'previousUrl' => URL::previous(),
         ]);
     }
 
@@ -153,6 +156,7 @@ class AdmissionController extends Controller
             'patients' => $patients,
             'doctors' => $doctors,
             'beds' => $beds,
+            'previousUrl' => URL::previous(),
         ]);
     }
 
@@ -212,7 +216,8 @@ class AdmissionController extends Controller
         return Redirect::route('admissions.index');
     }
 
-    public function restore(Admission $admission) {
+    public function restore(Admission $admission)
+    {
         $this->authorize('delete', $admission);
 
         $admission->update(['active' => true, 'in_process' => 0]);

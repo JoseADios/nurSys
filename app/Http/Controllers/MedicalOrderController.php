@@ -96,6 +96,7 @@ class MedicalOrderController extends Controller
             'regimes' => $regimes,
             'previousUrl' => URL::previous(),
         ]);
+
     }
 
     /**

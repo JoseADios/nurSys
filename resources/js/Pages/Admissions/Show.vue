@@ -5,10 +5,10 @@
                 <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
                     <div class="flex justify-between items-center">
                         <h2 class="text-2xl font-bold text-white">Detalles del Ingreso</h2>
-                        <button @click="goBack"
+                        <Link :href="route('admissions.index')"
                             class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out">
                             Volver
-                        </button>
+                        </Link>
                     </div>
                 </div>
 

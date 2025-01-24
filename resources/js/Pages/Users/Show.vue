@@ -85,11 +85,11 @@
                 <div class="flex justify-end space-x-4 pt-6">
                     <button v-if="user.active == 1" @click="userBeingDeleted = true"
                         class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
-                        Eliminar
+                        Deshabilitar
                     </button>
                     <button v-else @click="restoreUser"
                         class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
-                        Restaurar
+                        Habilitar
                     </button>
 
                     <Link :href="route('users.index')" type="button"

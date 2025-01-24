@@ -128,15 +128,65 @@
 
                     </div>
 
+                    <div class="space-x-4 pt-4">
+                        <button v-show="userChangingPass == null" type="button" @click="userChangingPass = true"
+                            class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200">
+                            Cambiar Contraseña
+                        </button>
+
+                        <div v-show="userChangingPass != null">
+                            <!-- Formulario para cambiar la contraseña  -->
+                            <form @submit.prevent="changePassword" class="space-y-6">
+                                <!-- Grid container -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Left Column -->
+                                    <div class="space-y-4">
+
+                                        <div class="space-y-2">
+                                            <label for="password" class="block text-sm font-medium text-white">Nueva
+                                                contraseña</label>
+                                            <input type="password" id="password" v-model="formPassword.password"
+                                                class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+                                                required>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label for="password_confirmation"
+                                                class="block text-sm font-medium text-white">Confirmar
+                                                Contraseña</label>
+                                            <input type="password" id="password_confirmation"
+                                                v-model="formPassword.password_confirmation"
+                                                class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+                                                required>
+                                        </div>
+
+                                        <div class="flex justify-end space-x-4 pt-4">
+                                            <button @click="userChangingPass = null"
+                                                class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
+                                                Cancelar
+                                            </button>
+                                            <button type="submit"
+                                                class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
+                                                Cambiar contraseña
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+
                     <!-- Buttons -->
                     <div class="flex justify-end space-x-4 pt-4">
                         <button v-if="user.active == 1" @click="userBeingDeleted = true" type="button"
                             class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
-                            Eliminar
+                            Deshabilitar
                         </button>
                         <button v-else @click="restoreUser" type="button"
                             class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
-                            Restaurar
+                            Habilitar
                         </button>
                         <Link :href="route('users.index')" type="button"
                             class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
@@ -201,6 +251,7 @@ export default {
     data() {
         return {
             userBeingDeleted: ref(null),
+            userChangingPass: ref(null),
             form: {
                 name: this.user.name,
                 last_name: this.user.last_name,
@@ -216,7 +267,11 @@ export default {
                 position: this.user.position,
                 comment: this.user.comment,
             },
-            birthdateError: ''
+            formPassword: {
+                password: null,
+                password_confirmation: null,
+            },
+            birthdateError: '',
         }
     },
     methods: {
@@ -245,7 +300,16 @@ export default {
         restoreUser() {
             this.$inertia.put(route('users.update', this.user.id), { active: true });
         },
-        previousUrl: String,
+        changePassword() {
+            this.$inertia.put(route('users.update', this.user.id), this.formPassword);
+        },
+        goBack() {
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
+        }
     }
 }
 </script>

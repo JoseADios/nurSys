@@ -121,12 +121,19 @@ class UserController extends Controller
             $validated = Validator::make($request->all(), [
                 'active' => 'boolean'
             ])->validate();
+        } elseif ($request->has('password')) {
+            $validated = Validator::make($request->all(), [
+                'password' => $this->passwordRules(),
+            ])->validate();
+            $user->update(attributes: [
+                'password' => Hash::make($validated['password']),
+            ]);
+            return Redirect::route('users.index', $user->id)->with('success', 'Password updated successfully.');
         } else {
             $validated = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
                 'last_name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-                // 'password' => $this->passwordRules(),
                 'identification_card' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
                 'exequatur' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
                 'specialty' => ['required', 'string', 'max:255'],

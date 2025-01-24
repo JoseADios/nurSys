@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\URL;
 
 class TemperatureRecordController extends Controller
 {
@@ -125,6 +126,7 @@ class TemperatureRecordController extends Controller
             'details' => $details,
             'lastTemperature' => $lastTemperature,
             'canCreateDetail' => $canCreateDetail,
+            'previousUrl' => URL::previous(),
         ]);
     }
 

@@ -310,6 +310,7 @@ export default {
         details: Array,
         lastTemperature: Object,
         canCreateDetail: Boolean,
+        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -403,8 +404,12 @@ export default {
             this.submitUpdateRecord()
         },
         goBack() {
-            this.$inertia.visit(document.referrer)
-        },
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
+        }
     }
 }
 </script>

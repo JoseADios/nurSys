@@ -146,10 +146,10 @@
 
                     <!-- Buttons -->
                     <div class="flex justify-end space-x-4 pt-4">
-                        <button @click="goBack" type="button"
+                        <Link :href="route('users.index')"
                             class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
                             Cancelar
-                        </button>
+                        </Link>
                         <button @click="save"
                             class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
                             Guardar
@@ -167,6 +167,7 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
@@ -180,6 +181,7 @@ export default {
     },
     components: {
         AppLayout,
+        Link
     },
     data() {
         return {
@@ -253,13 +255,6 @@ export default {
         saveAndNew() {
             this.form.saveAndNew = true;
             this.submit()
-        },
-        goBack() {
-            if (this.previousUrl) {
-                this.$inertia.visit(this.previousUrl);
-            } else {
-                window.history.back();
-            }
         }
     }
 }

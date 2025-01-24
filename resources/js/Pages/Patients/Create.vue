@@ -195,10 +195,10 @@
 
                 <!-- Form Actions -->
                 <div class="px-6 py-4 bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
-                    <button @click="goBack" type="button"
+                    <Link :href="route('patients.index')"
                         class="px-4 py-2 text-sm font-medium text-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Cancelar
-                    </button>
+                </Link>
                     <button type="submit"
                         class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Guardar
@@ -219,7 +219,6 @@ export default {
         maritalSatuses: Array,
         arss: Array,
         errors: Array,
-        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -246,13 +245,6 @@ export default {
     methods: {
         submit() {
             this.$inertia.post(route('patients.store'), this.form)
-        },
-        goBack() {
-            if (this.previousUrl) {
-                this.$inertia.visit(this.previousUrl);
-            } else {
-                window.history.back();
-            }
         }
     }
 }

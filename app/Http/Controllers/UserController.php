@@ -93,7 +93,6 @@ class UserController extends Controller
         $user->load('roles');
         return Inertia::render('Users/Show', [
             'user' => $user,
-            'previousUrl' => URL::previous(),
         ]);
     }
 

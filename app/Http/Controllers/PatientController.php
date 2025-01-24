@@ -84,7 +84,6 @@ class PatientController extends Controller
         return Inertia::render('Patients/Show', [
             'patient' => $patient,
             'inProcessAdmssion' => $inProcessAdmssion,
-            'previousUrl' => URL::previous(),
         ]);
     }
 

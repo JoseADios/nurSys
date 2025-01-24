@@ -40,14 +40,14 @@
                         </svg>
                         Editar
                         </Link>
-                        <button @click="goBack"
+                        <Link :href="route('patients.index')"
                             class="inline-flex items-center px-4 py-2 bg-gray-700 text-gray-200 text-sm rounded-lg hover:bg-gray-600 transition-all duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
                             Volver
-                        </button>
+                        </Link>
                     </div>
                 </div>
 
@@ -200,7 +200,6 @@ export default {
     props: {
         patient: Object,
         inProcessAdmssion: Number,
-        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -221,13 +220,6 @@ export default {
                 month: 'long',
                 day: 'numeric'
             });
-        },
-        goBack() {
-            if (this.previousUrl) {
-                this.$inertia.visit(this.previousUrl);
-            } else {
-                window.history.back();
-            }
         },
         getInitials(firstName, lastName) {
             return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();

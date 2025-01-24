@@ -157,13 +157,6 @@ export default {
         },
         restoreUser() {
             this.$inertia.put(route('users.update', this.user.id), { active: true });
-        },
-        goBack() {
-            if (this.previousUrl) {
-                this.$inertia.visit(this.previousUrl);
-            } else {
-                window.history.back();
-            }
         }
     }
 }

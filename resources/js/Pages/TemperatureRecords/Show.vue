@@ -302,6 +302,7 @@ import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { useGoBack } from '@/composables/useGoBack';
 
 export default {
     props: {
@@ -402,14 +403,11 @@ export default {
         restoreRecord() {
             this.formRecord.active = true
             this.submitUpdateRecord()
-        },
-        goBack() {
-            if (this.previousUrl) {
-                this.$inertia.visit(this.previousUrl);
-            } else {
-                window.history.back();
-            }
         }
+    },
+    setup() {
+        const { goBack } = useGoBack()
+        return { goBack }
     }
 }
 </script>

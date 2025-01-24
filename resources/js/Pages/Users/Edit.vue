@@ -232,6 +232,7 @@ import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { useGoBack } from '@/composables/useGoBack';
 
 export default {
     props: {
@@ -302,14 +303,11 @@ export default {
         },
         changePassword() {
             this.$inertia.put(route('users.update', this.user.id), this.formPassword);
-        },
-        goBack() {
-            if (this.previousUrl) {
-                this.$inertia.visit(this.previousUrl);
-            } else {
-                window.history.back();
-            }
         }
+    },
+    setup() {
+        const { goBack } = useGoBack()
+        return { goBack }
     }
 }
 </script>

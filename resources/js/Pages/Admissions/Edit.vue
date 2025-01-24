@@ -107,10 +107,10 @@
 
                 <div class="flex justify-end mt-6 mb-2">
 
-                    <Link @click="goBack"
+                    <button @click="goBack"
                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    Cancelar
-                    </Link>
+                        Cancelar
+                    </button>
 
                     <button type="submit"
                         class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Guardar</button>
@@ -126,6 +126,7 @@
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
+import { useGoBack } from '@/composables/useGoBack'
 
 export default {
     props: {
@@ -166,18 +167,15 @@ export default {
             this.form.in_process = 1
             this.submit()
         },
-        goBack() {
-            if (this.previousUrl) {
-                this.$inertia.visit(this.previousUrl);
-            } else {
-                window.history.back();
-            }
-        },
         confirmDelete() {
             if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
                 this.$inertia.delete(route('admissions.destroy', this.admission.id));
             }
         },
+        setup() {
+            const { goBack } = useGoBack()
+            return { goBack }
+        }
     },
 }
 </script>

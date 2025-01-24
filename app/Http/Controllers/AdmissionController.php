@@ -64,7 +64,6 @@ class AdmissionController extends Controller
             'beds' => $beds,
             'patients' => $patients,
             'selectedPatient' => $selectedPatient,
-            'previousUrl' => URL::previous(),
         ]);
     }
 
@@ -133,7 +132,6 @@ class AdmissionController extends Controller
                 'createOrder' => $user->hasRole(['admin']) || ($user->hasRole(['doctor']) && $admission->doctor_id == $user->id),
                 'createNurseRecord' => $user->hasRole(['nurse', 'admin']),
             ],
-            'previousUrl' => URL::previous(),
         ]);
     }
 

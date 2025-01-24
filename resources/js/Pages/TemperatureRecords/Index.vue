@@ -10,7 +10,7 @@
 
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-            <button @click="goBack"
+            <Link :href="route('admissions.show', admission_id)"
                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
@@ -18,7 +18,7 @@
                     clip-rule="evenodd" />
             </svg>
             <span class="font-medium">Volver</span>
-            </button>
+            </Link>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -82,9 +82,6 @@ export default {
         Link,
     },
     methods: {
-        goBack() {
-            this.$inertia.visit(document.referrer)
-        },
         temperatureRecordShow(id) {
             this.$inertia.get(route('temperatureRecords.customShow', {id: id, admission_id: null}));
         }

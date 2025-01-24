@@ -242,6 +242,7 @@ import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { useGoBack } from '@/composables/useGoBack';
 
 export default {
     props: {
@@ -282,20 +283,17 @@ export default {
         submit() {
             this.$inertia.put(route('patients.update', this.patient.id), this.form)
         },
-        goBack() {
-            if (this.previousUrl) {
-                this.$inertia.visit(this.previousUrl);
-            } else {
-                window.history.back();
-            }
-        },
         deletePatient() {
             this.patientBeingDeleted = false
             this.$inertia.delete(route('patients.destroy', this.patient.id));
         },
         restorePatient() {
-            this.$inertia.put(route('patients.update', this.patient.id), {active: true});
+            this.$inertia.put(route('patients.update', this.patient.id), { active: true });
         }
+    },
+    setup() {
+        const { goBack } = useGoBack()
+        return { goBack }
     }
 }
 </script>

@@ -50,7 +50,6 @@ class MedicalOrderController extends Controller
         return Inertia::render('MedicalOrders/Create', [
             'admissions' => $admissions,
             'admission_id' => intval($admission_id),
-            'previousUrl' => URL::previous(),
         ]);
     }
 

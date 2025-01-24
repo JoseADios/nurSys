@@ -224,7 +224,6 @@ export default {
         admission: Object,
         daysIngressed: Number,
         can: [Array, Object],
-        previousUrl: String
     },
     components: {
         AppLayout,
@@ -270,13 +269,6 @@ export default {
         },
         restoreAdmission() {
             this.$inertia.put(route('admissions.restore', this.admission.id));
-        },
-        goBack() {
-            if (this.previousUrl) {
-                this.$inertia.visit(this.previousUrl);
-            } else {
-                window.history.back();
-            }
         }
     }
 }

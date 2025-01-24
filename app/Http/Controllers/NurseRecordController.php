@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
 class NurseRecordController extends Controller
@@ -49,7 +50,8 @@ class NurseRecordController extends Controller
             ->get();
         return Inertia::render('NurseRecords/Create', [
             'admissions' => $admissions,
-            'admission_id' => intval($admission_id)
+            'admission_id' => intval($admission_id),
+            'previousUrl' => URL::previous(),
         ]);
     }
 
@@ -111,7 +113,8 @@ class NurseRecordController extends Controller
             'nurse' => $nurse,
             'bed' => $bed,
             'details' => $details,
-            'errors' => !empty($errors) ? $errors : []
+            'errors' => !empty($errors) ? $errors : [],
+            'previousUrl' => URL::previous(),
         ]);
     }
 

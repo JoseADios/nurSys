@@ -276,7 +276,7 @@ export default {
         nurse: Object,
         bed: Object,
         details: Array,
-        // datos: Object
+        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -339,7 +339,11 @@ export default {
             this.isVisibleEditSign = false
         },
         goBack() {
-            this.$inertia.visit(document.referrer)
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
         },
         deleteRecord() {
             this.recordBeingDeleted = false

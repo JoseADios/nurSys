@@ -46,7 +46,8 @@ export default {
         admission_id: {
             type: Number,
             default: null
-        }
+        },
+        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -63,9 +64,11 @@ export default {
             this.$inertia.post(route('nurseRecords.store'), this.form)
         },
         goBack() {
-            // this.$inertia.visit(document.referrer)
-            window.history.back()
-
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
         }
     }
 }

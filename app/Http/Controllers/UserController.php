@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Fortify\PasswordValidationRules;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,7 +48,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        Validator::make($request->all(), [
+        $validated = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -58,28 +59,14 @@ class UserController extends Controller
             'area' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
-            'birthdate' => ['required', 'date'],
+            'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
             'position' => ['required', 'string', 'max:255'],
             'comments' => ['string', 'max:255'],
 
         ])->validate();
 
         try {
-            $user = User::create([
-                'name' => $request['name'],
-                'last_name' => $request['last_name'],
-                'email' => $request['email'],
-                'password' => Hash::make($request['password']),
-                'identification_card' => $request['identification_card'],
-                'exequatur' => $request['exequatur'],
-                'specialty' => $request['specialty'],
-                'area' => $request['area'],
-                'phone' => $request['phone'],
-                'address' => $request['address'],
-                'birthdate' => $request['birthdate'],
-                'position' => $request['position'],
-                'comments' => $request['comments'],
-            ]);
+            $user = User::create($validated);
 
             $user->syncRoles($request->role);
 
@@ -92,9 +79,8 @@ class UserController extends Controller
             return Redirect::route('users.create', [
                 'reset' => true,
             ])->with('success', 'User created successfully.');
-        } else {
-            return Redirect::route('users.show', $user->id);
         }
+        return Redirect::route('users.show', $user->id);
     }
 
     /**
@@ -143,7 +129,7 @@ class UserController extends Controller
                 'area' => ['required', 'string', 'max:255'],
                 'phone' => ['required', 'string', 'max:255'],
                 'address' => ['required', 'string', 'max:255'],
-                'birthdate' => ['required', 'date'],
+                'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
                 'position' => ['required', 'string', 'max:255'],
                 'comments' => ['string', 'max:255'],
             ])->validate();

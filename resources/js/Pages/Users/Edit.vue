@@ -107,6 +107,7 @@
                                 <input type="date" id="birthdate" v-model="form.birthdate"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <span v-if="birthdateError" class="text-red-500 text-sm">{{ birthdateError }}</span>
                             </div>
 
                             <div class="space-y-2">
@@ -213,12 +214,28 @@ export default {
                 birthdate: this.user.birthdate,
                 position: this.user.position,
                 comment: this.user.comment,
-            }
+            },
+            birthdateError: ''
         }
     },
     methods: {
+        validateBirthdate(birthdate) {
+            const date = new Date(birthdate);
+            const today = new Date();
+            let age = today.getFullYear() - date.getFullYear();
+            const monthDifference = today.getMonth() - date.getMonth();
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < date.getDate())) {
+                age--;
+            }
+            return age >= 18;
+        },
         submit() {
-            this.$inertia.put(route('users.update', this.user.id), this.form)
+            if (!this.validateBirthdate(this.form.birthdate)) {
+                this.birthdateError = 'La fecha de nacimiento debe indicar que el usuario tiene al menos 18 años.';
+                return;
+            }
+            this.birthdateError = '';
+            this.$inertia.put(route('users.update', this.user.id), this.form);
         },
         deleteUser() {
             this.userBeingDeleted = false

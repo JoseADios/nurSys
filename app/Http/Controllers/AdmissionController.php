@@ -71,7 +71,7 @@ class AdmissionController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('store', Admission::class);
+        $this->authorize('create', Admission::class);
 
         $request->validate([
             'patient_id' => 'required',

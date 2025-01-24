@@ -136,6 +136,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 export default {
     props: {
         user: Object,
+        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -158,7 +159,11 @@ export default {
             this.$inertia.put(route('users.update', this.user.id), { active: true });
         },
         goBack() {
-            this.$inertia.visit(document.referrer)
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
         }
     }
 }

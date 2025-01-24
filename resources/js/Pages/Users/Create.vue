@@ -175,7 +175,8 @@ export default {
             type: Object,
             default: () => ({})
         },
-        reset: Boolean
+        reset: Boolean,
+        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -254,8 +255,12 @@ export default {
             this.submit()
         },
         goBack() {
-            this.$inertia.visit(document.referrer)
-        },
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
+        }
     }
 }
 </script>

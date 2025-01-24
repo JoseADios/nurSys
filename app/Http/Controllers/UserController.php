@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -40,6 +41,7 @@ class UserController extends Controller
         $roles = Role::orderBy('name', 'asc')->get();
         return Inertia::render('Users/Create', [
             'roles' => $roles,
+            'previousUrl' => URL::previous(),
         ]);
     }
 
@@ -91,6 +93,7 @@ class UserController extends Controller
         $user->load('roles');
         return Inertia::render('Users/Show', [
             'user' => $user,
+            'previousUrl' => URL::previous(),
         ]);
     }
 
@@ -105,6 +108,7 @@ class UserController extends Controller
             'user' => $user,
             'roles' => $roles,
             'hasRoles' => $hasRoles,
+            'previousUrl' => URL::previous(),
         ]);
     }
 

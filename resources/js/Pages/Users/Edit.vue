@@ -189,6 +189,7 @@ export default {
         roles: Array,
         hasRoles: Array,
         errors: Object,
+        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -244,9 +245,7 @@ export default {
         restoreUser() {
             this.$inertia.put(route('users.update', this.user.id), { active: true });
         },
-        goBack() {
-            this.$inertia.visit(document.referrer)
-        }
+        previousUrl: String,
     }
 }
 </script>

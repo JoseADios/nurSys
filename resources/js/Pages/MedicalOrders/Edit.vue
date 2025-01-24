@@ -372,6 +372,7 @@ export default {
         admissions: Array,
         details: Array,
         regimes: Array,
+        previousUrl: String,
     },
     data() {
         return {
@@ -441,7 +442,11 @@ export default {
             this.isVisibleDetail = true;
         },
         goBack() {
-            this.$inertia.visit(document.referrer)
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
         },
         deleteRecord() {
             this.recordBeingDeleted = false

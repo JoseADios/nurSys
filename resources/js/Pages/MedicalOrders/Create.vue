@@ -40,6 +40,7 @@ export default {
     props: {
         admissions: Array,
         admission_id: Number,
+        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -56,7 +57,11 @@ export default {
             this.$inertia.post(route('medicalOrders.store'), this.form)
         },
         goBack() {
-            window.history.back()
+            if (this.previousUrl) {
+                this.$inertia.visit(this.previousUrl);
+            } else {
+                window.history.back();
+            }
         }
     }
 }

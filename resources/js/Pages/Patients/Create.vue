@@ -6,13 +6,6 @@
             </h2>
         </template>
 
-        <!-- Error messages -->
-        <div v-if="errors.length > 0" class="max-w-3xl mx-auto mt-4">
-            <div v-for="error in errors" :key="error" class="bg-red-50 border-l-4 border-red-500 p-4 text-red-700 mb-2">
-                {{ error }}
-            </div>
-        </div>
-
         <div class="max-w-3xl mx-auto py-8 px-4 sm:px-6">
             <form @submit.prevent="submit" class="rounded-lg shadow-lg bg-gray-800">
                 <!-- Personal Information Section -->
@@ -33,6 +26,7 @@
                             <input type="text" id="first_name" v-model="form.first_name"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.first_name" class="mt-2" />
                         </div>
 
                         <!-- Primer Apellido -->
@@ -42,6 +36,7 @@
                             <input type="text" id="first_surname" v-model="form.first_surname"
                                 class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.first_surname" class="mt-2" />
                         </div>
 
                         <!-- Segundo Apellido -->
@@ -51,6 +46,7 @@
                             <input type="text" id="second_surname" v-model="form.second_surname"
                                 class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.second_surname" class="mt-2" />
                         </div>
 
                         <!-- Teléfono -->
@@ -67,6 +63,7 @@
                                 <input type="tel" id="phone" v-model="form.phone"
                                     class="block p-2.5 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     pattern="[0-9]{3}[0-9]{3}[0-9]{4}" placeholder="123-456-7890" required>
+                                <InputError :message="form.errors.phone" class="mt-2" />
                             </div>
                         </div>
                     </div>
@@ -90,6 +87,7 @@
                             <input type="text" id="identification_card" v-model="form.identification_card"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.identification_card" class="mt-2" />
                         </div>
 
                         <!-- Nacionalidad -->
@@ -102,6 +100,7 @@
                                     {{ nationality.name }}
                                 </option>
                             </select>
+                            <InputError :message="form.errors.nationality" class="mt-2" />
                         </div>
                     </div>
                 </div>
@@ -124,6 +123,7 @@
                             <input type="email" id="email" v-model="form.email"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.email" class="mt-2" />
                         </div>
 
                         <!-- Dirección -->
@@ -132,6 +132,7 @@
                             <textarea id="address" v-model="form.address" rows="3"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required></textarea>
+                            <InputError :message="form.errors.address" class="mt-2" />
                         </div>
                     </div>
                 </div>
@@ -155,6 +156,7 @@
                             <input type="date" id="birthdate" v-model="form.birthdate"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.birthdate" class="mt-2" />
                         </div>
 
                         <!-- Estado Civil -->
@@ -168,6 +170,7 @@
                                     {{ status.name }}
                                 </option>
                             </select>
+                            <InputError :message="form.errors.marital_status" class="mt-2" />
                         </div>
 
                         <!-- Cargo -->
@@ -176,6 +179,7 @@
                             <input type="text" id="position" v-model="form.position"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.position" class="mt-2" />
                         </div>
 
                         <!-- ARS -->
@@ -189,6 +193,8 @@
                                     {{ ars.name }}
                                 </option>
                             </select>
+                            <InputError :message="form.errors.ars" class="mt-2" />
+
                         </div>
                     </div>
                 </div>
@@ -211,22 +217,23 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
+import InputError from '@/Components/InputError.vue';
 
 export default {
     props: {
         nationalities: Array,
         maritalSatuses: Array,
         arss: Array,
-        errors: Array,
     },
     components: {
         AppLayout,
         Link,
+        InputError,
     },
     data() {
         return {
-            form: {
+            form: useForm({
                 first_name: null,
                 first_surname: null,
                 second_surname: null,
@@ -239,12 +246,16 @@ export default {
                 marital_status: null,
                 address: null,
                 ars: null,
-            }
+            })
         }
     },
     methods: {
         submit() {
-            this.$inertia.post(route('patients.store'), this.form)
+            this.$inertia.post(route('patients.store'), this.form, {
+                onError: (errors) => {
+                    this.form.errors = errors;
+                }
+            })
         }
     }
 }

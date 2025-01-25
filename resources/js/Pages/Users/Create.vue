@@ -9,16 +9,16 @@
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <div class="bg-gray-800 shadow-xl rounded-lg p-6">
                 <!-- show errors -->
-                <div v-if="Object.keys(errors).length"
+                <!-- <div v-if="Object.keys(errors).length"
                     class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
                     <strong class="font-bold">¡Ups!</strong>
                     <span class="block sm:inline">Por favor, corrige los errores en el formulario.</span>
                     <ul>
                         <li v-for="error in Object.values(errors)" class="text-sm">{{ error }}</li>
                     </ul>
-                </div>
+                </div> -->
 
-                <!-- <div class="text-white">{{ reset }}</div> -->
+                <!-- <div class="text-white">{{  }}</div> -->
 
                 <!-- Form -->
                 <form @submit.prevent="submit" class="space-y-6">
@@ -31,6 +31,7 @@
                                 <input type="text" id="name" v-model="form.name"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.name" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -38,6 +39,7 @@
                                 <input type="text" id="last_name" v-model="form.last_name"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.last_name" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -45,6 +47,7 @@
                                 <input type="email" id="email" v-model="form.email"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.email" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -52,6 +55,7 @@
                                 <input type="password" id="password" v-model="form.password"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.password" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -61,6 +65,7 @@
                                 <input type="password" id="password_confirmation" v-model="form.password_confirmation"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.password_confirmation" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -69,6 +74,7 @@
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                                     <option v-for="role in roles" :key="role" :value="role.id">{{ role.name }}</option>
                                 </select>
+                                <InputError :message="form.errors.role" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -77,6 +83,7 @@
                                 <input type="text" id="identification_card" v-model="form.identification_card"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.identification_card" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -84,6 +91,7 @@
                                 <input type="text" id="exequatur" v-model="form.exequatur"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.exequatur" class="mt-2" />
                             </div>
 
                         </div>
@@ -95,6 +103,7 @@
                                 <input type="text" id="specialty" v-model="form.specialty"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.specialty" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -102,6 +111,7 @@
                                 <input type="text" id="area" v-model="form.area"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.area" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -109,6 +119,7 @@
                                 <input type="tel" id="phone" v-model="form.phone"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.phone" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -118,6 +129,7 @@
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
                                 <div v-if="birthdateError" class="text-red-500 text-sm mt-2">{{ birthdateError }}</div>
+                                <InputError :message="form.errors.birthdate" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -125,12 +137,14 @@
                                 <input type="text" id="position" v-model="form.position"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.position" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
                                 <label for="comment" class="block text-sm font-medium text-white">Observación</label>
                                 <textarea id="comment" v-model="form.comment" rows="4"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"></textarea>
+                                <InputError :message="form.errors.comment" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -138,6 +152,7 @@
                                 <textarea id="address" v-model="form.address" rows="4"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required></textarea>
+                                <InputError :message="form.errors.address" class="mt-2" />
                             </div>
 
                         </div>
@@ -148,7 +163,7 @@
                     <div class="flex justify-end space-x-4 pt-4">
                         <Link :href="route('users.index')"
                             class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
-                            Cancelar
+                        Cancelar
                         </Link>
                         <button @click="save"
                             class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
@@ -166,26 +181,23 @@
 </template>
 
 <script>
+import InputError from '@/Components/InputError.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 
 export default {
     props: {
         roles: Array,
-        errors: {
-            type: Object,
-            default: () => ({})
-        },
-        reset: Boolean,
         previousUrl: String,
     },
     components: {
         AppLayout,
-        Link
+        Link,
+        InputError
     },
     data() {
         return {
-            form: {
+            form: useForm({
                 name: '',
                 last_name: '',
                 email: '',
@@ -202,31 +214,11 @@ export default {
                 position: '',
                 comment: '',
                 saveAndNew: false,
-            },
+            }),
             birthdateError: null,
         }
     },
     methods: {
-        resetForm() {
-            this.form = {
-                name: '',
-                last_name: '',
-                email: '',
-                role: '',
-                password: '',
-                password_confirmation: '',
-                identification_card: '',
-                exequatur: '',
-                specialty: '',
-                area: '',
-                phone: '',
-                address: '',
-                birthdate: '',
-                position: '',
-                comment: '',
-                saveAndNew: false,
-            }
-        },
         validateBirthdate() {
             const today = new Date();
             const birthdate = new Date(this.form.birthdate);
@@ -246,7 +238,12 @@ export default {
             if (this.birthdateError) {
                 return;
             }
-            this.$inertia.post(route('users.store'), this.form);
+            this.$inertia.post(route('users.store'), this.form, {
+                onSuccess: () => this.form.reset(),
+                onError: (errors) => {
+                    this.form.errors = errors;
+                }
+            });
         },
         save() {
             this.form.saveAndNew = false;

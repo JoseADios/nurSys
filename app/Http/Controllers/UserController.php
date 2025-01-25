@@ -53,8 +53,10 @@ class UserController extends Controller
         $validated = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
+            'role' => ['required', 'numeric', 'max:10'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => $this->passwordRules(),
+            'password' => array_merge($this->passwordRules(), ['confirmed']),
+            'password_confirmation' => ['required'],
             'identification_card' => ['required', 'string', 'max:255', 'unique:users'],
             'exequatur' => ['required', 'string', 'max:255', 'unique:users'],
             'specialty' => ['required', 'string', 'max:255'],
@@ -68,19 +70,17 @@ class UserController extends Controller
         ])->validate();
 
         try {
+            DB::beginTransaction();
             $user = User::create($validated);
-
             $user->syncRoles($request->role);
-
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
         }
 
         if ($request['saveAndNew'] == True) {
-            return Redirect::route('users.create', [
-                'reset' => true,
-            ])->with('success', 'User created successfully.');
+            return Redirect::route('users.create')
+                ->with('success', 'User created successfully.');
         }
         return Redirect::route('users.show', $user->id);
     }
@@ -132,6 +132,7 @@ class UserController extends Controller
             $validated = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
                 'last_name' => ['required', 'string', 'max:255'],
+                'role' => ['required', 'string', 'max:255', Rule::exists('roles', 'name')],
                 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
                 'identification_card' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
                 'exequatur' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],

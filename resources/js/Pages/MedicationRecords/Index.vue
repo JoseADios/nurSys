@@ -27,41 +27,80 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="record in medicationRecords" :key="record.id"
-                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ record.admission ? record.admission.id : 'N/A' }}
-                        </td>
-                        <td class="px-6 py-4">{{ record.diagnosis }}</td>
-                        <td class="px-6 py-4">{{ record.diet }}</td>
-                        <td class="px-6 py-4">{{ record.referrals }}</td>
-                        <td class="px-6 py-4">{{ record.pending_studies }}</td>
-                        <td class="px-6 py-4">{{ record.doctor_sign }}</td>
-                        <td class="px-6 py-4">
-                            <Link class="ml-2 text-blue-500 hover:text-blue-800"
-                                :href="route('medicationRecords.show', record.id)">
-                                Ver
-                            </Link>
-                            <Link class="text-green-500 hover:text-green-800"
-                                :href="route('medicationRecords.edit', record.id)">
-                                Editar
-                            </Link>
-                             <!-- <Link method="delete" class="ml-2 text-red-500 hover:text-red-800"
-                                :href="route('medicationRecords.destroy', record.id)" as="button">
-                                Eliminar
-                            </Link> -->
-                        </td>
-                    </tr>
+
+                    <tr
+    v-for="record in medicationRecords"
+    :key="record.id"
+    :class="[
+        'bg-white border-b dark:bg-gray-800 dark:border-gray-700',
+        !record.active && 'transition-colors bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-900/30'
+    ]"
+>
+    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        {{ record.admission ? record.admission.id : 'N/A' }}
+    </td>
+    <td class="px-6 py-4">{{ record.diagnosis }}</td>
+    <td class="px-6 py-4">{{ record.diet }}</td>
+    <td class="px-6 py-4">{{ record.referrals }}</td>
+    <td class="px-6 py-4">{{ record.pending_studies }}</td>
+    <td class="px-6 py-4">{{ record.doctor_sign }}</td>
+    <td class="px-6 py-4 ">
+        <Link class="ml-2 text-blue-500 hover:text-blue-800"
+            :href="route('medicationRecords.show', record.id)">
+            Ver
+        </Link>
+        <Link class="text-yellow-500 hover:text-yellow-800"
+            :href="route('medicationRecords.edit', record.id)">
+            Editar
+        </Link>
+        <div>
+            <Link
+                method="post"
+                :class="[
+                    ' p-4  transition-colors',
+                    record.active
+                        ? 'text-red-500 hover:text-red-800'
+                        : 'text-green-500 hover:text-green-800'
+                ]"
+
+                @click="record.active ? openDisableModal(record) : confirmEnable(record)"
+            >
+                {{ record.active ? 'Deshabilitar' : 'Habilitar' }}
+            </Link>
+        </div>
+    </td>
+</tr>
+
                 </tbody>
             </table>
         </div>
+        <ConfirmationModal :show="recordBeingDisabled != null" @close="recordBeingDisabled = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+            <template #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+            <template #footer>
+                <SecondaryButton @click="recordBeingDisabled = null">
+                    Cancelar
+                </SecondaryButton>
+                <DangerButton class="ms-3" @click="confirmDisable">
+                    Eliminar
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
+
     </AppLayout>
 </template>
 
 <script>
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
-
+import { ref } from 'vue';
 export default {
     props: {
         medicationRecords: Array,
@@ -69,6 +108,54 @@ export default {
     components: {
         AppLayout,
         Link,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
     },
+    data() {
+        return {
+            recordBeingDisabled: null,
+
+        }
+    },
+    methods: {
+    openDisableModal(record) {
+        this.recordBeingDisabled = record;
+    },
+    confirmDisable() {
+        if (this.recordBeingDisabled) {
+            this.$inertia.post(
+                route('medicationRecords.disable', this.recordBeingDisabled.id),
+                {
+                    onSuccess: () => {
+                        this.recordBeingDisabled = null;
+                    },
+                    onError: () => {
+                        alert('Error al intentar deshabilitar el registro.');
+                        this.recordBeingDisabled = null;
+                    },
+
+                }
+            );
+            this.recordBeingDisabled = null;
+        }
+    },
+    confirmEnable(record) {
+        this.$inertia.post(
+            route('medicationRecords.enable', record.id),
+            {},
+            {
+                onSuccess: () => {
+                    
+                },
+                onError: () => {
+                    alert('Error al intentar habilitar el registro.');
+                },
+            }
+        );
+    },
+}
+
+
 }
 </script>

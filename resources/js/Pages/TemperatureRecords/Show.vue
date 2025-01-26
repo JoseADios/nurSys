@@ -21,6 +21,19 @@
                         </svg>
                         <span class="font-medium">Volver</span>
                     </button>
+                    <button v-if="temperatureRecord.active" @click="recordBeingDeleted = true"
+                        class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-medium">Eliminar</span>
+                    </button>
+                    <button v-else @click="restoreRecord"
+                        class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                        <span class="font-medium">Restaurar</span>
+                    </button>
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -160,7 +173,7 @@
                 </div>
 
                 <!-- Formulario para agregar nuevo detalle -->
-                <div v-if="canCreate" class="p-8 ">
+                <div v-if="canCreateDetail" class="p-8 ">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura</h3>
 
                     <form @submit.prevent="submit" class="space-y-4">
@@ -206,7 +219,7 @@
                     </form>
                 </div>
                 <!-- si no puede crear ni actualizar mostrar que ya otro enfermero ha registrado una firma en este turno que no puede hacer nada -->
-                <div v-if="!canCreate && !lastTemperature" class="p-8">
+                <div v-if="!canCreateDetail && !lastTemperature" class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Información</h3>
                     <p class="text-lg text-gray-700 dark:text-gray-300">
                         Ya otro enfermero ha registrado una firma en este turno. No puede realizar ninguna acción.
@@ -258,6 +271,25 @@
 
             </div>
         </div>
+        <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="recordBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton class="ms-3" @click="deleteRecord">
+                    Eliminar
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
@@ -267,6 +299,10 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue'
 import { ref } from 'vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { useGoBack } from '@/composables/useGoBack';
 
 export default {
     props: {
@@ -274,16 +310,21 @@ export default {
         admissions: Array,
         details: Array,
         lastTemperature: Object,
-        canCreate: Boolean,
+        canCreateDetail: Boolean,
+        previousUrl: String,
     },
     components: {
         AppLayout,
         Link,
         TemperatureChart,
         SignaturePad,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
     },
     data() {
         return {
+            recordBeingDeleted: ref(null),
             isVisible: false,
             isVisibleEditSign: ref(null),
             signatureError: false,
@@ -300,7 +341,8 @@ export default {
                 signature: true,
             },
             formRecord: {
-                impression_diagnosis: this.temperatureRecord.impression_diagnosis
+                impression_diagnosis: this.temperatureRecord.impression_diagnosis,
+                active: this.temperatureRecord.active
             },
         }
     },
@@ -354,9 +396,18 @@ export default {
         toggleEditRecord() {
             this.isVisible = !this.isVisible
         },
-        goBack() {
-            this.$inertia.visit(document.referrer)
+        deleteRecord() {
+            this.recordBeingDeleted = false
+            this.$inertia.delete(route('temperatureRecords.destroy', this.temperatureRecord.id));
         },
+        restoreRecord() {
+            this.formRecord.active = true
+            this.submitUpdateRecord()
+        }
+    },
+    setup() {
+        const { goBack } = useGoBack()
+        return { goBack }
     }
 }
 </script>

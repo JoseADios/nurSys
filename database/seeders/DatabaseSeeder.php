@@ -40,12 +40,12 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
 
         $this->call(BedSeeder::class);
+        $this->call(ArsSeeder::class);
         $this->call(PatientSeeder::class);
         $this->call(AdmissionSeeder::class);
         $this->call(MedicationRecordSeeder::class);
         $this->call(DrugSeeder::class);
         $this->call(ClinicSeeder::class);
-        $this->call(ArsSeeder::class);
         $this->call(ClinicAreaSeeder::class);
         $this->call(DietSeeder::class);
         $this->call(DrugDoseSeeder::class);
@@ -53,7 +53,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DrugSeeder::class);
         $this->call(NationalitySeeder::class);
         $this->call(RegimeSeeder::class);
-        $this->call(RoomSeeder::class);
         $this->call(NurseRecordSeeder::class);
         $this->call(NurseRecordDetailSeeder::class);
         $this->call(MedicationRecordDetailSeeder::class);

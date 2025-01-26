@@ -6,13 +6,6 @@
             </h2>
         </template>
 
-        <!-- Error messages -->
-        <div v-if="errors.length > 0" class="max-w-3xl mx-auto mt-4">
-            <div v-for="error in errors" :key="error" class="bg-red-50 border-l-4 border-red-500 p-4 text-red-700 mb-2">
-                {{ error }}
-            </div>
-        </div>
-
         <div class="max-w-3xl mx-auto py-8 px-4 sm:px-6">
             <form @submit.prevent="submit" class="rounded-lg shadow-lg bg-gray-800">
                 <!-- Personal Information Section -->
@@ -33,6 +26,7 @@
                             <input type="text" id="first_name" v-model="form.first_name"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.first_name" class="mt-2" />
                         </div>
 
                         <!-- Primer Apellido -->
@@ -42,6 +36,7 @@
                             <input type="text" id="first_surname" v-model="form.first_surname"
                                 class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.first_surname" class="mt-2" />
                         </div>
 
                         <!-- Segundo Apellido -->
@@ -51,6 +46,7 @@
                             <input type="text" id="second_surname" v-model="form.second_surname"
                                 class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.second_surname" class="mt-2" />
                         </div>
 
                         <!-- Teléfono -->
@@ -67,6 +63,7 @@
                                 <input type="tel" id="phone" v-model="form.phone"
                                     class="block p-2.5 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     pattern="[0-9]{3}[0-9]{3}[0-9]{4}" placeholder="123-456-7890" required>
+                                <InputError :message="form.errors.phone" class="mt-2" />
                             </div>
                         </div>
                     </div>
@@ -90,6 +87,7 @@
                             <input type="text" id="identification_card" v-model="form.identification_card"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.identification_card" class="mt-2" />
                         </div>
 
                         <!-- Nacionalidad -->
@@ -102,6 +100,7 @@
                                     {{ nationality.name }}
                                 </option>
                             </select>
+                            <InputError :message="form.errors.nationality" class="mt-2" />
                         </div>
                     </div>
                 </div>
@@ -124,6 +123,7 @@
                             <input type="email" id="email" v-model="form.email"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.email" class="mt-2" />
                         </div>
 
                         <!-- Dirección -->
@@ -132,6 +132,7 @@
                             <textarea id="address" v-model="form.address" rows="3"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required></textarea>
+                            <InputError :message="form.errors.address" class="mt-2" />
                         </div>
                     </div>
                 </div>
@@ -155,6 +156,7 @@
                             <input type="date" id="birthdate" v-model="form.birthdate"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.birthdate" class="mt-2" />
                         </div>
 
                         <!-- Estado Civil -->
@@ -168,6 +170,7 @@
                                     {{ status.name }}
                                 </option>
                             </select>
+                            <InputError :message="form.errors.marital_status" class="mt-2" />
                         </div>
 
                         <!-- Cargo -->
@@ -176,25 +179,34 @@
                             <input type="text" id="position" v-model="form.position"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <InputError :message="form.errors.position" class="mt-2" />
                         </div>
 
                         <!-- ARS -->
                         <div>
                             <label for="ars" class="block text-sm font-medium text-white">ARS</label>
                             <select id="ars" v-model="form.ars"
-                            class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            >
+                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                 <option value="">Ninguno</option>
                                 <option v-for="ars in arss" :key="ars.id">
                                     {{ ars.name }}
                                 </option>
                             </select>
+                            <InputError :message="form.errors.ars" class="mt-2" />
                         </div>
                     </div>
                 </div>
 
                 <!-- Form Actions -->
                 <div class="px-6 py-4 bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
+                    <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
+                        class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
+                        Eliminar
+                    </button>
+                    <button type="button" v-else @click="restorePatient"
+                        class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
+                        Restaurar
+                    </button>
                     <button @click="goBack" type="button"
                         class="px-4 py-2 text-sm font-medium text-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Cancelar
@@ -206,12 +218,37 @@
                 </div>
             </form>
         </div>
+        <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="patientBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton class="ms-3" @click="deletePatient">
+                    Eliminar
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import InputError from '@/Components/InputError.vue';
+import { useGoBack } from '@/composables/useGoBack';
 
 export default {
     props: {
@@ -219,15 +256,20 @@ export default {
         nationalities: Array,
         maritalSatuses: Array,
         arss: Array,
-        errors: Array,
+        previousUrl: String,
     },
     components: {
         AppLayout,
         Link,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
+        InputError,
     },
     data() {
         return {
-            form: {
+            patientBeingDeleted: ref(null),
+            form: useForm({
                 first_name: this.patient.first_name,
                 first_surname: this.patient.first_surname,
                 second_surname: this.patient.second_surname,
@@ -240,16 +282,28 @@ export default {
                 marital_status: this.patient.marital_status,
                 address: this.patient.address,
                 ars: this.patient.ars,
-            }
+            })
         }
     },
     methods: {
         submit() {
-            this.$inertia.put(route('patients.update', this.patient.id), this.form)
+            this.$inertia.put(route('patients.update', this.patient.id), this.form, {
+                onError: (errors) => {
+                    this.form.errors = errors;
+                }
+            })
         },
-        goBack() {
-            this.$inertia.visit(document.referrer)
+        deletePatient() {
+            this.patientBeingDeleted = false
+            this.$inertia.delete(route('patients.destroy', this.patient.id));
+        },
+        restorePatient() {
+            this.$inertia.put(route('patients.update', this.patient.id), { active: true });
         }
+    },
+    setup() {
+        const { goBack } = useGoBack()
+        return { goBack }
     }
 }
 </script>

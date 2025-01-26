@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Bed extends Model
 {
     protected $fillable = [
-        'number',
-        'room',
-        'active',
+        'out_of_service',
     ];
 
     public function admission(): HasOne
@@ -20,6 +18,6 @@ class Bed extends Model
 
     public function isAvailable(): bool
     {
-        return !$this->admission()->where('in_process', true)->exists();
+        return !$this->admission()->where('in_process', true)->exists() && !$this->out_of_service;;
     }
 }

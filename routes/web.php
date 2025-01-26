@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdmissionController;
+use App\Http\Controllers\BedController;
 use App\Http\Controllers\MedicalOrderController;
 use App\Http\Controllers\MedicalOrderDetailController;
 use App\Http\Controllers\MedicationNotificationController;
@@ -21,10 +22,13 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+        // 'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});
+Route::get('/register', function () {
+    abort(404);
 });
 
 Route::middleware([
@@ -37,6 +41,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::resource('admissions', AdmissionController::class);
+    Route::put('/admissions/{admission}/restore', [AdmissionController::class, 'restore'])->name('admissions.restore');
     Route::resource('medicationRecords', MedicationRecordController::class);
 
 
@@ -57,6 +62,7 @@ Route::middleware([
     Route::group(['middleware' => ['role:admin']], function () {
         Route::resource('users', UserController::class);
     });
+    Route::resource('beds', BedController::class);
     Route::get('/medication-record-details/create/{medicationRecordId}', [MedicationRecordDetailController::class, 'create'])
     ->name('medicationRecordDetails.create');
 

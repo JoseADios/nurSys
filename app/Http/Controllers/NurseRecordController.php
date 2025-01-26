@@ -21,6 +21,7 @@ class NurseRecordController extends Controller
     public function index(Request $request)
     {
         $query = NurseRecord::with('nurse', 'admission.patient')
+            ->where('active', true)
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc');
 
@@ -48,7 +49,7 @@ class NurseRecordController extends Controller
             ->get();
         return Inertia::render('NurseRecords/Create', [
             'admissions' => $admissions,
-            'admission_id' => intval($admission_id)
+            'admission_id' => intval($admission_id),
         ]);
     }
 
@@ -100,7 +101,8 @@ class NurseRecordController extends Controller
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
-        $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')->get();
+        $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')
+            ->where('active', true)->get();
 
         return Inertia::render('NurseRecords/Edit', [
             'nurseRecord' => $nurseRecord,
@@ -109,7 +111,7 @@ class NurseRecordController extends Controller
             'nurse' => $nurse,
             'bed' => $bed,
             'details' => $details,
-            'errors' => !empty($errors) ? $errors : []
+            'errors' => !empty($errors) ? $errors : [],
         ]);
     }
 
@@ -120,19 +122,20 @@ class NurseRecordController extends Controller
     {
         $firmService = new FirmService;
 
+
         $validated = $request->validate([
             'admission_id' => 'numeric',
             'nurse_sign' => 'string',
+            'active' => 'boolean',
         ]);
 
         if ($request->signature) {
             $fileName = $firmService
-                ->createImag($request->nurse_sign, $nurseRecord->nurse_sign);
+            ->createImag($request->nurse_sign, $nurseRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
         }
 
         $nurseRecord->update($validated);
-
     }
 
     /**
@@ -140,6 +143,7 @@ class NurseRecordController extends Controller
      */
     public function destroy(NurseRecord $nurseRecord)
     {
-        //
+        $nurseRecord->update(['active' => 0]);
+        return Redirect::route('nurseRecords.index');
     }
 }

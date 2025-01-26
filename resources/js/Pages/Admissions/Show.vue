@@ -5,10 +5,10 @@
                 <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
                     <div class="flex justify-between items-center">
                         <h2 class="text-2xl font-bold text-white">Detalles del Ingreso</h2>
-                        <button @click="goBack"
+                        <Link :href="route('admissions.index')"
                             class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out">
                             Volver
-                        </button>
+                        </Link>
                     </div>
                 </div>
 
@@ -170,7 +170,7 @@
                         Editar
                         </Link>
 
-                        <button v-if="can.delete" @click="confirmDelete"
+                        <button v-if="can.delete && admission.active" @click="admissionBeingDeleted = true"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold rounded-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -180,17 +180,44 @@
                             </svg>
                             Eliminar
                         </button>
+                        <button v-if="can.delete && !admission.active" @click="restoreAdmission"
+                            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                            Restaurar
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+        <ConfirmationModal :show="admissionBeingDeleted != null" @close="admissionBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="admissionBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton class="ms-3" @click="confirmDelete">
+                    Eliminar
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
 <script>
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 export default {
     props: {
@@ -202,9 +229,13 @@ export default {
         AppLayout,
         Link,
         AccessGate,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
     },
     data() {
         return {
+            admissionBeingDeleted: ref(null),
             form: {
                 patient_id: this.admission.patient_id,
                 in_process: this.admission.in_process
@@ -233,12 +264,11 @@ export default {
             });
         },
         confirmDelete() {
-            if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
-                this.$inertia.delete(route('admissions.destroy', this.admission.id));
-            }
+            this.$inertia.delete(route('admissions.destroy', this.admission.id));
+            this.admissionBeingDeleted = false;
         },
-        goBack() {
-            this.$inertia.visit(document.referrer)
+        restoreAdmission() {
+            this.$inertia.put(route('admissions.restore', this.admission.id));
         }
     }
 }

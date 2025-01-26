@@ -13,21 +13,16 @@ return new class extends Migration
     {
         Schema::create('admissions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('bed_id');
-            $table->unsignedBigInteger('patient_id');
-            $table->unsignedBigInteger('recepcionist_id');
-            $table->unsignedBigInteger('doctor_id');
-            $table->foreign('bed_id')->references('id')->on('beds')->restricOnDelete('cascade');
-            $table->foreign('patient_id')->references('id')->on('patients')->restricOnDelete('cascade');
-            $table->foreign('recepcionist_id')->references('id')->on('users')->restricOnDelete('cascade');
-            $table->foreign('doctor_id')->references('id')->on('users')->restricOnDelete('cascade');
+            $table->foreignId('bed_id')->nullable()->constrained()->onDelete('restrict');
+            $table->foreignId('patient_id')->constrained()->onDelete('restrict');
+            $table->foreignId('receptionist_id')->constrained('users')->onDelete('restrict');
+            $table->foreignId('doctor_id')->constrained('users')->onDelete('restrict');
             $table->string('admission_dx');
             $table->string('final_dx')->nullable();
             $table->text('comment')->nullable();
             $table->boolean('in_process')->default(true);
             $table->boolean('active')->default(true);
             $table->timestamps();
-
         });
     }
 

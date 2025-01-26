@@ -12,7 +12,7 @@
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <button @click="goBack"
+                    <Link :href="route('nurseRecords.index')"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd"
@@ -20,6 +20,19 @@
                                 clip-rule="evenodd" />
                         </svg>
                         <span class="font-medium">Volver</span>
+                    </Link>
+                    <button v-if="nurseRecord.active" @click="recordBeingDeleted = true"
+                        class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-medium">Eliminar</span>
+                    </button>
+                    <button v-else @click="restoreRecord"
+                        class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                        <span class="font-medium">Restaurar</span>
                     </button>
                 </div>
 
@@ -217,10 +230,27 @@
                         </form>
                     </div>
                 </section>
-
-
             </div>
         </div>
+        <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="recordBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton class="ms-3" @click="deleteRecord">
+                    Eliminar
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
@@ -229,6 +259,9 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue'
 import { ref } from 'vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 export default {
     props: {
@@ -243,21 +276,25 @@ export default {
         nurse: Object,
         bed: Object,
         details: Array,
-        // datos: Object
     },
     components: {
         AppLayout,
         Link,
         SignaturePad,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
     },
     data() {
         return {
+            recordBeingDeleted: ref(null),
             isVisible: false,
             isVisibleEditSign: ref(null),
             signatureError: false,
 
             formAdmission: {
-                admission_id: this.nurseRecord.admission_id
+                admission_id: this.nurseRecord.admission_id,
+                active: this.nurseRecord.active
             },
             formDetail: {
                 nurse_record_id: this.nurseRecord.id,
@@ -276,7 +313,7 @@ export default {
         },
         submitAdmission() {
             this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formAdmission)
-            this.toggleEditAdmission()
+            this.isVisible = false
         },
         submit() {
             this.$inertia.post(route('nurseRecordDetails.store'),
@@ -300,10 +337,14 @@ export default {
             this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formSignature);
             this.isVisibleEditSign = false
         },
-        goBack() {
-            this.$inertia.visit(document.referrer)
+        deleteRecord() {
+            this.recordBeingDeleted = false
+            this.$inertia.delete(route('nurseRecords.destroy', this.nurseRecord.id));
         },
-
+        restoreRecord() {
+            this.formAdmission.active = true
+            this.submitAdmission();
+        }
     }
 }
 </script>

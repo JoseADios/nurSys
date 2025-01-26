@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\URL;
 
 class TemperatureRecordController extends Controller
 {
@@ -26,11 +27,18 @@ class TemperatureRecordController extends Controller
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc');
 
-        $temperatureRecords = $query->get();
+        if ($request->has('show_deleted') && $request->show_deleted) {
+            $query->where('active', false);
+        } else {
+            $query->where('active', true);
+        }
+
+        $temperatureRecords = $query->paginate(10);
 
         return Inertia::render('TemperatureRecords/Index', [
             'temperatureRecords' => $temperatureRecords,
             'admission_id' => intval($request->admission_id),
+            'show_deleted' => $request->show_deleted,
         ]);
     }
 
@@ -90,7 +98,7 @@ class TemperatureRecordController extends Controller
             ]);
         }
 
-        $canCreate = true;
+        $canCreateDetail = true;
 
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->whereBetween('created_at', [
@@ -102,7 +110,7 @@ class TemperatureRecordController extends Controller
 
 
         if ($lastTemperature) {
-            $canCreate = false;
+            $canCreateDetail = false;
 
             if ($lastTemperature->nurse_id != Auth::id()) {
                 $lastTemperature = null;
@@ -123,7 +131,8 @@ class TemperatureRecordController extends Controller
             'admissions' => $admissions,
             'details' => $details,
             'lastTemperature' => $lastTemperature,
-            'canCreate' => $canCreate,
+            'canCreateDetail' => $canCreateDetail,
+            'previousUrl' => URL::previous(),
         ]);
     }
 
@@ -145,6 +154,7 @@ class TemperatureRecordController extends Controller
             'admission_id' => 'numeric',
             'impression_diagnosis' => 'string',
             'nurse_sign' => 'string',
+            'active' => 'boolean'
         ]);
 
         if ($request->signature) {
@@ -164,6 +174,7 @@ class TemperatureRecordController extends Controller
      */
     public function destroy(TemperatureRecord $temperatureRecord)
     {
-        //
+        $temperatureRecord->update(['active' => 0]);
+        return Redirect::route('temperatureRecords.index');
     }
 }

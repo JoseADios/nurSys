@@ -19,7 +19,7 @@ class AdmissionFactory extends Factory
         return [
             'bed_id' => $this->faker->randomElement(range(1, 10)),
             'patient_id' => $this->faker->randomElement(range(1, 10)),
-            'recepcionist_id' => $this->faker->randomElement(range(1, 10)),
+            'receptionist_id' => $this->faker->randomElement(range(1, 10)),
             'doctor_id' => $this->faker->randomElement(range(1, 10)),
             'admission_dx' => $this->faker->sentence(),
             'final_dx' => $this->faker->sentence(),

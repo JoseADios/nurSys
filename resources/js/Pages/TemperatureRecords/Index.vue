@@ -6,11 +6,19 @@
             </h2>
         </template>
 
-        <!-- <div class="text-white">Datos: {{ admission_id }}</div> -->
+        <!-- Filtro para mostrar registros eliminados -->
+        <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+            <label class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                <input type="checkbox" v-model="showDeleted" @change="toggleShowDeleted">
+                <span class="font-medium">Mostrar registros eliminados</span>
+            </label>
+        </div>
+
+        <!-- <div class="text-white">Datos: {{ temperatureRecords.data }}</div> -->
 
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-            <button @click="goBack"
+            <Link :href="route('admissions.show', admission_id)"
                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
@@ -18,10 +26,12 @@
                     clip-rule="evenodd" />
             </svg>
             <span class="font-medium">Volver</span>
-            </button>
+            </Link>
         </div>
+
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table v-if="temperatureRecords.data.length"
+                class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
@@ -39,12 +49,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="temperatureRecord in temperatureRecords" :key="temperatureRecord.id"
+                    <tr v-for="temperatureRecord in temperatureRecords.data" :key="temperatureRecord.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
                             {{ temperatureRecord.admission.created_at }}
                             Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
-                            temperatureRecord.admission.bed.room }}
+                                temperatureRecord.admission.bed.room }}
                         </td>
                         <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ temperatureRecord.admission.patient.first_name }} {{
@@ -63,30 +73,39 @@
                     </tr>
                 </tbody>
             </table>
+            <Pagination :pagination="temperatureRecords" />
         </div>
     </AppLayout>
 </template>
 
 <script>
 
+import Pagination from '@/Components/Pagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
-        temperatureRecords: Array,
+        temperatureRecords: Object,
         admission_id: Number,
+        show_deleted: Boolean,
+    },
+    data() {
+        return {
+            showDeleted: this.show_deleted,
+        };
     },
     components: {
         AppLayout,
         Link,
+        Pagination
     },
     methods: {
-        goBack() {
-            this.$inertia.visit(document.referrer)
-        },
         temperatureRecordShow(id) {
-            this.$inertia.get(route('temperatureRecords.customShow', {id: id, admission_id: null}));
+            this.$inertia.get(route('temperatureRecords.customShow', { id: id, admission_id: null }));
+        },
+        toggleShowDeleted() {
+            this.$inertia.get(route('temperatureRecords.index', { show_deleted: this.showDeleted, admission_id: this.admission_id }));
         }
     }
 }

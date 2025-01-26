@@ -74,6 +74,7 @@ class AdmissionController extends Controller
     {
         $this->authorize('create', Admission::class);
 
+        $request->merge(['receptionist_id' => Auth::id()]);
         $validated = $request->validate([
             'bed_id' => 'numeric|nullable',
             'patient_id' => 'required|numeric',
@@ -81,9 +82,10 @@ class AdmissionController extends Controller
             'admission_dx' => 'required|string|max:255',
             'final_dx' => 'string|max:255|nullable',
             'comment' => 'nullable|string|max:255',
+            'receptionist_id' => 'required|numeric', // Añadir esta línea
         ]);
 
-        // validar que no exista, patient, in_process
+        // validar que el paciente no tenga otra admission in_process
         $patient = Patient::find($request->patient_id);
 
         if (!$patient->isAvailable()) {
@@ -154,12 +156,12 @@ class AdmissionController extends Controller
         $this->authorize('update', $admission);
 
 
-        if ($request->in_process ) {
+        if ($request->has('in_process') ) {
             $validated = $request->validate([
-                'patient_id' => 'required',
+                'in_process' => 'boolean',
             ]);
 
-            if ($admission->in_process == false) {
+            if ($admission->in_process == false && $request->in_process) {
                 $patient = Patient::find($request->patient_id);
                 $bed = Bed::find($admission->bed_id);
 

@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('beds', function (Blueprint $table) {
             $table->id();
-            $table->integer('number')->unique();
+            $table->integer('number');
             $table->string('room');
             $table->integer('floor');
+            $table->boolean('out_of_service')->default(false);
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

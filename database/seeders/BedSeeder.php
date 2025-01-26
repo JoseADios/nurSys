@@ -13,12 +13,17 @@ class BedSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (range(1, 10) as $number) {
-            DB::table('beds')->insert([
-                'number' => $number,
-                'room' => '310',
-                'active' => true,
-            ]);
+        foreach (range(1, 3) as $floor) {
+            foreach (range(1, 2) as $room) {
+                foreach (range(1, 6) as $number) {
+                    DB::table('beds')->insert([
+                        'number' => $number,
+                        'room' => $floor . '0' . $room,
+                        'floor' => $floor,
+                        'active' => true,
+                    ]);
+                }
+            }
         }
     }
 }

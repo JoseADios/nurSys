@@ -15,7 +15,7 @@ class Admission extends Model
     protected $fillable = [
         'bed_id',
         'patient_id',
-        'recepcionist_id',
+        'receptionist_id',
         'doctor_id',
         'admission_dx',
         'final_dx',

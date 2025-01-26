@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdmissionController;
+use App\Http\Controllers\BedController;
 use App\Http\Controllers\MedicalOrderController;
 use App\Http\Controllers\MedicalOrderDetailController;
 use App\Http\Controllers\MedicationNotificationController;
@@ -60,6 +61,7 @@ Route::middleware([
     Route::group(['middleware' => ['role:admin']], function () {
         Route::resource('users', UserController::class);
     });
+    Route::resource('beds', BedController::class);
     Route::get('/medication-record-details/create/{medicationRecordId}', [MedicationRecordDetailController::class, 'create'])
     ->name('medicationRecordDetails.create');
 

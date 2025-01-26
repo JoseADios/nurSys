@@ -61,7 +61,7 @@
                 ? 'text-red-500 hover:text-red-800'
                 : 'text-green-500 hover:text-green-800'
         ]"
-        @click="record.active ? openDisableModal(record) : confirmEnable(record)"
+        @click="record.active ? openDisableModal(record) : Enable(record)"
     >
         {{ record.active ? 'Deshabilitar' : 'Habilitar' }}
     </Link>
@@ -136,7 +136,7 @@ export default {
         );
     }
 },
-confirmEnable(record) {
+Enable(record) {
     this.$inertia.put(
         route('medicationRecords.update', record.id),
         { active: true },

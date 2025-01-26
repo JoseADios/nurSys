@@ -136,7 +136,10 @@ class MedicationRecordDetailController extends Controller
      */
     public function update(Request $request, MedicationRecordDetail  $medicationRecordDetail)
     {
+        if ($request->has('active')) {
+            $this->restore($medicationRecordDetail->id);
 
+        }else{
 
         $fc = $request->fc;
         $interval_in_hours = $request->interval_in_hours;
@@ -191,14 +194,6 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
       Log::error('no hubo cambios delete/create');
     }
 
-
-
-
-
-
-
-
-
         // Si intervalo en horas se cambia actualizar hora programada para todas las notificaciones relacionadas.
         if ($medicationRecordDetail->interval_in_hours != $interval_in_hours || $medicationRecordDetail->start_time != $start_time) {
             try {
@@ -250,25 +245,46 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
 
 
         $medicationRecordDetail->update($request->all());
-
         return Redirect::route('medicationNotification.show', $medicationRecordDetail->id);
-
-
-
-
-
-
-
-
+    }
 
 
     }
+
+    private function restore($id)
+    {
+        $medicationRecordDetail = MedicationRecordDetail::findOrFail($id);
+
+
+        $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();
+        foreach ($medicationNotifications as $notification) {
+            $notification->update(['active' => 1]);
+        }
+
+
+        $medicationRecordDetail->update(['active' => true]);
+
+        return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id);
+    }
+
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(MedicationRecordDetail $medicationRecordDetail)
     {
-        //
+
+
+
+        $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();
+        foreach ($medicationNotifications as $notification) {
+            $notification->update(['active' => 0]);
+        }
+
+
+        $medicationRecordDetail->update(['active' => false]);
+
+        return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id);
     }
 }

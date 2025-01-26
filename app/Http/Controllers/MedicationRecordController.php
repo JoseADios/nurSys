@@ -20,7 +20,7 @@ class MedicationRecordController extends Controller
      */
     public function index()
     {
-        $medicationRecords = MedicationRecord::with('admission')->get();
+        $medicationRecords = MedicationRecord::with('admission')->paginate(10);
         return Inertia::render('MedicationRecords/Index', [
             'medicationRecords' => $medicationRecords,
         ]);

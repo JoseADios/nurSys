@@ -21,10 +21,13 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+        // 'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});
+Route::get('/register', function () {
+    abort(404);
 });
 
 Route::middleware([
@@ -37,6 +40,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::resource('admissions', AdmissionController::class);
+    Route::put('/admissions/{admission}/restore', [AdmissionController::class, 'restore'])->name('admissions.restore');
     Route::resource('medicationRecords', MedicationRecordController::class);
     Route::resource('medicationRecordDetails', MedicationRecordDetailController::class);
     Route::get('medicationRecordDetails/create/{medicationRecord}',[MedicationRecordDetailController::class,'create'])->name('create');

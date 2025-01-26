@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 
 class AdmissionController extends Controller
 {
@@ -71,17 +72,16 @@ class AdmissionController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('store', Admission::class);
+        $this->authorize('create', Admission::class);
 
-        $request->validate([
-            'patient_id' => 'required',
-            'admission_dx' => 'required',
+        $validated = $request->validate([
+            'bed_id' => 'numeric|nullable',
+            'patient_id' => 'required|numeric',
+            'doctor_id' => 'numeric|required',
+            'admission_dx' => 'required|string|max:255',
+            'final_dx' => 'string|max:255|nullable',
+            'comment' => 'nullable|string|max:255',
         ]);
-
-        // show errors
-        if ($request->has('errors')) {
-            return back()->withErrors($request->get('errors'));
-        }
 
         // validar que no exista, patient, in_process
         $patient = Patient::find($request->patient_id);
@@ -90,18 +90,7 @@ class AdmissionController extends Controller
             return back()->with('error', 'Ya existe un ingreso en proceso para este paciente');
         }
 
-        Admission::create(
-            [
-                'bed_id' => $request->bed_id,
-                'patient_id' => $request->patient_id,
-                'recepcionist_id' => Auth::id(),
-                'doctor_id' => $request->doctor_id,
-                'admission_dx' => $request->admission_dx,
-                'final_dx' => $request->final_dx,
-                'comment' => $request->comment,
-                'created_at' => now(),
-            ]
-        );
+        Admission::create($validated);
         return Redirect::route('admissions.index');
     }
 
@@ -130,7 +119,7 @@ class AdmissionController extends Controller
                 'delete' => Gate::allows('delete', $admission),
                 'createOrder' => $user->hasRole(['admin']) || ($user->hasRole(['doctor']) && $admission->doctor_id == $user->id),
                 'createNurseRecord' => $user->hasRole(['nurse', 'admin']),
-            ]
+            ],
         ]);
     }
 
@@ -153,6 +142,7 @@ class AdmissionController extends Controller
             'patients' => $patients,
             'doctors' => $doctors,
             'beds' => $beds,
+            'previousUrl' => URL::previous(),
         ]);
     }
 
@@ -163,20 +153,32 @@ class AdmissionController extends Controller
     {
         $this->authorize('update', $admission);
 
-        $request->validate([
-            'patient_id' => 'required',
-        ]);
 
-        if ($request->in_process && $admission->in_process == false) {
-            $patient = Patient::find($request->patient_id);
-            $bed = Bed::find($admission->bed_id);
+        if ($request->in_process ) {
+            $validated = $request->validate([
+                'patient_id' => 'required',
+            ]);
 
-            if (!$patient->isAvailable() || !$bed->isAvailable()) {
-                return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente o la cama seleccionada esta ocupada, dé el alta al otro para activar este.');
+            if ($admission->in_process == false) {
+                $patient = Patient::find($request->patient_id);
+                $bed = Bed::find($admission->bed_id);
+
+                if (!$patient->isAvailable() || !$bed->isAvailable()) {
+                    return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente o la cama seleccionada esta ocupada, dé el alta al otro para activar este.');
+                }
             }
+        } else {
+            $validated = $request->validate([
+                'bed_id' => 'numeric|nullable',
+                'patient_id' => 'required|numeric',
+                'doctor_id' => 'numeric|required',
+                'admission_dx' => 'required|string|max:255',
+                'final_dx' => 'string|max:255|nullable',
+                'comment' => 'nullable|string|max:255',
+            ]);
         }
 
-        $admission->update($request->all());
+        $admission->update($validated);
         return Redirect::route('admissions.show', $admission->id);
     }
 
@@ -212,7 +214,8 @@ class AdmissionController extends Controller
         return Redirect::route('admissions.index');
     }
 
-    public function restore(Admission $admission) {
+    public function restore(Admission $admission)
+    {
         $this->authorize('delete', $admission);
 
         $admission->update(['active' => true, 'in_process' => 0]);

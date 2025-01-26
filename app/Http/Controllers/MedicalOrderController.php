@@ -10,6 +10,7 @@ use App\Services\FirmService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
 class MedicalOrderController extends Controller
@@ -48,7 +49,7 @@ class MedicalOrderController extends Controller
             ->get();
         return Inertia::render('MedicalOrders/Create', [
             'admissions' => $admissions,
-            'admission_id' => intval($admission_id)
+            'admission_id' => intval($admission_id),
         ]);
     }
 
@@ -92,7 +93,9 @@ class MedicalOrderController extends Controller
             'details' => $details,
             'admissions' => $admissions,
             'regimes' => $regimes,
+            'previousUrl' => URL::previous(),
         ]);
+
     }
 
     /**
@@ -105,6 +108,7 @@ class MedicalOrderController extends Controller
         $validated = $request->validate([
             'admission_id' => 'numeric',
             'doctor_sign' => 'string',
+            'active' => 'boolean',
         ]);
 
         if ($request->signature) {

@@ -76,6 +76,7 @@
 </template>
 <script>
 
+import { useGoBack } from '@/composables/useGoBack';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
@@ -88,9 +89,11 @@ export default {
         Link,
     },
     methods: {
-        goBack() {
-            this.$inertia.visit(document.referrer)
-        }
+
+    },
+    setup() {
+        const { goBack } = useGoBack()
+        return { goBack }
     }
 
 }

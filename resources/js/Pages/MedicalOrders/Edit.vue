@@ -12,7 +12,7 @@
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <button @click="goBack"
+                    <Link :href="route('medicalOrders.index')"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd"
@@ -20,7 +20,7 @@
                                 clip-rule="evenodd" />
                         </svg>
                         <span class="font-medium">Volver</span>
-                    </button>
+                    </Link>
                     <button v-if="medicalOrder.active" @click="recordBeingDeleted = true"
                         class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -29,6 +29,10 @@
                                 clip-rule="evenodd" />
                         </svg>
                         <span class="font-medium">Eliminar</span>
+                    </button>
+                    <button v-else @click="restoreRecord"
+                        class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                        <span class="font-medium">Restaurar</span>
                     </button>
                 </div>
 
@@ -382,6 +386,7 @@ export default {
             isVisibleAdm: false,
             formAdmission: {
                 admission_id: this.medicalOrder.admission_id,
+                active: this.medicalOrder.active
             },
             formDetail: {
                 medical_order_id: this.medicalOrder.id,
@@ -401,7 +406,7 @@ export default {
         },
         submitAdmission() {
             this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formAdmission)
-            this.toggleEditAdmission()
+            this.isVisibleAdm = false
         },
         submit() {
             this.$inertia.post(route('medicalOrderDetails.store'),
@@ -435,9 +440,6 @@ export default {
             this.originalSuspendedState = detail.suspended_at;
             this.isVisibleDetail = true;
         },
-        goBack() {
-            this.$inertia.visit(document.referrer)
-        },
         deleteRecord() {
             this.recordBeingDeleted = false
             this.$inertia.delete(route('medicalOrders.destroy', this.medicalOrder.id));
@@ -451,6 +453,10 @@ export default {
         restoreDetail() {
             this.selectedDetail.active = true
             this.submitUpdateDetail()
+        },
+        restoreRecord() {
+            this.formAdmission.active = true
+            this.submitAdmission()
         }
     }
 }

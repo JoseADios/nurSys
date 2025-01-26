@@ -30,6 +30,7 @@
                                 <input type="text" id="name" v-model="form.name"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.name" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -37,6 +38,7 @@
                                 <input type="text" id="last_name" v-model="form.last_name"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.last_name" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -44,6 +46,7 @@
                                 <input type="email" id="email" v-model="form.email"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.email" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -52,6 +55,7 @@
                                 <input type="text" id="identification_card" v-model="form.identification_card"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.identification_card" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -59,6 +63,7 @@
                                 <input type="text" id="exequatur" v-model="form.exequatur"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.exequatur" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -68,6 +73,7 @@
                                     <option v-for="role in roles" :key="role.id" :value="role.name">{{ role.name }}
                                     </option>
                                 </select>
+                                <InputError :message="form.errors.role" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -75,6 +81,7 @@
                                 <textarea id="address" v-model="form.address" rows="4"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required></textarea>
+                                <InputError :message="form.errors.address" class="mt-2" />
                             </div>
                         </div>
 
@@ -85,6 +92,7 @@
                                 <input type="text" id="specialty" v-model="form.specialty"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.specialty" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -92,6 +100,7 @@
                                 <input type="text" id="area" v-model="form.area"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.area" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -99,6 +108,7 @@
                                 <input type="tel" id="phone" v-model="form.phone"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.phone" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -107,6 +117,8 @@
                                 <input type="date" id="birthdate" v-model="form.birthdate"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <span v-if="birthdateError" class="text-red-500 text-sm">{{ birthdateError }}</span>
+                                <InputError :message="form.errors.birthdate" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -114,15 +126,67 @@
                                 <input type="text" id="position" v-model="form.position"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
                                     required>
+                                <InputError :message="form.errors.position" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
                                 <label for="comment" class="block text-sm font-medium text-white">Observación</label>
                                 <textarea id="comment" v-model="form.comment" rows="4"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"></textarea>
+                                <InputError :message="form.errors.comment" class="mt-2" />
                             </div>
 
 
+                        </div>
+
+                    </div>
+
+                    <div class="space-x-4 pt-4">
+                        <button v-show="userChangingPass == null" type="button" @click="userChangingPass = true"
+                            class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200">
+                            Cambiar Contraseña
+                        </button>
+
+                        <div v-show="userChangingPass != null">
+                            <!-- Formulario para cambiar la contraseña  -->
+                            <form @submit.prevent="changePassword" class="space-y-6">
+                                <!-- Grid container -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Left Column -->
+                                    <div class="space-y-4">
+
+                                        <div class="space-y-2">
+                                            <label for="password" class="block text-sm font-medium text-white">Nueva
+                                                contraseña</label>
+                                            <input type="password" id="password" v-model="formPassword.password"
+                                                class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+                                                required>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label for="password_confirmation"
+                                                class="block text-sm font-medium text-white">Confirmar
+                                                Contraseña</label>
+                                            <input type="password" id="password_confirmation"
+                                                v-model="formPassword.password_confirmation"
+                                                class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+                                                required>
+                                        </div>
+
+                                        <div class="flex justify-end space-x-4 pt-4">
+                                            <button @click="userChangingPass = null"
+                                                class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
+                                                Cancelar
+                                            </button>
+                                            <button type="submit"
+                                                class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
+                                                Cambiar contraseña
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </form>
                         </div>
 
                     </div>
@@ -131,11 +195,11 @@
                     <div class="flex justify-end space-x-4 pt-4">
                         <button v-if="user.active == 1" @click="userBeingDeleted = true" type="button"
                             class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
-                            Eliminar
+                            Deshabilitar
                         </button>
                         <button v-else @click="restoreUser" type="button"
                             class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
-                            Restaurar
+                            Habilitar
                         </button>
                         <Link :href="route('users.index')" type="button"
                             class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
@@ -176,11 +240,12 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { useGoBack } from '@/composables/useGoBack';
 
 export default {
     props: {
@@ -188,6 +253,7 @@ export default {
         roles: Array,
         hasRoles: Array,
         errors: Object,
+        previousUrl: String,
     },
     components: {
         AppLayout,
@@ -199,7 +265,8 @@ export default {
     data() {
         return {
             userBeingDeleted: ref(null),
-            form: {
+            userChangingPass: ref(null),
+            form: useForm({
                 name: this.user.name,
                 last_name: this.user.last_name,
                 email: this.user.email,
@@ -213,12 +280,36 @@ export default {
                 birthdate: this.user.birthdate,
                 position: this.user.position,
                 comment: this.user.comment,
-            }
+            }),
+            formPassword: {
+                password: null,
+                password_confirmation: null,
+            },
+            birthdateError: '',
         }
     },
     methods: {
+        validateBirthdate(birthdate) {
+            const date = new Date(birthdate);
+            const today = new Date();
+            let age = today.getFullYear() - date.getFullYear();
+            const monthDifference = today.getMonth() - date.getMonth();
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < date.getDate())) {
+                age--;
+            }
+            return age >= 18;
+        },
         submit() {
-            this.$inertia.put(route('users.update', this.user.id), this.form)
+            if (!this.validateBirthdate(this.form.birthdate)) {
+                this.birthdateError = 'La fecha de nacimiento debe indicar que el usuario tiene al menos 18 años.';
+                return;
+            }
+            this.birthdateError = '';
+            this.$inertia.put(route('users.update', this.user.id), this.form, {
+                onError: (errors) => {
+                    this.form.errors = errors
+                }
+            });
         },
         deleteUser() {
             this.userBeingDeleted = false
@@ -227,9 +318,13 @@ export default {
         restoreUser() {
             this.$inertia.put(route('users.update', this.user.id), { active: true });
         },
-        goBack() {
-            this.$inertia.visit(document.referrer)
+        changePassword() {
+            this.$inertia.put(route('users.update', this.user.id), this.formPassword);
         }
+    },
+    setup() {
+        const { goBack } = useGoBack()
+        return { goBack }
     }
 }
 </script>

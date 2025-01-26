@@ -5,10 +5,10 @@
                 <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
                     <div class="flex justify-between items-center">
                         <h2 class="text-2xl font-bold text-white">Detalles del Ingreso</h2>
-                        <button @click="goBack"
+                        <Link :href="route('admissions.index')"
                             class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out">
                             Volver
-                        </button>
+                        </Link>
                     </div>
                 </div>
 
@@ -180,6 +180,10 @@
                             </svg>
                             Eliminar
                         </button>
+                        <button v-if="can.delete && !admission.active" @click="restoreAdmission"
+                            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                            Restaurar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -263,8 +267,8 @@ export default {
             this.$inertia.delete(route('admissions.destroy', this.admission.id));
             this.admissionBeingDeleted = false;
         },
-        goBack() {
-            this.$inertia.visit(document.referrer)
+        restoreAdmission() {
+            this.$inertia.put(route('admissions.restore', this.admission.id));
         }
     }
 }

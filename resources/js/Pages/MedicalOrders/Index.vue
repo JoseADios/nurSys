@@ -46,7 +46,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="medicalOrder in medicalOrders" :key="medicalOrder.id"
+                    <tr v-for="medicalOrder in medicalOrders.data.filter(medicalOrder => medicalOrder.id)" :key="medicalOrder.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ medicalOrder.admission.patient.first_name }} {{
@@ -67,6 +67,7 @@
                     </tr>
                 </tbody>
             </table>
+            <Pagination :pagination="medicalOrders" />
         </div>
 
     </AppLayout>
@@ -75,7 +76,7 @@
 
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
-
+import Pagination from '@/Components/Pagination.vue';
 export default {
     props: {
         medicalOrders: Array,
@@ -84,6 +85,7 @@ export default {
     components: {
         AppLayout,
         Link,
+        Pagination
     },
 
 }

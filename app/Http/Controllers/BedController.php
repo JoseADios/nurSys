@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bed;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BedController extends Controller
 {
@@ -12,7 +13,10 @@ class BedController extends Controller
      */
     public function index()
     {
-        //
+        $beds = Bed::all();
+        return Inertia::render('Beds/Index', [
+            'beds' => $beds,
+        ]);
     }
 
     /**

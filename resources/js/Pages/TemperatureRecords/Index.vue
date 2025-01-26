@@ -6,7 +6,7 @@
             </h2>
         </template>
 
-        <!-- <div class="text-white">Datos: {{ admission_id }}</div> -->
+        <!-- <div class="text-white">Datos: {{ temperatureRecords.data }}</div> -->
 
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
@@ -20,8 +20,10 @@
             <span class="font-medium">Volver</span>
             </Link>
         </div>
+
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table v-if="temperatureRecords.data.length"
+                class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
@@ -39,12 +41,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="temperatureRecord in temperatureRecords" :key="temperatureRecord.id"
+                    <tr v-for="temperatureRecord in temperatureRecords.data" :key="temperatureRecord.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
                             {{ temperatureRecord.admission.created_at }}
                             Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
-                            temperatureRecord.admission.bed.room }}
+                                temperatureRecord.admission.bed.room }}
                         </td>
                         <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ temperatureRecord.admission.patient.first_name }} {{
@@ -63,27 +65,30 @@
                     </tr>
                 </tbody>
             </table>
+            <Pagination :pagination="temperatureRecords" />
         </div>
     </AppLayout>
 </template>
 
 <script>
 
+import Pagination from '@/Components/Pagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
-        temperatureRecords: Array,
+        temperatureRecords: Object,
         admission_id: Number,
     },
     components: {
         AppLayout,
         Link,
+        Pagination
     },
     methods: {
         temperatureRecordShow(id) {
-            this.$inertia.get(route('temperatureRecords.customShow', {id: id, admission_id: null}));
+            this.$inertia.get(route('temperatureRecords.customShow', { id: id, admission_id: null }));
         }
     }
 }

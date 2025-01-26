@@ -24,11 +24,16 @@ class TemperatureRecordController extends Controller
     public function index(Request $request)
     {
         $query = TemperatureRecord::with('admission.patient', 'admission.bed', 'nurse')
-            ->where('active', true)
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc');
 
-        $temperatureRecords = $query->get();
+        if (request('show_deleted')) {
+            $query->where('active', false);
+        } else {
+            $query->where('active', true);
+        }
+
+        $temperatureRecords = $query->paginate(10);
 
         return Inertia::render('TemperatureRecords/Index', [
             'temperatureRecords' => $temperatureRecords,

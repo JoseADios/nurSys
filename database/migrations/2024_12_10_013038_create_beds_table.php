@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('number')->unique();
             $table->string('room');
+            $table->integer('floor');
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

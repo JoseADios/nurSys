@@ -71,7 +71,7 @@
 
                 </tbody>
             </table>
-            <Pagination :pagination="temperatureRecords" />
+            <Pagination :pagination="medicationRecords" />
         </div>
         <ConfirmationModal :show="recordBeingDisabled != null" @close="recordBeingDisabled = null">
             <template #title>

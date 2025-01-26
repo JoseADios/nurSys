@@ -124,8 +124,8 @@ export default {
     },
     confirmDisable() {
         if (this.recordBeingDisabled) {
-            this.$inertia.post(
-                route('medicationRecords.disable', this.recordBeingDisabled.id),
+            this.$inertia.delete(
+                route('medicationRecords.destroy', this.recordBeingDisabled.id),
                 {
                     onSuccess: () => {
                         this.recordBeingDisabled = null;
@@ -142,11 +142,11 @@ export default {
     },
     confirmEnable(record) {
         this.$inertia.post(
-            route('medicationRecords.enable', record.id),
+            route('medicationRecords.update', record.id),
             {},
             {
                 onSuccess: () => {
-                    
+
                 },
                 onError: () => {
                     alert('Error al intentar habilitar el registro.');

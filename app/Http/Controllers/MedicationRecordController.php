@@ -129,7 +129,16 @@ class MedicationRecordController extends Controller
             'pending_studies' => 'required|string|max:255',
         ]);
 
-        $medicationRecord->update($validated);
+
+
+
+
+        if ($request->has('active')) {
+            restore($medicationRecord);
+        }else{
+
+            $medicationRecord->update($validated);
+        }
 
         return redirect()->route('medicationRecords.index')
                          ->with('success', 'Medication record updated successfully.');
@@ -138,45 +147,18 @@ class MedicationRecordController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function disable($id)
+     public function destroy(MedicationRecord $medicationRecord)
+     {
+         $medicationRecord->update(['active' => 0]);
+
+     return Redirect::route('medicationRecords.index');
+     }
+
+
+
+    private function restore($id)
     {
 
-        try {
-
-        $medicationRecord = MedicationRecord::findOrFail($id);
-
-
-        $medicationRecordDetails = MedicationRecordDetail::where('medication_record_id', $id)->get();
-
-
-        $medicationRecord->update(['active' => 0]);
-
-
-        foreach ($medicationRecordDetails as $detail) {
-            $detail->update(['active' => 0]);
-        }
-
-
-        $medicationNotificationIds = $medicationRecordDetails->pluck('id');
-
-
-        $medicationNotifications = MedicationNotification::whereIn('medication_record_detail_id', $medicationNotificationIds)->get();
-
-
-        foreach ($medicationNotifications as $notification) {
-            $notification->update(['active' => 0]);
-        }
-        } catch (\Throwable $th) {
-          Log::error($th);
-        }
-
-
-        return Redirect::route('medicationRecords.index');
-    }
-
-
-    public function enable($id)
-    {
         $record = MedicationRecord::findOrFail($id);
 
         $medicationRecordDetails = MedicationRecordDetail::where('medication_record_id', $id)->get();

@@ -38,8 +38,6 @@ Route::middleware([
 
     Route::resource('admissions', AdmissionController::class);
     Route::resource('medicationRecords', MedicationRecordController::class);
-    Route::post('/medication-records/{id}/disable', [MedicationRecordController::class, 'disable'])->name('medicationRecords.disable');
-    Route::post('/medication-records/{id}/enable', [MedicationRecordController::class, 'enable'])->name('medicationRecords.enable');
 
 
     Route::resource('medicationRecordDetails', MedicationRecordDetailController::class);

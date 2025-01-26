@@ -16,7 +16,7 @@
             </Link>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table v-if="users.data.length" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
@@ -40,7 +40,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="user in users" :key="user.id"
+                    <tr v-for="user in users.data" :key="user.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ user.name }} {{ user.last_name }}
@@ -70,12 +70,14 @@
                     </tr>
                 </tbody>
             </table>
+            <Pagination :pagination="users"/>
         </div>
-
+        <div class="pb-4"></div>
     </AppLayout>
 </template>
 <script>
 
+import Pagination from '@/Components/Pagination.vue';
 import { useGoBack } from '@/composables/useGoBack';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
@@ -87,6 +89,7 @@ export default {
     components: {
         AppLayout,
         Link,
+        Pagination
     },
     methods: {
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bed;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BedController extends Controller
 {
@@ -12,7 +13,12 @@ class BedController extends Controller
      */
     public function index()
     {
-        //
+        $beds = Bed::orderBy('number', 'asc')->get()->each(function ($bed) {
+            $bed->admission_id = $bed->admission && $bed->admission->in_process ? $bed->admission->id : null;
+        });
+        return Inertia::render('Beds/Index', [
+            'beds' => $beds,
+        ]);
     }
 
     /**
@@ -52,7 +58,11 @@ class BedController extends Controller
      */
     public function update(Request $request, Bed $bed)
     {
-        //
+        $validated = $request->validate([
+            'out_of_service' => 'required|boolean'
+        ]);
+
+        $bed->update($validated);
     }
 
     /**

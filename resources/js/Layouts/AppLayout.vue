@@ -55,6 +55,11 @@ const logout = () => {
                                 </NavLink>
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('beds.index')" :active="route().current('beds.index')">
+                                    Camas
+                                </NavLink>
+                            </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('admissions.index')"
                                     :active="route().current('admissions.index')">
                                     Ingresos
@@ -93,7 +98,7 @@ const logout = () => {
                                 </NavLink>
                             </div>
 
-                            <AccessGate :role="['admin']"  class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <AccessGate :role="['admin']" class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('users.index')" :active="route().current('users.index')">
                                     Usuarios
                                 </NavLink>
@@ -276,6 +281,10 @@ const logout = () => {
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.show')" :active="route().current('profile.show')">
                                 Profile
+                            </ResponsiveNavLink>
+
+                            <ResponsiveNavLink :href="route('beds.index')" :active="route().current('beds.index')">
+                                Camas
                             </ResponsiveNavLink>
 
                             <ResponsiveNavLink :href="route('admissions.index')"

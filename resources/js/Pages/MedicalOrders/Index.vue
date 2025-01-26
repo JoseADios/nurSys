@@ -2,7 +2,7 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Registros de Enfermería
+                Ordenes médicas
             </h2>
         </template>
 

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('bed_id')->nullable()->constrained()->onDelete('restrict');
             $table->foreignId('patient_id')->constrained()->onDelete('restrict');
-            $table->foreignId('recepcionist_id')->constrained('users')->onDelete('restrict');
+            $table->foreignId('receptionist_id')->constrained('users')->onDelete('restrict');
             $table->foreignId('doctor_id')->constrained('users')->onDelete('restrict');
             $table->string('admission_dx');
             $table->string('final_dx')->nullable();

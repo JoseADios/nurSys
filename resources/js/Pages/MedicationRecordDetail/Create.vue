@@ -235,7 +235,7 @@ export default {
         },
         submitModal() {
 
-            this.$inertia.post(route('Drug.StoreModal', { id: this.id }), this.modalform);
+            this.$inertia.post(route('Drugs.store', { id: this.id }), this.modalform);
             this.isVisible = false;
             this.modalform = {
                 name: '',

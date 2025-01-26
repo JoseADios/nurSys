@@ -28,8 +28,7 @@ class AdmissionController extends Controller
 
         $admissions = Admission::with(['bed', 'patient', 'doctor'])
             ->where('active', '=', 1)
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->orderBy('created_at', 'desc')->paginate(10);
 
         $admissions->each(function ($admission) {
             $admission->days_admitted = intval($admission->created_at->diffInDays(now()));

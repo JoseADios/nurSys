@@ -45,7 +45,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="admission in admissions" :key="admission.id"
+                    <tr v-for="admission in admissions.data.filter(admission => admission.id)" :key="admission.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
@@ -88,6 +88,7 @@
                     </tr>
                 </tbody>
             </table>
+            <Pagination :pagination="admissions" />
         </div>
 
     </AppLayout>
@@ -96,7 +97,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
-
+import Pagination from '@/Components/Pagination.vue';
 export default {
     props: {
         admissions: Array,
@@ -105,6 +106,7 @@ export default {
     components: {
         AppLayout,
         Link,
+        Pagination
     },
 
 }

@@ -7,7 +7,7 @@ defineProps({
 </script>
 
 <template>
-    <nav class="relative flex justify-center text-gray-700 bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
+    <nav class="relative py-1 flex justify-center text-gray-700 bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
         <template v-for="link in pagination.links" :key="link.label">
             <Link preserve-scroll :href="link.url ?? ''" v-html="link.label"
                 class="flex items-center justify-center px-3 py-2 text-sm rounded-lg text-gray-600"

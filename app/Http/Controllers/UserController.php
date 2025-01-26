@@ -26,8 +26,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::where('active', true)->get();
-        $users->load('roles');
+        $users = User::where('active', true)
+            ->with('roles')
+            ->paginate(10);
         return Inertia::render('Users/Index', [
             'users' => $users,
         ]);

@@ -27,7 +27,7 @@ class TemperatureRecordController extends Controller
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc');
 
-        if (request('show_deleted')) {
+        if ($request->has('show_deleted') && $request->show_deleted) {
             $query->where('active', false);
         } else {
             $query->where('active', true);
@@ -38,6 +38,7 @@ class TemperatureRecordController extends Controller
         return Inertia::render('TemperatureRecords/Index', [
             'temperatureRecords' => $temperatureRecords,
             'admission_id' => intval($request->admission_id),
+            'show_deleted' => $request->show_deleted,
         ]);
     }
 

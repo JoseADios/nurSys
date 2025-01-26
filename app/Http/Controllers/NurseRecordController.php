@@ -29,7 +29,7 @@ class NurseRecordController extends Controller
             $query->where('admission_id', $request->admission_id);
         }
 
-        $nurseRecords = $query->get();
+        $nurseRecords = $query->paginate(10);
 
         return Inertia::render('NurseRecords/Index', [
             'nurseRecords' => $nurseRecords,

@@ -71,6 +71,7 @@
 
                 </tbody>
             </table>
+            <Pagination :pagination="temperatureRecords" />
         </div>
         <ConfirmationModal :show="recordBeingDisabled != null" @close="recordBeingDisabled = null">
             <template #title>
@@ -92,13 +93,15 @@
     </AppLayout>
 </template>
 
+
+
 <script>
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import Pagination from '@/Components/Pagination.vue';
 export default {
     props: {
         medicationRecords: Array,
@@ -109,6 +112,7 @@ export default {
         ConfirmationModal,
         DangerButton,
         SecondaryButton,
+        Pagination,
     },
     data() {
         return {

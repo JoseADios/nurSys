@@ -44,31 +44,29 @@
     <td class="px-6 py-4">{{ record.referrals }}</td>
     <td class="px-6 py-4">{{ record.pending_studies }}</td>
     <td class="px-6 py-4">{{ record.doctor_sign }}</td>
-    <td class="px-6 py-4 ">
-        <Link class="ml-2 text-blue-500 hover:text-blue-800"
-            :href="route('medicationRecords.show', record.id)">
-            Ver
-        </Link>
-        <Link class="text-yellow-500 hover:text-yellow-800"
-            :href="route('medicationRecords.edit', record.id)">
-            Editar
-        </Link>
-        <div>
-            <Link
-                method="post"
-                :class="[
-                    ' p-4  transition-colors',
-                    record.active
-                        ? 'text-red-500 hover:text-red-800'
-                        : 'text-green-500 hover:text-green-800'
-                ]"
+    <td class="px-6 py-4 flex items-center space-x-4">
+    <Link class="text-blue-500 hover:text-blue-800"
+        :href="route('medicationRecords.show', record.id)">
+        Ver
+    </Link>
+    <Link class="text-yellow-500 hover:text-yellow-800"
+        :href="route('medicationRecords.edit', record.id)">
+        Editar
+    </Link>
+    <Link
+        method="post"
+        :class="[
+            'transition-colors',
+            record.active
+                ? 'text-red-500 hover:text-red-800'
+                : 'text-green-500 hover:text-green-800'
+        ]"
+        @click="record.active ? openDisableModal(record) : confirmEnable(record)"
+    >
+        {{ record.active ? 'Deshabilitar' : 'Habilitar' }}
+    </Link>
+</td>
 
-                @click="record.active ? openDisableModal(record) : confirmEnable(record)"
-            >
-                {{ record.active ? 'Deshabilitar' : 'Habilitar' }}
-            </Link>
-        </div>
-    </td>
 </tr>
 
                 </tbody>
@@ -123,37 +121,38 @@ export default {
         this.recordBeingDisabled = record;
     },
     confirmDisable() {
-        if (this.recordBeingDisabled) {
-            this.$inertia.delete(
-                route('medicationRecords.destroy', this.recordBeingDisabled.id),
-                {
-                    onSuccess: () => {
-                        this.recordBeingDisabled = null;
-                    },
-                    onError: () => {
-                        alert('Error al intentar deshabilitar el registro.');
-                        this.recordBeingDisabled = null;
-                    },
-
-                }
-            );
-            this.recordBeingDisabled = null;
-        }
-    },
-    confirmEnable(record) {
-        this.$inertia.post(
-            route('medicationRecords.update', record.id),
-            {},
+    if (this.recordBeingDisabled) {
+        this.$inertia.delete(
+            route('medicationRecords.destroy', this.recordBeingDisabled.id),
             {
                 onSuccess: () => {
 
+                    this.recordBeingDisabled = null;
                 },
-                onError: () => {
-                    alert('Error al intentar habilitar el registro.');
+                onError: ($error) => {
+                    alert($error,'Error al intentar deshabilitar el registro.');
                 },
             }
         );
-    },
+    }
+},
+confirmEnable(record) {
+    this.$inertia.put(
+        route('medicationRecords.update', record.id),
+        { active: true },
+        {
+            onSuccess: (response) => {
+
+            },
+            onError: (errors) => {
+                console.error('Errores:', errors);
+                alert('Error al intentar habilitar el registro.');
+            },
+        }
+    );
+},
+
+
 }
 
 

@@ -121,28 +121,25 @@ class MedicationRecordController extends Controller
      */
     public function update(Request $request, MedicationRecord $medicationRecord)
     {
-        $validated = $request->validate([
-            'diagnosis' => 'required|string|max:255',
-            //crear doctor id = con auth ID
-            'diet' => 'required|string|max:255',
-            'referrals' => 'required|string|max:255',
-            'pending_studies' => 'required|string|max:255',
-        ]);
-
-
-
 
 
         if ($request->has('active')) {
-            restore($medicationRecord);
-        }else{
-
+            $this->restore($medicationRecord->id);
+        } else {
+            $validated = $request->validate([
+                'diagnosis' => 'required|string|max:255',
+                'diet' => 'required|string|max:255',
+                'referrals' => 'required|string|max:255',
+                'pending_studies' => 'required|string|max:255',
+            ]);
             $medicationRecord->update($validated);
         }
+
 
         return redirect()->route('medicationRecords.index')
                          ->with('success', 'Medication record updated successfully.');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -150,39 +147,51 @@ class MedicationRecordController extends Controller
      public function destroy(MedicationRecord $medicationRecord)
      {
          $medicationRecord->update(['active' => 0]);
+         $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
+
+
+    foreach ($details as $detail) {
+        $detail->update(['active' => 0]);
+    }
+
+
+    $notificationIds = $details->pluck('id');
+    MedicationNotification::whereIn('medication_record_detail_id', $notificationIds)
+        ->update(['active' => 0]);
 
      return Redirect::route('medicationRecords.index');
      }
 
 
 
-    private function restore($id)
-    {
+     private function restore($id)
+     {
 
-        $record = MedicationRecord::findOrFail($id);
+         $record = MedicationRecord::findOrFail($id);
 
-        $medicationRecordDetails = MedicationRecordDetail::where('medication_record_id', $id)->get();
+         $medicationRecordDetails = MedicationRecordDetail::where('medication_record_id', $id)->get();
 
-        foreach ($medicationRecordDetails as $detail) {
-            $detail->update(['active' => 1]);
+         foreach ($medicationRecordDetails as $detail) {
+             $detail->update(['active' => 1]);
+         }
+
+
+         $medicationNotificationIds = $medicationRecordDetails->pluck('id');
+
+
+         $medicationNotifications = MedicationNotification::whereIn('medication_record_detail_id', $medicationNotificationIds)->get();
+
+
+         foreach ($medicationNotifications as $notification) {
+             $notification->update(['active' => 1]);
+         }
+
+         $record->active = true;
+         $record->save();
+
+         return redirect()->back()->with('success', 'Registro habilitado con éxito.');
         }
 
-
-        $medicationNotificationIds = $medicationRecordDetails->pluck('id');
-
-
-        $medicationNotifications = MedicationNotification::whereIn('medication_record_detail_id', $medicationNotificationIds)->get();
-
-
-        foreach ($medicationNotifications as $notification) {
-            $notification->update(['active' => 1]);
-        }
-
-        $record->active = true;
-        $record->save();
-
-        return redirect()->back()->with('success', 'Registro habilitado con éxito.');
-    }
 
 
 

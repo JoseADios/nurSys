@@ -7,7 +7,7 @@
                         <h2 class="text-2xl font-bold text-white">Detalles del Ingreso</h2>
                         <Link :href="route('admissions.index')"
                             class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out">
-                            Volver
+                        Volver
                         </Link>
                     </div>
                 </div>
@@ -36,7 +36,12 @@
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                            <div v-if="admission.bed">
                                 Sala: {{ admission.bed.room }}, Cama: {{ admission.bed.number }}
+                            </div>
+                            <div v-else>
+                                No asignada
+                            </div>
                             </p>
                         </div>
 

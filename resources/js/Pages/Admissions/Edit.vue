@@ -40,7 +40,7 @@
         </div>
 
         <!-- <div class="text-white">
-            {{ admission }}
+            {{ beds }}
         </div> -->
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
@@ -134,7 +134,7 @@ export default {
         admission: Object,
         patients: [Array, Object],
         doctors: [Array, Object],
-        beds: [Array, Object],
+        beds: Array,
         previousUrl: String,
     },
     components: {

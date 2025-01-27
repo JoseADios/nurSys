@@ -52,7 +52,7 @@
                                 admission.patient.second_surname }}
                         </th>
                         <td class="px-6 py-4">
-                           Sala: {{ admission.bed.room }}, Cama: {{ admission.bed.number }}
+                            Sala: {{ admission.bed ? admission.bed.room : 'N/A' }}, Cama: {{ admission.bed ? admission.bed.number : 'N/A' }}
                         </td>
                         <td class="px-6 py-4">
                             {{ admission.doctor.name }} {{ admission.doctor.last_name }}
@@ -100,7 +100,7 @@ import { Link } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
 export default {
     props: {
-        admissions: Array,
+        admissions: Object,
         can: [Array, Object],
     },
     components: {

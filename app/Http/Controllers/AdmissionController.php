@@ -26,6 +26,7 @@ class AdmissionController extends Controller
     {
         $this->authorize('viewAny', Admission::class);
 
+
         $admissions = Admission::query()
             ->with(['bed', 'patient', 'doctor'])
             ->where('active', true)
@@ -37,12 +38,14 @@ class AdmissionController extends Controller
                 return $admission;
             });
 
-        return Inertia::render('Admissions/Index', [
-            'admissions' => $admissions,
-            'can' => [
-                'create' => Gate::allows('create', Admission::class),
-            ]
-        ]);
+        $admissions = Admission::with(['bed', 'patient', 'doctor'])
+            ->where('active', '=', 1)
+            ->orderBy('created_at', 'desc')->paginate(10);
+
+        $admissions->each(function ($admission) {
+            $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
+        });
+
     }
 
     /**

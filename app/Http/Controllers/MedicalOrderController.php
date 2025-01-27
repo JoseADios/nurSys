@@ -29,7 +29,7 @@ class MedicalOrderController extends Controller
             $query->where('admission_id', $request->admission_id);
         }
 
-        $medicalOrders = $query->get();
+        $medicalOrders = $query->paginate(10);
 
         return Inertia::render('MedicalOrders/Index', [
             'medicalOrders' => $medicalOrders,

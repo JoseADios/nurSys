@@ -16,11 +16,11 @@
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
-                <label for="drug" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
+                <label for="drug" class="block hidden mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
                     Ficha Medicamentos
                 </label>
                 <input required id="medication_record_id" type="text" v-model="form.medication_record_id"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-gray-50 border hidden border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Escribe la dieta asignada..." />
 
 
@@ -31,7 +31,7 @@
                         <label for="drug-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Medicamento
                         </label>
-                        <select id="drug-select" v-model="form.drug"
+                        <select id="drug-select" required v-model="form.drug"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option v-for="drugs in drug" :key="drugs.id" :value="drugs.description">
                             {{ drugs.name }} - {{ drugs.description }}
@@ -63,7 +63,7 @@
                         <label for="route-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Via
                         </label>
-                        <select id="route-select" v-model="form.route"
+                        <select id="route-select" required v-model="form.route"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option v-for="routes in routeOptions" :key="routes.id" :value="routes.description">
                             {{ routes.name }} - {{ routes.description }}
@@ -79,7 +79,7 @@
                         <label for="dose" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Dosis
                         </label>
-                        <input  id="dose" type="text" v-model="form.dose"
+                        <input  id="dose" required type="text" v-model="form.dose"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="Escribe la Dosis asignada..." />
                     </div>
@@ -88,7 +88,7 @@
                         <label for="dose-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Dosis
                         </label>
-                        <select id="dose-select" v-model="form.dose_metric"
+                        <select id="dose-select" required v-model="form.dose_metric"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option v-for="doses in dose" :key="doses.id" :value="doses.name">
                             {{ doses.name }} - {{ doses.description }}
@@ -102,7 +102,7 @@
                 <label for="fc" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
                     Frecuencia
                 </label>
-                <input  id="fc" rows="4" v-model="form.fc"
+                <input  id="fc" rows="4" required v-model="form.fc"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Escribe los estudios pendientes..."></input>
 
@@ -235,7 +235,7 @@ export default {
         },
         submitModal() {
 
-            this.$inertia.post(route('Drug.StoreModal', { id: this.id }), this.modalform);
+            this.$inertia.post(route('Drugs.store', { id: this.id }), this.modalform);
             this.isVisible = false;
             this.modalform = {
                 name: '',

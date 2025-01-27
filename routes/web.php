@@ -43,8 +43,9 @@ Route::middleware([
     Route::resource('admissions', AdmissionController::class);
     Route::put('/admissions/{admission}/restore', [AdmissionController::class, 'restore'])->name('admissions.restore');
     Route::resource('medicationRecords', MedicationRecordController::class);
+
+
     Route::resource('medicationRecordDetails', MedicationRecordDetailController::class);
-    Route::get('medicationRecordDetails/create/{medicationRecord}',[MedicationRecordDetailController::class,'create'])->name('create');
     Route::resource('medicationNotification', MedicationNotificationController::class);
     Route::resource('nurseRecords', NurseRecordController::class);
     Route::resource('nurseRecordDetails', NurseRecordDetailController::class);
@@ -65,6 +66,5 @@ Route::middleware([
     Route::get('/medication-record-details/create/{medicationRecordId}', [MedicationRecordDetailController::class, 'create'])
     ->name('medicationRecordDetails.create');
 
-    Route::post('StoreModal',[DietController::class,'StoreModal'])->name('Diet.StoreModal');
-    Route::post('/drug/store-modal/{id}', [DrugController::class, 'storemodal'])->name('Drug.StoreModal');
+
 });

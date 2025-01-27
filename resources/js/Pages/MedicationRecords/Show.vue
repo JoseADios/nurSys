@@ -79,7 +79,7 @@
                 <div class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
                     <div>
-                        <Link :href="route('create',medicationRecord.id)"
+                        <Link :href="route('medicationRecordDetails.create',medicationRecord.id)"
                             class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                 transition-colors duration-300">
@@ -91,9 +91,12 @@
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro</h3>
 
-                    <div v-for="detail in details" :key="detail.id"
-                        class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
-                        <div class="flex-grow">
+                    <div v-for="detail in details" :key="detail.id" :class="[
+         'rounded-lg p-4 shadow-md flex justify-between items-center transition-colors',
+         detail.active
+             ?'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900'
+             : 'bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-900/30'
+     ]"> <div class="flex-grow">
                             <div class="font-semibold text-gray-900 dark:text-white">
                                Medicamento: {{ detail.drug }}
 
@@ -123,9 +126,10 @@
                             </div>
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            <!-- Editar -->
+                            <div v-if="detail.active">
+                                 <!-- Editar -->
                             <Link  v-if="!hasApplied(detail)":href="route('medicationRecordDetails.edit', detail.id )"
-                                class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                                class="flex items-center space-x-2 text-yellow-600 hover:text-yellow-800 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                 fill="currentColor">
                                 <path fill-rule="evenodd"
@@ -143,8 +147,23 @@
                                     d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <span class="font-medium">Notificacion</span>
+                            <span class="font-medium">Notificaciones</span>
                             </Link>
+                            </div>
+
+                            <!-- Disable -->
+                            <Link  @click="ToggleActivate(detail)"
+                            :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
+                                class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span>{{ detail.active ? 'Deshabilitar' : 'Habilitar' }}</span>
+                            </Link>
+
                         </div>
                     </div>
 
@@ -193,9 +212,6 @@ export default{
                 return detail.medication_notification?.some(item => item.applied === 1) ?? false;
             },
             Firstnoapplied(notifications) {
-    console.log(this.details);
-
-
     for (const detail of this.details) {
         if (Array.isArray(detail.medication_notification)) {
 
@@ -213,6 +229,35 @@ export default{
 
     return false;
 },
+ToggleActivate(detail) {
+        if (!detail.active) {
+
+            this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
+                active: !detail.active,
+                    onSuccess: () => {
+
+                    },
+                    onError: (errors) => {
+                        console.error('Error al habilitar:', errors);
+                    },
+                }
+            );
+        } else {
+
+            this.$inertia.delete(
+                route('medicationRecordDetails.destroy', detail.id),
+                {
+                    onSuccess: () => {
+
+                    },
+                    onError: (errors) => {
+                        console.error('Error al deshabilitar:', errors);
+                    },
+                }
+            );
+        }
+    },
+
         }
 }
 

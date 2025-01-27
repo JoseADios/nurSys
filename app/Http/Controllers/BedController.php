@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admission;
 use App\Models\Bed;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,14 +14,21 @@ class BedController extends Controller
      */
     public function index()
     {
-        $beds = Bed::orderBy('number', 'asc')->get()->each(function ($bed) {
-            $bed->admission_id = $bed->admission && $bed->admission->in_process ? $bed->admission->id : null;
-        });
+        $beds = Bed::with(['admission' => function ($query) {
+            $query->where('in_process', true);
+        }])
+            ->orderBy('room', 'asc')
+            ->orderBy('number', 'asc')
+            ->get()
+            ->map(function ($bed) {
+                $bed->admission_id = optional($bed->admission)->id;
+                return $bed;
+            });
+
         return Inertia::render('Beds/Index', [
             'beds' => $beds,
         ]);
     }
-
     /**
      * Show the form for creating a new resource.
      */

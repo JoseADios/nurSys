@@ -19,9 +19,8 @@ export function useGoBack() {
 // En cualquier componente Vue
 // import { useGoBack } from '@/composables/useGoBack'
 
-// export default {
-//     setup() {
-//         const { goBack } = useGoBack()
-//         return { goBack }
+// data() {
+//     return {
+//         goBack: useGoBack().goBack
 //     }
-// }
+// },

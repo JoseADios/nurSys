@@ -17,7 +17,6 @@
                         </h4>
                         <div class="grid grid-cols-4 gap-4 justify-center">
                             <div v-for="bed in room.beds" :key="bed.id" class="relative">
-
                                 <div class="relative w-20 h-32 rounded-lg cursor-pointer transition-all duration-300 hover:scale-110 flex flex-col items-center justify-end"
                                     :class="{
                                         'bg-orange-500': bed.admission_id,
@@ -45,7 +44,7 @@
                                             d="M3 11h18v3H3zm1.5-3h15c.83 0 1.5.67 1.5 1.5V11H3V9.5C3 8.67 3.67 8 4.5 8zm2-2h10c.83 0 1.5.67 1.5 1.5V8H5v-.5C5 6.67 5.67 6 6.5 6z" />
                                     </svg>
                                     <div v-if="bed.admission_id" class="w-11/12 mb-1">
-                                        <Link :href="route('admissions.show', bed.admission_id)"
+                                        <Link :href="route('admissions.show', {id: bed.admission_id, bedsRoute: true})"
                                             class="w-full block text-center bg-gray-700 text-white py-1 rounded-md text-xs hover:bg-gray-600 transition-colors">
                                         Ver Ingreso
                                         </Link>

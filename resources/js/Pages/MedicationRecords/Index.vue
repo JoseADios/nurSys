@@ -44,10 +44,13 @@
     <td class="px-6 py-4">{{ record.pending_studies }}</td>
     <td class="px-6 py-4">{{ record.doctor_sign }}</td>
     <td class="px-6 py-4 flex items-center space-x-4">
-        <Link class="text-blue-500 hover:text-blue-800"
+        <div v-if="record.active">
+            <Link class="text-blue-500 hover:text-blue-800"
             @click="MedicationRecordShow(record.id)">
             Ver
         </Link>
+        </div>
+
         <Link class="text-yellow-500 hover:text-yellow-800"
             @click="MedicationRecordEdit(record.id)">
             Editar

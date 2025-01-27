@@ -119,10 +119,14 @@ class MedicationRecordDetailController extends Controller
 
              $Applied = $existingnotification->applied;
              if ($Applied == 1) {
-                 // Si ya existe, redirigir con un mensaje de error
                  return redirect()->route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->withErrors([
                      'medication_record_detail_id' => 'Ya Existe una notifiacion con medicamentos administrados.',
                  ])->withInput();
+             }
+             if ($medicationRecordDetail->active == 0) {
+                return redirect()->route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->withErrors([
+                    'medication_record_detail_id' => 'Ya Existe una notifiacion con medicamentos administrados.',
+                ])->withInput();
              }
             return Inertia::render('MedicationRecordDetail/Edit', [
                 'medicationRecordDetail' => $medicationRecordDetail

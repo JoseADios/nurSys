@@ -20,7 +20,7 @@ class MedicationRecordController extends Controller
      */
     public function index()
     {
-        $medicationRecords = MedicationRecord::with('admission')->get();
+        $medicationRecords = MedicationRecord::with('admission')->paginate(10);
         return Inertia::render('MedicationRecords/Index', [
             'medicationRecords' => $medicationRecords,
         ]);
@@ -93,14 +93,15 @@ class MedicationRecordController extends Controller
         $medicationRecord = MedicationRecord::where('id',$medicationRecord->id)->with(['admission.patient','admission.bed','doctor','medicationRecordDetail'])->first();
         $details = MedicationRecordDetail::where('medication_record_id', operator: $medicationRecord->id)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
 
+            if ($medicationRecord->active) {
+                return Inertia::render('MedicationRecords/Show', [
+                    'medicationRecord' => $medicationRecord,
+                    'details' => $details,
+                ]);
+            }else{
+             return redirect()->back()->withErrors($validator)->withInput();
+            }
 
-        return Inertia::render('MedicationRecords/Show', [
-            'medicationRecord' => $medicationRecord,
-            'details' => $details,
-
-
-
-        ]);
     }catch(\Exception $e){
     return redirect()->route('MedicationRecords/Show')->with('error',$e);
     }

@@ -79,7 +79,7 @@
                 <div class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
                     <div>
-                        <Link :href="route('create',medicationRecord.id)"
+                        <Link :href="route('medicationRecordDetails.create',medicationRecord.id)"
                             class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                 transition-colors duration-300">
@@ -126,7 +126,8 @@
                             </div>
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            <!-- Editar -->
+                            <div v-if="detail.active">
+                                 <!-- Editar -->
                             <Link  v-if="!hasApplied(detail)":href="route('medicationRecordDetails.edit', detail.id )"
                                 class="flex items-center space-x-2 text-yellow-600 hover:text-yellow-800 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
@@ -148,6 +149,8 @@
                             </svg>
                             <span class="font-medium">Notificaciones</span>
                             </Link>
+                            </div>
+
                             <!-- Disable -->
                             <Link  @click="ToggleActivate(detail)"
                             :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"

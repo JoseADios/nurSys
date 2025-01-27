@@ -29,8 +29,7 @@
                 <tbody>
 
                     <tr
-    v-for="record in medicationRecords"
-    :key="record.id"
+   v-for="record in medicationRecords.data.filter(record => record.id)" :key="record.id"
     :class="[
         'bg-white border-b dark:bg-gray-800 dark:border-gray-700',
         !record.active && 'transition-colors bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-900/30'
@@ -45,14 +44,18 @@
     <td class="px-6 py-4">{{ record.pending_studies }}</td>
     <td class="px-6 py-4">{{ record.doctor_sign }}</td>
     <td class="px-6 py-4 flex items-center space-x-4">
-    <Link class="text-blue-500 hover:text-blue-800"
-        :href="route('medicationRecords.show', record.id)">
-        Ver
-    </Link>
-    <Link class="text-yellow-500 hover:text-yellow-800"
-        :href="route('medicationRecords.edit', record.id)">
-        Editar
-    </Link>
+        <div v-if="record.active">
+            <Link class="text-blue-500 hover:text-blue-800"
+            @click="MedicationRecordShow(record.id)">
+            Ver
+        </Link>
+        </div>
+
+        <Link class="text-yellow-500 hover:text-yellow-800"
+            @click="MedicationRecordEdit(record.id)">
+            Editar
+        </Link>
+
     <Link
         method="post"
         :class="[
@@ -71,7 +74,7 @@
 
                 </tbody>
             </table>
-            <Pagination :pagination="temperatureRecords" />
+            <Pagination :pagination="medicationRecords" />
         </div>
         <ConfirmationModal :show="recordBeingDisabled != null" @close="recordBeingDisabled = null">
             <template #title>
@@ -121,6 +124,12 @@ export default {
         }
     },
     methods: {
+        MedicationRecordShow(id) {
+        this.$inertia.get(route('medicationRecords.show', id));
+    },
+    MedicationRecordEdit(id) {
+        this.$inertia.get(route('medicationRecords.edit', id));
+    },
     openDisableModal(record) {
         this.recordBeingDisabled = record;
     },

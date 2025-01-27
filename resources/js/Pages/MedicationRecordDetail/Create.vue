@@ -16,11 +16,11 @@
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
-                <label for="drug" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
+                <label for="drug" class="block hidden mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
                     Ficha Medicamentos
                 </label>
                 <input required id="medication_record_id" type="text" v-model="form.medication_record_id"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-gray-50 border hidden border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Escribe la dieta asignada..." />
 
 
@@ -235,7 +235,7 @@ export default {
         },
         submitModal() {
 
-            this.$inertia.post(route('Drug.StoreModal', { id: this.id }), this.modalform);
+            this.$inertia.post(route('Drugs.store', { id: this.id }), this.modalform);
             this.isVisible = false;
             this.modalform = {
                 name: '',

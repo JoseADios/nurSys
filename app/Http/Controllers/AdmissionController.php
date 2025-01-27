@@ -26,14 +26,16 @@ class AdmissionController extends Controller
     {
         $this->authorize('viewAny', Admission::class);
 
-        $admissions = Admission::with(['bed', 'patient', 'doctor'])
-            ->where('active', '=', 1)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        $admissions->each(function ($admission) {
-            $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
-        });
+        $admissions = Admission::query()
+            ->with(['bed', 'patient', 'doctor'])
+            ->where('active', true)
+            ->select(['id', 'patient_id', 'bed_id', 'doctor_id', 'created_at', 'in_process', 'active'])
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function ($admission) {
+                $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
+                return $admission;
+            });
 
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
@@ -155,8 +157,7 @@ class AdmissionController extends Controller
     {
         $this->authorize('update', $admission);
 
-
-        if ($request->has('in_process') ) {
+        if ($request->has('in_process')) {
             $validated = $request->validate([
                 'in_process' => 'boolean',
             ]);

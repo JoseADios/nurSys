@@ -7,7 +7,8 @@
         </template>
 
         <div class="ml-10 mt-4 lg:mx-10 flex justify-between">
-            <button @click="goBack" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full">
+            <button @click="goBack(previousUrl)"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full">
                 Volver
             </button>
 
@@ -106,7 +107,7 @@
 
                 <div class="flex justify-end mt-6 mb-2">
 
-                    <button @click="goBack"
+                    <button @click="goBack(previousUrl)"
                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                         Cancelar
                     </button>
@@ -151,7 +152,8 @@ export default {
                 admission_dx: this.admission.admission_dx,
                 final_dx: this.admission.final_dx,
                 comment: this.admission.comment,
-            })
+            }),
+            goBack: useGoBack().goBack
         }
     },
     methods: {
@@ -163,7 +165,10 @@ export default {
             })
         },
         submitProcess(value) {
-            this.$inertia.put(route('admissions.update', this.admission.id), {in_process: value}, {
+            this.$inertia.put(route('admissions.update', this.admission.id), {
+                patient_id: this.admission.patient_id,
+                in_process: value
+            }, {
                 onError: (errors) => {
                     this.form.errors = errors;
                 }
@@ -179,10 +184,6 @@ export default {
             if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
                 this.$inertia.delete(route('admissions.destroy', this.admission.id));
             }
-        },
-        setup() {
-            const { goBack } = useGoBack()
-            return { goBack }
         }
     },
 }

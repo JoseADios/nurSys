@@ -65,6 +65,11 @@ class AdmissionController extends Controller
             $selectedPatient = $request->query('patient_id');
         }
 
+        $selectedbed = null;
+        if ($request->query('bed_id')) {
+            $selectedbed = $request->query('bed_id');
+        }
+
         $doctors = User::all();
         $beds = Bed::all()->filter->isAvailable();
         $patients = Patient::all()->filter->isAvailable();
@@ -74,6 +79,7 @@ class AdmissionController extends Controller
             'beds' => $beds,
             'patients' => $patients,
             'selectedPatient' => $selectedPatient,
+            'selectedbed' => $selectedbed,
         ]);
     }
 

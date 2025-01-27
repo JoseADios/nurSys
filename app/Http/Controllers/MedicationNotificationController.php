@@ -44,7 +44,11 @@ class MedicationNotificationController extends Controller
     $MedicationRecordDetail = MedicationRecordDetail::find($id);
     $MedicationNotificacion = MedicationNotification::where('medication_record_detail_id', $id)->get();
 
-
+    if ($MedicationRecordDetail->active == 0) {
+        return redirect()->route('medicationRecords.show', $MedicationRecordDetail->medication_record_id)->withErrors([
+            'medication_record_detail_id' => 'Ya Existe una notifiacion con medicamentos administrados.',
+        ])->withInput();
+     }
     return Inertia::render('MedicationNotification/show', [
         'details' => $MedicationRecordDetail,
         'notifications' => $MedicationNotificacion,

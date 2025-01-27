@@ -126,7 +126,8 @@
                             </div>
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            <!-- Editar -->
+                            <div v-if="detail.active">
+                                 <!-- Editar -->
                             <Link  v-if="!hasApplied(detail)":href="route('medicationRecordDetails.edit', detail.id )"
                                 class="flex items-center space-x-2 text-yellow-600 hover:text-yellow-800 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
@@ -148,6 +149,8 @@
                             </svg>
                             <span class="font-medium">Notificaciones</span>
                             </Link>
+                            </div>
+
                             <!-- Disable -->
                             <Link  @click="ToggleActivate(detail)"
                             :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"

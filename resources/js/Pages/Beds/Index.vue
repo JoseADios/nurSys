@@ -17,37 +17,57 @@
                         </h4>
                         <div class="grid grid-cols-4 gap-4 justify-center">
                             <div v-for="bed in room.beds" :key="bed.id" class="relative">
-                                <div class="relative w-20 h-32 rounded-lg cursor-pointer transition-all duration-300 hover:scale-110 flex flex-col items-center justify-end"
+                                <div class="relative w-20 h-32 rounded-lg transition-all duration-300 hover:scale-110 flex flex-col items-center"
                                     :class="{
                                         'bg-orange-500': bed.admission_id,
                                         'bg-red-600': bed.out_of_service,
                                         'bg-green-500': !bed.out_of_service
                                     }">
-                                    <div
-                                        class="absolute top-0 left-0 right-0 h-8 bg-gray-700 rounded-t-lg flex items-center justify-evenly">
+                                    <!-- Header con número fijo -->
+                                    <div class="absolute top-0 w-full h-6 bg-gray-700 rounded-t-lg flex items-center justify-center">
                                         <span class="text-white text-xs">{{ bed.number }}</span>
-                                        <button v-if="!bed.admission_id" @click="onBedClick(bed)">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                class="text-white size-4 icon icon-tabler icons-tabler-outline icon-tabler-pencil-minus transition-colors duration-300 hover:text-yellow-500">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                                <path d="M13.5 6.5l4 4" />
-                                                <path d="M16 19h6" />
-                                            </svg>
-                                        </button>
-
                                     </div>
-                                    <svg viewBox="0 0 24 24" class="w-12 h-12 text-white mb-2">
-                                        <path fill="currentColor"
-                                            d="M3 11h18v3H3zm1.5-3h15c.83 0 1.5.67 1.5 1.5V11H3V9.5C3 8.67 3.67 8 4.5 8zm2-2h10c.83 0 1.5.67 1.5 1.5V8H5v-.5C5 6.67 5.67 6 6.5 6z" />
-                                    </svg>
-                                    <div v-if="bed.admission_id" class="w-11/12 mb-1">
-                                        <Link :href="route('admissions.show', {id: bed.admission_id, bedsRoute: true})"
-                                            class="w-full block text-center bg-gray-700 text-white py-1 rounded-md text-xs hover:bg-gray-600 transition-colors">
-                                        Ver Ingreso
-                                        </Link>
+
+                                    <!-- Icono de cama centrado -->
+                                    <div class="flex-1 flex items-center justify-center mt-5">
+                                        <svg viewBox="0 0 24 14" class="w-12 h-12 text-white">
+                                            <path fill="currentColor"
+                                                d="M3 11h18v3H3zm1.5-3h15c.83 0 1.5.67 1.5 1.5V11H3V9.5C3 8.67 3.67 8 4.5 8zm2-2h10c.83 0 1.5.67 1.5 1.5V8H5v-.5C5 6.67 5.67 6 6.5 6z" />
+                                        </svg>
+                                    </div>
+
+                                    <!-- Contenedor de botones fijo -->
+                                    <div class="w-full p-1 space-y-1">
+                                        <!-- Botón Ver Ingreso -->
+                                        <div v-if="bed.admission_id" class="w-full">
+                                            <Link :href="route('admissions.show', { id: bed.admission_id, bedsRoute: true })"
+                                                class="w-full block text-center bg-gray-700 text-white py-1 rounded-md text-xs hover:bg-gray-600 transition-colors">
+                                                Ver Ingreso
+                                            </Link>
+                                        </div>
+
+                                        <!-- Botones Editar y Crear -->
+                                        <div v-if="!bed.admission_id" class="w-full space-y-1 flex justify-evenly items-end">
+
+                                            <Link v-if="!bed.out_of_service" :href="route('admissions.create', {bed_id: bed.id})"
+                                                class="text-center h-6 w-8 bg-gray-700 hover:bg-blue-600 text-white rounded-md text-xs transition-colors flex items-center justify-center">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" class="">
+                                                    <path d="M12 5v14M5 12h14" />
+                                                </svg>
+
+                                            </Link>
+
+                                            <button @click="onBedClick(bed)" class="h-6 w-8 bg-gray-600 hover:bg-orange-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" class="">
+                                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                                    <path d="M13.5 6.5l4 4" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -55,8 +75,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <DialogModal :show="showEditModal != null" @close="showEditModal = null">
+        </div>        <DialogModal :show="showEditModal != null" @close="showEditModal = null">
             <template #title>
                 Cambiar estado de la cama
             </template>

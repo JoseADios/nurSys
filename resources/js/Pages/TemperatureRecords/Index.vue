@@ -6,8 +6,31 @@
             </h2>
         </template>
 
+        <!-- <div class="text-white">Datos: {{ temperatureRecords.data }}</div> -->
+
+        <!-- Navigation -->
+        <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+            <Link :href="route('admissions.show', admission_id)"
+                class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span class="font-medium">Volver</span>
+            </Link>
+        </div>
+
         <!-- Filtro para mostrar registros eliminados -->
-        <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-end items-center">
+        <div class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-10 lg:mx-10">
+            <form @submit.prevent="submitFilter" class="mb-2">
+                <label for="search" class="block my-2 text-md font-large text-gray-900 dark:text-white">
+                    Buscar:
+                </label>
+                <input @input="submitFilter()" class="rounded-lg" type="text" name="search" id="search"
+                    v-model="form.search" placeholder="Buscar ..." />
+            </form>
+
             <button @click="toggleShowDeleted"
                 class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors" :class="{
                     'bg-red-500 hover:bg-red-600 text-white': showDeleted,
@@ -25,21 +48,6 @@
             </button>
         </div>
 
-        <!-- <div class="text-white">Datos: {{ temperatureRecords.data }}</div> -->
-
-        <!-- Navigation -->
-        <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-            <Link :href="route('admissions.show', admission_id)"
-                class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                    clip-rule="evenodd" />
-            </svg>
-            <span class="font-medium">Volver</span>
-            </Link>
-        </div>
-
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
             <table v-if="temperatureRecords.data.length"
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -50,6 +58,9 @@
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Paciente
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Enfermera
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Fecha
@@ -71,6 +82,10 @@
                             {{ temperatureRecord.admission.patient.first_name }} {{
                                 temperatureRecord.admission.patient.first_surname }} {{
                                 temperatureRecord.admission.patient.second_surname }}
+                        </td>
+                        <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ temperatureRecord.nurse.name }} {{
+                                temperatureRecord.nurse.last_surname }}
                         </td>
                         <td class="px-6 py-4">
                             {{ temperatureRecord.created_at }}
@@ -99,11 +114,14 @@ export default {
     props: {
         temperatureRecords: Object,
         admission_id: Number,
-        show_deleted: Boolean,
+        filters: Object,
     },
     data() {
         return {
-            showDeleted: this.show_deleted,
+            showDeleted: this.filters.show_deleted,
+            form: {
+                search: this.filters.search || '',
+            },
         };
     },
     components: {
@@ -118,7 +136,17 @@ export default {
         toggleShowDeleted() {
             this.showDeleted = !this.showDeleted;
             this.$inertia.get(route('temperatureRecords.index', { show_deleted: this.showDeleted, admission_id: this.admission_id }));
-        }
+        },
+        submitFilter() {
+            if (this.timeout) {
+                clearTimeout(this.timeout);
+            }
+            this.timeout = setTimeout(() => {
+                this.$inertia.get(route('temperatureRecords.index'), this.form, {
+                    preserveState: true,
+                });
+            }, 300);
+        },
     }
 }
 </script>

@@ -98,6 +98,7 @@ export default {
         patients: Object,
         errors: [Array, Object],
         selectedPatient: String,
+        selectedbed: String,
     },
     components: {
         AppLayout,
@@ -107,7 +108,7 @@ export default {
     data() {
         return {
             form: useForm({
-                bed_id: null,
+                bed_id: this.selectedbed,
                 patient_id: this.selectedPatient,
                 doctor_id: null,
                 admission_dx: null,

@@ -32,25 +32,18 @@ class AdmissionController extends Controller
             ->where('active', true)
             ->select(['id', 'patient_id', 'bed_id', 'doctor_id', 'created_at', 'in_process', 'active'])
             ->orderByDesc('created_at')
-            ->get()
-            ->map(function ($admission) {
+            ->paginate(10)
+            ->through(function ($admission) {
                 $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
                 return $admission;
             });
 
-        $admissions = Admission::with(['bed', 'patient', 'doctor'])
-            ->where('active', '=', 1)
-            ->orderBy('created_at', 'desc')->paginate(10);
-
-
-      return Inertia::render('Admissions/Index', [
-        'admissions' => $admissions,
-        'can' => [
-            'create' =>Gate::allows('create', Admission::class),
+        return Inertia::render('Admissions/Index', [
+            'admissions' => $admissions,
+            'can' => [
+                'create' => Gate::allows('create', Admission::class),
             ]
         ]);
-
-
     }
 
     /**
@@ -65,6 +58,11 @@ class AdmissionController extends Controller
             $selectedPatient = $request->query('patient_id');
         }
 
+        $selectedbed = null;
+        if ($request->query('bed_id')) {
+            $selectedbed = $request->query('bed_id');
+        }
+
         $doctors = User::all();
         $beds = Bed::all()->filter->isAvailable();
         $patients = Patient::all()->filter->isAvailable();
@@ -74,6 +72,7 @@ class AdmissionController extends Controller
             'beds' => $beds,
             'patients' => $patients,
             'selectedPatient' => $selectedPatient,
+            'selectedbed' => $selectedbed,
         ]);
     }
 
@@ -147,7 +146,11 @@ class AdmissionController extends Controller
         $patients->add(Patient::find($admission->patient_id));
         $doctors = User::all();
         $beds = Bed::all()->filter->isAvailable();
-        $beds->add(Bed::find($admission->bed_id));
+        $selectedBed = Bed::find($admission->bed_id);
+
+        if ($selectedBed) {
+            $beds->add($selectedBed);
+        }
 
         return Inertia::render('Admissions/Edit', [
             'admission' => $admission,

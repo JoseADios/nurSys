@@ -21,8 +21,9 @@
             </Link>
         </div>
 
-        <!-- Filtro para mostrar registros eliminados -->
-        <div class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-10 lg:mx-10">
+        <div
+            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-10 lg:mx-10">
+
             <form @submit.prevent="submitFilter" class="mb-2">
                 <label for="search" class="block my-2 text-md font-large text-gray-900 dark:text-white">
                     Buscar:
@@ -31,14 +32,15 @@
                     v-model="form.search" placeholder="Buscar ..." />
             </form>
 
+            <!-- Filtro para mostrar registros eliminados -->
             <button @click="toggleShowDeleted"
                 class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors" :class="{
-                    'bg-red-500 hover:bg-red-600 text-white': showDeleted,
-                    'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !showDeleted
+                    'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
+                    'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
                 }">
                 <span class="font-medium">Mostrar registros eliminados</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path v-if="showDeleted" fill-rule="evenodd"
+                    <path v-if="form.showDeleted" fill-rule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
                         clip-rule="evenodd" />
                     <path v-else fill-rule="evenodd"
@@ -53,6 +55,9 @@
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
+                        <th scope="col" class="px-6 py-3">
+                            #
+                        </th>
                         <th scope="col" class="px-6 py-3">
                             Ingreso
                         </th>
@@ -71,8 +76,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="temperatureRecord in temperatureRecords.data" :key="temperatureRecord.id"
+                    <tr v-for="(temperatureRecord, index) in temperatureRecords.data" :key="temperatureRecord.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <td class="px-6 py-4">
+                            {{ index + 1 }}
+                        </td>
                         <td class="px-6 py-4">
                             {{ temperatureRecord.admission.created_at }}
                             Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
@@ -83,7 +91,7 @@
                                 temperatureRecord.admission.patient.first_surname }} {{
                                 temperatureRecord.admission.patient.second_surname }}
                         </td>
-                        <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        <td scope="row" class="px-6 py-4 ">
                             {{ temperatureRecord.nurse.name }} {{
                                 temperatureRecord.nurse.last_surname }}
                         </td>
@@ -99,6 +107,9 @@
                     </tr>
                 </tbody>
             </table>
+            <div v-else class="text-center text-gray-500 dark:text-gray-400 py-4">
+                No hay registros disponibles.
+            </div>
             <Pagination :pagination="temperatureRecords" />
         </div>
     </AppLayout>
@@ -116,26 +127,28 @@ export default {
         admission_id: Number,
         filters: Object,
     },
-    data() {
-        return {
-            showDeleted: this.filters.show_deleted,
-            form: {
-                search: this.filters.search || '',
-            },
-        };
-    },
     components: {
         AppLayout,
         Link,
         Pagination
+    },
+    data() {
+        return {
+            form: {
+                search: this.filters.search || '',
+                admission_id: this.filters.admission_id,
+                showDeleted: this.filters.show_deleted,
+            },
+        };
     },
     methods: {
         temperatureRecordShow(id) {
             this.$inertia.get(route('temperatureRecords.customShow', { id: id, admission_id: null }));
         },
         toggleShowDeleted() {
-            this.showDeleted = !this.showDeleted;
-            this.$inertia.get(route('temperatureRecords.index', { show_deleted: this.showDeleted, admission_id: this.admission_id }));
+            this.form.search = '';
+            this.form.showDeleted = !this.form.showDeleted;
+            this.$inertia.get(route('temperatureRecords.index', this.form));
         },
         submitFilter() {
             if (this.timeout) {

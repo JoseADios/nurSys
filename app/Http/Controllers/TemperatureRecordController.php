@@ -9,10 +9,8 @@ use App\Services\FirmService;
 use App\Services\TurnService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\URL;
 
@@ -25,7 +23,7 @@ class TemperatureRecordController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $showDeleted = $request->boolean('show_deleted');
+        $showDeleted = $request->boolean('showDeleted');
         $admissionId = $request->integer('admission_id');
 
         $query = TemperatureRecord::query()

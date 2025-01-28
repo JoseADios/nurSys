@@ -64,13 +64,13 @@
             @click="MedicationRecordShow(record.id)">
             Ver
         </Link>
-        </div>
 
-        <Link class="text-yellow-500 hover:text-yellow-800"
+
+        <Link class="text-yellow-500 ml-2 hover:text-yellow-800"
             @click="MedicationRecordEdit(record.id)">
             Editar
         </Link>
-
+    </div>
     <Link
         method="post"
         :class="[

@@ -7,14 +7,22 @@
         </template>
 
         <!-- Filtro para mostrar registros eliminados -->
-        <div class="p-4 flex justify-end items-center">
-            <label class="flex items-center space-x-2 text-white hover:text-red-300 transition-colors">
-            <input type="checkbox" v-model="showDeleted" :checked="showDeleted" :true-value="1" :false-value="0" @change="toggleShowDeleted">
-            <span class="font-medium">Ver eliminados</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z" clip-rule="evenodd" />
-            </svg>
-            </label>
+        <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-end items-center">
+            <button @click="toggleShowDeleted"
+                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors" :class="{
+                    'bg-red-500 hover:bg-red-600 text-white': showDeleted,
+                    'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !showDeleted
+                }">
+                <span class="font-medium">Mostrar registros eliminados</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path v-if="showDeleted" fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
+                        clip-rule="evenodd" />
+                    <path v-else fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                        clip-rule="evenodd" />
+                </svg>
+            </button>
         </div>
 
         <!-- <div class="text-white">Datos: {{ temperatureRecords.data }}</div> -->
@@ -108,6 +116,7 @@ export default {
             this.$inertia.get(route('temperatureRecords.customShow', { id: id, admission_id: null }));
         },
         toggleShowDeleted() {
+            this.showDeleted = !this.showDeleted;
             this.$inertia.get(route('temperatureRecords.index', { show_deleted: this.showDeleted, admission_id: this.admission_id }));
         }
     }

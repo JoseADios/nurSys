@@ -38,7 +38,7 @@ class TemperatureRecordController extends Controller
         return Inertia::render('TemperatureRecords/Index', [
             'temperatureRecords' => $temperatureRecords,
             'admission_id' => intval($request->admission_id),
-            'show_deleted' => $request->show_deleted,
+            'show_deleted' => boolval($request->show_deleted),
         ]);
     }
 

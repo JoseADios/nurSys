@@ -18,11 +18,33 @@ class MedicationRecordController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $medicationRecords = MedicationRecord::with('admission')->paginate(10);
+
+        $search = $request->input('search');
+
+
+        $query = MedicationRecord::query();
+
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('admission_id', 'like', '%' . $search . '%')
+                  ->orWhere('doctor_id', 'like', '%' . $search . '%')
+                  ->orWhere('diagnosis', 'like', '%' . $search . '%')
+                  ->orWhere('diet', 'like', '%' . $search . '%')
+                  ->orWhere('referrals', 'like', '%' . $search . '%')
+                  ->orWhere('pending_studies', 'like', '%' . $search . '%')
+                  ->orWhere('doctor_sign', 'like', '%' . $search . '%');
+            });
+        }
+
+
+        $medicationRecords = $query->with('admission')->paginate(10);
+
         return Inertia::render('MedicationRecords/Index', [
             'medicationRecords' => $medicationRecords,
+            'filters' => ['search' => $search],
         ]);
     }
 //

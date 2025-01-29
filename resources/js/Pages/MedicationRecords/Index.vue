@@ -164,15 +164,14 @@ export default {
                 search: this.filters.search || '',
             },
             timeout: 1000,
+
             selectedRecord: ref(null),
             isVisibleRecord: ref(false),
 
         }
     },
     methods: {
-
         submit() {
-
             if (this.timeout) {
                 clearTimeout(this.timeout);
             }
@@ -181,6 +180,7 @@ export default {
                 preserveState: true,
             });
         },
+
         submitCreateRecord() {
             this.$inertia.get(route('medicationRecords.create', this.selectedRecord))
         },
@@ -190,6 +190,7 @@ export default {
             };
             this.isVisibleRecord = true;
         },
+
         MedicationRecordShow(id) {
             this.$inertia.get(route('medicationRecords.show', id));
         },
@@ -202,7 +203,8 @@ export default {
         confirmDisable() {
             if (this.recordBeingDisabled) {
                 this.$inertia.delete(
-                    route('medicationRecords.destroy', this.recordBeingDisabled.id), {
+                    route('medicationRecords.destroy', this.recordBeingDisabled.id),
+                    {
                         onSuccess: () => {
 
                             this.recordBeingDisabled = null;
@@ -216,9 +218,10 @@ export default {
         },
         Enable(record) {
             this.$inertia.put(
-                route('medicationRecords.update', record.id), {
-                    active: true
-                }, {
+                route('medicationRecords.update', record.id),
+                { active: true },
+                {
+
                     onSuccess: (response) => {
 
                     },
@@ -229,6 +232,10 @@ export default {
                 }
             );
         },
+
+
+    }
+
 
     }
 

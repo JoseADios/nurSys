@@ -24,13 +24,57 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('active', true)
-            ->with('roles')
-            ->paginate(10);
+        $search = $request->input('search');
+        $role = $request->input('role');
+        $specialty = $request->input('specialty');
+        $position = $request->input('position');
+        $area = $request->input('area');
+        $showDeleted = $request->boolean('show_deleted');
+
+        $query = User::query();
+
+        if ($showDeleted) {
+            $query->where('active', false);
+        } else {
+            $query->where('active', true);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($role) {
+            $query->whereHas('roles', function ($q) use ($role) {
+                $q->where('name', 'like', '%' . $role . '%');
+            });
+        }
+        if ($specialty) {
+            $query->where('specialty', 'like', '%' . $specialty . '%');
+        }
+        if ($position) {
+            $query->where('position', 'like', '%' . $position . '%');
+        }
+        if ($area) {
+            $query->where('area', 'like', '%' . $area . '%');
+        }
+
+        $users = $query->with('roles')->orderBy('updated_at', 'desc')->paginate(10);
+
         return Inertia::render('Users/Index', [
             'users' => $users,
+            'filters' => [
+                'search' => $search,
+                'role' => $role,
+                'specialty' => $specialty,
+                'position' => $position,
+                'area' => $area,
+                'show_deleted' => $showDeleted,
+            ],
         ]);
     }
 

@@ -20,20 +20,38 @@ class MedicalOrderController extends Controller
      */
     public function index(Request $request)
     {
+        $search = $request->input('search', '');
+        $admissionId = $request->input('admission_id');
+
         $query = MedicalOrder::where('active', true)
             ->with('admission.patient', 'admission.bed', 'doctor')
             ->orderBy('created_at', 'desc')
             ->orderBy('updated_at', 'desc');
 
-        if ($request->has('admission_id')) {
-            $query->where('admission_id', $request->admission_id);
-        }
+            if (!empty($search)) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('created_at', 'like', '%' . $search . '%')
+                      ->orWhereHas('admission.patient', function ($patientQuery) use ($search) {
+                          $patientQuery->where('first_name', 'like', '%' . $search . '%')
+                                       ->orWhere('first_surname', 'like', '%' . $search . '%')
+                                       ->orWhere('second_surname', 'like', '%' . $search . '%');
+                      })
+                      ->orWhereHas('doctor', function ($doctorQuery) use ($search) {
+                          $doctorQuery->where('name', 'like', '%' . $search . '%');
+                      });
+                });
+            }
+
+            if (!empty($admissionId)) {
+                $query->where('admission_id', intval($admissionId));
+            }
 
         $medicalOrders = $query->paginate(10);
 
         return Inertia::render('MedicalOrders/Index', [
             'medicalOrders' => $medicalOrders,
             'admission_id' => $request->admission_id,
+            'filters' => ['search' => $search],
         ]);
     }
 

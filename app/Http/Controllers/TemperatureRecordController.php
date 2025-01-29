@@ -9,10 +9,9 @@ use App\Services\FirmService;
 use App\Services\TurnService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\URL;
 
 class TemperatureRecordController extends Controller
@@ -23,22 +22,44 @@ class TemperatureRecordController extends Controller
      */
     public function index(Request $request)
     {
-        $query = TemperatureRecord::with('admission.patient', 'admission.bed', 'nurse')
-            ->orderBy('updated_at', 'desc')
-            ->orderBy('created_at', 'desc');
+        $search = $request->input('search');
+        $showDeleted = $request->boolean('showDeleted');
+        $admissionId = $request->integer('admission_id');
 
-        if ($request->has('show_deleted') && $request->show_deleted) {
-            $query->where('active', false);
-        } else {
-            $query->where('active', true);
+        $query = TemperatureRecord::query()
+            ->with([
+                'admission.patient',
+                'admission.bed',
+                'nurse'
+            ])
+            ->select('temperature_records.*')
+            ->join('admissions', 'temperature_records.admission_id', '=', 'admissions.id')
+            ->join('patients', 'admissions.patient_id', '=', 'patients.id')
+            ->join('beds', 'admissions.bed_id', '=', 'beds.id')
+            ->join('users', 'temperature_records.nurse_id', '=', 'users.id')
+            ->where('temperature_records.active', !$showDeleted)
+            ->latest('temperature_records.updated_at')
+            ->latest('temperature_records.created_at');
+
+        if ($search) {
+            $query->where(function (Builder $query) use ($search) {
+                $query->whereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(beds.room, "-", beds.number) LIKE ?', ['%' . $search . '%']);
+            });
         }
 
-        $temperatureRecords = $query->paginate(10);
-
+        if ($admissionId) {
+            $query->where('temperature_records.admission_id', $admissionId);
+        }
+        // dd($showDeleted);
         return Inertia::render('TemperatureRecords/Index', [
-            'temperatureRecords' => $temperatureRecords,
-            'admission_id' => intval($request->admission_id),
-            'show_deleted' => boolval($request->show_deleted),
+            'temperatureRecords' => $query->paginate(10),
+            'filters' => [
+                'search' => $search,
+                'show_deleted' => $showDeleted,
+                'admission_id' => $admissionId,
+            ]
         ]);
     }
 

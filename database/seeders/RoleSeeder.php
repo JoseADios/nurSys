@@ -49,8 +49,16 @@ class RoleSeeder extends Seeder
             'admission.view',
         ]);
 
-
         $user = User::where('name', 'Test User')->first();
         $user->assignRole('admin');
+
+        // a los usuarios que estan creados en la base de datos, excepto test user asigna roles aleatorios
+        $users = User::where('name', '!=', 'Test User')->get();
+        $roles = Role::all()->pluck('name')->toArray();
+
+        foreach ($users as $user) {
+            $randomRole = $roles[array_rand($roles)];
+            $user->assignRole($randomRole);
+        }
     }
 }

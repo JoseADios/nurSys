@@ -106,6 +106,13 @@
                                 {{ medicalOrder.created_at }}
                             </p>
                         </div>
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+
+                            <button type="submit" @click="submitCreateRecord" class="ml-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                Crear
+            </button>
+                        </div>
+
                     </div>
                 </div>
 
@@ -421,6 +428,9 @@ export default {
                     }
                 });
         },
+        submitCreateRecord() {
+    this.$inertia.get(route('medicationRecords.create', { admission: this.medicalOrder.admission.id }))
+},
         submitUpdateDetail() {
             this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail)
             this.isVisibleAdm = false

@@ -22,15 +22,36 @@ class AdmissionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Admission::class);
 
-
-        $admissions = Admission::query()
+        $search = $request->input('search');
+        $query = Admission::query()
             ->with(['bed', 'patient', 'doctor'])
-            ->where('active', true)
-            ->select(['id', 'patient_id', 'bed_id', 'doctor_id', 'created_at', 'in_process', 'active'])
+            ->where('active', true);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('created_at', 'like', '%' . $search . '%')
+
+                  ->orWhereHas('patient', function ($patientQuery) use ($search) {
+                      $patientQuery->where('first_name', 'like', '%' . $search . '%')
+                                   ->orWhere('first_surname', 'like', '%' . $search . '%')
+                                   ->orWhere('second_surname', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('bed', function ($bedQuery) use ($search) {
+                      $bedQuery->where('number', 'like', '%' . $search . '%')
+                               ->orWhere('room', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('doctor', function ($doctorQuery) use ($search) {
+                      $doctorQuery->where('name', 'like', '%' . $search . '%')
+                                  ->orWhere('last_name', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        $admissions = $query->select(['id', 'patient_id', 'bed_id', 'doctor_id', 'created_at', 'in_process', 'active'])
             ->orderByDesc('created_at')
             ->paginate(10)
             ->through(function ($admission) {
@@ -42,9 +63,11 @@ class AdmissionController extends Controller
             'admissions' => $admissions,
             'can' => [
                 'create' => Gate::allows('create', Admission::class),
-            ]
+            ],
+            'filters' => ['search' => $search],
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.

@@ -18,6 +18,17 @@
         </div> -->
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
+            <form @submit.prevent="submit" class="mb-2">
+      <input @input ="submit()"
+        class="rounded-lg"
+        type="text"
+        name="search"
+        id="search"
+        v-model="form.search"
+        placeholder="Buscar ..."
+      />
+
+    </form>
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -102,11 +113,33 @@ export default {
     props: {
         admissions: Object,
         can: [Array, Object],
+        filters: Object,
     },
     components: {
         AppLayout,
         Link,
         Pagination
+    },
+    data() {
+        return {
+            recordBeingDisabled: null,
+            form: {
+        search: this.filters.search || '',
+      },
+      timeout: 1000,
+        }
+    },
+    methods: {
+                submit() {
+
+        if (this.timeout) {
+        clearTimeout(this.timeout);
+        }
+        this.timeout
+        this.$inertia.get(route('admissions.index'), this.form, {
+        preserveState: true,
+        });
+},
     },
 
 }

@@ -25,7 +25,7 @@ class MedicationRecordController extends Controller
 
 
         $query = MedicationRecord::query();
-
+        $admission = Admission::with('patient')->get();
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -38,27 +38,34 @@ class MedicationRecordController extends Controller
                   ->orWhere('doctor_sign', 'like', '%' . $search . '%');
             });
         }
+        Log::info($admission);
 
-
-        $medicationRecords = $query->with('admission')->paginate(10);
+        $medicationRecords = $query->with('admission')->orderByDesc('created_at')->paginate(10);
 
         return Inertia::render('MedicationRecords/Index', [
             'medicationRecords' => $medicationRecords,
             'filters' => ['search' => $search],
+            'admission' => $admission,
         ]);
     }
 //
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        $admissions = Admission::all();
+
+
         $diet = Diet::all();
+        $admission = Admission::with('patient','bed','doctor')->find($request->admission);
+
+
+
+        Log::info($admission);
 
         // Pasar los datos a la vista
         return Inertia::render('MedicationRecords/Create', [
-            'admissions' => $admissions,  // Enviar todos los registros de Admission
+            'admission' => $admission,  // Enviar todos los registros de Admission
             'diet' => $diet,
         ]);
 

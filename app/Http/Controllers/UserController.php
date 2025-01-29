@@ -7,7 +7,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -31,11 +30,11 @@ class UserController extends Controller
         $specialty = $request->input('specialty');
         $position = $request->input('position');
         $area = $request->input('area');
-        $showDeleted = $request->boolean('show_deleted');
+        $show_deleted = $request->boolean('show_deleted');
 
         $query = User::query();
 
-        if ($showDeleted) {
+        if ($show_deleted) {
             $query->where('active', false);
         } else {
             $query->where('active', true);
@@ -45,7 +44,7 @@ class UserController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
                     ->orWhere('last_name', 'like', '%' . $search . '%');
-            });
+            }); // TODO: concat name and last_name to filter
         }
 
         if ($role) {
@@ -73,7 +72,7 @@ class UserController extends Controller
                 'specialty' => $specialty,
                 'position' => $position,
                 'area' => $area,
-                'show_deleted' => $showDeleted,
+                'show_deleted' => $show_deleted,
             ],
         ]);
     }

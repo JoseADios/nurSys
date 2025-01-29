@@ -19,16 +19,10 @@
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
             <form @submit.prevent="submit" class="mb-2">
-      <input @input ="submit()"
-        class="rounded-lg"
-        type="text"
-        name="search"
-        id="search"
-        v-model="form.search"
-        placeholder="Buscar ..."
-      />
+                <input @input="submit()" class="rounded-lg" type="text" name="search" id="search" v-model="form.search"
+                    placeholder="Buscar ..." />
 
-    </form>
+            </form>
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -63,7 +57,8 @@
                                 admission.patient.second_surname }}
                         </th>
                         <td class="px-6 py-4">
-                            Sala: {{ admission.bed ? admission.bed.room : 'N/A' }}, Cama: {{ admission.bed ? admission.bed.number : 'N/A' }}
+                            Sala: {{ admission.bed ? admission.bed.room : 'N/A' }}, Cama: {{ admission.bed ?
+                            admission.bed.number : 'N/A' }}
                         </td>
                         <td class="px-6 py-4">
                             {{ admission.doctor.name }} {{ admission.doctor.last_name }}
@@ -73,10 +68,13 @@
                         </td>
                         <td class="px-6 py-4">
                             <div v-if="admission.in_process">
-                                <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Ingresado</span>
+                                <span
+                                    class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Ingresado</span>
                             </div>
                             <div v-else>
-                                <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">Dado de alta</span>
+                                <span
+                                    class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">Dado
+                                    de alta</span>
                             </div>
                         </td>
                         <td class="px-6 py-4">
@@ -124,22 +122,22 @@ export default {
         return {
             recordBeingDisabled: null,
             form: {
-        search: this.filters.search || '',
-      },
-      timeout: 1000,
+                search: this.filters.search || '',
+            },
+            timeout: 1000,
         }
     },
     methods: {
-                submit() {
+        submit() {
 
-        if (this.timeout) {
-        clearTimeout(this.timeout);
-        }
-        this.timeout
-        this.$inertia.get(route('admissions.index'), this.form, {
-        preserveState: true,
-        });
-},
+            if (this.timeout) {
+                clearTimeout(this.timeout);
+            }
+            this.timeout
+            this.$inertia.get(route('admissions.index'), this.form, {
+                preserveState: true,
+            });
+        },
     },
 
 }

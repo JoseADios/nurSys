@@ -21,6 +21,7 @@ class PatientController extends Controller
     {
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
+        $days = $request->integer('days');
 
         // Construir la consulta base
         $query = Patient::query();
@@ -33,13 +34,17 @@ class PatientController extends Controller
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', '%' . $search . '%')
+                $q->where('first_name', 'like', '%' . $search . '%') // TODO: concat name and last_name to filter
                     ->orWhere('first_surname', 'like', '%' . $search . '%')
                     ->orWhere('second_surname', 'like', '%' . $search . '%')
                     ->orWhere('phone', 'like', '%' . $search . '%')
                     ->orWhere('identification_card', 'like', '%' . $search . '%')
                     ->orWhere('nationality', 'like', '%' . $search . '%');
             });
+        }
+
+        if ($days) {
+            $query->where('created_at', '>=', now()->subDays($days));
         }
 
         $patients = $query->orderBy('updated_at', 'desc')->paginate(10);

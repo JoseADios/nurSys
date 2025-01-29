@@ -390,7 +390,9 @@ export default {
                 return;
             }
             this.signatureError = false;
-            this.$inertia.put(route('temperatureRecords.update', this.temperatureRecord.id), this.formSignature);
+            this.$inertia.put(route('temperatureRecords.update', this.temperatureRecord.id), this.formSignature, {
+                preserveScroll: true
+            });
             this.isVisibleEditSign = false
         },
         toggleEditRecord() {

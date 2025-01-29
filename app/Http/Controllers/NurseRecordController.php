@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
-
+use Illuminate\Support\Facades\Log;
 class NurseRecordController extends Controller
 {
     /**
@@ -20,22 +20,42 @@ class NurseRecordController extends Controller
      */
     public function index(Request $request)
     {
+        $search = $request->input('search', '');
+        $admissionId = $request->input('admission_id');
+
         $query = NurseRecord::with('nurse', 'admission.patient')
             ->where('active', true)
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc');
 
-        if ($request->has('admission_id')) {
-            $query->where('admission_id', $request->admission_id);
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('created_at', 'like', '%' . $search . '%')
+                  ->orWhereHas('admission.patient', function ($patientQuery) use ($search) {
+                      $patientQuery->where('first_name', 'like', '%' . $search . '%')
+                                   ->orWhere('first_surname', 'like', '%' . $search . '%')
+                                   ->orWhere('second_surname', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('nurse', function ($nurseQuery) use ($search) {
+                      $nurseQuery->where('name', 'like', '%' . $search . '%')
+                                 ->orWhere('last_name', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        if (!empty($admissionId)) {
+            $query->where('admission_id', intval($admissionId));
         }
 
         $nurseRecords = $query->paginate(10);
 
         return Inertia::render('NurseRecords/Index', [
             'nurseRecords' => $nurseRecords,
-            'admission_id' => intval($request->admission_id),
+            'admission_id' => intval($admissionId),
+            'filters' => ['search' => $search],
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.

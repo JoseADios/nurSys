@@ -16,12 +16,22 @@
         <div
             class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
 
-            <form @submit.prevent="submitFilter" class="mb-2">
+            <form @submit.prevent="submitFilter" class="mb-2 relative">
                 <label for="search" class="block my-2 text-md font-large text-gray-900 dark:text-white">
                     Buscar:
                 </label>
-                <input @input="submitFilter()" class="rounded-lg" type="text" name="search" id="search"
-                    v-model="form.search" placeholder="Buscar ..." />
+                <div class="relative">
+                    <input @input="submitFilter()" class="rounded-lg pr-10" type="text" name="search" id="search"
+                        v-model="form.search" placeholder="Buscar ..." />
+                    <button v-if="form.search" @click="form.search = ''; submitFilter()" type="button"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
+                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
             </form>
 
             <!-- Filtro para mostrar registros eliminados -->
@@ -31,7 +41,7 @@
                     'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
                 }">
                 <span class="font-medium">Mostrar registros eliminados</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path v-if="form.showDeleted" fill-rule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
                         clip-rule="evenodd" />
@@ -47,33 +57,15 @@
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">
-                            #
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Nombre
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Teléfono
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Cédula
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Nacionalidad
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Correo
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            ARS
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Ingresado
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Acciones
-                        </th>
+                        <th scope="col" class="px-6 py-3"> # </th>
+                        <th scope="col" class="px-6 py-3"> Nombre </th>
+                        <th scope="col" class="px-6 py-3"> Teléfono </th>
+                        <th scope="col" class="px-6 py-3"> Cédula </th>
+                        <th scope="col" class="px-6 py-3"> Nacionalidad </th>
+                        <th scope="col" class="px-6 py-3"> Correo </th>
+                        <th scope="col" class="px-6 py-3"> ARS </th>
+                        <th scope="col" class="px-6 py-3"> Ingresado </th>
+                        <th scope="col" class="px-6 py-3"> Acciones </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -158,7 +150,6 @@ export default {
     },
     methods: {
         toggleShowDeleted() {
-            this.form.search = '';
             this.form.showDeleted = !this.form.showDeleted;
             this.$inertia.get(route('patients.index', this.form));
         },
@@ -171,7 +162,7 @@ export default {
                     preserveState: true,
                 });
             }, 300);
-        },
+        }
     },
 
 }

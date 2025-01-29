@@ -33,7 +33,7 @@ class Admission extends Model
         ];
     }
 
-    public function recepcionist(): BelongsTo
+    public function receptionist(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

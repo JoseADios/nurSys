@@ -17,9 +17,33 @@ class PatientController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $patients = Patient::orderBy('updated_at', 'desc')->paginate(10);
+        $search = $request->input('search');
+        $showDeleted = $request->boolean('showDeleted');
+
+        // Construir la consulta base
+        $query = Patient::query();
+
+        if ($showDeleted) {
+            $query->where('active', false); // Mostrar solo los registros activos
+        } else {
+            $query->where('active', true); // Mostrar solo los registros activos
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('first_surname', 'like', '%' . $search . '%')
+                    ->orWhere('second_surname', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%')
+                    ->orWhere('identification_card', 'like', '%' . $search . '%')
+                    ->orWhere('nationality', 'like', '%' . $search . '%');
+            });
+        }
+
+        $patients = $query->orderBy('updated_at', 'desc')->paginate(10);
+
         $patients->getCollection()->transform(function ($patient) {
             $patient->is_hospitalized = !$patient->isAvailable();
             return $patient;
@@ -27,6 +51,10 @@ class PatientController extends Controller
 
         return Inertia::render('Patients/Index', [
             'patients' => $patients,
+            'filters' => [
+                'search' => $search,
+                'show_deleted' => $showDeleted,
+            ]
         ]);
     }
 

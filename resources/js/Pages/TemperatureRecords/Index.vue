@@ -22,7 +22,7 @@
         </div>
 
         <div
-            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-10 lg:mx-10">
+            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
 
             <form @submit.prevent="submitFilter" class="mb-2">
                 <label for="search" class="block my-2 text-md font-large text-gray-900 dark:text-white">

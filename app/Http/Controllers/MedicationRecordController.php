@@ -121,7 +121,7 @@ class MedicationRecordController extends Controller
                     'details' => $details,
                 ]);
             }else{
-             return redirect()->back()->withErrors($validator)->withInput();
+             return redirect()->back()->withErrors()->withInput();
             }
 
     }catch(\Exception $e){

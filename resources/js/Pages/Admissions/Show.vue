@@ -92,7 +92,7 @@
                         </div>
                     </div>
 
-                    <AccessGate :except-role="['recepcionist']"
+                    <AccessGate :except-role="['receptionist']"
                         class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 shadow-md">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Acciones Adicionales</h3>
                         <div class="grid md:grid-cols-3 gap-4">

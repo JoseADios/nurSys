@@ -22,7 +22,7 @@ class RoleSeeder extends Seeder
             'name' => 'doctor'
         ]);
         Role::create([
-            'name' => 'recepcionist'
+            'name' => 'receptionist'
         ]);
         Role::create([
             'name' => 'nurse'
@@ -39,7 +39,7 @@ class RoleSeeder extends Seeder
             'medicalOrder.create'
         ]);
 
-        $role = Role::findByName('recepcionist');
+        $role = Role::findByName('receptionist');
         $role->syncPermissions([
             'admission.*',
         ]);

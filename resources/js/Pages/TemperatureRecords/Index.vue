@@ -24,30 +24,53 @@
         <div
             class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
 
-            <form @submit.prevent="submitFilter" class="mb-2">
+            <form @submit.prevent="submitFilter" class="mb-2 relative">
                 <label for="search" class="block my-2 text-md font-large text-gray-900 dark:text-white">
                     Buscar:
                 </label>
-                <input @input="submitFilter()" class="rounded-lg" type="text" name="search" id="search"
-                    v-model="form.search" placeholder="Buscar ..." />
+                <div class="relative">
+                    <input @input="submitFilter()" class="rounded-lg pr-10" type="text" name="search" id="search"
+                        v-model="form.search" placeholder="Buscar ..." />
+                    <button v-if="form.search" @click="form.search = ''; submitFilter()" type="button"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
+                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
             </form>
 
-            <!-- Filtro para mostrar registros eliminados -->
-            <button @click="toggleShowDeleted"
-                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors" :class="{
-                    'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                    'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                }">
-                <span class="font-medium">Mostrar registros eliminados</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path v-if="form.showDeleted" fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                        clip-rule="evenodd" />
-                    <path v-else fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                        clip-rule="evenodd" />
-                </svg>
-            </button>
+            <div class="flex items-end">
+                <select @change="submitFilter()"
+                    class="bg-gray-50 mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    name="days" id="days" v-model="form.days">
+                    <option value="">Siempre</option>
+                    <option value="1">Último día</option>
+                    <option value="7">Últimos 7 días</option>
+                    <option value="30">Últimos 30 días</option>
+                    <option value="90">Últimos 90 días</option>
+                    <option value="180">Últimos 180 días</option>
+                    <option value="365">Último año</option>
+                </select>
+                <!-- Filtro para mostrar registros eliminados -->
+                <button @click="toggleShowDeleted"
+                    class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors" :class="{
+                        'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
+                        'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
+                    }">
+                    {{ filters.show_deleted ? 'Activos' : 'Eliminados ' }}
+                    <svg xmlns="http://www.w3.org/2000/svg" class=" ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path v-if="form.showDeleted" fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
+                            clip-rule="evenodd" />
+                        <path v-else fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
@@ -55,24 +78,12 @@
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">
-                            #
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Ingreso
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Paciente
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Enfermera
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Fecha
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Acciones
-                        </th>
+                        <th scope="col" class="px-6 py-3"> # </th>
+                        <th scope="col" class="px-6 py-3"> Ingreso </th>
+                        <th scope="col" class="px-6 py-3"> Paciente </th>
+                        <th scope="col" class="px-6 py-3"> Enfermera </th>
+                        <th scope="col" class="px-6 py-3"> Fecha </th>
+                        <th scope="col" class="px-6 py-3"> Acciones </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -138,6 +149,7 @@ export default {
                 search: this.filters.search || '',
                 admission_id: this.filters.admission_id,
                 showDeleted: this.filters.show_deleted,
+                days: this.filters.days || '',
             },
         };
     },
@@ -146,7 +158,6 @@ export default {
             this.$inertia.get(route('temperatureRecords.customShow', { id: id, admission_id: null }));
         },
         toggleShowDeleted() {
-            this.form.search = '';
             this.form.showDeleted = !this.form.showDeleted;
             this.$inertia.get(route('temperatureRecords.index', this.form));
         },
@@ -159,7 +170,7 @@ export default {
                     preserveState: true,
                 });
             }, 300);
-        },
+        }
     }
 }
 </script>

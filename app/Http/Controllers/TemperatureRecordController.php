@@ -25,6 +25,7 @@ class TemperatureRecordController extends Controller
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
         $admissionId = $request->integer('admission_id');
+        $days = $request->integer('days');
 
         $query = TemperatureRecord::query()
             ->with([
@@ -52,13 +53,18 @@ class TemperatureRecordController extends Controller
         if ($admissionId) {
             $query->where('temperature_records.admission_id', $admissionId);
         }
-        // dd($showDeleted);
+
+        if ($days) {
+            $query->where('temperature_records.created_at', '>=', now()->subDays($days));
+        }
+
         return Inertia::render('TemperatureRecords/Index', [
             'temperatureRecords' => $query->paginate(10),
             'filters' => [
                 'search' => $search,
                 'show_deleted' => $showDeleted,
                 'admission_id' => $admissionId,
+                'days' => $days,
             ]
         ]);
     }

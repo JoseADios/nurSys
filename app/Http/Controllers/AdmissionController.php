@@ -35,19 +35,19 @@ class AdmissionController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('created_at', 'like', '%' . $search . '%')
 
-                  ->orWhereHas('patient', function ($patientQuery) use ($search) {
-                      $patientQuery->where('first_name', 'like', '%' . $search . '%')
-                                   ->orWhere('first_surname', 'like', '%' . $search . '%')
-                                   ->orWhere('second_surname', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('bed', function ($bedQuery) use ($search) {
-                      $bedQuery->where('number', 'like', '%' . $search . '%')
-                               ->orWhere('room', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('doctor', function ($doctorQuery) use ($search) {
-                      $doctorQuery->where('name', 'like', '%' . $search . '%')
-                                  ->orWhere('last_name', 'like', '%' . $search . '%');
-                  });
+                    ->orWhereHas('patient', function ($patientQuery) use ($search) {
+                        $patientQuery->where('first_name', 'like', '%' . $search . '%')
+                            ->orWhere('first_surname', 'like', '%' . $search . '%')
+                            ->orWhere('second_surname', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('bed', function ($bedQuery) use ($search) {
+                        $bedQuery->where('number', 'like', '%' . $search . '%')
+                            ->orWhere('room', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('doctor', function ($doctorQuery) use ($search) {
+                        $doctorQuery->where('name', 'like', '%' . $search . '%')
+                            ->orWhere('last_name', 'like', '%' . $search . '%');
+                    });
             });
         }
 
@@ -122,6 +122,12 @@ class AdmissionController extends Controller
 
         if (!$patient->isAvailable()) {
             return back()->with('error', 'Ya existe un ingreso en proceso para este paciente');
+        }
+        if ($request->bed_id) {
+            $bed = Bed::find($request->bed_id);
+            if (!$bed->isAvailable()) {
+                return back()->with('error', 'La cama seleccionada no está disponible');
+            }
         }
 
         Admission::create($validated);
@@ -213,6 +219,13 @@ class AdmissionController extends Controller
                 'final_dx' => 'string|max:255|nullable',
                 'comment' => 'nullable|string|max:255',
             ]);
+        }
+
+        if ($request->bed_id) {
+            $bed = Bed::find($request->bed_id);
+            if (!$bed->isAvailable()) {
+                return back()->with('error', 'La cama seleccionada no está disponible');
+            }
         }
 
         $admission->update($validated);

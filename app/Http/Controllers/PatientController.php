@@ -21,28 +21,43 @@ class PatientController extends Controller
     {
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
+        $days = $request->integer('days');
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
 
         // Construir la consulta base
         $query = Patient::query();
 
         if ($showDeleted) {
-            $query->where('active', false); // Mostrar solo los registros activos
+            $query->where('patients.active', false); // Especificar la tabla patients
         } else {
-            $query->where('active', true); // Mostrar solo los registros activos
+            $query->where('patients.active', true); // Especificar la tabla patients
         }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', '%' . $search . '%')
-                    ->orWhere('first_surname', 'like', '%' . $search . '%')
-                    ->orWhere('second_surname', 'like', '%' . $search . '%')
-                    ->orWhere('phone', 'like', '%' . $search . '%')
-                    ->orWhere('identification_card', 'like', '%' . $search . '%')
-                    ->orWhere('nationality', 'like', '%' . $search . '%');
+                $q->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $search . '%'])
+                    ->orWhere('patients.phone', 'like', '%' . $search . '%')
+                    ->orWhere('patients.identification_card', 'like', '%' . $search . '%')
+                    ->orWhere('patients.nationality', 'like', '%' . $search . '%');
             });
         }
 
-        $patients = $query->orderBy('updated_at', 'desc')->paginate(10);
+        if ($days) {
+            $query->where('patients.created_at', '>=', now()->subDays($days)); // Especificar la tabla patients
+        }
+
+        if ($sortField === 'is_hospitalized') {
+            $patients = $query->leftJoin('admissions', 'patients.id', '=', 'admissions.patient_id')
+                ->select('patients.*')
+                ->groupBy('patients.id')
+                ->orderByRaw('MAX(admissions.in_process) ' . $sortDirection)
+                ->paginate(10);
+        } elseif ($sortField) {
+            $patients = $query->orderBy($sortField, $sortDirection)->paginate(10);
+        } else {
+            $patients = $query->orderBy('patients.updated_at', 'desc')->paginate(10); // Especificar la tabla patients
+        }
 
         $patients->getCollection()->transform(function ($patient) {
             $patient->is_hospitalized = !$patient->isAvailable();
@@ -54,6 +69,9 @@ class PatientController extends Controller
             'filters' => [
                 'search' => $search,
                 'show_deleted' => $showDeleted,
+                'days' => $days,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection,
             ]
         ]);
     }

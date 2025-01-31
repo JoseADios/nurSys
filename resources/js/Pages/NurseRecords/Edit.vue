@@ -334,7 +334,9 @@ export default {
                 return;
             }
             this.signatureError = false;
-            this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formSignature);
+            this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formSignature, {
+                preserveScroll: true
+            });
             this.isVisibleEditSign = false
         },
         deleteRecord() {

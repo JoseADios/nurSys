@@ -7,7 +7,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -31,11 +30,13 @@ class UserController extends Controller
         $specialty = $request->input('specialty');
         $position = $request->input('position');
         $area = $request->input('area');
-        $showDeleted = $request->boolean('show_deleted');
+        $show_deleted = $request->boolean('show_deleted');
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
 
         $query = User::query();
 
-        if ($showDeleted) {
+        if ($show_deleted) {
             $query->where('active', false);
         } else {
             $query->where('active', true);
@@ -63,7 +64,19 @@ class UserController extends Controller
             $query->where('area', 'like', '%' . $area . '%');
         }
 
-        $users = $query->with('roles')->orderBy('updated_at', 'desc')->paginate(10);
+        // Ordenamiento
+        if ($sortField === 'role') {
+            $query->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->orderBy('roles.name', $sortDirection)
+                ->select('users.*');
+        } elseif ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->orderBy('updated_at', 'desc');
+        }
+
+        $users = $query->with('roles')->paginate(10);
 
         return Inertia::render('Users/Index', [
             'users' => $users,
@@ -73,7 +86,9 @@ class UserController extends Controller
                 'specialty' => $specialty,
                 'position' => $position,
                 'area' => $area,
-                'show_deleted' => $showDeleted,
+                'show_deleted' => $show_deleted,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection,
             ],
         ]);
     }

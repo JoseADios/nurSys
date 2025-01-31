@@ -31,6 +31,8 @@ class UserController extends Controller
         $position = $request->input('position');
         $area = $request->input('area');
         $show_deleted = $request->boolean('show_deleted');
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
 
         $query = User::query();
 
@@ -44,7 +46,7 @@ class UserController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
                     ->orWhere('last_name', 'like', '%' . $search . '%');
-            }); // TODO: concat name and last_name to filter
+            });
         }
 
         if ($role) {
@@ -62,7 +64,19 @@ class UserController extends Controller
             $query->where('area', 'like', '%' . $area . '%');
         }
 
-        $users = $query->with('roles')->orderBy('updated_at', 'desc')->paginate(10);
+        // Ordenamiento
+        if ($sortField === 'role') {
+            $query->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->orderBy('roles.name', $sortDirection)
+                ->select('users.*');
+        } elseif ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->orderBy('updated_at', 'desc');
+        }
+
+        $users = $query->with('roles')->paginate(10);
 
         return Inertia::render('Users/Index', [
             'users' => $users,
@@ -73,6 +87,8 @@ class UserController extends Controller
                 'position' => $position,
                 'area' => $area,
                 'show_deleted' => $show_deleted,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection,
             ],
         ]);
     }

@@ -125,12 +125,31 @@
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">#</th>
-                        <th scope="col" class="px-6 py-3">Nombre</th>
-                        <th scope="col" class="px-6 py-3">Rol</th>
-                        <th scope="col" class="px-6 py-3">Especialidad</th>
-                        <th scope="col" class="px-6 py-3">Posición</th>
-                        <th scope="col" class="px-6 py-3">Área</th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
+                            # <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('name')">
+                            Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
+                                }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('role')">
+                            Rol <span v-if="form.sortField === 'role'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
+                                }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('specialty')">
+                            Especialidad <span v-if="form.sortField === 'specialty'">{{ form.sortDirection === 'asc' ?
+                                '↑' : '↓'
+                                }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('position')">
+                            Posición <span v-if="form.sortField === 'position'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('area')">
+                            Área <span v-if="form.sortField === 'area'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
+                                }}</span>
+                        </th>
                         <th scope="col" class="px-6 py-3">Acciones</th>
                     </tr>
                 </thead>
@@ -197,6 +216,8 @@ export default {
                 position: this.filters.position || '',
                 area: this.filters.area || '',
                 show_deleted: this.filters.show_deleted,
+                sortField: this.filters.sortField || '', // Nuevo campo
+                sortDirection: this.filters.sortDirection || 'asc', // Nuevo campo
             },
         };
     },
@@ -210,7 +231,12 @@ export default {
         toggleShowDeleted() {
             this.form.show_deleted = !this.form.show_deleted;
             this.applyFilters();
-        }
+        },
+        sort(field) {
+            this.form.sortField = field;
+            this.form.sortDirection = this.form.sortDirection === 'asc' ? 'desc' : 'asc';
+            this.applyFilters();
+        },
     },
 };
 </script>

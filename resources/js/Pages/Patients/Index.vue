@@ -70,14 +70,30 @@
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3"> # </th>
-                        <th scope="col" class="px-6 py-3"> Nombre </th>
-                        <th scope="col" class="px-6 py-3"> Teléfono </th>
-                        <th scope="col" class="px-6 py-3"> Cédula </th>
-                        <th scope="col" class="px-6 py-3"> Nacionalidad </th>
-                        <th scope="col" class="px-6 py-3"> Correo </th>
-                        <th scope="col" class="px-6 py-3"> ARS </th>
-                        <th scope="col" class="px-6 py-3"> Ingresado </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
+                            # <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('first_name')">
+                            Nombre <span v-if="form.sortField === 'first_name'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('phone')">
+                            Teléfono <span v-if="form.sortField === 'phone'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('identification_card')">
+                            Cédula <span v-if="form.sortField === 'identification_card'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('nationality')">
+                            Nacionalidad <span v-if="form.sortField === 'nationality'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('email')">
+                            Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('ars')">
+                            ARS <span v-if="form.sortField === 'ars'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('is_hospitalized')">
+                            Ingresado <span v-if="form.sortField === 'is_hospitalized'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        </th>
                         <th scope="col" class="px-6 py-3"> Acciones </th>
                     </tr>
                 </thead>
@@ -159,6 +175,8 @@ export default {
                 search: this.filters.search || '',
                 showDeleted: this.filters.show_deleted,
                 days: this.filters.days || '',
+                sortField: this.filters.sortField || '',
+                sortDirection: this.filters.sortDirection || 'asc',
             },
         };
     },
@@ -176,10 +194,12 @@ export default {
                     preserveState: true,
                 });
             }, 300);
+        },
+        sort(field) {
+            this.form.sortField = field;
+            this.form.sortDirection = this.form.sortDirection === 'asc' ? 'desc' : 'asc';
+            this.submitFilter();
         }
     },
-
 }
-
-
 </script>

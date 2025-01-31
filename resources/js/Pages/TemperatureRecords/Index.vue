@@ -6,8 +6,6 @@
             </h2>
         </template>
 
-        <!-- <div class="text-white">Datos: {{ temperatureRecords.data }}</div> -->
-
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
             <Link :href="route('admissions.show', admission_id)"
@@ -78,11 +76,29 @@
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3"> # </th>
-                        <th scope="col" class="px-6 py-3"> Ingreso </th>
-                        <th scope="col" class="px-6 py-3"> Paciente </th>
-                        <th scope="col" class="px-6 py-3"> Enfermera </th>
-                        <th scope="col" class="px-6 py-3"> Fecha </th>
+                        <th scope="col" class="px-6 py-3">
+                            #
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('beds.room')">
+                            Ingreso <span v-if="form.sortField === 'beds.room'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
+                            Paciente <span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
+                                'asc' ? '↑'
+                                : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')">
+                            Enfermera <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ? '↑'
+                                : '↓'
+                                }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer"
+                            @click="sort('temperature_records.updated_at')">
+                            Fecha de actualización <span v-if="form.sortField === 'temperature_records.updated_at'">{{
+                                form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        </th>
                         <th scope="col" class="px-6 py-3"> Acciones </th>
                     </tr>
                 </thead>
@@ -107,7 +123,7 @@
                                 temperatureRecord.nurse.last_surname }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ temperatureRecord.created_at }}
+                            {{ temperatureRecord.updated_at }}
                         </td>
                         <td class="px-6 py-4">
                             <button class="ml-2 text-green-500 hover:text-green-800"
@@ -150,6 +166,8 @@ export default {
                 admission_id: this.filters.admission_id,
                 showDeleted: this.filters.show_deleted,
                 days: this.filters.days || '',
+                sortField: this.filters.sortField || 'temperature_records.updated_at',
+                sortDirection: this.filters.sortDirection || 'asc',
             },
         };
     },
@@ -170,6 +188,11 @@ export default {
                     preserveState: true,
                 });
             }, 300);
+        },
+        sort(field) {
+            this.form.sortField = field;
+            this.form.sortDirection = this.form.sortDirection === 'asc' ? 'desc' : 'asc';
+            this.submitFilter();
         }
     }
 }

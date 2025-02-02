@@ -15,7 +15,7 @@ class BedController extends Controller
     public function index()
     {
         $beds = Bed::with(['admission' => function ($query) {
-            $query->where('in_process', true);
+            $query->whereNull('discharged_date');
         }])
             ->orderBy('room', 'asc')
             ->orderBy('number', 'asc')

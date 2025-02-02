@@ -21,7 +21,7 @@ class Admission extends Model
         'final_dx',
         'created_at',
         'comment',
-        'in_process',
+        'discharged_date',
         'active',
     ];
 

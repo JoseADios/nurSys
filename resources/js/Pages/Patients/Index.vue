@@ -192,6 +192,7 @@ export default {
             this.timeout = setTimeout(() => {
                 this.$inertia.get(route('patients.index'), this.form, {
                     preserveState: true,
+                    preserveScroll: true
                 });
             }, 300);
         },

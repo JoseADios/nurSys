@@ -18,6 +18,6 @@ class Bed extends Model
 
     public function isAvailable(): bool
     {
-        return !$this->admission()->where('in_process', true)->exists() && !$this->out_of_service;;
+        return !$this->admission()->whereNull('discharged_date')->exists() && !$this->out_of_service;
     }
 }

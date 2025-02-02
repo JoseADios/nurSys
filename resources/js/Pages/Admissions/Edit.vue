@@ -13,13 +13,13 @@
             </button>
 
             <div class="flex">
-                <div v-if="admission.in_process">
+                <div v-if="admission.discharged_date == null">
                     <button type="button" @click="discharge"
                         class="self-end focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
                         Dar de Alta
                     </button>
                 </div>
-                <div v-if="!admission.in_process">
+                <div v-if="admission.discharged_date != null">
                     <button type="button" @click="charge"
                         class="self-end focus:outline-none text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-900">
                         Poner en progreso
@@ -167,7 +167,7 @@ export default {
         submitProcess(value) {
             this.$inertia.put(route('admissions.update', this.admission.id), {
                 patient_id: this.admission.patient_id,
-                in_process: value
+                discharged_date: value
             }, {
                 onError: (errors) => {
                     this.form.errors = errors;
@@ -175,10 +175,10 @@ export default {
             })
         },
         discharge() {
-            this.submitProcess(0)
+            this.submitProcess(new Date().toISOString())
         },
         charge() {
-            this.submitProcess(1)
+            this.submitProcess(null)
         },
         confirmDelete() {
             if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {

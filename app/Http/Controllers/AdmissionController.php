@@ -51,13 +51,13 @@ class AdmissionController extends Controller
             });
         }
 
-        $admissions = $query->select(['id', 'patient_id', 'bed_id', 'doctor_id', 'created_at', 'in_process', 'active'])
+        $admissions = $query->select(['id', 'patient_id', 'bed_id', 'doctor_id', 'created_at', 'discharged_date', 'active'])
             ->orderByDesc('created_at')
             ->paginate(10)
             ->through(function ($admission) {
                 $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
                 return $admission;
-            });
+            }); // TODO: solo los ingresos que estan activos deben restar now, los demas dicharge_date
 
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
@@ -197,12 +197,18 @@ class AdmissionController extends Controller
     {
         $this->authorize('update', $admission);
 
-        if ($request->has('in_process')) {
+        if ($request->has('discharged_date')) {
             $validated = $request->validate([
-                'in_process' => 'boolean',
+                'discharged_date' => 'nullable|string',
             ]);
 
-            if ($admission->in_process == false && $request->in_process) {
+            if ($request->discharged_date) {
+                $validated['discharged_date'] = now();
+            } else {
+                $validated['discharged_date'] = null;
+            }
+
+            if ($admission->discharged_date != null && $request->discharged_date == null) {
                 $patient = Patient::find($request->patient_id);
                 $bed = Bed::find($admission->bed_id);
 
@@ -239,7 +245,7 @@ class AdmissionController extends Controller
     {
         $this->authorize('delete', $admission);
 
-        $admission->update(['active' => 0, 'in_process' => 0]);
+        $admission->update(['active' => 0, 'discharged_date' => now()]);
 
         // desactivar todas las ordenes médicas relacionadas
         DB::table('medical_orders')
@@ -268,7 +274,7 @@ class AdmissionController extends Controller
     {
         $this->authorize('delete', $admission);
 
-        $admission->update(['active' => true, 'in_process' => 0]);
+        $admission->update(['active' => true]);
 
         // activar todas las ordenes médicas relacionadas
         DB::table('medical_orders')

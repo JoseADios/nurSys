@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Fortify\PasswordValidationRules;
+use App\Models\ClinicArea;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -99,8 +100,10 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::orderBy('name', 'asc')->get();
+        $areas = ClinicArea::all();
         return Inertia::render('Users/Create', [
             'roles' => $roles,
+            'areas' => $areas,
             'previousUrl' => URL::previous(),
         ]);
     }
@@ -162,9 +165,11 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $hasRoles = $user->getRoleNames();
+        $areas = ClinicArea::all();
         $roles = Role::orderBy('name', 'asc')->get();
         return Inertia::render('Users/Edit', [
             'user' => $user,
+            'areas' => $areas,
             'roles' => $roles,
             'hasRoles' => $hasRoles,
             'previousUrl' => URL::previous(),

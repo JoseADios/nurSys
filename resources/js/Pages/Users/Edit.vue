@@ -96,10 +96,12 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="area" class="block text-sm font-medium text-white">Área</label>
-                                <input type="text" id="area" v-model="form.area"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <label for="area" class="block text-sm font-medium text-white">Areas</label>
+                                <select required id="area" v-model="form.area"
+                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
+                                    <option v-for="area in areas" :key="area" :value="area.name">{{ area.name }}
+                                    </option>
+                                </select>
                                 <InputError :message="form.errors.area" class="mt-2" />
                             </div>
 
@@ -254,6 +256,7 @@ export default {
         hasRoles: Array,
         errors: Object,
         previousUrl: String,
+        areas: Array,
     },
     components: {
         AppLayout,

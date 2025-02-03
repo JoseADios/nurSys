@@ -62,8 +62,6 @@ class PatientController extends Controller
             return $patient;
         });
 
-        // dd($patients);
-
         return Inertia::render('Patients/Index', [
             'patients' => $patients,
             'filters' => [

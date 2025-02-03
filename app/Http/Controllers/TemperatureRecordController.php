@@ -38,7 +38,7 @@ class TemperatureRecordController extends Controller
             ->select('temperature_records.*')
             ->join('admissions', 'temperature_records.admission_id', '=', 'admissions.id')
             ->join('patients', 'admissions.patient_id', '=', 'patients.id')
-            ->join('beds', 'admissions.bed_id', '=', 'beds.id')
+            ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
             ->join('users', 'temperature_records.nurse_id', '=', 'users.id')
             ->where('temperature_records.active', !$showDeleted);
 
@@ -58,15 +58,29 @@ class TemperatureRecordController extends Controller
             $query->where('temperature_records.created_at', '>=', now()->subDays($days));
         }
 
-        if ($sortField) {
+        if ($sortField == 'in_process') {
+            $query->orderByRaw('CASE WHEN admissions.discharged_date IS NULL THEN 0 ELSE 1 END ' . $sortDirection);
+        }
+        elseif ($sortField) {
             $query->orderBy($sortField, $sortDirection);
         } else {
             $query->latest('temperature_records.updated_at')
                 ->latest('temperature_records.created_at');
         }
 
+        $temperatureRecords = $query->paginate(10);
+
+        $temperatureRecords->getCollection()->transform(function ($record) {
+            if ($record->admission->discharged_date != null) {
+                $record->in_process = false;
+            } else {
+                $record->in_process = true;
+            }
+            return $record;
+        });
+
         return Inertia::render('TemperatureRecords/Index', [
-            'temperatureRecords' => $query->paginate(10),
+            'temperatureRecords' => $temperatureRecords,
             'filters' => [
                 'search' => $search,
                 'show_deleted' => $showDeleted,
@@ -77,6 +91,7 @@ class TemperatureRecordController extends Controller
             ]
         ]);
     }
+
     /**
      * Show the form for creating a new resource.
      */

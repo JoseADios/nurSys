@@ -201,7 +201,9 @@ export default {
             this.showEditModal = true;
         },
         submitUpdate() {
-            this.$inertia.put(route('beds.update', this.selectedBed.id), this.selectedBed);
+            this.$inertia.put(route('beds.update', this.selectedBed.id), this.selectedBed, {
+                preserveScroll: true
+            });
             this.showEditModal = null;
         }
     }

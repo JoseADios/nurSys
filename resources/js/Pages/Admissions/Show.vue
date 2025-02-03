@@ -158,13 +158,13 @@
                     <div class="flex justify-end space-x-4">
                         <div v-if="can.update">
                             <div v-if="admission.discharged_date == null">
-                                <button type="button" @click="discharge"
+                                <button type="button" @click="admissionUpdateCharge = true"
                                     class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                     Dar de Alta
                                 </button>
                             </div>
                             <div v-if="admission.discharged_date != null">
-                                <button type="button" @click="charge"
+                                <button type="button" @click="admissionUpdateCharge = true"
                                     class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                     Poner en progreso
                                 </button>
@@ -200,6 +200,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- modal para eliminar -->
         <ConfirmationModal :show="admissionBeingDeleted != null" @close="admissionBeingDeleted = null">
             <template #title>
                 Eliminar Ingreso
@@ -219,6 +221,37 @@
                 </DangerButton>
             </template>
         </ConfirmationModal>
+
+        <!-- modal para dar de alta -->
+        <ConfirmationModal :show="admissionUpdateCharge != null" @close="admissionUpdateCharge = null">
+            <template #title>
+                <div v-if="admission.discharged_date == null">Dar de alta</div>
+                <div v-if="admission.discharged_date != null">Poner en progreso</div>
+            </template>
+
+            <template #content>
+                <div v-if="admission.discharged_date == null">¿Estás seguro de que deseas dar de alta a este ingreso?</div>
+                <div v-if="admission.discharged_date != null">¿Estás seguro de que deseas poner en progreso este ingreso?</div>
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="admissionUpdateCharge = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <div v-if="admission.discharged_date == null">
+                    <PrimaryButton class="ms-3" @click="discharge">
+                        Dar de alta
+                    </PrimaryButton>
+                </div>
+                <div v-if="admission.discharged_date != null">
+                    <PrimaryButton class="ms-3" @click="charge">
+                        Poner en progreso
+                    </PrimaryButton>
+                </div>
+
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
@@ -226,6 +259,7 @@
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
@@ -244,10 +278,12 @@ export default {
         ConfirmationModal,
         DangerButton,
         SecondaryButton,
+        PrimaryButton,
     },
     data() {
         return {
             admissionBeingDeleted: ref(null),
+            admissionUpdateCharge: ref(null),
             form: {
                 patient_id: this.admission.patient_id,
                 discharged_date: this.admission.discharged_date
@@ -262,10 +298,12 @@ export default {
         },
         discharge() {
             this.form.discharged_date = new Date().toISOString()
+            this.admissionUpdateCharge = null
             this.submit()
         },
         charge() {
             this.form.discharged_date = null
+            this.admissionUpdateCharge = null
             this.submit()
         },
         formatDate(dateString) {

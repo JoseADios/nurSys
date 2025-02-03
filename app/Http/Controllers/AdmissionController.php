@@ -50,14 +50,17 @@ class AdmissionController extends Controller
                     });
             });
         }
-
         $admissions = $query->select(['id', 'patient_id', 'bed_id', 'doctor_id', 'created_at', 'discharged_date', 'active'])
             ->orderByDesc('created_at')
             ->paginate(10)
             ->through(function ($admission) {
-                $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
+                if ($admission->discharged_date) {
+                    $admission->days_admitted = intval($admission->created_at->diffInDays($admission->discharged_date));
+                } else {
+                    $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
+                }
                 return $admission;
-            }); // TODO: solo los ingresos que estan activos deben restar now, los demas dicharge_date
+            });
 
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
@@ -83,11 +86,11 @@ class AdmissionController extends Controller
 
         $selectedbed = null;
         if ($request->query('bed_id')) {
-            $selectedbed = $request->query('bed_id');
+            $selectedbed = Bed::find($request->query('bed_id'));
         }
 
+        $beds = Bed::all()->filter->isAvailable()->values()->toArray();
         $doctors = User::all();
-        $beds = Bed::all()->filter->isAvailable();
         $patients = Patient::all()->filter->isAvailable();
 
         return Inertia::render('Admissions/Create', [
@@ -174,12 +177,14 @@ class AdmissionController extends Controller
         $patients = Patient::all()->filter->isAvailable();
         $patients->add(Patient::find($admission->patient_id));
         $doctors = User::all();
-        $beds = Bed::all()->filter->isAvailable();
+        $beds = Bed::all()->filter->isAvailable()->values();
         $selectedBed = Bed::find($admission->bed_id);
 
         if ($selectedBed) {
             $beds->add($selectedBed);
         }
+
+        $beds->toArray();
 
         return Inertia::render('Admissions/Edit', [
             'admission' => $admission,

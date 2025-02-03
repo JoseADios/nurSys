@@ -6,27 +6,18 @@
             </h2>
         </template>
 
-        <!-- show errors -->
+        <!-- Mostrar errores -->
         <div v-if="errors.length > 0" class="mb-4 flex flex-col items-center">
             <div class="mb-4 text-red-500" v-for="error in errors" :key="error">
                 {{ error }}
             </div>
         </div>
 
-        <!-- <div class="text-white">{{ bedsFilled }}</div> -->
-
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
-                <label for="bed"
-                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Ubicacion</label>
-                <select id="bed" v-model="form.bed_id"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option v-for="bed in beds" :key="bed.id" :value="bed.id">
-                        Cama: {{ bed.number }} - Sala: {{ bed.room }}
-                    </option>
-                </select>
-                <InputError :message="form.errors.bed_id" class="mt-2" />
+                <BedSelector :beds="beds" :errors="form.errors" :initialBedId="form.bed_id"
+                    @update:bedId="updateBedId" />
 
                 <label for="patient"
                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Paciente</label>
@@ -67,8 +58,8 @@
                 <div class="flex justify-end mt-6 mb-2">
                     <Link :href="route('admissions.index')"
                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                        Cancelar
-                </Link>
+                    Cancelar
+                    </Link>
 
                     <button type="submit"
                         class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Guardar</button>
@@ -79,11 +70,19 @@
 </template>
 
 <script>
+
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
+import BedSelector from '@/Components/BedSelector.vue';
 
 export default {
+    components: {
+        AppLayout,
+        Link,
+        BedSelector,
+        InputError,
+    },
     props: {
         doctors: Array,
         beds: Object,
@@ -91,11 +90,6 @@ export default {
         errors: [Array, Object],
         selectedPatient: String,
         selectedbed: String,
-    },
-    components: {
-        AppLayout,
-        Link,
-        InputError,
     },
     data() {
         return {
@@ -109,6 +103,9 @@ export default {
         }
     },
     methods: {
+        updateBedId(bedId) {
+            this.form.bed_id = bedId;
+        },
         submit() {
             this.$inertia.post(route('admissions.store'), this.form, {
                 onError: (errors) => {

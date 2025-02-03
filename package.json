@@ -22,6 +22,7 @@
     "dependencies": {
         "apexcharts": "^4.3.0",
         "signature_pad": "^5.0.4",
+        "sonner": "^1.7.4",
         "vue3-apexcharts": "^1.8.0"
     }
 }

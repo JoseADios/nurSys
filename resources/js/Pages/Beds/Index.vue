@@ -6,6 +6,11 @@
             </h2>
         </template>
 
+        <!-- mostrar toasts -->
+        <div v-if="$page.props.flash.success" class="">
+            <Toast ref="toast" :message="$page.props.flash.success" type="success" />
+        </div>
+
         <div class="container mx-auto px-4 py-6">
             <div v-for="floor in floorPlan" :key="floor.number" class="mb-8">
                 <h3 class="text-2xl font-bold text-white mb-4 text-center">Piso {{ floor.number }}</h3>
@@ -24,7 +29,8 @@
                                         'bg-green-500': !bed.out_of_service
                                     }">
                                     <!-- Header con número fijo -->
-                                    <div class="absolute top-0 w-full h-6 bg-gray-700 rounded-t-lg flex items-center justify-center">
+                                    <div
+                                        class="absolute top-0 w-full h-6 bg-gray-700 rounded-t-lg flex items-center justify-center">
                                         <span class="text-white text-xs">{{ bed.number }}</span>
                                     </div>
 
@@ -40,26 +46,30 @@
                                     <div class="w-full p-1 space-y-1">
                                         <!-- Botón Ver Ingreso -->
                                         <div v-if="bed.admission_id" class="w-full">
-                                            <Link :href="route('admissions.show', { id: bed.admission_id, bedsRoute: true })"
+                                            <Link
+                                                :href="route('admissions.show', { id: bed.admission_id, bedsRoute: true })"
                                                 class="w-full block text-center bg-gray-700 text-white py-1 rounded-md text-xs hover:bg-gray-600 transition-colors">
-                                                Ver Ingreso
+                                            Ver Ingreso
                                             </Link>
                                         </div>
 
                                         <!-- Botones Editar y Crear -->
-                                        <div v-if="!bed.admission_id" class="w-full space-y-1 flex justify-evenly items-end">
+                                        <div v-if="!bed.admission_id"
+                                            class="w-full space-y-1 flex justify-evenly items-end">
 
-                                            <Link v-if="!bed.out_of_service" :href="route('admissions.create', {bed_id: bed.id})"
+                                            <Link v-if="!bed.out_of_service"
+                                                :href="route('admissions.create', { bed_id: bed.id })"
                                                 class="text-center h-6 w-8 bg-gray-700 hover:bg-blue-600 text-white rounded-md text-xs transition-colors flex items-center justify-center">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="">
-                                                    <path d="M12 5v14M5 12h14" />
-                                                </svg>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="">
+                                                <path d="M12 5v14M5 12h14" />
+                                            </svg>
 
                                             </Link>
 
-                                            <button @click="onBedClick(bed)" class="h-6 w-8 bg-gray-600 hover:bg-orange-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
+                                            <button @click="onBedClick(bed)"
+                                                class="h-6 w-8 bg-gray-600 hover:bg-orange-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round" class="">
@@ -75,7 +85,8 @@
                     </div>
                 </div>
             </div>
-        </div>        <DialogModal :show="showEditModal != null" @close="showEditModal = null">
+        </div>
+        <DialogModal :show="showEditModal != null" @close="showEditModal = null">
             <template #title>
                 Cambiar estado de la cama
             </template>
@@ -112,6 +123,7 @@
 import DialogModal from '@/Components/DialogModal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import Toast from '@/Components/Toast.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -123,6 +135,7 @@ export default {
         DialogModal,
         PrimaryButton,
         SecondaryButton,
+        Toast
     },
     props: {
         beds: Array

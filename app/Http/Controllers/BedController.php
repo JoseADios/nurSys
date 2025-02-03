@@ -71,6 +71,8 @@ class BedController extends Controller
         ]);
 
         $bed->update($validated);
+
+        return back()->with('success', 'El registro fue actualizado con éxito.');
     }
 
     /**

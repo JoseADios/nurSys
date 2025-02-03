@@ -105,11 +105,11 @@
         </div>
         <ConfirmationModal :show="userBeingDeleted != null" @close="userBeingDeleted = null">
             <template #title>
-                Eliminar Ingreso
+                Deshabilitar Usuario
             </template>
 
             <template #content>
-                ¿Estás seguro de que deseas eliminar este ingreso?
+                ¿Estás seguro de que deseas deshabilitar este usuario?
             </template>
 
             <template #footer>
@@ -118,7 +118,7 @@
                 </SecondaryButton>
 
                 <DangerButton class="ms-3" @click="deleteUser">
-                    Eliminar
+                    Deshabilitar
                 </DangerButton>
             </template>
         </ConfirmationModal>

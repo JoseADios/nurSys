@@ -219,6 +219,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->update(['active' => false]);
-        return Redirect::route('users.index');
+        DB::table('sessions')->where('user_id', $user->id)->delete();
+        return Redirect::route('users.index')->with('success', 'Usuario desactivado y sesión cerrada.');;
     }
 }

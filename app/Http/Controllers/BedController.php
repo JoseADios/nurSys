@@ -67,7 +67,7 @@ class BedController extends Controller
     public function update(Request $request, Bed $bed)
     {
         $validated = $request->validate([
-            'status' => 'required|string' //TODO: validar que este dentro de las opciones aceptadas
+            'status' => 'required|string|in:available,cleaning,out_of_service',
         ]);
 
         $bed->update($validated);

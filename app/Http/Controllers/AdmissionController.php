@@ -213,13 +213,17 @@ class AdmissionController extends Controller
                 $validated['discharged_date'] = null;
             }
 
+            $bed = Bed::find($admission->bed_id);
+
             if ($admission->discharged_date != null && $request->discharged_date == null) {
                 $patient = Patient::find($request->patient_id);
-                $bed = Bed::find($admission->bed_id);
 
                 if (!$patient->isAvailable() || !$bed->isAvailable()) {
                     return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente o la cama seleccionada esta ocupada, dé el alta al otro para activar este.');
                 }
+            } elseif ($admission->discharged_date == null && $request->discharged_date != null) {
+                $bed->status = 'cleaning';
+                $bed->save();
             }
         } else {
             $validated = $request->validate([
@@ -251,6 +255,10 @@ class AdmissionController extends Controller
         $this->authorize('delete', $admission);
 
         $admission->update(['active' => 0, 'discharged_date' => now()]);
+
+        $bed = Bed::find($admission->bed_id);
+        $bed->status = 'cleaning';
+        $bed->save();
 
         // desactivar todas las ordenes médicas relacionadas
         DB::table('medical_orders')

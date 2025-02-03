@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('number');
             $table->string('room');
             $table->integer('floor');
-            $table->boolean('out_of_service')->default(false);
+            $table->string('status')->default('available');
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

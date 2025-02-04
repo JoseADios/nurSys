@@ -61,7 +61,7 @@ class MedicationRecordController extends Controller
 
 
         $diet = Diet::all();
-        $admission = Admission::with('patient','bed','doctor');
+        $admission = Admission::with('patient','bed','doctor')->get();
 
 
 

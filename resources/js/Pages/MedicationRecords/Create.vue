@@ -25,10 +25,16 @@
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
                    <!-- Diagnóstico -->
-                   <label for="admission_id" class="block  mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                    Admission Id
-                </label>
-                <input required id="admission_id" rows="4"v-model="form.admission_id" class="block  p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el diagnóstico..."></input>
+                  <!-- Selector -->
+
+                        <label for="diet-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Admission ID
+                        </label>
+                        <select id="diet-select" v-model="form.admission_id" required class="text-sm font-medium w-full text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100  p-2.5 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                            <option v-for="admissions in admission" :key="admissions.id" :value="admissions.id">
+                                {{ admissions.id }} - {{ admissions.patient.first_name }} {{ admissions.patient.first_surname  }} {{ admissions.patient.second_surname  }}
+                            </option>
+                        </select>
 
                 <!-- Diagnóstico -->
                 <label for="diagnosis" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
@@ -162,7 +168,7 @@ export default {
         return {
             isVisible: false,
             form: {
-                admission_id: this.admission.id,
+                admission_id: '',
                 diagnosis: '',
                 diet: '',
                 referrals: '',
@@ -182,7 +188,7 @@ export default {
         },
         openCreateModal() {
             this.isVisible = true;
-            console.log(this.admission);
+
         },
         submitModal() {
 

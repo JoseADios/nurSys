@@ -7,8 +7,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Bed extends Model
 {
+    const STATUS_AVAILABLE = 'available';
+    const STATUS_OUT_OF_SERVICE = 'out_of_service';
+    const STATUS_CLEANING = 'cleaning';
+
     protected $fillable = [
-        'out_of_service',
+        'status',
     ];
 
     public function admission(): HasOne
@@ -18,6 +22,6 @@ class Bed extends Model
 
     public function isAvailable(): bool
     {
-        return !$this->admission()->where('in_process', true)->exists() && !$this->out_of_service;;
+        return !$this->admission()->whereNull('discharged_date')->exists() && $this->status === 'available';
     }
 }

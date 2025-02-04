@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Fortify\PasswordValidationRules;
+use App\Models\ClinicArea;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -99,8 +100,10 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::orderBy('name', 'asc')->get();
+        $areas = ClinicArea::all();
         return Inertia::render('Users/Create', [
             'roles' => $roles,
+            'areas' => $areas,
             'previousUrl' => URL::previous(),
         ]);
     }
@@ -117,11 +120,11 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => array_merge($this->passwordRules(), ['confirmed']),
             'password_confirmation' => ['required'],
-            'identification_card' => ['required', 'string', 'max:255', 'unique:users'],
+            'identification_card' => ['required', 'digits:10', 'unique:users'],
             'exequatur' => ['required', 'string', 'max:255', 'unique:users'],
             'specialty' => ['required', 'string', 'max:255'],
             'area' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'digits:10'],
             'address' => ['required', 'string', 'max:255'],
             'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
             'position' => ['required', 'string', 'max:255'],
@@ -162,9 +165,11 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $hasRoles = $user->getRoleNames();
+        $areas = ClinicArea::all();
         $roles = Role::orderBy('name', 'asc')->get();
         return Inertia::render('Users/Edit', [
             'user' => $user,
+            'areas' => $areas,
             'roles' => $roles,
             'hasRoles' => $hasRoles,
             'previousUrl' => URL::previous(),
@@ -194,11 +199,11 @@ class UserController extends Controller
                 'last_name' => ['required', 'string', 'max:255'],
                 'role' => ['required', 'string', 'max:255', Rule::exists('roles', 'name')],
                 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-                'identification_card' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+                'identification_card' => ['required', 'digits:10', Rule::unique('users')->ignore($user->id)],
                 'exequatur' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
                 'specialty' => ['required', 'string', 'max:255'],
                 'area' => ['required', 'string', 'max:255'],
-                'phone' => ['required', 'string', 'max:255'],
+                'phone' => ['required', 'digits:10'],
                 'address' => ['required', 'string', 'max:255'],
                 'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
                 'position' => ['required', 'string', 'max:255'],
@@ -219,6 +224,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->update(['active' => false]);
-        return Redirect::route('users.index');
+        DB::table('sessions')->where('user_id', $user->id)->delete();
+        return Redirect::route('users.index')->with('success', 'Usuario desactivado y sesión cerrada.');;
     }
 }

@@ -15,7 +15,7 @@ class BedController extends Controller
     public function index()
     {
         $beds = Bed::with(['admission' => function ($query) {
-            $query->where('in_process', true);
+            $query->whereNull('discharged_date');
         }])
             ->orderBy('room', 'asc')
             ->orderBy('number', 'asc')
@@ -67,10 +67,12 @@ class BedController extends Controller
     public function update(Request $request, Bed $bed)
     {
         $validated = $request->validate([
-            'out_of_service' => 'required|boolean'
+            'status' => 'required|string|in:available,cleaning,out_of_service',
         ]);
 
         $bed->update($validated);
+
+        return back()->with('success', 'El registro fue actualizado con éxito.');
     }
 
     /**

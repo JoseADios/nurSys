@@ -79,6 +79,11 @@
                         <th scope="col" class="px-6 py-3">
                             #
                         </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('in_process')">
+                            En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span>
+                        </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('beds.room')">
                             Ingreso <span v-if="form.sortField === 'beds.room'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
@@ -109,9 +114,17 @@
                             {{ index + 1 }}
                         </td>
                         <td class="px-6 py-4">
+                            <span v-if="temperatureRecord.in_process"
+                                class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
+                            <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div v-if="temperatureRecord.admission.bed">
                             {{ temperatureRecord.admission.created_at }}
                             Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
                                 temperatureRecord.admission.bed.room }}
+                            </div>
+                            <div v-else>{{ temperatureRecord.admission.created_at }} N/A</div>
                         </td>
                         <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ temperatureRecord.admission.patient.first_name }} {{
@@ -163,6 +176,7 @@ export default {
         return {
             form: {
                 search: this.filters.search || '',
+                in_process: this.filters.in_process || '',
                 admission_id: this.filters.admission_id,
                 showDeleted: this.filters.show_deleted,
                 days: this.filters.days || '',

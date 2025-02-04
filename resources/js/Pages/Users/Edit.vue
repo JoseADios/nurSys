@@ -50,19 +50,12 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="identification_card"
-                                    class="block text-sm font-medium text-white">Cédula</label>
-                                <input type="text" id="identification_card" v-model="form.identification_card"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <CedulaInput v-model="form.identification_card" />
                                 <InputError :message="form.errors.identification_card" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="exequatur" class="block text-sm font-medium text-white">Exequatur</label>
-                                <input type="text" id="exequatur" v-model="form.exequatur"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <ExequaturInput v-model="form.exequatur" />
                                 <InputError :message="form.errors.exequatur" class="mt-2" />
                             </div>
 
@@ -96,28 +89,22 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="area" class="block text-sm font-medium text-white">Área</label>
-                                <input type="text" id="area" v-model="form.area"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <label for="area" class="block text-sm font-medium text-white">Areas</label>
+                                <select required id="area" v-model="form.area"
+                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
+                                    <option v-for="area in areas" :key="area" :value="area.name">{{ area.name }}
+                                    </option>
+                                </select>
                                 <InputError :message="form.errors.area" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="phone" class="block text-sm font-medium text-white">Teléfono</label>
-                                <input type="tel" id="phone" v-model="form.phone"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <PhoneInput v-model="form.phone" />
                                 <InputError :message="form.errors.phone" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="birthdate" class="block text-sm font-medium text-white">Fecha de
-                                    Nacimiento</label>
-                                <input type="date" id="birthdate" v-model="form.birthdate"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
-                                <span v-if="birthdateError" class="text-red-500 text-sm">{{ birthdateError }}</span>
+                                <BirthDateInput v-model="form.birthdate" />
                                 <InputError :message="form.errors.birthdate" class="mt-2" />
                             </div>
 
@@ -217,11 +204,11 @@
         <!-- Modal para confirmar eliminacion -->
         <ConfirmationModal :show="userBeingDeleted != null" @close="userBeingDeleted = null">
             <template #title>
-                Eliminar Ingreso
+                Deshabilitar Ingreso
             </template>
 
             <template #content>
-                ¿Estás seguro de que deseas eliminar este ingreso?
+                ¿Estás seguro de que deseas deshabilitar este ingreso?
             </template>
 
             <template #footer>
@@ -230,7 +217,7 @@
                 </SecondaryButton>
 
                 <DangerButton class="ms-3" @click="deleteUser">
-                    Eliminar
+                    Deshabilitar
                 </DangerButton>
             </template>
         </ConfirmationModal>
@@ -246,6 +233,10 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { useGoBack } from '@/composables/useGoBack';
+import PhoneInput from '@/Components/PhoneInput.vue';
+import CedulaInput from '@/Components/CedulaInput.vue';
+import ExequaturInput from '@/Components/ExequaturInput.vue';
+import BirthDateInput from '@/Components/BirthDateInput.vue';
 
 export default {
     props: {
@@ -254,6 +245,7 @@ export default {
         hasRoles: Array,
         errors: Object,
         previousUrl: String,
+        areas: Array,
     },
     components: {
         AppLayout,
@@ -261,6 +253,10 @@ export default {
         ConfirmationModal,
         DangerButton,
         SecondaryButton,
+        PhoneInput,
+        CedulaInput,
+        ExequaturInput,
+        BirthDateInput,
     },
     data() {
         return {
@@ -285,26 +281,10 @@ export default {
                 password: null,
                 password_confirmation: null,
             },
-            birthdateError: '',
         }
     },
     methods: {
-        validateBirthdate(birthdate) {
-            const date = new Date(birthdate);
-            const today = new Date();
-            let age = today.getFullYear() - date.getFullYear();
-            const monthDifference = today.getMonth() - date.getMonth();
-            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < date.getDate())) {
-                age--;
-            }
-            return age >= 18;
-        },
         submit() {
-            if (!this.validateBirthdate(this.form.birthdate)) {
-                this.birthdateError = 'La fecha de nacimiento debe indicar que el usuario tiene al menos 18 años.';
-                return;
-            }
-            this.birthdateError = '';
             this.$inertia.put(route('users.update', this.user.id), this.form, {
                 onError: (errors) => {
                     this.form.errors = errors

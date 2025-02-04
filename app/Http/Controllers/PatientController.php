@@ -25,13 +25,12 @@ class PatientController extends Controller
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
 
-        // Construir la consulta base
         $query = Patient::query();
 
         if ($showDeleted) {
-            $query->where('patients.active', false); // Especificar la tabla patients
+            $query->where('patients.active', false);
         } else {
-            $query->where('patients.active', true); // Especificar la tabla patients
+            $query->where('patients.active', true);
         }
 
         if ($search) {
@@ -44,19 +43,18 @@ class PatientController extends Controller
         }
 
         if ($days) {
-            $query->where('patients.created_at', '>=', now()->subDays($days)); // Especificar la tabla patients
+            $query->where('patients.created_at', '>=', now()->subDays($days));
         }
 
         if ($sortField === 'is_hospitalized') {
             $patients = $query->leftJoin('admissions', 'patients.id', '=', 'admissions.patient_id')
                 ->select('patients.*')
                 ->groupBy('patients.id')
-                ->orderByRaw('MAX(admissions.in_process) ' . $sortDirection)
-                ->paginate(10);
+                ->orderByRaw('MAX(admissions.discharged_date IS NULL) ' . $sortDirection)->paginate(10);
         } elseif ($sortField) {
             $patients = $query->orderBy($sortField, $sortDirection)->paginate(10);
         } else {
-            $patients = $query->orderBy('patients.updated_at', 'desc')->paginate(10); // Especificar la tabla patients
+            $patients = $query->orderBy('patients.updated_at', 'desc')->paginate(10);
         }
 
         $patients->getCollection()->transform(function ($patient) {
@@ -126,7 +124,7 @@ class PatientController extends Controller
         $inProcessAdmssion = null;
         if (!$patient->isAvailable()) {
             $inProcessAdmssion = Admission::where('patient_id', $patient->id)
-                ->where('in_process', true)
+                ->whereNull('discharged_date')
                 ->value('id');
         }
 

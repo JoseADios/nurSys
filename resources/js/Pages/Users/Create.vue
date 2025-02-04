@@ -78,19 +78,12 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="identification_card"
-                                    class="block text-sm font-medium text-white">Cédula</label>
-                                <input type="text" id="identification_card" v-model="form.identification_card"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <CedulaInput v-model="form.identification_card" />
                                 <InputError :message="form.errors.identification_card" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="exequatur" class="block text-sm font-medium text-white">Exequatur</label>
-                                <input type="text" id="exequatur" v-model="form.exequatur"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <ExequaturInput v-model="form.exequatur" />
                                 <InputError :message="form.errors.exequatur" class="mt-2" />
                             </div>
 
@@ -116,10 +109,7 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="phone" class="block text-sm font-medium text-white">Teléfono</label>
-                                <input type="tel" id="phone" v-model="form.phone"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <PhoneInput v-model="form.phone" />
                                 <InputError :message="form.errors.phone" class="mt-2" />
                             </div>
 
@@ -182,20 +172,26 @@
 </template>
 
 <script>
+import CedulaInput from '@/Components/CedulaInput.vue';
+import ExequaturInput from '@/Components/ExequaturInput.vue';
 import InputError from '@/Components/InputError.vue';
+import PhoneInput from '@/Components/PhoneInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 
 export default {
+    components: {
+        AppLayout,
+        Link,
+        InputError,
+        PhoneInput,
+        ExequaturInput,
+        CedulaInput
+    },
     props: {
         roles: Array,
         previousUrl: String,
         areas: Array,
-    },
-    components: {
-        AppLayout,
-        Link,
-        InputError
     },
     data() {
         return {

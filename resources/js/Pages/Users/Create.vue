@@ -114,12 +114,7 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="birthdate" class="block text-sm font-medium text-white">Fecha de
-                                    Nacimiento</label>
-                                <input type="date" id="birthdate" v-model="form.birthdate" @change="validateBirthdate"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
-                                <div v-if="birthdateError" class="text-red-500 text-sm mt-2">{{ birthdateError }}</div>
+                                <BirthDateInput v-model="form.birthdate" />
                                 <InputError :message="form.errors.birthdate" class="mt-2" />
                             </div>
 
@@ -172,6 +167,7 @@
 </template>
 
 <script>
+import BirthDateInput from '@/Components/BirthDateInput.vue';
 import CedulaInput from '@/Components/CedulaInput.vue';
 import ExequaturInput from '@/Components/ExequaturInput.vue';
 import InputError from '@/Components/InputError.vue';
@@ -186,7 +182,8 @@ export default {
         InputError,
         PhoneInput,
         ExequaturInput,
-        CedulaInput
+        CedulaInput,
+        BirthDateInput
     },
     props: {
         roles: Array,
@@ -213,29 +210,10 @@ export default {
                 comment: '',
                 saveAndNew: false,
             }),
-            birthdateError: null,
         }
     },
     methods: {
-        validateBirthdate() {
-            const today = new Date();
-            const birthdate = new Date(this.form.birthdate);
-            let age = today.getFullYear() - birthdate.getFullYear();
-            const monthDifference = today.getMonth() - birthdate.getMonth();
-            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthdate.getDate())) {
-                age--;
-            }
-            if (age < 18) {
-                this.birthdateError = 'El usuario debe tener al menos 18 años.';
-            } else {
-                this.birthdateError = null;
-            }
-        },
         submit() {
-            this.validateBirthdate();
-            if (this.birthdateError) {
-                return;
-            }
             this.$inertia.post(route('users.store'), this.form, {
                 onSuccess: () => this.form.reset(),
                 onError: (errors) => {

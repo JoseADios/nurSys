@@ -100,8 +100,9 @@ class MedicalOrderController extends Controller
     {
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
 
-        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor']);
-        
+        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor','admission.medicationRecord']);
+
+
         $regimes = Regime::all();
         $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
             ->where('active', true)

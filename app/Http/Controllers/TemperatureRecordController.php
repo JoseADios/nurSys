@@ -60,8 +60,7 @@ class TemperatureRecordController extends Controller
 
         if ($sortField == 'in_process') {
             $query->orderByRaw('CASE WHEN admissions.discharged_date IS NULL THEN 0 ELSE 1 END ' . $sortDirection);
-        }
-        elseif ($sortField) {
+        } elseif ($sortField) {
             $query->orderBy($sortField, $sortDirection);
         } else {
             $query->latest('temperature_records.updated_at')
@@ -168,7 +167,16 @@ class TemperatureRecordController extends Controller
         }
 
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
-        $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
+
+        $allTemperatureRecords = TemperatureRecord::whereNot('admission_id', $temperatureRecord->admission_id)
+            ->where('active', true)
+            ->get()
+            ->pluck('admission_id');
+
+        $admissions = Admission::where('active', true)->with('patient', 'bed')
+            ->whereNotIn('id', $allTemperatureRecords)
+            ->get();
+
         $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->with(['nurse' => function ($query) {
                 $query->select('id', 'name', 'last_name');
@@ -201,11 +209,26 @@ class TemperatureRecordController extends Controller
     {
         $firmService = new FirmService;
         $validated = $request->validate([
-            'admission_id' => 'numeric',
-            'impression_diagnosis' => 'string',
-            'nurse_sign' => 'string',
-            'active' => 'boolean'
+            'admission_id' => 'numeric|nullable',
+            'impression_diagnosis' => 'string|nullable',
+            'nurse_sign' => 'string|nullable',
+            'active' => 'boolean|nullable'
         ]);
+
+        // si encuentra uno relacionado al ingreso nuevo o al ingreso actual
+        if ($request->has('admission_id')) {
+            $admission = Admission::find($request->admission_id);
+        } else {
+            $admission = $temperatureRecord->admission;
+        }
+
+        $tempRecordAdm = TemperatureRecord::where('admission_id', $admission->id)
+            ->whereNot('id', $temperatureRecord->id)
+            ->where('active', true)->get();
+
+        if (!$tempRecordAdm->isEmpty()) {
+            return back()->withErrors('error', 'El ingreso al que quiere asignar este registro ya posee una hoja de temperatura');
+        }
 
         if ($request->signature) {
             $fileName = $firmService
@@ -214,7 +237,6 @@ class TemperatureRecordController extends Controller
         }
 
         $temperatureRecord->update($validated);
-
 
         return back()->with('succes', 'Registro actualizado correctamente');
     }

@@ -120,9 +120,9 @@
                         </td>
                         <td class="px-6 py-4">
                             <div v-if="temperatureRecord.admission.bed">
-                            {{ temperatureRecord.admission.created_at }}
                             Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
-                                temperatureRecord.admission.bed.room }}
+                                temperatureRecord.admission.bed.room }},
+                            {{ temperatureRecord.admission.created_at }}
                             </div>
                             <div v-else>{{ temperatureRecord.admission.created_at }} N/A</div>
                         </td>

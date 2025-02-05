@@ -13,9 +13,24 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\URL;
+use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class TemperatureRecordController extends Controller
+class TemperatureRecordController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:temperatureRecord.view', only: ['index', 'show']),
+            new Middleware('permission:temperatureRecord.create', only: ['store']),
+            new Middleware('permission:temperatureRecord.update', only: ['update']),
+            new Middleware('permission:temperatureRecord.delete', only: ['destroy']),
+        ];
+    }
 
     /**
      * Display a listing of the resource.

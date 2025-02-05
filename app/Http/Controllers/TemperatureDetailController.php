@@ -4,12 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\TemperatureDetail;
 use App\Services\TurnService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class TemperatureDetailController extends Controller
+class TemperatureDetailController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:temperatureDetail.create', only: ['store']),
+            new Middleware('permission:temperatureDetail.update', only: ['update']),
+        ];
+    }
 
     /**
      * Display a listing of the resource.
@@ -35,8 +45,7 @@ class TemperatureDetailController extends Controller
     public function store(Request $request)
     {
         $turnService = new TurnService();
-        $currentTurn = $turnService->getCurrentTurn();
-        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+        $dateRange = $turnService->getDateRangeForTurn($turnService->getCurrentTurn());
 
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $request->temperature_record_id)
             ->whereBetween('created_at', [

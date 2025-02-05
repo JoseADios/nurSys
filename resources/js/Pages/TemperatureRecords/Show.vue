@@ -39,13 +39,43 @@
                 <!-- Patient and Record Information -->
                 <div class="grid md:grid-cols-2 gap-6 p-8 bg-gray-50 dark:bg-gray-700">
                     <div class="space-y-4">
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
+                        <div v-if="isVisibleEditAdm === null"
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
                             <div class="">
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                     {{ temperatureRecord.admission_id }}
                                 </p>
                             </div>
+                            <button @click="isVisibleEditAdm = true" class="text-blue-500 mr-3">Edit</button>
+                        </div>
+                        <div v-if="isVisibleEditAdm !== null" class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            <form @submit.prevent="submitUpdateRecord">
+
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Seleccionar
+                                    Ingreso</h3>
+                                <select v-model="formRecord.admission_id"
+                                    class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option :value="admission.id" v-for="admission in admissions" :key="admission.id">
+                                        {{ admission.id }}
+                                        {{ admission.created_at }}
+                                        {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
+                                            admission.patient.second_surname }}
+                                        Cama {{ admission.bed.number }}, Sala {{ admission.bed.room }}
+                                    </option>
+                                </select>
+                                <div class="mt-3">
+                                    <button
+                                        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                        @click="isVisibleEditAdm = null">Cancelar</button>
+
+                                    <button type="submit"
+                                        class="focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+                                        Aceptar</button>
+                                </div>
+
+                            </form>
+
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
@@ -58,15 +88,6 @@
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ temperatureRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             <div v-if="temperatureRecord.admission.bed">
@@ -77,6 +98,16 @@
                             <div v-else>N/A</div>
                             </p>
                         </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ temperatureRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
+                            </p>
+                        </div>
+
 
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Registro</h3>
@@ -179,7 +210,7 @@
                 <div v-if="canCreateDetail" class="p-8 ">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura</h3>
 
-                    <form @submit.prevent="submit" class="space-y-4">
+                    <form @submit.prevent="submitCreateDetail" class="space-y-4">
                         <div class="grid md:grid-cols-3 gap-4">
                             <div>
                                 <label for="temperature"
@@ -327,6 +358,7 @@ export default {
     },
     data() {
         return {
+            isVisibleEditAdm: ref(null),
             recordBeingDeleted: ref(null),
             isVisible: false,
             isVisibleEditSign: ref(null),
@@ -344,6 +376,7 @@ export default {
                 signature: true,
             },
             formRecord: {
+                admission_id: this.temperatureRecord.admission_id,
                 impression_diagnosis: this.temperatureRecord.impression_diagnosis,
                 active: this.temperatureRecord.active
             },
@@ -360,7 +393,7 @@ export default {
         },
     },
     methods: {
-        submit() {
+        submitCreateDetail() {
             this.$inertia.post(route('temperatureDetails.store'),
                 this.formDetail,
                 {
@@ -384,6 +417,7 @@ export default {
 
         },
         submitUpdateRecord() {
+            this.isVisibleEditAdm = null
             this.$inertia.put(route('temperatureRecords.update', this.temperatureRecord.id), this.formRecord)
             this.isVisible = false
         },

@@ -130,57 +130,40 @@ class TemperatureRecordController extends Controller
     public function show($id, $admission_id = null)
     {
         $turnService = new TurnService();
-        $currentTurn = $turnService->getCurrentTurn();
-        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+        $dateRange = $turnService->getDateRangeForTurn($turnService->getCurrentTurn());
 
-        if ($admission_id) {
-            $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)
-                ->where('active', 1)
-                ->first();
-        } else {
-            $temperatureRecord = TemperatureRecord::find($id);
-        }
+        $temperatureRecord = $admission_id
+            ? TemperatureRecord::where('admission_id', $admission_id)->where('active', 1)->first()
+            : TemperatureRecord::find($id);
 
         if (!$temperatureRecord) {
-            return Redirect::route('temperatureRecords.create', [
-                'admission_id' => $admission_id
-            ]);
-        }
-
-        $canCreateDetail = true;
-
-        $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-            ->whereBetween('created_at', [
-                $dateRange['start'],
-                $dateRange['end']
-            ])
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-
-        if ($lastTemperature) {
-            $canCreateDetail = false;
-
-            if ($lastTemperature->nurse_id != Auth::id()) {
-                $lastTemperature = null;
-            }
+            return Redirect::route('temperatureRecords.create', ['admission_id' => $admission_id]);
         }
 
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
 
-        $allTemperatureRecords = TemperatureRecord::whereNot('admission_id', $temperatureRecord->admission_id)
-            ->where('active', true)
-            ->get()
+        $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+            ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        $canCreateDetail = !$lastTemperature;
+
+        if ($lastTemperature && $lastTemperature->nurse_id != Auth::id()) {
+            $lastTemperature = null;
+        }
+
+        $allTemperatureRecords = TemperatureRecord::where('active', true)
+            ->whereNot('admission_id', $temperatureRecord->admission_id)
             ->pluck('admission_id');
 
-        $admissions = Admission::where('active', true)->with('patient', 'bed')
+        $admissions = Admission::where('active', true)
+            ->with('patient', 'bed')
             ->whereNotIn('id', $allTemperatureRecords)
             ->get();
 
         $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-            ->with(['nurse' => function ($query) {
-                $query->select('id', 'name', 'last_name');
-            }])
+            ->with(['nurse:id,name,last_name']) // Especificar solo las columnas necesarias
             ->orderBy('created_at', 'asc')
             ->get(['temperature', 'evacuations', 'urinations', 'nurse_id', 'created_at']);
 
@@ -193,6 +176,7 @@ class TemperatureRecordController extends Controller
             'previousUrl' => URL::previous(),
         ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.

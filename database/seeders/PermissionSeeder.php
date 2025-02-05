@@ -90,6 +90,13 @@ class PermissionSeeder extends Seeder
             'temperatureRecord.update',
             'temperatureRecord.view',
             'temperatureRecord.delete',
+
+            // user
+            'user.*',
+            'user.create',
+            'user.update',
+            'user.view',
+            'user.delete',
         ];
 
         foreach ($permissions as $permission) {

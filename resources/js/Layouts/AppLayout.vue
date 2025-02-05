@@ -86,19 +86,21 @@ const logout = () => {
                                 </NavLink>
                             </div>
 
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <AccessGate :permission="['temperatureRecord.view']"
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('temperatureRecords.index')"
                                     :active="route().current('temperatureRecords.index')">
                                     Hojas de Temperatura
                                 </NavLink>
-                            </div>
+                            </AccessGate>
+
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('patients.index')" :active="route().current('patients.index')">
                                     Pacientes
                                 </NavLink>
                             </div>
 
-                            <AccessGate :role="['admin']" class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <AccessGate :permission="['user.view']" class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('users.index')" :active="route().current('users.index')">
                                     Usuarios
                                 </NavLink>

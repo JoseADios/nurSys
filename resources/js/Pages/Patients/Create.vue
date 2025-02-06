@@ -78,13 +78,15 @@
                         <!-- Nacionalidad -->
                         <div>
                             <label for="nationality" class="block text-sm font-medium text-white">Nacionalidad</label>
-                            <select id="nationality" v-model="form.nationality"
+                            <input list="options" id="nationality" v-model="form.nationality"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <datalist id="options">
                                 <option v-for="nationality in nationalities" :key="nationality.id">
                                     {{ nationality.name }}
                                 </option>
-                            </select>
+                            </datalist>
+                            </input>
                             <InputError :message="form.errors.nationality" class="mt-2" />
                         </div>
                     </div>

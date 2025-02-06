@@ -24,29 +24,36 @@
                         </div>
                     </div>
                     <div class="flex space-x-3">
-                        <button v-if="patient.active == 1" @click="patientBeingDeleted = true"
-                            class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
-                            Eliminar
-                        </button>
-                        <button v-else @click="restorePatient"
-                            class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
-                            Restaurar
-                        </button>
-                        <Link :href="route('patients.edit', patient.id)"
-                            class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                        Editar
-                        </Link>
-                        <Link :href="route('patients.index')"
-                            class="inline-flex items-center px-4 py-2 bg-gray-700 text-gray-200 text-sm rounded-lg hover:bg-gray-600 transition-all duration-200">
+                        <AccessGate :permission="['patient.delete']">
+                            <button v-if="patient.active == 1" @click="patientBeingDeleted = true"
+                                class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
+                                Eliminar
+                            </button>
+                            <button v-else @click="restorePatient"
+                                class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
+                                Restaurar
+                            </button>
+
+                        </AccessGate>
+
+                        <AccessGate :permission="['patient.update']">
+                            <Link :href="route('patients.edit', patient.id)"
+                                class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>
-                            Volver
+                            Editar
+                            </Link>
+                        </AccessGate>
+
+                        <Link :href="route('patients.index')"
+                            class="inline-flex items-center px-4 py-2 bg-gray-700 text-gray-200 text-sm rounded-lg hover:bg-gray-600 transition-all duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Volver
                         </Link>
                     </div>
                 </div>
@@ -155,35 +162,39 @@
                             class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200"
                             :href="route('admissions.show', inProcessAdmssion)">Ir al ingreso</Link>
                     </div>
-                    <div v-else>
+                    <div v-else class="flex items-center justify-center">
                         <strong class="text-white mr-4">Paciente no ingresado</strong>
-                        <Link
-                            class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200"
-                            :href="route('admissions.create', { patient_id: patient.id })">Crear ingreso</Link>
+                        <AccessGate :permission="['admission.create']">
+                            <Link
+                                class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200"
+                                :href="route('admissions.create', { patient_id: patient.id })">Crear ingreso</Link>
+                        </AccessGate>
                     </div>
 
                 </div>
             </div>
         </div>
-        <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
-            <template #title>
-                Eliminar Ingreso
-            </template>
+        <AccessGate :permission="['patient.delete']">
+            <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
+                <template #title>
+                    Eliminar Ingreso
+                </template>
 
-            <template #content>
-                ¿Estás seguro de que deseas eliminar este ingreso?
-            </template>
+                <template #content>
+                    ¿Estás seguro de que deseas eliminar este ingreso?
+                </template>
 
-            <template #footer>
-                <SecondaryButton @click="patientBeingDeleted = null">
-                    Cancelar
-                </SecondaryButton>
+                <template #footer>
+                    <SecondaryButton @click="patientBeingDeleted = null">
+                        Cancelar
+                    </SecondaryButton>
 
-                <DangerButton class="ms-3" @click="deletePatient">
-                    Eliminar
-                </DangerButton>
-            </template>
-        </ConfirmationModal>
+                    <DangerButton class="ms-3" @click="deletePatient">
+                        Eliminar
+                    </DangerButton>
+                </template>
+            </ConfirmationModal>
+        </AccessGate>
     </AppLayout>
 </template>
 
@@ -194,6 +205,7 @@ import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import AccessGate from '@/Components/Access/AccessGate.vue';
 
 
 export default {
@@ -207,6 +219,7 @@ export default {
         ConfirmationModal,
         DangerButton,
         SecondaryButton,
+        AccessGate,
     },
     data() {
         return {

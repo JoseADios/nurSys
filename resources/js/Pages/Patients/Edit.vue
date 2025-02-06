@@ -184,14 +184,16 @@
 
                 <!-- Form Actions -->
                 <div class="px-6 py-4 bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
-                    <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
-                        class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
-                        Eliminar
-                    </button>
-                    <button type="button" v-else @click="restorePatient"
-                        class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
-                        Restaurar
-                    </button>
+                    <AccessGate :permission="['patient.delete']">
+                        <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
+                            class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
+                            Eliminar
+                        </button>
+                        <button type="button" v-else @click="restorePatient"
+                            class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
+                            Restaurar
+                        </button>
+                    </AccessGate>
                     <button @click="goBack" type="button"
                         class="px-4 py-2 text-sm font-medium text-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Cancelar
@@ -203,25 +205,27 @@
                 </div>
             </form>
         </div>
-        <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
-            <template #title>
-                Eliminar Ingreso
-            </template>
+        <AccessGate :permission="['patient.delete']">
+            <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
+                <template #title>
+                    Eliminar Ingreso
+                </template>
 
-            <template #content>
-                ¿Estás seguro de que deseas eliminar este ingreso?
-            </template>
+                <template #content>
+                    ¿Estás seguro de que deseas eliminar este ingreso?
+                </template>
 
-            <template #footer>
-                <SecondaryButton @click="patientBeingDeleted = null">
-                    Cancelar
-                </SecondaryButton>
+                <template #footer>
+                    <SecondaryButton @click="patientBeingDeleted = null">
+                        Cancelar
+                    </SecondaryButton>
 
-                <DangerButton class="ms-3" @click="deletePatient">
-                    Eliminar
-                </DangerButton>
-            </template>
-        </ConfirmationModal>
+                    <DangerButton class="ms-3" @click="deletePatient">
+                        Eliminar
+                    </DangerButton>
+                </template>
+            </ConfirmationModal>
+        </AccessGate>
     </AppLayout>
 </template>
 
@@ -236,6 +240,7 @@ import InputError from '@/Components/InputError.vue';
 import { useGoBack } from '@/composables/useGoBack';
 import CedulaInput from '@/Components/CedulaInput.vue';
 import PhoneInput from '@/Components/PhoneInput.vue';
+import AccessGate from '@/Components/Access/AccessGate.vue';
 
 export default {
     props: {
@@ -254,6 +259,7 @@ export default {
         InputError,
         CedulaInput,
         PhoneInput,
+        AccessGate
     },
     data() {
         return {

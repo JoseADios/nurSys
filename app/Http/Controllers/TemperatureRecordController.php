@@ -26,7 +26,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:temperatureRecord.view', only: ['index', 'show']),
-            new Middleware('permission:temperatureRecord.create', only: ['store']),
+            new Middleware('permission:temperatureRecord.create', only: ['edit', 'store']),
             new Middleware('permission:temperatureRecord.update', only: ['update']),
             new Middleware('permission:temperatureRecord.delete', only: ['destroy']),
         ];

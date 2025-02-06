@@ -40,12 +40,18 @@ class RoleSeeder extends Seeder
             'temperatureRecord.view',
             'temperatureDetail.view',
             'bed.view',
+            'patient.view',
+            'patient.create',
+            'patient.update',
         ]);
 
         $role = Role::findByName('receptionist');
         $role->syncPermissions([
             'admission.*',
             'bed.view',
+            'patient.view',
+            'patient.create',
+            'patient.update',
         ]);
 
         $role = Role::findByName('nurse');
@@ -57,6 +63,7 @@ class RoleSeeder extends Seeder
             'temperatureDetail.*',
             'bed.view',
             'bed.update',
+            'patient.view',
         ]);
 
         $user = User::where('name', 'Test User')->first();

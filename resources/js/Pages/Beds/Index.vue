@@ -58,26 +58,32 @@
                                         <div v-if="!bed.admission_id"
                                             class="w-full space-y-1 flex justify-evenly items-end">
 
-                                            <Link v-if="bed.status === 'available'"
-                                                :href="route('admissions.create', { bed_id: bed.id })"
-                                                class="text-center h-6 w-8 bg-gray-700 hover:bg-blue-600 text-white rounded-md text-xs transition-colors flex items-center justify-center">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                stroke-linejoin="round" class="">
-                                                <path d="M12 5v14M5 12h14" />
-                                            </svg>
-
-                                            </Link>
-
-                                            <button @click="onBedClick(bed)"
-                                                class="h-6 w-8 bg-gray-600 hover:bg-orange-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
+                                            <!-- crear ingreso -->
+                                            <AccessGate :role="['receptionist', 'admin']">
+                                                <Link v-if="bed.status === 'available'"
+                                                    :href="route('admissions.create', { bed_id: bed.id })"
+                                                    class="text-center h-6 w-8 bg-gray-700 hover:bg-blue-600 text-white rounded-md text-xs transition-colors flex items-center justify-center">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round" class="">
-                                                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                                    <path d="M13.5 6.5l4 4" />
+                                                    <path d="M12 5v14M5 12h14" />
                                                 </svg>
-                                            </button>
+
+                                                </Link>
+                                            </AccessGate>
+
+                                            <AccessGate :permission="['bed.update']">
+                                                <button @click="onBedClick(bed)"
+                                                    class="h-6 w-8 bg-gray-600 hover:bg-orange-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round" class="">
+                                                        <path
+                                                            d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                                        <path d="M13.5 6.5l4 4" />
+                                                    </svg>
+                                                </button>
+                                            </AccessGate>
                                         </div>
                                     </div>
                                 </div>
@@ -87,60 +93,63 @@
                 </div>
             </div>
         </div>
-        <DialogModal :show="showEditModal != null" @close="showEditModal = null">
-            <template #title>
-                Cambiar estado de la cama
-            </template>
+        <AccessGate :permission="['bed.update']">
+            <DialogModal :show="showEditModal != null" @close="showEditModal = null">
+                <template #title>
+                    Cambiar estado de la cama
+                </template>
 
-            <template #content>
-                <form @submit.prevent="submitUpdate">
-                    <div class="flex items-center">
+                <template #content>
+                    <form @submit.prevent="submitUpdate">
                         <div class="flex items-center">
+                            <div class="flex items-center">
 
-                            <div class="flex flex-wrap">
-                                <div class="flex items-center me-4">
-                                    <input id="green-radio" type="radio" value="available" v-model="selectedBed.status"
-                                        name="bed-status"
-                                        class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="green-radio"
-                                        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Disponible</label>
-                                </div>
-                                <div class="flex items-center me-4">
-                                    <input id="yellow-radio" type="radio" value="cleaning" v-model="selectedBed.status"
-                                        name="bed-status"
-                                        class="w-4 h-4 text-yellow-400 bg-gray-100 border-gray-300 focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="yellow-radio"
-                                        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">En
-                                        limpieza</label>
-                                </div>
-                                <div class="flex items-center me-4">
-                                    <input id="red-radio" type="radio" value="out_of_service"
-                                        v-model="selectedBed.status" name="bed-status"
-                                        class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="red-radio"
-                                        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Fuera de
-                                        servicio</label>
+                                <div class="flex flex-wrap">
+                                    <div class="flex items-center me-4">
+                                        <input id="green-radio" type="radio" value="available"
+                                            v-model="selectedBed.status" name="bed-status"
+                                            class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="green-radio"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Disponible</label>
+                                    </div>
+                                    <div class="flex items-center me-4">
+                                        <input id="yellow-radio" type="radio" value="cleaning"
+                                            v-model="selectedBed.status" name="bed-status"
+                                            class="w-4 h-4 text-yellow-400 bg-gray-100 border-gray-300 focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="yellow-radio"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">En
+                                            limpieza</label>
+                                    </div>
+                                    <div class="flex items-center me-4">
+                                        <input id="red-radio" type="radio" value="out_of_service"
+                                            v-model="selectedBed.status" name="bed-status"
+                                            class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="red-radio"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Fuera de
+                                            servicio</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </template>
+                    </form>
+                </template>
 
-            <template #footer>
-                <SecondaryButton @click="showEditModal = null">
-                    Cancel
-                </SecondaryButton>
+                <template #footer>
+                    <SecondaryButton @click="showEditModal = null">
+                        Cancel
+                    </SecondaryButton>
 
-                <PrimaryButton class="ms-3" @click="submitUpdate">
-                    Save
-                </PrimaryButton>
-            </template>
-        </DialogModal>
+                    <PrimaryButton class="ms-3" @click="submitUpdate">
+                        Save
+                    </PrimaryButton>
+                </template>
+            </DialogModal>
+        </AccessGate>
     </AppLayout>
 </template>
 
 <script>
+import AccessGate from '@/Components/Access/AccessGate.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -156,7 +165,8 @@ export default {
         DialogModal,
         PrimaryButton,
         SecondaryButton,
-        Toast
+        Toast,
+        AccessGate,
     },
     props: {
         beds: Array

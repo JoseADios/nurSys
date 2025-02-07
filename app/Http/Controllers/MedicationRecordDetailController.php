@@ -60,18 +60,18 @@ class MedicationRecordDetailController extends Controller
 
 
 
-        $detail = MedicationRecordDetail::create([
-            'medication_record_id' => $request->medication_record_id,
-            'drug' => $request->drug,
-            'dose' => $dose_formatted,
-            'route' => $request->route,
-            'fc' => $request->fc,
-            'interval_in_hours' => $request->interval_in_hours,
-           'start_time' =>$start_time_24,
-            'active' => true,
-            'created_at' => now(),
-
-        ]);
+            $detail = MedicationRecordDetail::create([
+                'medication_record_id' => $request->medication_record_id,
+                'drug' => $request->drug,
+                'dose' => $dose_formatted,
+                'route' => $request->route,
+                'fc' => $request->fc,
+                'interval_in_hours' => $request->interval_in_hours,
+            'start_time' =>$start_time_24,
+                'active' => true,
+                'created_at' => now(),
+                'medical_order_detail_id' =>$request->selectedOrderId,
+            ]);
 
 
         // Obtén el valor de fc

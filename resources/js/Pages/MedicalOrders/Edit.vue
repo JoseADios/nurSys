@@ -442,7 +442,7 @@ export default {
         },
 
         submitUpdateDetail() {
-            this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail)
+       this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail)
             this.isVisibleAdm = false
             this.isVisibleDetail = false
         },

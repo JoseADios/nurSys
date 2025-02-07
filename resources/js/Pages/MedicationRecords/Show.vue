@@ -90,72 +90,68 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:mx-10 mt-6 hidden" id="formcreaterecord">
         <!-- Tarjeta para información del Medical Order -->
         <div class="relative overflow-hidden rounded-lg shadow-md bg-white dark:bg-gray-800 mb-5">
-            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ medicationRecord.admission.id }} - Paciente:  {{ medicationRecord.admission.patient.first_name }} {{
-                                    medicationRecord.admission.patient.first_surname
-                                }} {{ medicationRecord.admission.patient.second_surname }}
-                            </p>
-                        </div>
+
+                        <div class="max-h-80 overflow-y-auto  shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
+                            <div
+  v-for="orders in order"
+  :key="orders.id"
+  :value="orders.description"
+  @click="selectOrder(orders.id)"
+  :class="{
+    'bg-blue-500 text-white': selectedOrderId === orders.id,
+    'bg-white dark:bg-gray-800': selectedOrderId !== orders.id
+  }"
+  class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200"
+>
+  <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
+    {{ orders.id }} - Orden
+  </h3>
+  <p class="text-lg font-semibold text-gray-900 dark:text-white">
+    {{ orders.order }} <br />
+    <!-- Mostrar régimen solo si la orden está seleccionada -->
+    <span v-if="selectedOrderId === orders.id" class="text-lg font-semibold text-gray-900 dark:text-white">
+      Régimen: {{ orders.regime }}
+    </span>
+  </p>
+</div>
+
+  </div>
 
 
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
-                            <p class="text-lg font- semibold text-gray-900 dark:text-white">
-                                {{ medicationRecord.doctor.name }} {{ medicationRecord.doctor.last_name }}
-                            </p>
-                        </div>
-                        <div  class="bg-white border mb-2 dark:bg-gray-800 rounded-lg p-4 shadow-md"  v-for="orders in order" :key="orders.id" :value="orders.description" >
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2"> {{ orders.id  }} - Orden</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ orders.order }} <br>
-                                Regimen:    {{ orders.regime }}
-
-                            </p>
-
-
-                        </div>
 
                 <!-- Espacio del detalle de Medical Orders -->
 
         </div>
-                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4  lg:mx-10">
+                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg   lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
 
 
-             <!-- Contenedor para la Medicamento y el selector -->
-             <div class="flex items-center space-x-4 mt-6">
-                    <!-- Selector -->
-                    <div class="flex-1">
-                        <label for="drug-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            Medicamento
-                        </label>
-                        <select id="drug-select" required v-model="form.drug"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option v-for="drugs in drug" :key="drugs.id" :value="drugs.description">
-                            {{ drugs.name }} - {{ drugs.description }}
-                        </option>
-                    </select>
+           <!-- Contenedor para la Medicamento y el selector -->
+<div class="flex justify-between items-center mt-6">
+    <input type="hidden" v-model="form.selectedOrderId" />
 
-                    </div>
-                    <div class="flex-1 mt-5">
+    <!-- Selector de Medicamento -->
+    <div class="w-2/3 mb-2">
+        <label for="drug-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Medicamento
+        </label>
+        <select id="drug-select" required v-model="form.drug"
+            class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option v-for="drugs in drug" :key="drugs.id" :value="drugs.description">
+                {{ drugs.name }} - {{ drugs.description }}
+            </option>
+        </select>
+    </div>
 
+    <!-- Botón Crear Medicamento -->
+    <button @click="openCreateModal"
+        class="ml-2 mt-3 flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
 
-                        <button  @click="openCreateModal"
-                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="font-medium">Crear Medicamento</span>
-                    </button>
+        <span class="font-medium">Crear Medicamento</span>
+    </button>
+</div>
 
-
-                        </div>
-                </div>
 
                   <!-- Contenedor para la Via y el selector -->
 
@@ -358,11 +354,18 @@ export default{
                 interval_in_hours: '',
                 start_time: '',
                 dose_metric: '',
+                selectedOrderId: null,
+
             },
+            selectedOrderId: null
         }
     },
     methods: {
         submit() {
+            if (!this.form.selectedOrderId) {
+            alert("Debe seleccionar una orden antes de guardar.")
+            return;
+        }
             this.$inertia.post(route('medicationRecordDetails.store'),
                 this.form,
                 {
@@ -373,8 +376,10 @@ export default{
                             dose: '',
                             route: '',
                             fc: '',
-                            interval_in_hours: ''
+                            interval_in_hours: '',
+                            selectedOrderId: null,
                         };
+                        this.selectedOrderId = null;
                         let form_div = document.getElementById('formcreaterecord');
                          form_div.classList.add("hidden");
                     }
@@ -382,6 +387,10 @@ export default{
                 });
 
             },
+            selectOrder(id) {
+                this.selectedOrderId = id;
+                this.form.selectedOrderId = id;
+    },
             hasApplied(detail){
                 return detail.medication_notification?.some(item => item.applied === 1) ?? false;
             },
@@ -446,3 +455,9 @@ ToggleActivate(detail) {
 }
 
 </script>
+<style scoped>
+
+.max-h-80 {
+  max-height: 600px;
+}
+</style>

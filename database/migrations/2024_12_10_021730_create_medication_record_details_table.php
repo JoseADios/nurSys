@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('medication_record_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('medication_record_id')->constrained()->onDelete('restrict');
+            $table->foreignId('medical_order_detail_id')->constrained()->onDelete('restrict');
             $table->string('drug');
             $table->string('dose');
             $table->string('route');

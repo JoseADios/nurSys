@@ -16,12 +16,17 @@ class MedicationRecordDetail extends Model
         'fc',
         'interval_in_hours',
         'active',
-        'start_time'
+        'start_time',
+        'medical_order_detail_id',
     ];
 
     public function medicationRecord(): BelongsTo
     {
         return $this->belongsTo(medicationRecord::class);
+    }
+    public function medicalOrderDetail(): BelongsTo
+    {
+        return $this->belongsTo(medicalOrderDetail::class);
     }
 
     public function medicationNotification(): HasMany

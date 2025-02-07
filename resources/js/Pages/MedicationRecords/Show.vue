@@ -98,11 +98,14 @@
   :value="orders.description"
   @click="selectOrder(orders.id)"
   :class="{
-    'bg-blue-500 text-white': selectedOrderId === orders.id,
-    'bg-white dark:bg-gray-800': selectedOrderId !== orders.id
-  }"
+    'bg-blue-500 text-white': selectedOrderId === orders.id && !orders.suspended_at,
+    'bg-white dark:bg-gray-800': selectedOrderId !== orders.id && !orders.suspended_at,
+    'hidden': orders.suspended_at
+    // bg-red-500 text-white
+}"
   class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200"
 >
+
   <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
     {{ orders.id }} - Orden
   </h3>

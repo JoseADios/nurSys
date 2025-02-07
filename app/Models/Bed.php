@@ -7,10 +7,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Bed extends Model
 {
-    const STATUS_AVAILABLE = 'available';
-    const STATUS_OUT_OF_SERVICE = 'out_of_service';
-    const STATUS_CLEANING = 'cleaning';
-
     protected $fillable = [
         'status',
     ];

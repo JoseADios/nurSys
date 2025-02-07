@@ -182,17 +182,22 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         if ($request->has('active')) {
+
             $validated = Validator::make($request->all(), [
                 'active' => 'boolean'
             ])->validate();
+
         } elseif ($request->has('password')) {
+
             $validated = Validator::make($request->all(), [
                 'password' => $this->passwordRules(),
             ])->validate();
+
             $user->update(attributes: [
                 'password' => Hash::make($validated['password']),
             ]);
-            return Redirect::route('users.index', $user->id)->with('success', 'Password updated successfully.');
+
+            return back()->with('success', 'Password updated successfully.');
         } else {
             $validated = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
@@ -213,9 +218,11 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        $user->syncRoles($request->role);
+        if ($request->has('role')) {
+            $user->syncRoles($request->role);
+        }
 
-        return Redirect::route('users.index', $user->id)->with('success', 'User updated successfully.');
+        return back()->with('success', 'User updated successfully.');
     }
 
     /**

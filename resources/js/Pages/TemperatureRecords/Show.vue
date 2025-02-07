@@ -47,9 +47,10 @@
                                 class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
                                 <div class="">
                                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
-                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                        ING-00{{ temperatureRecord.admission_id }}
-                                    </p>
+                                    <Link :href="route('admissions.show', temperatureRecord.admission_id)" as="button"
+                                        class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
+                                    ING-00{{ temperatureRecord.admission_id }}
+                                    </Link>
                                 </div>
                                 <button @click="isVisibleEditAdm = true" class="text-blue-500 mr-3">Edit</button>
                             </div>
@@ -87,19 +88,21 @@
                         <AccessGate :except-role="['admin']">
                             <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
-                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                    ING-00{{ temperatureRecord.admission_id }}
-                                </p>
+                                <Link :href="route('admissions.show', temperatureRecord.admission_id)" as="button"
+                                    class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
+                                ING-00{{ temperatureRecord.admission_id }}
+                                </Link>
                             </div>
                         </AccessGate>
 
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ temperatureRecord.admission.patient.first_name }} {{
-                                    temperatureRecord.admission.patient.first_surname }} {{
-                                    temperatureRecord.admission.patient.second_surname }}
-                            </p>
+                            <Link :href="route('patients.show', temperatureRecord.admission.patient.id)" as="button"
+                                class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
+                            {{ temperatureRecord.admission.patient.first_name }} {{
+                                temperatureRecord.admission.patient.first_surname }} {{
+                                temperatureRecord.admission.patient.second_surname }}
+                            </Link>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
@@ -311,7 +314,7 @@
                                     No hay firma disponible
                                 </div>
                             </div>
-                            <AccessGate :permission="['temperatureRecord.update']">
+                            <AccessGate :permission="['temperatureRecord.update']" v-if="canUpdateSignature">
                                 <button @click="isVisibleEditSign = true"
                                     class="mt-4 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
                                     Editar</button>
@@ -391,6 +394,7 @@ export default {
         lastTemperature: Object,
         canCreateDetail: Boolean,
         previousUrl: String,
+        canUpdateSignature: Boolean,
     },
     components: {
         AppLayout,

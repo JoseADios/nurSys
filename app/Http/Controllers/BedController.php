@@ -2,13 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Admission;
 use App\Models\Bed;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class BedController extends Controller
+
+class BedController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:bed.view', only: ['index']),
+            new Middleware('permission:bed.update', only: ['update'])
+        ];
+    }
     /**
      * Display a listing of the resource.
      */

@@ -51,20 +51,8 @@
 
                         <!-- Teléfono -->
                         <div>
-                            <label for="phone" class="block text-sm font-medium text-white">Teléfono</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                    </svg>
-                                </div>
-                                <input type="tel" id="phone" v-model="form.phone"
-                                    class="block p-2.5 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    pattern="[0-9]{3}[0-9]{3}[0-9]{4}" placeholder="123-456-7890" required>
-                                <InputError :message="form.errors.phone" class="mt-2" />
-                            </div>
+                            <PhoneInput v-model="form.phone" />
+                            <InputError :message="form.errors.phone" class="mt-2" />
                         </div>
                     </div>
                 </div>
@@ -83,23 +71,22 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Cédula -->
                         <div>
-                            <label for="identification_card" class="block text-sm font-medium text-white">Cédula</label>
-                            <input type="text" id="identification_card" v-model="form.identification_card"
-                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required>
+                            <CedulaInput v-model="form.identification_card" />
                             <InputError :message="form.errors.identification_card" class="mt-2" />
                         </div>
 
                         <!-- Nacionalidad -->
                         <div>
                             <label for="nationality" class="block text-sm font-medium text-white">Nacionalidad</label>
-                            <select id="nationality" v-model="form.nationality"
+                            <input list="nationalityOptions" id="nationality" v-model="form.nationality"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <datalist id="nationalityOptions">
                                 <option v-for="nationality in nationalities" :key="nationality.id">
                                     {{ nationality.name }}
                                 </option>
-                            </select>
+                            </datalist>
+                            </input>
                             <InputError :message="form.errors.nationality" class="mt-2" />
                         </div>
                     </div>
@@ -199,14 +186,16 @@
 
                 <!-- Form Actions -->
                 <div class="px-6 py-4 bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
-                    <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
-                        class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
-                        Eliminar
-                    </button>
-                    <button type="button" v-else @click="restorePatient"
-                        class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
-                        Restaurar
-                    </button>
+                    <AccessGate :permission="['patient.delete']">
+                        <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
+                            class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
+                            Eliminar
+                        </button>
+                        <button type="button" v-else @click="restorePatient"
+                            class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
+                            Restaurar
+                        </button>
+                    </AccessGate>
                     <button @click="goBack" type="button"
                         class="px-4 py-2 text-sm font-medium text-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Cancelar
@@ -218,25 +207,27 @@
                 </div>
             </form>
         </div>
-        <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
-            <template #title>
-                Eliminar Ingreso
-            </template>
+        <AccessGate :permission="['patient.delete']">
+            <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
+                <template #title>
+                    Eliminar Ingreso
+                </template>
 
-            <template #content>
-                ¿Estás seguro de que deseas eliminar este ingreso?
-            </template>
+                <template #content>
+                    ¿Estás seguro de que deseas eliminar este ingreso?
+                </template>
 
-            <template #footer>
-                <SecondaryButton @click="patientBeingDeleted = null">
-                    Cancelar
-                </SecondaryButton>
+                <template #footer>
+                    <SecondaryButton @click="patientBeingDeleted = null">
+                        Cancelar
+                    </SecondaryButton>
 
-                <DangerButton class="ms-3" @click="deletePatient">
-                    Eliminar
-                </DangerButton>
-            </template>
-        </ConfirmationModal>
+                    <DangerButton class="ms-3" @click="deletePatient">
+                        Eliminar
+                    </DangerButton>
+                </template>
+            </ConfirmationModal>
+        </AccessGate>
     </AppLayout>
 </template>
 
@@ -249,6 +240,9 @@ import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import InputError from '@/Components/InputError.vue';
 import { useGoBack } from '@/composables/useGoBack';
+import CedulaInput from '@/Components/CedulaInput.vue';
+import PhoneInput from '@/Components/PhoneInput.vue';
+import AccessGate from '@/Components/Access/AccessGate.vue';
 
 export default {
     props: {
@@ -265,6 +259,9 @@ export default {
         DangerButton,
         SecondaryButton,
         InputError,
+        CedulaInput,
+        PhoneInput,
+        AccessGate
     },
     data() {
         return {

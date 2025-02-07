@@ -11,9 +11,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
+use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class PatientController extends Controller
+class PatientController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:patient.view', only: ['index', 'show']),
+            new Middleware('permission:patient.create', only: ['create', 'store']),
+            new Middleware('permission:patient.update', only: [ 'edit', 'update']),
+            new Middleware('permission:patient.delete', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

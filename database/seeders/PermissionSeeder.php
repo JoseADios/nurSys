@@ -21,6 +21,13 @@ class PermissionSeeder extends Seeder
             'admission.view',
             'admission.delete',
 
+            // bed
+            'bed.*',
+            'bed.create',
+            'bed.update',
+            'bed.view',
+            'bed.delete',
+
             // medical orders
             'medicalOrder.*',
             'medicalOrder.create',

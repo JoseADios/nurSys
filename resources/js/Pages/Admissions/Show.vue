@@ -28,6 +28,12 @@
                                 {{ daysIngressed }}
                             </span>
                         </div>
+                        <div v-else class="flex space-x-2 items-center">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Fecha:</h3>
+                            <span class="text-gray-900 dark:text-white text-sm font-semibold">
+                                {{ formatDate(admission.discharged_date) }}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -64,13 +70,6 @@
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Ingreso</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ formatDate(admission.created_at) }}
-                            </p>
-                        </div>
-
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Alta</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ admission.discharged_date ? formatDate(admission.discharged_date) : 'No dado de alta' }}
                             </p>
                         </div>
                     </div>

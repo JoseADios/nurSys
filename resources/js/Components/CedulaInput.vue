@@ -1,6 +1,6 @@
 <template>
     <div class="form-group">
-        <label for="cedula-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        <label for="cedula-input" class="block text-sm font-medium text-gray-900 dark:text-white">
             Número de cédula:
         </label>
         <div class="relative">

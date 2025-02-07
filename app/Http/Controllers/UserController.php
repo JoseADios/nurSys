@@ -197,7 +197,7 @@ class UserController extends Controller
                 'password' => Hash::make($validated['password']),
             ]);
 
-            return Redirect::route('users.index', $user->id)->with('success', 'Password updated successfully.');
+            return back()->with('success', 'Password updated successfully.');
         } else {
             $validated = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
@@ -218,11 +218,11 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        if ($request->has('role' && $request->role)) {
+        if ($request->has('role')) {
             $user->syncRoles($request->role);
         }
 
-        return Redirect::route('users.index', $user->id)->with('success', 'User updated successfully.');
+        return back()->with('success', 'User updated successfully.');
     }
 
     /**

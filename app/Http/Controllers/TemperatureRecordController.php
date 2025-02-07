@@ -14,6 +14,7 @@ use Inertia\Inertia;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -146,6 +147,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     {
         $turnService = new TurnService();
         $dateRange = $turnService->getDateRangeForTurn($turnService->getCurrentTurn());
+        $user = User::find(Auth::id());
 
         $temperatureRecord = $admission_id
             ? TemperatureRecord::where('admission_id', $admission_id)->where('active', 1)->first()
@@ -163,6 +165,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             ->first();
 
         $canCreateDetail = !$lastTemperature;
+        $canUpdateSignature = $temperatureRecord->nurse_id == Auth::id() || $user->hasRole('admin');
 
         if ($lastTemperature && $lastTemperature->nurse_id != Auth::id()) {
             $lastTemperature = null;
@@ -175,6 +178,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $admissions = Admission::where('active', true)
             ->with('patient', 'bed')
             ->whereNotIn('id', $allTemperatureRecords)
+            ->whereNull('discharged_date')
             ->get();
 
         $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
@@ -188,6 +192,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             'details' => $details,
             'lastTemperature' => $lastTemperature,
             'canCreateDetail' => $canCreateDetail,
+            'canUpdateSignature' => $canUpdateSignature,
             'previousUrl' => URL::previous(),
         ]);
     }
@@ -207,6 +212,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     public function update(Request $request, TemperatureRecord $temperatureRecord)
     {
         $firmService = new FirmService;
+        $user = User::find(Auth::id());
+
         $validated = $request->validate([
             'admission_id' => 'numeric|nullable',
             'impression_diagnosis' => 'string|nullable',
@@ -229,10 +236,12 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             return back()->withErrors('error', 'El ingreso al que quiere asignar este registro ya posee una hoja de temperatura');
         }
 
-        if ($request->signature) {
+        if (($request->signature && $temperatureRecord->nurse_id == Auth::id()) || $user->hasRole(['admin'])) {
             $fileName = $firmService
                 ->createImag($request->nurse_sign, $temperatureRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
+        } else {
+            return abort(403, 'Acción inautorizada.');
         }
 
         $temperatureRecord->update($validated);

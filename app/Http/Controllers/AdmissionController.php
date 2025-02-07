@@ -35,27 +35,30 @@ class AdmissionController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('created_at', 'like', '%' . $search . '%')
 
-                  ->orWhereHas('patient', function ($patientQuery) use ($search) {
-                      $patientQuery->where('first_name', 'like', '%' . $search . '%')
-                                   ->orWhere('first_surname', 'like', '%' . $search . '%')
-                                   ->orWhere('second_surname', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('bed', function ($bedQuery) use ($search) {
-                      $bedQuery->where('number', 'like', '%' . $search . '%')
-                               ->orWhere('room', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('doctor', function ($doctorQuery) use ($search) {
-                      $doctorQuery->where('name', 'like', '%' . $search . '%')
-                                  ->orWhere('last_name', 'like', '%' . $search . '%');
-                  });
+                    ->orWhereHas('patient', function ($patientQuery) use ($search) {
+                        $patientQuery->where('first_name', 'like', '%' . $search . '%')
+                            ->orWhere('first_surname', 'like', '%' . $search . '%')
+                            ->orWhere('second_surname', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('bed', function ($bedQuery) use ($search) {
+                        $bedQuery->where('number', 'like', '%' . $search . '%')
+                            ->orWhere('room', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('doctor', function ($doctorQuery) use ($search) {
+                        $doctorQuery->where('name', 'like', '%' . $search . '%')
+                            ->orWhere('last_name', 'like', '%' . $search . '%');
+                    });
             });
         }
-
-        $admissions = $query->select(['id', 'patient_id', 'bed_id', 'doctor_id', 'created_at', 'in_process', 'active'])
+        $admissions = $query->select(['id', 'patient_id', 'bed_id', 'doctor_id', 'created_at', 'discharged_date', 'active'])
             ->orderByDesc('created_at')
             ->paginate(10)
             ->through(function ($admission) {
-                $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
+                if ($admission->discharged_date) {
+                    $admission->days_admitted = intval($admission->created_at->diffInDays($admission->discharged_date));
+                } else {
+                    $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
+                }
                 return $admission;
             });
 
@@ -83,11 +86,11 @@ class AdmissionController extends Controller
 
         $selectedbed = null;
         if ($request->query('bed_id')) {
-            $selectedbed = $request->query('bed_id');
+            $selectedbed = Bed::find($request->query('bed_id'));
         }
 
+        $beds = Bed::all()->filter->isAvailable()->values()->toArray();
         $doctors = User::all();
-        $beds = Bed::all()->filter->isAvailable();
         $patients = Patient::all()->filter->isAvailable();
 
         return Inertia::render('Admissions/Create', [
@@ -122,6 +125,12 @@ class AdmissionController extends Controller
 
         if (!$patient->isAvailable()) {
             return back()->with('error', 'Ya existe un ingreso en proceso para este paciente');
+        }
+        if ($request->bed_id) {
+            $bed = Bed::find($request->bed_id);
+            if (!$bed->isAvailable()) {
+                return back()->with('error', 'La cama seleccionada no está disponible');
+            }
         }
 
         Admission::create($validated);
@@ -168,12 +177,14 @@ class AdmissionController extends Controller
         $patients = Patient::all()->filter->isAvailable();
         $patients->add(Patient::find($admission->patient_id));
         $doctors = User::all();
-        $beds = Bed::all()->filter->isAvailable();
+        $beds = Bed::all()->filter->isAvailable()->values();
         $selectedBed = Bed::find($admission->bed_id);
 
         if ($selectedBed) {
             $beds->add($selectedBed);
         }
+
+        $beds->toArray();
 
         return Inertia::render('Admissions/Edit', [
             'admission' => $admission,
@@ -191,18 +202,28 @@ class AdmissionController extends Controller
     {
         $this->authorize('update', $admission);
 
-        if ($request->has('in_process')) {
+        if ($request->has('discharged_date')) {
             $validated = $request->validate([
-                'in_process' => 'boolean',
+                'discharged_date' => 'nullable|string',
             ]);
 
-            if ($admission->in_process == false && $request->in_process) {
+            if ($request->discharged_date) {
+                $validated['discharged_date'] = now();
+            } else {
+                $validated['discharged_date'] = null;
+            }
+
+            $bed = Bed::find($admission->bed_id);
+
+            if ($admission->discharged_date != null && $request->discharged_date == null) {
                 $patient = Patient::find($request->patient_id);
-                $bed = Bed::find($admission->bed_id);
 
                 if (!$patient->isAvailable() || !$bed->isAvailable()) {
                     return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente o la cama seleccionada esta ocupada, dé el alta al otro para activar este.');
                 }
+            } elseif ($admission->discharged_date == null && $request->discharged_date != null) {
+                $bed->status = 'cleaning';
+                $bed->save();
             }
         } else {
             $validated = $request->validate([
@@ -213,6 +234,13 @@ class AdmissionController extends Controller
                 'final_dx' => 'string|max:255|nullable',
                 'comment' => 'nullable|string|max:255',
             ]);
+        }
+
+        if ($request->bed_id) {
+            $bed = Bed::find($request->bed_id);
+            if (!$bed->isAvailable()) {
+                return back()->with('error', 'La cama seleccionada no está disponible');
+            }
         }
 
         $admission->update($validated);
@@ -226,7 +254,11 @@ class AdmissionController extends Controller
     {
         $this->authorize('delete', $admission);
 
-        $admission->update(['active' => 0, 'in_process' => 0]);
+        $admission->update(['active' => 0, 'discharged_date' => now()]);
+
+        $bed = Bed::find($admission->bed_id);
+        $bed->status = 'cleaning';
+        $bed->save();
 
         // desactivar todas las ordenes médicas relacionadas
         DB::table('medical_orders')
@@ -255,7 +287,7 @@ class AdmissionController extends Controller
     {
         $this->authorize('delete', $admission);
 
-        $admission->update(['active' => true, 'in_process' => 0]);
+        $admission->update(['active' => true]);
 
         // activar todas las ordenes médicas relacionadas
         DB::table('medical_orders')

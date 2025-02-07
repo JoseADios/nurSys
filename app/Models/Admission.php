@@ -21,7 +21,7 @@ class Admission extends Model
         'final_dx',
         'created_at',
         'comment',
-        'in_process',
+        'discharged_date',
         'active',
     ];
 
@@ -33,7 +33,7 @@ class Admission extends Model
         ];
     }
 
-    public function recepcionist(): BelongsTo
+    public function receptionist(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

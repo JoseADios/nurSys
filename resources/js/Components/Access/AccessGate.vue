@@ -32,6 +32,23 @@ const props = defineProps({
     }
 });
 
+// Función para verificar si un permiso coincide con un wildcard
+const matchWildcardPermission = (userPermission, requiredPermission) => {
+    // Si el permiso del usuario termina en .*
+    if (userPermission.endsWith('.*')) {
+        const basePermission = userPermission.slice(0, -2); // Remover el '.*'
+        return requiredPermission.startsWith(basePermission);
+    }
+    return userPermission === requiredPermission;
+};
+
+// Función para verificar si el usuario tiene un permiso específico
+const hasPermission = (userPermissions, permission) => {
+    return userPermissions.some(userPermission =>
+        matchWildcardPermission(userPermission, permission)
+    );
+};
+
 const hasAccess = computed(() => {
     const user = usePage().props.auth.user;
     if (!user) return false;
@@ -44,7 +61,6 @@ const hasAccess = computed(() => {
         const excludedRoles = Array.isArray(props.exceptRole)
             ? props.exceptRole
             : [props.exceptRole];
-
         if (excludedRoles.some(r => roles.includes(r))) {
             return false;
         }
@@ -55,8 +71,7 @@ const hasAccess = computed(() => {
         const excludedPermissions = Array.isArray(props.exceptPermission)
             ? props.exceptPermission
             : [props.exceptPermission];
-
-        if (excludedPermissions.some(p => permissions.includes(p))) {
+        if (excludedPermissions.some(p => hasPermission(permissions, p))) {
             return false;
         }
     }
@@ -64,25 +79,23 @@ const hasAccess = computed(() => {
     // Si no hay roles o permisos requeridos después de verificar exclusiones
     if (!props.role && !props.permission) return true;
 
-    const hasRole = props.role ? (Array.isArray(props.role)
+    const hasRoleAccess = props.role ? (Array.isArray(props.role)
         ? props.role.some(r => roles.includes(r))
         : roles.includes(props.role))
         : null;
 
-    const hasPermission = props.permission ? (Array.isArray(props.permission)
-        ? props.permission.some(p => permissions.includes(p))
-        : permissions.includes(props.permission))
+    const hasPermissionAccess = props.permission ? (Array.isArray(props.permission)
+        ? props.permission.some(p => hasPermission(permissions, p))
+        : hasPermission(permissions, props.permission))
         : null;
 
     // Si solo se especifica rol, verificar solo rol
-    if (props.role && !props.permission) return hasRole;
-
+    if (props.role && !props.permission) return hasRoleAccess;
     // Si solo se especifica permiso, verificar solo permiso
-    if (!props.role && props.permission) return hasPermission;
-
+    if (!props.role && props.permission) return hasPermissionAccess;
     // Si se especifican ambos, usar requireAll
     return props.requireAll
-        ? (hasRole && hasPermission)
-        : (hasRole || hasPermission);
+        ? (hasRoleAccess && hasPermissionAccess)
+        : (hasRoleAccess || hasPermissionAccess);
 });
 </script>

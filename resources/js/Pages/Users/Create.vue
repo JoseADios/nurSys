@@ -78,19 +78,12 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="identification_card"
-                                    class="block text-sm font-medium text-white">Cédula</label>
-                                <input type="text" id="identification_card" v-model="form.identification_card"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <CedulaInput v-model="form.identification_card" />
                                 <InputError :message="form.errors.identification_card" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="exequatur" class="block text-sm font-medium text-white">Exequatur</label>
-                                <input type="text" id="exequatur" v-model="form.exequatur"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <ExequaturInput v-model="form.exequatur" />
                                 <InputError :message="form.errors.exequatur" class="mt-2" />
                             </div>
 
@@ -107,28 +100,21 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="area" class="block text-sm font-medium text-white">Área</label>
-                                <input type="text" id="area" v-model="form.area"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <label for="area" class="block text-sm font-medium text-white">Areas</label>
+                                <select required id="area" v-model="form.area"
+                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
+                                    <option v-for="area in areas" :key="area" :value="area.name">{{ area.name }}</option>
+                                </select>
                                 <InputError :message="form.errors.area" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="phone" class="block text-sm font-medium text-white">Teléfono</label>
-                                <input type="tel" id="phone" v-model="form.phone"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
+                                <PhoneInput v-model="form.phone" />
                                 <InputError :message="form.errors.phone" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="birthdate" class="block text-sm font-medium text-white">Fecha de
-                                    Nacimiento</label>
-                                <input type="date" id="birthdate" v-model="form.birthdate" @change="validateBirthdate"
-                                    class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                                    required>
-                                <div v-if="birthdateError" class="text-red-500 text-sm mt-2">{{ birthdateError }}</div>
+                                <BirthDateInput v-model="form.birthdate" />
                                 <InputError :message="form.errors.birthdate" class="mt-2" />
                             </div>
 
@@ -181,19 +167,28 @@
 </template>
 
 <script>
+import BirthDateInput from '@/Components/BirthDateInput.vue';
+import CedulaInput from '@/Components/CedulaInput.vue';
+import ExequaturInput from '@/Components/ExequaturInput.vue';
 import InputError from '@/Components/InputError.vue';
+import PhoneInput from '@/Components/PhoneInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 
 export default {
-    props: {
-        roles: Array,
-        previousUrl: String,
-    },
     components: {
         AppLayout,
         Link,
-        InputError
+        InputError,
+        PhoneInput,
+        ExequaturInput,
+        CedulaInput,
+        BirthDateInput
+    },
+    props: {
+        roles: Array,
+        previousUrl: String,
+        areas: Array,
     },
     data() {
         return {
@@ -215,29 +210,10 @@ export default {
                 comment: '',
                 saveAndNew: false,
             }),
-            birthdateError: null,
         }
     },
     methods: {
-        validateBirthdate() {
-            const today = new Date();
-            const birthdate = new Date(this.form.birthdate);
-            let age = today.getFullYear() - birthdate.getFullYear();
-            const monthDifference = today.getMonth() - birthdate.getMonth();
-            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthdate.getDate())) {
-                age--;
-            }
-            if (age < 18) {
-                this.birthdateError = 'El usuario debe tener al menos 18 años.';
-            } else {
-                this.birthdateError = null;
-            }
-        },
         submit() {
-            this.validateBirthdate();
-            if (this.birthdateError) {
-                return;
-            }
             this.$inertia.post(route('users.store'), this.form, {
                 onSuccess: () => this.form.reset(),
                 onError: (errors) => {

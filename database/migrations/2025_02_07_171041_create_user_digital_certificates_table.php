@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('clinics', function (Blueprint $table) {
+        Schema::create('user_digital_certificates', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('about');
-            $table->string('address');
-            $table->string('phone');
-            $table->string('email');
-            $table->string('rnc');
+            $table->foreignId('user_id')->constrained()->onDelete('restrict');
+            $table->string('digital_certificate_path');
+            $table->string('public_key_path')->nullable();
+            $table->timestamp('expires_at');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('clinics');
+        Schema::dropIfExists('user_digital_certificates');
     }
 };

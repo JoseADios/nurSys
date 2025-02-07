@@ -32,7 +32,7 @@ class AdmissionPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(['admin', 'recepcionist']);
+        return $user->hasRole(['admin', 'receptionist']);
     }
 
     /**
@@ -43,7 +43,7 @@ class AdmissionPolicy
         if ($user->hasRole('doctor') && $admission->doctor_id == $user->id) {
             return true;
         }
-        return $user->hasRole(['admin', 'nurse', 'recepcionist']);
+        return $user->hasRole(['admin', 'nurse', 'receptionist']);
     }
 
     /**
@@ -51,7 +51,7 @@ class AdmissionPolicy
      */
     public function delete(User $user, Admission $admission): bool
     {
-        return $user->hasRole(['admin', 'recepcionist']);
+        return $user->hasRole(['admin', 'receptionist']);
     }
 
     /**
@@ -59,7 +59,7 @@ class AdmissionPolicy
      */
     public function restore(User $user, Admission $admission): bool
     {
-        return $user->hasRole(['admin', 'recepcionist']);
+        return $user->hasRole(['admin', 'receptionist']);
     }
 
     /**

@@ -14,12 +14,12 @@
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <Link :href="route('medicalOrders.index')"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="font-medium">Volver</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-medium">Volver</span>
                     </Link>
                     <button v-if="medicalOrder.active" @click="recordBeingDeleted = true"
                         class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
@@ -108,9 +108,10 @@
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
 
-                            <button type="submit" @click="submitCreateRecord" class="ml-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                Crear
-            </button>
+                            <button type="submit" @click="submitCreateRecord"
+                                class="ml-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                                Crear
+                            </button>
                         </div>
 
                     </div>
@@ -412,7 +413,9 @@ export default {
             this.isVisibleAdm = !this.isVisibleAdm;
         },
         submitAdmission() {
-            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formAdmission)
+            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formAdmission, {
+                preserveScroll: true
+            })
             this.isVisibleAdm = false
         },
         submit() {
@@ -430,6 +433,7 @@ export default {
         },
         submitCreateRecord() {
 
+
             if (this.medicalOrder.admission.medication_record) {
 
                 this.$inertia.get(route('medicationRecordDetails.create', { medicationRecordId: this.medicalOrder.admission.medication_record.id }))
@@ -440,6 +444,7 @@ export default {
 
 
         },
+
 
         submitUpdateDetail() {
        this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail)
@@ -452,7 +457,9 @@ export default {
                 return;
             }
             this.signatureError = false;
-            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formSignature);
+            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formSignature, {
+                preserveScroll: true
+            });
             this.isVisibleEditSign = false
         },
         openEditModal(detail) {

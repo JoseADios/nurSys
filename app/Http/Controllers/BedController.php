@@ -2,20 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Admission;
 use App\Models\Bed;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class BedController extends Controller
+
+class BedController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:bed.view', only: ['index']),
+            new Middleware('permission:bed.update', only: ['update'])
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $beds = Bed::with(['admission' => function ($query) {
-            $query->where('in_process', true);
+            $query->whereNull('discharged_date');
         }])
             ->orderBy('room', 'asc')
             ->orderBy('number', 'asc')
@@ -67,10 +77,12 @@ class BedController extends Controller
     public function update(Request $request, Bed $bed)
     {
         $validated = $request->validate([
-            'out_of_service' => 'required|boolean'
+            'status' => 'required|string|in:available,cleaning,out_of_service',
         ]);
 
         $bed->update($validated);
+
+        return back()->with('success', 'El registro fue actualizado con éxito.');
     }
 
     /**

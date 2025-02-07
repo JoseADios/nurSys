@@ -59,16 +59,15 @@
                                             class="w-full space-y-1 flex justify-evenly items-end">
 
                                             <!-- crear ingreso -->
-                                            <AccessGate :role="['receptionist', 'admin']">
-                                                <Link v-if="bed.status === 'available'"
-                                                    :href="route('admissions.create', { bed_id: bed.id })"
+                                            <AccessGate :role="['receptionist', 'admin']"
+                                                v-if="bed.status === 'available'">
+                                                <Link :href="route('admissions.create', { bed_id: bed.id })"
                                                     class="text-center h-6 w-8 bg-gray-700 hover:bg-blue-600 text-white rounded-md text-xs transition-colors flex items-center justify-center">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round" class="">
                                                     <path d="M12 5v14M5 12h14" />
                                                 </svg>
-
                                                 </Link>
                                             </AccessGate>
 

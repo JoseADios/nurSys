@@ -10,6 +10,7 @@ use App\Models\Drug;
 use App\Models\DrugRoute;
 use App\Models\DrugDose;
 use App\Models\MedicalOrderDetail;
+use App\Models\MedicalOrder;
 use Inertia\Inertia;
 use App\Models\MedicationRecord;
 use Illuminate\Http\Request;
@@ -123,10 +124,12 @@ class MedicationRecordController extends Controller
     public function show(MedicationRecord $medicationRecord)
     {
         try{
-        $medicationRecord = MedicationRecord::where('id',$medicationRecord->id)->with(['admission.patient','admission.bed','doctor','medicationRecordDetail','admission.medicalOrders'])->first();
-        $details = MedicationRecordDetail::where('medication_record_id', operator: $medicationRecord->id)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+        $medicationRecord->load(['admission.patient','admission.bed','doctor','medicationRecordDetail','admission.medicalOrders']);
+        $allMedicalOrders = MedicalOrder::where('active',true)->where('admission_id',$medicationRecord->admission->id)->pluck('id');
+        $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->whereIn('medication_record_id',$allMedicalOrders)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
 
-        $order = MedicalOrderDetail::whereIn('medical_order_id', $medicationRecord->admission->medicalOrders->pluck('id'))->get();
+        $orderDetails = MedicalOrderDetail::whereIn('medical_order_id',$allMedicalOrders)->get();
+
         $drug = Drug::all();
         $route = DrugRoute::all();
         $dose = DrugDose::all();
@@ -136,7 +139,7 @@ class MedicationRecordController extends Controller
                 return Inertia::render('MedicationRecords/Show', [
                     'medicationRecord' => $medicationRecord,
                     'details' => $details,
-                    'order' => $order,
+                    'order' => $orderDetails,
                     'drug' =>$drug,
                     'dose' => $dose,
                     'routeOptions' => $route

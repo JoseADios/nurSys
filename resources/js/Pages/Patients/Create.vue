@@ -51,20 +51,8 @@
 
                         <!-- Teléfono -->
                         <div>
-                            <label for="phone" class="block text-sm font-medium text-white">Teléfono</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                    </svg>
-                                </div>
-                                <input type="tel" id="phone" v-model="form.phone"
-                                    class="block p-2.5 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    pattern="[0-9]{3}[0-9]{3}[0-9]{4}" placeholder="123-456-7890" required>
-                                <InputError :message="form.errors.phone" class="mt-2" />
-                            </div>
+                            <PhoneInput v-model="form.phone" />
+                            <InputError :message="form.errors.phone" class="mt-2" />
                         </div>
                     </div>
                 </div>
@@ -83,23 +71,22 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Cédula -->
                         <div>
-                            <label for="identification_card" class="block text-sm font-medium text-white">Cédula</label>
-                            <input type="text" id="identification_card" v-model="form.identification_card"
-                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required>
+                            <CedulaInput v-model="form.identification_card" />
                             <InputError :message="form.errors.identification_card" class="mt-2" />
                         </div>
 
                         <!-- Nacionalidad -->
                         <div>
                             <label for="nationality" class="block text-sm font-medium text-white">Nacionalidad</label>
-                            <select id="nationality" v-model="form.nationality"
+                            <input list="options" id="nationality" v-model="form.nationality"
                                 class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
+                            <datalist id="options">
                                 <option v-for="nationality in nationalities" :key="nationality.id">
                                     {{ nationality.name }}
                                 </option>
-                            </select>
+                            </datalist>
+                            </input>
                             <InputError :message="form.errors.nationality" class="mt-2" />
                         </div>
                     </div>
@@ -186,8 +173,7 @@
                         <div>
                             <label for="ars" class="block text-sm font-medium text-white">ARS</label>
                             <select id="ars" v-model="form.ars"
-                            class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            >
+                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                 <option value="">Ninguno</option>
                                 <option v-for="ars in arss" :key="ars.id">
                                     {{ ars.name }}
@@ -203,8 +189,8 @@
                 <div class="px-6 py-4 bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
                     <Link :href="route('patients.index')"
                         class="px-4 py-2 text-sm font-medium text-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                        Cancelar
-                </Link>
+                    Cancelar
+                    </Link>
                     <button type="submit"
                         class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Guardar
@@ -219,6 +205,8 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
+import CedulaInput from '@/Components/CedulaInput.vue';
+import PhoneInput from '@/Components/PhoneInput.vue';
 
 export default {
     props: {
@@ -230,22 +218,24 @@ export default {
         AppLayout,
         Link,
         InputError,
+        CedulaInput,
+        PhoneInput,
     },
     data() {
         return {
             form: useForm({
-                first_name: null,
-                first_surname: null,
-                second_surname: null,
-                phone: null,
-                identification_card: null,
-                nationality: null,
-                email: null,
-                birthdate: null,
-                position: null,
-                marital_status: null,
-                address: null,
-                ars: null,
+                first_name: '',
+                first_surname: '',
+                second_surname: '',
+                phone: '',
+                identification_card: '',
+                nationality: '',
+                email: '',
+                birthdate: '',
+                position: '',
+                marital_status: '',
+                address: '',
+                ars: '',
             })
         }
     },

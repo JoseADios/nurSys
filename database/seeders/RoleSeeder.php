@@ -22,7 +22,7 @@ class RoleSeeder extends Seeder
             'name' => 'doctor'
         ]);
         Role::create([
-            'name' => 'recepcionist'
+            'name' => 'receptionist'
         ]);
         Role::create([
             'name' => 'nurse'
@@ -36,17 +36,34 @@ class RoleSeeder extends Seeder
         $role->syncPermissions([
             'admission.view',
             'medicalOrder.view',
-            'medicalOrder.create'
+            'medicalOrder.create',
+            'temperatureRecord.view',
+            'temperatureDetail.view',
+            'bed.view',
+            'patient.view',
+            'patient.create',
+            'patient.update',
         ]);
 
-        $role = Role::findByName('recepcionist');
+        $role = Role::findByName('receptionist');
         $role->syncPermissions([
             'admission.*',
+            'bed.view',
+            'patient.view',
+            'patient.create',
+            'patient.update',
         ]);
 
         $role = Role::findByName('nurse');
         $role->syncPermissions([
             'admission.view',
+            'temperatureRecord.view',
+            'temperatureRecord.create',
+            'temperatureRecord.update',
+            'temperatureDetail.*',
+            'bed.view',
+            'bed.update',
+            'patient.view',
         ]);
 
         $user = User::where('name', 'Test User')->first();

@@ -11,9 +11,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
+use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class PatientController extends Controller
+class PatientController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:patient.view', only: ['index', 'show']),
+            new Middleware('permission:patient.create', only: ['create', 'store']),
+            new Middleware('permission:patient.update', only: [ 'edit', 'update']),
+            new Middleware('permission:patient.delete', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -21,28 +35,41 @@ class PatientController extends Controller
     {
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
+        $days = $request->integer('days');
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
 
-        // Construir la consulta base
         $query = Patient::query();
 
         if ($showDeleted) {
-            $query->where('active', false); // Mostrar solo los registros activos
+            $query->where('patients.active', false);
         } else {
-            $query->where('active', true); // Mostrar solo los registros activos
+            $query->where('patients.active', true);
         }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', '%' . $search . '%')
-                    ->orWhere('first_surname', 'like', '%' . $search . '%')
-                    ->orWhere('second_surname', 'like', '%' . $search . '%')
-                    ->orWhere('phone', 'like', '%' . $search . '%')
-                    ->orWhere('identification_card', 'like', '%' . $search . '%')
-                    ->orWhere('nationality', 'like', '%' . $search . '%');
+                $q->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $search . '%'])
+                    ->orWhere('patients.phone', 'like', '%' . $search . '%')
+                    ->orWhere('patients.identification_card', 'like', '%' . $search . '%')
+                    ->orWhere('patients.nationality', 'like', '%' . $search . '%');
             });
         }
 
-        $patients = $query->orderBy('updated_at', 'desc')->paginate(10);
+        if ($days) {
+            $query->where('patients.created_at', '>=', now()->subDays($days));
+        }
+
+        if ($sortField === 'is_hospitalized') {
+            $patients = $query->leftJoin('admissions', 'patients.id', '=', 'admissions.patient_id')
+                ->select('patients.*')
+                ->groupBy('patients.id')
+                ->orderByRaw('MAX(admissions.discharged_date IS NULL) ' . $sortDirection)->paginate(10);
+        } elseif ($sortField) {
+            $patients = $query->orderBy($sortField, $sortDirection)->paginate(10);
+        } else {
+            $patients = $query->orderBy('patients.updated_at', 'desc')->paginate(10);
+        }
 
         $patients->getCollection()->transform(function ($patient) {
             $patient->is_hospitalized = !$patient->isAvailable();
@@ -54,6 +81,9 @@ class PatientController extends Controller
             'filters' => [
                 'search' => $search,
                 'show_deleted' => $showDeleted,
+                'days' => $days,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection,
             ]
         ]);
     }
@@ -108,7 +138,7 @@ class PatientController extends Controller
         $inProcessAdmssion = null;
         if (!$patient->isAvailable()) {
             $inProcessAdmssion = Admission::where('patient_id', $patient->id)
-                ->where('in_process', true)
+                ->whereNull('discharged_date')
                 ->value('id');
         }
 

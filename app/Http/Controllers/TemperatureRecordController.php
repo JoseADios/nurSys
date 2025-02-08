@@ -13,9 +13,25 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\URL;
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class TemperatureRecordController extends Controller
+class TemperatureRecordController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:temperatureRecord.view', only: ['index', 'show']),
+            new Middleware('permission:temperatureRecord.create', only: ['edit', 'store']),
+            new Middleware('permission:temperatureRecord.update', only: ['update']),
+            new Middleware('permission:temperatureRecord.delete', only: ['destroy']),
+        ];
+    }
 
     /**
      * Display a listing of the resource.
@@ -25,6 +41,9 @@ class TemperatureRecordController extends Controller
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
         $admissionId = $request->integer('admission_id');
+        $days = $request->integer('days');
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
 
         $query = TemperatureRecord::query()
             ->with([
@@ -35,11 +54,9 @@ class TemperatureRecordController extends Controller
             ->select('temperature_records.*')
             ->join('admissions', 'temperature_records.admission_id', '=', 'admissions.id')
             ->join('patients', 'admissions.patient_id', '=', 'patients.id')
-            ->join('beds', 'admissions.bed_id', '=', 'beds.id')
+            ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
             ->join('users', 'temperature_records.nurse_id', '=', 'users.id')
-            ->where('temperature_records.active', !$showDeleted)
-            ->latest('temperature_records.updated_at')
-            ->latest('temperature_records.created_at');
+            ->where('temperature_records.active', !$showDeleted);
 
         if ($search) {
             $query->where(function (Builder $query) use ($search) {
@@ -52,13 +69,40 @@ class TemperatureRecordController extends Controller
         if ($admissionId) {
             $query->where('temperature_records.admission_id', $admissionId);
         }
-        // dd($showDeleted);
+
+        if ($days) {
+            $query->where('temperature_records.created_at', '>=', now()->subDays($days));
+        }
+
+        if ($sortField == 'in_process') {
+            $query->orderByRaw('CASE WHEN admissions.discharged_date IS NULL THEN 0 ELSE 1 END ' . $sortDirection);
+        } elseif ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->latest('temperature_records.updated_at')
+                ->latest('temperature_records.created_at');
+        }
+
+        $temperatureRecords = $query->paginate(10);
+
+        $temperatureRecords->getCollection()->transform(function ($record) {
+            if ($record->admission->discharged_date != null) {
+                $record->in_process = false;
+            } else {
+                $record->in_process = true;
+            }
+            return $record;
+        });
+
         return Inertia::render('TemperatureRecords/Index', [
-            'temperatureRecords' => $query->paginate(10),
+            'temperatureRecords' => $temperatureRecords,
             'filters' => [
                 'search' => $search,
                 'show_deleted' => $showDeleted,
                 'admission_id' => $admissionId,
+                'days' => $days,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection,
             ]
         ]);
     }
@@ -102,48 +146,43 @@ class TemperatureRecordController extends Controller
     public function show($id, $admission_id = null)
     {
         $turnService = new TurnService();
-        $currentTurn = $turnService->getCurrentTurn();
-        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+        $dateRange = $turnService->getDateRangeForTurn($turnService->getCurrentTurn());
+        $user = User::find(Auth::id());
 
-        if ($admission_id) {
-            $temperatureRecord = TemperatureRecord::where('admission_id', $admission_id)
-                ->where('active', 1)
-                ->first();
-        } else {
-            $temperatureRecord = TemperatureRecord::find($id);
-        }
+        $temperatureRecord = $admission_id
+            ? TemperatureRecord::where('admission_id', $admission_id)->where('active', 1)->first()
+            : TemperatureRecord::find($id);
 
         if (!$temperatureRecord) {
-            return Redirect::route('temperatureRecords.create', [
-                'admission_id' => $admission_id
-            ]);
-        }
-
-        $canCreateDetail = true;
-
-        $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-            ->whereBetween('created_at', [
-                $dateRange['start'],
-                $dateRange['end']
-            ])
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-
-        if ($lastTemperature) {
-            $canCreateDetail = false;
-
-            if ($lastTemperature->nurse_id != Auth::id()) {
-                $lastTemperature = null;
-            }
+            return Redirect::route('temperatureRecords.create', ['admission_id' => $admission_id]);
         }
 
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
-        $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
+
+        $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+            ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        $canCreateDetail = !$lastTemperature;
+        $canUpdateSignature = $temperatureRecord->nurse_id == Auth::id() || $user->hasRole('admin');
+
+        if ($lastTemperature && $lastTemperature->nurse_id != Auth::id()) {
+            $lastTemperature = null;
+        }
+
+        $allTemperatureRecords = TemperatureRecord::where('active', true)
+            ->whereNot('admission_id', $temperatureRecord->admission_id)
+            ->pluck('admission_id');
+
+        $admissions = Admission::where('active', true)
+            ->with('patient', 'bed')
+            ->whereNotIn('id', $allTemperatureRecords)
+            ->whereNull('discharged_date')
+            ->get();
+
         $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-            ->with(['nurse' => function ($query) {
-                $query->select('id', 'name', 'last_name');
-            }])
+            ->with(['nurse:id,name,last_name']) // Especificar solo las columnas necesarias
             ->orderBy('created_at', 'asc')
             ->get(['temperature', 'evacuations', 'urinations', 'nurse_id', 'created_at']);
 
@@ -153,9 +192,11 @@ class TemperatureRecordController extends Controller
             'details' => $details,
             'lastTemperature' => $lastTemperature,
             'canCreateDetail' => $canCreateDetail,
+            'canUpdateSignature' => $canUpdateSignature,
             'previousUrl' => URL::previous(),
         ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -171,21 +212,39 @@ class TemperatureRecordController extends Controller
     public function update(Request $request, TemperatureRecord $temperatureRecord)
     {
         $firmService = new FirmService;
+        $user = User::find(Auth::id());
+
         $validated = $request->validate([
-            'admission_id' => 'numeric',
-            'impression_diagnosis' => 'string',
-            'nurse_sign' => 'string',
-            'active' => 'boolean'
+            'admission_id' => 'numeric|nullable',
+            'impression_diagnosis' => 'string|nullable',
+            'nurse_sign' => 'string|nullable',
+            'active' => 'boolean|nullable'
         ]);
 
-        if ($request->signature) {
+        // si encuentra uno relacionado al ingreso nuevo o al ingreso actual
+        if ($request->has('admission_id')) {
+            $admission = Admission::find($request->admission_id);
+        } else {
+            $admission = $temperatureRecord->admission;
+        }
+
+        $tempRecordAdm = TemperatureRecord::where('admission_id', $admission->id)
+            ->whereNot('id', $temperatureRecord->id)
+            ->where('active', true)->get();
+
+        if (!$tempRecordAdm->isEmpty()) {
+            return back()->withErrors('error', 'El ingreso al que quiere asignar este registro ya posee una hoja de temperatura');
+        }
+
+        if (($request->signature && $temperatureRecord->nurse_id == Auth::id()) || $user->hasRole(['admin'])) {
             $fileName = $firmService
                 ->createImag($request->nurse_sign, $temperatureRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
+        } else {
+            return abort(403, 'Acción inautorizada.');
         }
 
         $temperatureRecord->update($validated);
-
 
         return back()->with('succes', 'Registro actualizado correctamente');
     }

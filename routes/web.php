@@ -36,35 +36,39 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
     Route::resource('admissions', AdmissionController::class);
     Route::put('/admissions/{admission}/restore', [AdmissionController::class, 'restore'])->name('admissions.restore');
+
     Route::resource('medicationRecords', MedicationRecordController::class);
-
-
     Route::resource('medicationRecordDetails', MedicationRecordDetailController::class);
     Route::resource('medicationNotification', MedicationNotificationController::class);
+
     Route::resource('nurseRecords', NurseRecordController::class);
     Route::resource('nurseRecordDetails', NurseRecordDetailController::class);
+
+    Route::get('/medication-record-details/create/{medicationRecordId}', [MedicationRecordDetailController::class, 'create'])
+        ->name('medicationRecordDetails.create');
     Route::resource('medicalOrders', MedicalOrderController::class);
     Route::resource('medicalOrderDetails', MedicalOrderDetailController::class);
+
     Route::resource('temperatureRecords', TemperatureRecordController::class);
     Route::get('temperatureRecords/{id}/{admission_id?}', [TemperatureRecordController::class, 'show'])
         ->name('temperatureRecords.customShow');
     Route::resource('temperatureDetails', TemperatureDetailController::class);
+
     Route::resource('patients', PatientController::class);
-    Route::resource('users', UserController::class);
+
     Route::resource('Drugs', DrugController::class);
     Route::resource('Diet', DietController::class);
+    Route::resource('beds', BedController::class);
+
     Route::group(['middleware' => ['role:admin']], function () {
         Route::resource('users', UserController::class);
     });
-    Route::resource('beds', BedController::class);
-    Route::get('/medication-record-details/create/{medicationRecordId}', [MedicationRecordDetailController::class, 'create'])
-    ->name('medicationRecordDetails.create');
-
 
 });

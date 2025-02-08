@@ -13,13 +13,13 @@
             </button>
 
             <div class="flex">
-                <div v-if="admission.in_process">
+                <div v-if="admission.discharged_date == null">
                     <button type="button" @click="discharge"
                         class="self-end focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
                         Dar de Alta
                     </button>
                 </div>
-                <div v-if="!admission.in_process">
+                <div v-if="admission.discharged_date != null">
                     <button type="button" @click="charge"
                         class="self-end focus:outline-none text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-900">
                         Poner en progreso
@@ -46,15 +46,13 @@
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
-                <label for="bed"
-                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Ubicación</label>
-                <select id="bed" v-model="form.bed_id"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option :value="bed.id" v-for="bed in beds" :key="bed.id" :selected="bed.id === admission.bed_id">
-                        Cama {{ bed.number }} - Cuarto {{ bed.room }}
-                    </option>
-                </select>
-                <InputError :message="form.errors.bed_id" class="mt-2" />
+                <BedSelector
+                    :beds="beds"
+                    :errors="form.errors"
+                    :initialBedId="form.bed_id"
+                    @update:bedId="form.bed_id = $event"
+                />
+
                 <AccessGate :except-role="['nurse']">
                     <label for="patient"
                         class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Paciente</label>
@@ -128,6 +126,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import { useGoBack } from '@/composables/useGoBack';
 import InputError from '@/Components/InputError.vue';
+import BedSelector from '@/Components/BedSelector.vue';
 
 export default {
     props: {
@@ -142,6 +141,7 @@ export default {
         Link,
         AccessGate,
         InputError,
+        BedSelector
     },
     data() {
         return {
@@ -167,7 +167,7 @@ export default {
         submitProcess(value) {
             this.$inertia.put(route('admissions.update', this.admission.id), {
                 patient_id: this.admission.patient_id,
-                in_process: value
+                discharged_date: value
             }, {
                 onError: (errors) => {
                     this.form.errors = errors;
@@ -175,10 +175,10 @@ export default {
             })
         },
         discharge() {
-            this.submitProcess(0)
+            this.submitProcess(new Date().toISOString())
         },
         charge() {
-            this.submitProcess(1)
+            this.submitProcess(null)
         },
         confirmDelete() {
             if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {

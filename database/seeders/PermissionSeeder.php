@@ -21,6 +21,13 @@ class PermissionSeeder extends Seeder
             'admission.view',
             'admission.delete',
 
+            // bed
+            'bed.*',
+            'bed.create',
+            'bed.update',
+            'bed.view',
+            'bed.delete',
+
             // medical orders
             'medicalOrder.*',
             'medicalOrder.create',
@@ -90,6 +97,13 @@ class PermissionSeeder extends Seeder
             'temperatureRecord.update',
             'temperatureRecord.view',
             'temperatureRecord.delete',
+
+            // user
+            'user.*',
+            'user.create',
+            'user.update',
+            'user.view',
+            'user.delete',
         ];
 
         foreach ($permissions as $permission) {

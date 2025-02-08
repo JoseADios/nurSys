@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('admission_dx');
             $table->string('final_dx')->nullable();
             $table->text('comment')->nullable();
-            $table->boolean('in_process')->default(true);
+            $table->datetime('discharged_date')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

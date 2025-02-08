@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Fortify\PasswordValidationRules;
+use App\Models\ClinicArea;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -31,11 +31,13 @@ class UserController extends Controller
         $specialty = $request->input('specialty');
         $position = $request->input('position');
         $area = $request->input('area');
-        $showDeleted = $request->boolean('show_deleted');
+        $show_deleted = $request->boolean('show_deleted');
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
 
         $query = User::query();
 
-        if ($showDeleted) {
+        if ($show_deleted) {
             $query->where('active', false);
         } else {
             $query->where('active', true);
@@ -63,7 +65,19 @@ class UserController extends Controller
             $query->where('area', 'like', '%' . $area . '%');
         }
 
-        $users = $query->with('roles')->orderBy('updated_at', 'desc')->paginate(10);
+        // Ordenamiento
+        if ($sortField === 'role') {
+            $query->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->orderBy('roles.name', $sortDirection)
+                ->select('users.*');
+        } elseif ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->orderBy('updated_at', 'desc');
+        }
+
+        $users = $query->with('roles')->paginate(10);
 
         return Inertia::render('Users/Index', [
             'users' => $users,
@@ -73,7 +87,9 @@ class UserController extends Controller
                 'specialty' => $specialty,
                 'position' => $position,
                 'area' => $area,
-                'show_deleted' => $showDeleted,
+                'show_deleted' => $show_deleted,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection,
             ],
         ]);
     }
@@ -84,8 +100,10 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::orderBy('name', 'asc')->get();
+        $areas = ClinicArea::all();
         return Inertia::render('Users/Create', [
             'roles' => $roles,
+            'areas' => $areas,
             'previousUrl' => URL::previous(),
         ]);
     }
@@ -102,11 +120,11 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => array_merge($this->passwordRules(), ['confirmed']),
             'password_confirmation' => ['required'],
-            'identification_card' => ['required', 'string', 'max:255', 'unique:users'],
+            'identification_card' => ['required', 'digits:10', 'unique:users'],
             'exequatur' => ['required', 'string', 'max:255', 'unique:users'],
             'specialty' => ['required', 'string', 'max:255'],
             'area' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'digits:10'],
             'address' => ['required', 'string', 'max:255'],
             'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
             'position' => ['required', 'string', 'max:255'],
@@ -147,9 +165,11 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $hasRoles = $user->getRoleNames();
+        $areas = ClinicArea::all();
         $roles = Role::orderBy('name', 'asc')->get();
         return Inertia::render('Users/Edit', [
             'user' => $user,
+            'areas' => $areas,
             'roles' => $roles,
             'hasRoles' => $hasRoles,
             'previousUrl' => URL::previous(),
@@ -162,28 +182,33 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         if ($request->has('active')) {
+
             $validated = Validator::make($request->all(), [
                 'active' => 'boolean'
             ])->validate();
+
         } elseif ($request->has('password')) {
+
             $validated = Validator::make($request->all(), [
                 'password' => $this->passwordRules(),
             ])->validate();
+
             $user->update(attributes: [
                 'password' => Hash::make($validated['password']),
             ]);
-            return Redirect::route('users.index', $user->id)->with('success', 'Password updated successfully.');
+
+            return back()->with('success', 'Password updated successfully.');
         } else {
             $validated = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
                 'last_name' => ['required', 'string', 'max:255'],
                 'role' => ['required', 'string', 'max:255', Rule::exists('roles', 'name')],
                 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-                'identification_card' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+                'identification_card' => ['required', 'digits:10', Rule::unique('users')->ignore($user->id)],
                 'exequatur' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
                 'specialty' => ['required', 'string', 'max:255'],
                 'area' => ['required', 'string', 'max:255'],
-                'phone' => ['required', 'string', 'max:255'],
+                'phone' => ['required', 'digits:10'],
                 'address' => ['required', 'string', 'max:255'],
                 'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
                 'position' => ['required', 'string', 'max:255'],
@@ -193,9 +218,11 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        $user->syncRoles($request->role);
+        if ($request->has('role')) {
+            $user->syncRoles($request->role);
+        }
 
-        return Redirect::route('users.index', $user->id)->with('success', 'User updated successfully.');
+        return back()->with('success', 'User updated successfully.');
     }
 
     /**
@@ -204,6 +231,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->update(['active' => false]);
-        return Redirect::route('users.index');
+        DB::table('sessions')->where('user_id', $user->id)->delete();
+        return Redirect::route('users.index')->with('success', 'Usuario desactivado y sesión cerrada.');;
     }
 }

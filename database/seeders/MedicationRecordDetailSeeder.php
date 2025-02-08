@@ -26,17 +26,6 @@ class MedicationRecordDetailSeeder extends Seeder
             'medical_order_detail_id'=>1
         ]);
 
-        // Puedes agregar más registros de la misma forma
-        MedicationRecordDetail::create([
-            'medication_record_id' => 2,
-            'drug' => 'Paracetamol',
-            'dose' => '200cc',
-            'route' => 'Intra Venosa',
-            'fc' => 1,
-            'start_time' => now(),
-            'interval_in_hours' => 2,
-            'active' => true,
-            'medical_order_detail_id'=>2
-        ]);
+
     }
 }

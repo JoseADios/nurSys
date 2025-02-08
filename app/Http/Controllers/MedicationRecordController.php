@@ -126,9 +126,9 @@ class MedicationRecordController extends Controller
         try{
         $medicationRecord->load(['admission.patient','admission.bed','doctor','medicationRecordDetail','admission.medicalOrders']);
         $allMedicalOrders = MedicalOrder::where('active',true)->where('admission_id',$medicationRecord->admission->id)->pluck('id');
-        $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->whereIn('medication_record_id',$allMedicalOrders)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+        $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
 
-        $orderDetails = MedicalOrderDetail::whereIn('medical_order_id',$allMedicalOrders)->get();
+        $orderDetails = MedicalOrderDetail::whereIn('medical_order_id',$allMedicalOrders)->whereNull('suspended_at')->get();
 
         $drug = Drug::all();
         $route = DrugRoute::all();

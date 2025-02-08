@@ -79,13 +79,165 @@
                 <div class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
                     <div>
-                        <Link :href="route('medicationRecordDetails.create',medicationRecord.id)"
+                        <button @click="OpenFormCreateRecord"
                             class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                 transition-colors duration-300">
                             Agregar Detalle
-                        </Link>
+                        </button>
                     </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:mx-10 mt-6 hidden" id="formcreaterecord">
+        <!-- Tarjeta para información del Medical Order -->
+        <div class="relative overflow-hidden rounded-lg shadow-md bg-white dark:bg-gray-800 mb-5">
+
+                        <div class="max-h-80 overflow-y-auto  shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
+                            <div
+  v-for="orders in order"
+  :key="orders.id"
+  :value="orders.description"
+  @click="selectOrder(orders.id)"
+  :class="{
+    'bg-blue-500 text-white': selectedOrderId === orders.id && !orders.suspended_at,
+    'bg-white dark:bg-gray-800': selectedOrderId !== orders.id && !orders.suspended_at,
+
+
+
+}"
+  class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200"
+>
+
+  <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
+    {{ orders.id }} - Orden
+  </h3>
+  <p class="text-lg font-semibold text-gray-900 dark:text-white">
+    {{ orders.order }} <br />
+    <!-- Mostrar régimen solo si la orden está seleccionada -->
+    <span v-if="selectedOrderId === orders.id" class="text-lg font-semibold text-gray-900 dark:text-white">
+      Régimen: {{ orders.regime }}
+    </span>
+  </p>
+</div>
+
+  </div>
+
+
+
+                <!-- Espacio del detalle de Medical Orders -->
+
+        </div>
+                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg   lg:mx-10">
+            <form @submit.prevent="submit" class="max-w-sm mx-auto">
+
+
+
+           <!-- Contenedor para la Medicamento y el selector -->
+<div class="flex justify-between items-center mt-6">
+    <input type="hidden" v-model="form.selectedOrderId" />
+
+    <!-- Selector de Medicamento -->
+    <div class="w-2/3 mb-2">
+        <label for="drug-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Medicamento
+        </label>
+        <select id="drug-select" required v-model="form.drug"
+            class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option v-for="drugs in drug" :key="drugs.id" :value="drugs.description">
+                {{ drugs.name }} - {{ drugs.description }}
+            </option>
+        </select>
+    </div>
+
+    <!-- Botón Crear Medicamento -->
+    <button @click="openCreateModal"
+        class="ml-2 mt-3 flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+
+        <span class="font-medium">Crear Medicamento</span>
+    </button>
+</div>
+
+
+                  <!-- Contenedor para la Via y el selector -->
+
+                    <!-- Selector -->
+                    <div class="flex-1">
+                        <label for="route-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Via
+                        </label>
+                        <select id="route-select" required v-model="form.route"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option v-for="routes in routeOptions" :key="routes.id" :value="routes.description">
+                            {{ routes.name }} - {{ routes.description }}
+                        </option>
+                    </select>
+
+                    </div>
+
+                 <!-- Contenedor para la Dosis y el selector -->
+                 <div class="flex items-center space-x-4 mt-6">
+                    <!-- Dosis -->
+                    <div class="flex-1">
+                        <label for="dose" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Dosis
+                        </label>
+                        <input  id="dose" required type="text" v-model="form.dose"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Escribe la Dosis asignada..." />
+                    </div>
+                    <!-- Selector -->
+                    <div class="flex-1">
+                        <label for="dose-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Dosis
+                        </label>
+                        <select id="dose-select" required v-model="form.dose_metric"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option v-for="doses in dose" :key="doses.id" :value="doses.name">
+                            {{ doses.name }} - {{ doses.description }}
+                        </option>
+                    </select>
+
+                    </div>
+                </div>
+
+                <!-- Estudios Pendientes -->
+                <label for="fc" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
+                    Frecuencia
+                </label>
+                <input  id="fc" rows="4" required v-model="form.fc"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Escribe los estudios pendientes..."></input>
+
+                <!-- Firma del Doctor -->
+                <label for="interval_in_hours" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
+                    Intervalo en Horas
+                </label>
+                <input required id="interval_in_hours" type="text" v-model="form.interval_in_hours"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Intervalo en Horas..." />
+
+                     <!-- Hora de Inicio -->
+                <label for="start_time" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
+                    Hora de Inicio
+                </label>
+                <input required id="start_time" type="time" v-model="form.start_time"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Hora de Inicio..." />
+
+                <!-- Botones -->
+                <div class="flex justify-end mt-6 mb-2">
+                    <button @click="closeform"
+                        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        Cerrar
+                    </button>
+
+                    <button type="submit"
+                        class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+        </div>
                 </div>
 
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
@@ -173,6 +325,7 @@
                 </div>
             </div>
         </div>
+
     </AppLayout>
 </template>
 
@@ -184,15 +337,39 @@ import { Link } from '@inertiajs/vue3';
 export default{
     props: {
         medicationRecord: Object,
-        details: Array
+        details: Array,
+        order: Object,
+        drug: Array,
+        routeOptions: Array,
+        dose: Array
     },
     components: {
         AppLayout,
         Link,
     },
+    data(){
+        return{
+            form: {
+                medication_record_id: this.medicationRecord.id,
+                drug: '',
+                dose: '',
+                route: '',
+                fc: '',
+                interval_in_hours: '',
+                start_time: '',
+                dose_metric: '',
+                selectedOrderId: null,
 
+            },
+            selectedOrderId: null
+        }
+    },
     methods: {
         submit() {
+            if (!this.form.selectedOrderId) {
+            alert("Debe seleccionar una orden antes de guardar.")
+            return;
+        }
             this.$inertia.post(route('medicationRecordDetails.store'),
                 this.form,
                 {
@@ -203,11 +380,21 @@ export default{
                             dose: '',
                             route: '',
                             fc: '',
-                            interval_in_hours: ''
+                            interval_in_hours: '',
+                            selectedOrderId: null,
                         };
+                        this.selectedOrderId = null;
+                        let form_div = document.getElementById('formcreaterecord');
+                         form_div.classList.add("hidden");
                     }
+
                 });
+
             },
+            selectOrder(id) {
+                this.selectedOrderId = id;
+                this.form.selectedOrderId = id;
+    },
             hasApplied(detail){
                 return detail.medication_notification?.some(item => item.applied === 1) ?? false;
             },
@@ -229,6 +416,16 @@ export default{
 
     return false;
 },
+ OpenFormCreateRecord() {
+    let form_div = document.getElementById('formcreaterecord');
+    form_div.classList.remove("hidden");
+},
+closeform(){
+    let form_div = document.getElementById('formcreaterecord');
+    form_div.classList.add("hidden");
+},
+
+
 ToggleActivate(detail) {
         if (!detail.active) {
 
@@ -262,3 +459,9 @@ ToggleActivate(detail) {
 }
 
 </script>
+<style scoped>
+
+.max-h-80 {
+  max-height: 600px;
+}
+</style>

@@ -7,9 +7,9 @@
     </template>
 
     <div class="flex flex-col items-center justify-center mt-10">
-        <button @click="openCreateModal(record)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+        <Link as="button" :href="route('medicationRecords.create')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
             Crear Nueva Ficha Medica
-        </button>
+        </Link>
     </div>
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
@@ -87,44 +87,7 @@
         </template>
     </ConfirmationModal>
 
-    <DialogModal :show="isVisibleRecord" @close="isVisibleRecord = false">
-        <!-- Header del modal -->
-        <template #title>
-            Crear Ficha de Medicamento
-        </template>
 
-        <!-- Contenido del modal -->
-        <template #content>
-            <div class="">
-                <form>
-                    <div class="grid md:grid-cols-[2fr_1fr] gap-4">
-                        <div>
-                            <label for="orden" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Admisión
-                            </label>
-                            <select id="order" v-model="selectedRecord.admission" class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <option :value="admissions.id" v-for="admissions in admission" :key="admissions.id">
-                                    {{ admissions.id }} - {{ admissions.patient.first_name }} {{ admissions.patient.last_name }}
-                                </option>
-                            </select>
-
-                        </div>
-
-                    </div>
-                </form>
-            </div>
-        </template>
-
-        <!-- Footer del modal -->
-        <template #footer>
-            <button type="submit" @click="submitCreateRecord" class="ml-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                Crear
-            </button>
-            <button type="button" @click="isVisibleRecord = false" class="py-2.5  ml-2 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                Cerrar
-            </button>
-        </template>
-    </DialogModal>
 
 </AppLayout>
 </template>
@@ -134,14 +97,12 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import DialogModal from '@/Components/DialogModal.vue';
+
 import {
     Link
 } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
-import {
-    ref
-} from 'vue';
+
 export default {
     props: {
         medicationRecords: Array,
@@ -155,18 +116,16 @@ export default {
         DangerButton,
         SecondaryButton,
         Pagination,
-        DialogModal,
+
     },
     data() {
         return {
-            recordBeingDisabled: null,
+
             form: {
                 search: this.filters.search || '',
             },
             timeout: 1000,
 
-            selectedRecord: ref(null),
-            isVisibleRecord: ref(false),
 
         }
     },
@@ -181,15 +140,7 @@ export default {
             });
         },
 
-        submitCreateRecord() {
-            this.$inertia.get(route('medicationRecords.create', this.selectedRecord))
-        },
-        openCreateModal(record) {
-            this.selectedRecord = {
-                ...record
-            };
-            this.isVisibleRecord = true;
-        },
+
 
         MedicationRecordShow(id) {
             this.$inertia.get(route('medicationRecords.show', id));

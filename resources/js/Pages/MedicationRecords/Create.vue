@@ -19,46 +19,23 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:mx-10 mt-6 ">
-        <!-- Tarjeta para información del Medical Order -->
-        <div class="relative overflow-hidden rounded-lg shadow-md bg-white dark:bg-gray-800 mb-5">
-            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ admission.id }}
-                            </p>
-                        </div>
-            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ admission.patient.first_name }} {{
-                                    admission.patient.first_surname
-                                }} {{ admission.patient.second_surname }}
-                            </p>
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Sala</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                Sala {{ admission.bed.room }}, Cama {{ admission.bed.number }}
-                            </p>
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ admission.doctor.name }} {{ admission.doctor.last_name }}
-                            </p>
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ admission.created_at }} {{ admission.created_at }}
-                            </p>
-                        </div>
-        </div>
+
 
         <!-- Formulario -->
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
+                   <!-- Diagnóstico -->
+                  <!-- Selector -->
+
+                        <label for="diet-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Admission ID
+                        </label>
+                        <select id="diet-select" v-model="form.admission_id" required class="text-sm font-medium w-full text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100  p-2.5 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                            <option v-for="admissions in admission" :key="admissions.id" :value="admissions.id">
+                                {{ admissions.id }} - {{ admissions.patient.first_name }} {{ admissions.patient.first_surname  }} {{ admissions.patient.second_surname  }}
+                            </option>
+                        </select>
+
                 <!-- Diagnóstico -->
                 <label for="diagnosis" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
                     Diagnóstico
@@ -120,10 +97,10 @@
                     <button type="submit" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
                         Guardar
                     </button>
+
                 </div>
             </form>
         </div>
-    </div>
 
     <DialogModal :show="isVisible" @close="isVisible = false" class="">
         <!-- Header del modal -->
@@ -191,7 +168,7 @@ export default {
         return {
             isVisible: false,
             form: {
-                admission_id: this.admission.id,
+                admission_id: '',
                 diagnosis: '',
                 diet: '',
                 referrals: '',
@@ -211,6 +188,7 @@ export default {
         },
         openCreateModal() {
             this.isVisible = true;
+
         },
         submitModal() {
 

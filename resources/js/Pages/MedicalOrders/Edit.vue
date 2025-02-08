@@ -432,10 +432,22 @@ export default {
                 });
         },
         submitCreateRecord() {
-            this.$inertia.get(route('medicationRecords.create', { admission: this.medicalOrder.admission.id }))
+
+
+            if (this.medicalOrder.admission.medication_record) {
+
+                this.$inertia.get(route('medicationRecordDetails.create', { medicationRecordId: this.medicalOrder.admission.medication_record.id }))
+            }else{
+                alert('create record')
+                this.$inertia.get(route('medicationRecords.create', { admission: this.medicalOrder.admission.id }))
+            }
+
+
         },
+
+
         submitUpdateDetail() {
-            this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail)
+       this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail)
             this.isVisibleAdm = false
             this.isVisibleDetail = false
         },

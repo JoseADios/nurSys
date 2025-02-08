@@ -6,6 +6,11 @@ use App\Models\Admission;
 use App\Models\MedicationNotification;
 use App\Models\MedicationRecordDetail;
 use App\Models\Diet;
+use App\Models\Drug;
+use App\Models\DrugRoute;
+use App\Models\DrugDose;
+use App\Models\MedicalOrderDetail;
+use App\Models\MedicalOrder;
 use Inertia\Inertia;
 use App\Models\MedicationRecord;
 use Illuminate\Http\Request;
@@ -25,7 +30,7 @@ class MedicationRecordController extends Controller
 
 
         $query = MedicationRecord::query();
-        $admission = Admission::with('patient')->get();
+        $admission = Admission::with('patient', 'bed')->get();
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -52,16 +57,16 @@ class MedicationRecordController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create()
     {
 
 
         $diet = Diet::all();
-        $admission = Admission::with('patient','bed','doctor')->find($request->admission);
+        $admission = Admission::with('patient','bed','doctor')->get();
 
 
 
-        Log::info($admission);
+
 
         // Pasar los datos a la vista
         return Inertia::render('MedicationRecords/Create', [
@@ -119,13 +124,25 @@ class MedicationRecordController extends Controller
     public function show(MedicationRecord $medicationRecord)
     {
         try{
-        $medicationRecord = MedicationRecord::where('id',$medicationRecord->id)->with(['admission.patient','admission.bed','doctor','medicationRecordDetail'])->first();
-        $details = MedicationRecordDetail::where('medication_record_id', operator: $medicationRecord->id)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+        $medicationRecord->load(['admission.patient','admission.bed','doctor','medicationRecordDetail','admission.medicalOrders']);
+        $allMedicalOrders = MedicalOrder::where('active',true)->where('admission_id',$medicationRecord->admission->id)->pluck('id');
+        $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+
+        $orderDetails = MedicalOrderDetail::whereIn('medical_order_id',$allMedicalOrders)->whereNull('suspended_at')->get();
+
+        $drug = Drug::all();
+        $route = DrugRoute::all();
+        $dose = DrugDose::all();
+
 
             if ($medicationRecord->active) {
                 return Inertia::render('MedicationRecords/Show', [
                     'medicationRecord' => $medicationRecord,
                     'details' => $details,
+                    'order' => $orderDetails,
+                    'drug' =>$drug,
+                    'dose' => $dose,
+                    'routeOptions' => $route
                 ]);
             }else{
              return redirect()->back()->withErrors()->withInput();

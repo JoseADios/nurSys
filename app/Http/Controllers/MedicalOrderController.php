@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
-
+use Illuminate\Support\Facades\Log;
 class MedicalOrderController extends Controller
 {
     /**
@@ -100,8 +100,9 @@ class MedicalOrderController extends Controller
     {
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
 
-        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor']);
-        
+        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor','admission.medicationRecord']);
+
+
         $regimes = Regime::all();
         $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
             ->where('active', true)
@@ -130,6 +131,16 @@ class MedicalOrderController extends Controller
             'doctor_sign' => 'string',
             'active' => 'boolean',
         ]);
+
+
+
+        if ($request->active === false) {
+            $record = MedicationRecord::where('admission_id', $request->admission_id)->pluck('id');
+            Log::info($record);
+            MedicationRecordDetail::whereIn('medication_record_id', $record)
+                ->update(['active' => false]);
+        }
+
 
         if ($request->signature) {
             $fileName = $firmService

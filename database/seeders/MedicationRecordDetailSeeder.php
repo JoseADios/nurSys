@@ -23,6 +23,7 @@ class MedicationRecordDetailSeeder extends Seeder
             'start_time' => now(),
             'interval_in_hours' => 8,
             'active' => true,
+            'medical_order_detail_id'=>1
         ]);
 
         // Puedes agregar más registros de la misma forma
@@ -35,6 +36,7 @@ class MedicationRecordDetailSeeder extends Seeder
             'start_time' => now(),
             'interval_in_hours' => 2,
             'active' => true,
+            'medical_order_detail_id'=>2
         ]);
     }
 }

@@ -24,6 +24,11 @@
                         </div>
                     </div>
                     <div class="flex space-x-3">
+
+                        <button @click="downloadPatientReport"
+                            class="inline-flex items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
+                            📄 Reporte Paciente</button>
+
                         <AccessGate :permission="['patient.delete']">
                             <button v-if="patient.active == 1" @click="patientBeingDeleted = true"
                                 class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
@@ -243,6 +248,9 @@ export default {
         },
         restorePatient() {
             this.$inertia.put(route('patients.update', this.patient.id), { active: true });
+        },
+        downloadPatientReport() {
+            window.open(route('reports.patient', { id: this.patient.id }), '_blank');
         }
     }
 }

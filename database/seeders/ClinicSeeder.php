@@ -16,10 +16,12 @@ class ClinicSeeder extends Seeder
         Clinic::create([
             'name' => 'Instituto de Especialidades Medicas Monseñor Nouel',
             'about' => 'Esta es una descripcion de la institucion',
-            'address' => 'Av. Circunvalación No. 4 Monseñor Nouel-Bonao República Dominicana',
-            'phone' => '8092962004',
+            'slogan' => 'Trabajando por su salud',
+            'address' => 'Av. Aniana Vargas No. 4 Monseñor Nouel-Bonao República Dominicana',
+            'phone' => '809-296-2002',
+            'fax' => '809-296-1685',
             'email' => 'info@iemmn.com.do',
-            'rnc' => '12345678',
+            'rnc' => '1-200040-7',
         ]);
     }
 }

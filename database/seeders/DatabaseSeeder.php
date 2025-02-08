@@ -55,9 +55,9 @@ class DatabaseSeeder extends Seeder
         $this->call(RegimeSeeder::class);
         $this->call(NurseRecordSeeder::class);
         $this->call(NurseRecordDetailSeeder::class);
+        $this->call(MedicalOrderDetailSeeder::class);
         $this->call(MedicationRecordDetailSeeder::class);
         $this->call(MedicalOrderSeeder::class);
-        $this->call(MedicalOrderDetailSeeder::class);
         $this->call(TemperatureRecordSeeder::class);
         $this->call(TemperatureDetailSeeder::class);
         $this->call(MaritalStatusSeeder::class);

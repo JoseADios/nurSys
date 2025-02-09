@@ -1,6 +1,31 @@
 <template>
     <AppLayout>
         <div class="container mx-auto px-4 py-8">
+           <!-- Navigation -->
+           <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+                    <Link :href="route('medicationRecords.index')"
+                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-medium">Volver</span>
+                    </Link>
+                    <button v-if="medicationRecord.active" @click="recordBeingDeleted = true"
+                        class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-medium">Eliminar</span>
+                    </button>
+                    <button v-else @click="restoreRecord"
+                        class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                        <span class="font-medium">Restaurar</span>
+                    </button>
+                </div>
             <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-xl overflow-hidden">
                 <div class="bg-gradient-to-r from-blue-600 to-blue-600 p-6">
                     <div class="flex justify-between items-center">
@@ -92,6 +117,10 @@
         <div class="relative overflow-hidden rounded-lg shadow-md bg-white dark:bg-gray-800 mb-5">
 
                         <div class="max-h-80 overflow-y-auto  shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
+                            <div v-if="order.length === 0" class="text-center text-gray-500 dark:text-gray-300 p-4">
+    No hay órdenes disponibles.
+  </div>
+
                             <div
   v-for="orders in order"
   :key="orders.id"
@@ -325,6 +354,32 @@
                 </div>
             </div>
         </div>
+        <ConfirmationModal :show="recordBeingDeleted != null || detailBeingDeleted != null"
+            @close="recordBeingDeleted = null; detailBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
+
+            <template v-if="recordBeingDeleted" #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+            <template v-else #content>
+                ¿Estás seguro de que deseas eliminar este detalle?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="recordBeingDeleted = null; detailBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton v-if="recordBeingDeleted" class="ms-3" @click="deleteRecord">
+                    Eliminar registro
+                </DangerButton>
+                <DangerButton v-else class="ms-3" @click="deleteDetail(); detailBeingDeleted = null;">
+                    Eliminar detalle
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
 
     </AppLayout>
 </template>

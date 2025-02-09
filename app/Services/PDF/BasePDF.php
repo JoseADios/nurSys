@@ -3,6 +3,7 @@
 namespace App\Services\PDF;
 
 use App\Models\Clinic;
+use Illuminate\Support\Facades\Auth;
 use TCPDF;
 
 class BasePDF extends TCPDF
@@ -20,6 +21,8 @@ class BasePDF extends TCPDF
         $clinic = Clinic::get()->first();
 
         $this->Ln(10);
+        $this->SetCreator(PDF_CREATOR);
+        $this->setAuthor(Auth::user()->name . ' ' . Auth::user()->last_name);
         $this->SetFont('helvetica', 'B', 16);
         $this->Cell(0, 1, $clinic->name, 0, 1, 'C');
         $this->SetFont('helvetica', '', 9);

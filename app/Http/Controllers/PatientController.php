@@ -205,7 +205,7 @@ class PatientController extends Controller implements HasMiddleware
 
         $patient->update($validated);
 
-        return Redirect::route('patients.index');
+        return back()->with('success', 'Registro actualizado exitosamente');
     }
 
     /**

@@ -21,22 +21,27 @@
                         </svg>
                         <span class="font-medium">Volver</span>
                     </button>
-                    <AccessGate :permission="['temperatureRecord.delete']">
-                        <button v-if="temperatureRecord.active" @click="recordBeingDeleted = true"
-                            class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <span class="font-medium">Eliminar</span>
-                        </button>
-                        <button v-else @click="restoreRecord"
-                            class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
-                            <span class="font-medium">Restaurar</span>
-                        </button>
-                    </AccessGate>
+                    <div class="flex items-center">
+                        <button @click="downloadRecordReport"
+                            class="inline-flex mr-8 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
+                            📄 Crear Reporte </button>
+                        <AccessGate :permission="['temperatureRecord.delete']">
+                            <button v-if="temperatureRecord.active" @click="recordBeingDeleted = true"
+                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <span class="font-medium">Eliminar</span>
+                            </button>
+                            <button v-else @click="restoreRecord"
+                                class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                                <span class="font-medium">Restaurar</span>
+                            </button>
+                        </AccessGate>
+                    </div>
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -184,7 +189,7 @@
 
                 <!-- Chart -->
                 <div class="p-4 mx-8 my-4">
-                    <TemperatureChart :temperatureData="details" :key="chartKey" :height="100" />
+                    <TemperatureChart ref="chart" :temperatureData="details" :key="chartKey" :height="100" />
                 </div>
 
                 <!-- ultima temperatura -->
@@ -492,6 +497,26 @@ export default {
         restoreRecord() {
             this.formRecord.active = true
             this.submitUpdateRecord()
+        },
+        async downloadRecordReport() {
+            if (!this.$refs.chart) {
+                console.error("El gráfico aún no está disponible.");
+                return;
+            }
+
+            // Obtener la imagen del gráfico
+            const chartImage = await this.$refs.chart.getChartImage();
+
+            if (!chartImage) {
+                console.error("No se pudo obtener la imagen del gráfico.");
+                return;
+            }
+
+            // Abrir el PDF con la imagen del gráfico
+            window.open(route('reports.temperatureRecord', {
+                id: this.temperatureRecord.id,
+                img: chartImage
+            }), '_blank');
         }
     },
     setup() {

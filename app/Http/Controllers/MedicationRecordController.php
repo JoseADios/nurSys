@@ -62,8 +62,9 @@ class MedicationRecordController extends Controller
 
 
         $diet = Diet::all();
-        $admission = Admission::with('patient','bed','doctor')->get();
-
+        $admission = Admission::with('patient', 'bed', 'doctor')
+        ->whereDoesntHave('medicationRecord')
+        ->get();
 
 
 

@@ -17,7 +17,7 @@ class ClinicSeeder extends Seeder
             'name' => 'Instituto de Especialidades Medicas Monseñor Nouel',
             'about' => 'Esta es una descripcion de la institucion',
             'slogan' => 'Trabajando por su salud',
-            'address' => 'Av. Aniana Vargas No. 4 Monseñor Nouel-Bonao República Dominicana',
+            'address' => 'Av. Aniana Vargas No. 4 Monseñor Nouel-Bonao R. D.',
             'phone' => '809-296-2002',
             'fax' => '809-296-1685',
             'email' => 'info@iemmn.com.do',

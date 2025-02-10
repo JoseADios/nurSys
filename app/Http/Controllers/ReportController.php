@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Clinic;
 use App\Models\Patient;
 use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
@@ -22,7 +23,11 @@ class ReportController extends Controller
 
         $details = TemperatureDetail::where('temperature_record_id', $id)->get();
 
-        $pdf = Pdf::loadView('reports.temperature_record', compact('temperatureRecord', 'details'))
+        $clinic = Clinic::get()->first();
+
+        // return view('reports.temperature_record', compact('temperatureRecord', 'details', 'clinic'));
+
+        $pdf = Pdf::loadView('reports.temperature_record', compact('temperatureRecord', 'details', 'clinic'))
             ->setPaper('a4', 'landscape');
 
         return $pdf->stream('hoja_temperatura.pdf');

@@ -499,24 +499,7 @@ export default {
             this.submitUpdateRecord()
         },
         async downloadRecordReport() {
-            if (!this.$refs.chart) {
-                console.error("El gráfico aún no está disponible.");
-                return;
-            }
-
-            // Obtener la imagen del gráfico
-            const chartImage = await this.$refs.chart.getChartImage();
-
-            if (!chartImage) {
-                console.error("No se pudo obtener la imagen del gráfico.");
-                return;
-            }
-
-            // Abrir el PDF con la imagen del gráfico
-            window.open(route('reports.temperatureRecord', {
-                id: this.temperatureRecord.id,
-                img: chartImage
-            }), '_blank');
+            window.open(route('reports.temperatureRecord', { id: this.temperatureRecord.id }), '_blank');
         }
     },
     setup() {

@@ -133,7 +133,7 @@ export default defineComponent({
 
         const processTemperatureData = () => {
             chartOptions.value.xaxis.categories = props.temperatureData.map(item =>
-                new Date(item.created_at).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+                new Date(item.updated_at).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
             );
             chartSeries.value[0].data = props.temperatureData.map(item => item.temperature);
 
@@ -143,7 +143,7 @@ export default defineComponent({
 
             // Identificar todas las fronteras de los días
             props.temperatureData.forEach((item, index) => {
-                const date = new Date(item.created_at);
+                const date = new Date(item.updated_at);
                 const dayStr = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
 
                 if (dayStr !== currentDay) {

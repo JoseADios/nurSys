@@ -16,9 +16,9 @@ class TemperatureDetailSeeder extends Seeder
     {
         // Definir los turnos
         $shifts = [
-            ['start' => 7, 'end' => 14],   // Turno mañana (7:00 - 14:00)
-            ['start' => 14, 'end' => 21],  // Turno tarde (14:00 - 21:00)
-            ['start' => 21, 'end' => 7],   // Turno noche (21:00 - 7:00)
+            ['name' => 'mañana', 'start' => 7, 'end' => 14],  // 7:00 - 14:00
+            ['name' => 'tarde', 'start' => 14, 'end' => 21],  // 14:00 - 21:00
+            ['name' => 'noche', 'start' => 21, 'end' => 7],   // 21:00 - 7:00
         ];
 
         // Número de días para los que se generarán datos
@@ -34,30 +34,31 @@ class TemperatureDetailSeeder extends Seeder
         for ($day = 0; $day < $numberOfDays; $day++) {
             $currentDate = $startDate->copy()->addDays($day);
 
-            // Generar 4 temperaturas por día (una por turno, excepto el último turno que cubre dos días)
-            for ($i = 0; $i < 4; $i++) {
-                $shift = $shifts[$i % count($shifts)]; // Seleccionar el turno correspondiente
-
-                // Generar una hora aleatoria dentro del turno
-                $hour = rand($shift['start'], $shift['end'] - 1);
-                $minute = rand(0, 59);
-
-                // Si el turno es de 21 a 7, ajustar la fecha correctamente
-                if ($shift['start'] > $shift['end']) {
-                    if ($hour >= 21) {
-                        $createdAt = $currentDate->copy()->setTime($hour, $minute);
-                    } else {
-                        $createdAt = $currentDate->copy()->addDay()->setTime($hour, $minute);
-                    }
+            // Generar un registro por cada turno
+            foreach ($shifts as $shift) {
+                // Calcular la hora aleatoria dentro del turno
+                if ($shift['start'] < $shift['end']) {
+                    // Turnos normales (mañana y tarde)
+                    $hour = rand($shift['start'], $shift['end'] - 1);
+                    $createdAt = $currentDate->copy()->setTime($hour, rand(0, 59));
                 } else {
-                    $createdAt = $currentDate->copy()->setTime($hour, $minute);
+                    // Turno noche (cruza la medianoche)
+                    if (rand(0, 1) == 0) {
+                        // Primera mitad del turno (21:00 - 23:59)
+                        $hour = rand($shift['start'], 23);
+                        $createdAt = $currentDate->copy()->setTime($hour, rand(0, 59));
+                    } else {
+                        // Segunda mitad del turno (00:00 - 7:00)
+                        $hour = rand(0, $shift['end'] - 1);
+                        $createdAt = $currentDate->copy()->addDay()->setTime($hour, rand(0, 59));
+                    }
                 }
 
                 // Añadir los datos al array
                 $data[] = [
                     'temperature_record_id' => 1,
                     'nurse_id' => 1,
-                    'temperature' => mt_rand(360, 399) / 10, // Temperatura flotante entre 36.0 y 39.9
+                    'temperature' => mt_rand(360, 399) / 10, // Temperatura entre 36.0 y 39.9
                     'evacuations' => rand(0, 2),
                     'urinations' => rand(1, 4),
                     'active' => true,

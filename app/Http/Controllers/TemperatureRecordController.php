@@ -183,8 +183,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->with(['nurse:id,name,last_name']) // Especificar solo las columnas necesarias
-            ->orderBy('created_at', 'asc')
-            ->get(['temperature', 'evacuations', 'urinations', 'nurse_id', 'created_at']);
+            ->orderBy('updated_at', 'asc')
+            ->get(['temperature', 'evacuations', 'urinations', 'nurse_id', 'updated_at']);
 
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,

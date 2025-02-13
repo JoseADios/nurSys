@@ -22,7 +22,7 @@
                         <span class="font-medium">Volver</span>
                     </button>
                     <div class="flex items-center">
-                        <button @click="downloadRecordReport"
+                        <button v-if="temperatureRecord.active" @click="downloadRecordReport"
                             class="inline-flex mr-8 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
                             📄 Crear Reporte </button>
                         <AccessGate :permission="['temperatureRecord.delete']">

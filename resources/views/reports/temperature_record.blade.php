@@ -115,8 +115,8 @@
         <table width="100%">
             <tr>
                 <td class="col-1" width="10%">
-                    {{-- <img src="{{ public_path('images/clinicLogo.jpg') }}" width="60" height="80"> --}}
-                    <img src="{{ asset('images/clinicLogo.jpg') }}" width="60" height="80">
+                    <img src="{{ public_path('images/clinicLogo.jpg') }}" width="60" height="80">
+                    {{-- <img src="{{ asset('images/clinicLogo.jpg') }}" width="60" height="80"> --}}
                     <h3 id="clinic-ab">IEMMN</h3>
 
                 </td>
@@ -154,8 +154,11 @@
     </table>
 
 
-    <h3>Gráfico de Temperatura</h3>
+    {{-- <h3>Gráfico de Temperatura</h3> --}}
+    {{-- <h3>Gráfico de Temperatura</h3> --}}
     <img src="{{ $graphPath }}" width="90%">
+
+    {{-- <img src="{{ public_path('storage/temp_chart.jpg') }}" width="90%"> --}}
 
 </body>
 

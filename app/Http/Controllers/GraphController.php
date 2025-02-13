@@ -101,11 +101,11 @@ class GraphController extends Controller
         $lineplot->mark->SetType(MARK_FILLEDCIRCLE);
         $lineplot->mark->SetColor('white');
         $lineplot->mark->SetFillColor('black');
-        $lineplot->mark->SetSize(3);
+        $lineplot->mark->SetSize(4);
         $graph->Add($lineplot);
 
         $hline = new PlotLine(HORIZONTAL, 37.0, 'red');
-        $hline->SetWeight(2);
+        // $hline->SetWeight(2);
         $graph->AddLine($hline);
 
         return $graph;
@@ -226,20 +226,30 @@ class GraphController extends Controller
     private function addVerticalLines($graph, $timestamps)
     {
         $uniqueDays = array_unique(array_map(fn($timestamp) => date('Y-m-d', $timestamp), $timestamps));
+        $minTimestamp = min($timestamps);
+        $maxTimestamp = max($timestamps);
 
         foreach ($uniqueDays as $day) {
-            $this->addDayLines($graph, $day);
+
+            $this->addDayLines($graph, $day, $minTimestamp, $maxTimestamp);
         }
     }
 
-    private function addDayLines($graph, $day)
+    private function addDayLines($graph, $day, $minTimestamp, $maxTimestamp)
     {
         $midnight = strtotime($day . ' 00:00:00');
-        $graph->AddLine(new PlotLine(VERTICAL, $midnight, 'black', 2));
+
+        // solo agregar la linea si el timestamp es mayor o igual que el min de los timestamps
+        if ($midnight >= $minTimestamp && $midnight <= $maxTimestamp) {
+            $graph->AddLine(new PlotLine(VERTICAL, $midnight, 'black', 2));
+        }
 
         $turns = ['07:00:00', '14:00:00', '21:00:00'];
+
         foreach ($turns as $turn) {
-            $graph->AddLine(new PlotLine(VERTICAL, strtotime($day . ' ' . $turn), 'lightgray', 1));
+            if (strtotime($day . ' ' . $turn) >= $minTimestamp && strtotime($day . ' ' . $turn) <= $maxTimestamp) {
+                $graph->AddLine(new PlotLine(VERTICAL, strtotime($day . ' ' . $turn), 'lightgray', 1));
+            }
         }
     }
 

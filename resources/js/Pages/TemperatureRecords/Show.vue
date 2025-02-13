@@ -460,14 +460,16 @@ export default {
                             urinations: 1,
                         };
                         this.chartKey++;
-                    }
+                    },
+                    preserveScroll: true,
                 });
         },
         updateDetail() {
             this.$inertia.put(route('temperatureDetails.update', this.lastTemperature.id), this.formDetailUpdate, {
                 onSuccess: () => {
                     this.chartKey++;
-                }
+                },
+                preserveScroll: true,
             });
 
         },

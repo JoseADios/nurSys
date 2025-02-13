@@ -86,6 +86,8 @@ class GraphController extends Controller
             $graph->xaxis->HideFirstLastLabel();
         }
 
+        dump($timestamps);
+
         $graph->xaxis->SetPos("max");
         $graph->xaxis->SetLabelFormatCallback(function ($timestamp) {
             return date('H', $timestamp);
@@ -136,6 +138,8 @@ class GraphController extends Controller
         if ($timestampRange == 0) {
             $centerXPos = $graph->img->left_margin + ($graph->img->plotwidth / 2);
             $currentTurnData = $details[0];
+            $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
+
 
             $this->addTableText($graph, $currentTurnData, $centerXPos, $yTableTop, $yTableBottom, $rowHeight);
         } else {
@@ -169,7 +173,6 @@ class GraphController extends Controller
         $graph->img->Line(0, $yTableMiddle, $graph->img->width - $graph->img->right_margin, $yTableMiddle);
         $graph->img->Line(0, $yTableBottom, $graph->img->width - $graph->img->right_margin, $yTableBottom);
         $graph->img->Line($graph->img->left_margin, $yTableTop, $graph->img->left_margin, $yTableBottom);
-        $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
     }
 
     private function calculateXPos($graph, $timestamps, $turnTimestamp)
@@ -232,6 +235,10 @@ class GraphController extends Controller
         }
 
         $uniqueDays = array_unique(array_map(fn($timestamp) => date('Y-m-d', $timestamp), $timestamps));
+
+        if ($timestamps[0] < strtotime($uniqueDays[0] . ' 07:00:00')) {
+            array_unshift($uniqueDays, date('Y-m-d', strtotime($uniqueDays[0] . ' -1 day')));
+        }
 
         $turnTimestamps = [];
         foreach ($uniqueDays as $day) {

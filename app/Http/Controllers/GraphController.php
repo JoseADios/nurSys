@@ -75,7 +75,7 @@ class GraphController extends Controller
 
         $graph->SetScale("datlin");
         $graph->xaxis->scale->SetTimeAlign(DAYADJ_1);
-        $graph->SetMargin(120, 10, 100, 90);
+        $graph->SetMargin(120, 50, 100, 90);
 
         $turnTimestamps = $this->generateTurnTimestamps($timestamps);
 
@@ -84,9 +84,8 @@ class GraphController extends Controller
             $graph->xaxis->SetTickPositions($turnTimestamps, $turnTimestamps);
         } else {
             $graph->xaxis->HideFirstLastLabel();
+            // $graph->xaxis->SetTextTickInterval(7);
         }
-
-        dump($timestamps);
 
         $graph->xaxis->SetPos("max");
         $graph->xaxis->SetLabelFormatCallback(function ($timestamp) {
@@ -158,7 +157,19 @@ class GraphController extends Controller
                         $nextXPos = $this->calculateXPos($graph, $timestamps, $turnTimestamps[$i + 1]);
                         $cellCenter = ($xPos + $nextXPos) / 2;
 
-                        $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight);
+                        if ($xPos !== null && abs($xPos - $nextXPos) < 20) {
+                            $newXPos = $graph->img->left_margin + $graph->img->plotwidth + 40;
+
+                            $graph->img->Line($newXPos, $yTableTop, $newXPos, $yTableBottom);
+                            $graph->img->Line($newXPos - 40, $yTableTop, $newXPos, $yTableTop);
+                            $graph->img->Line($newXPos - 40, $yTableMiddle, $newXPos, $yTableMiddle);
+                            $graph->img->Line($newXPos - 40, $yTableBottom, $newXPos, $yTableBottom);
+                            $graph->img->SetColor('white');
+
+                            $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, $minSpace = true);
+                        } else {
+                            $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight);
+                        }
                     }
                 }
             }
@@ -185,8 +196,12 @@ class GraphController extends Controller
         return max($graph->img->left_margin, min($xPos, $graph->img->width - $graph->img->right_margin));
     }
 
-    private function addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight)
+    private function addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, $minSpace = false)
     {
+        if ($minSpace) {
+            $cellCenter += 20;
+        }
+
         $textUrinations = new Text(strval($currentTurnData->urinations), $cellCenter, $yTableTop + ($rowHeight / 2));
         $textUrinations->SetAlign('center', 'center');
         $graph->AddText($textUrinations);

@@ -72,11 +72,11 @@ class GraphController extends Controller
 
     private function createGraph($timestamps, $dataY)
     {
-        $graph = new Graph(1500, 800);
+        $graph = new Graph(1500, 700);
 
         $graph->SetScale("datlin");
         $graph->xaxis->scale->SetTimeAlign(DAYADJ_1);
-        $graph->SetMargin(120, 90, 100, 90);
+        $graph->SetMargin(120, 90, 70, 90);
 
         $turnTimestamps = $this->generateTurnTimestamps($timestamps);
 
@@ -134,6 +134,7 @@ class GraphController extends Controller
         $turnTimestamps = $this->generateTurnTimestamps($timestamps);
         $timestampRange = max($timestamps) - min($timestamps);
 
+        // si solo hay un registro
         if ($timestampRange == 0) {
             $centerXPos = $graph->img->left_margin + ($graph->img->plotwidth / 2);
             $currentTurnData = $details[0];
@@ -141,9 +142,10 @@ class GraphController extends Controller
 
             $this->addTableText($graph, $currentTurnData, $centerXPos, $yTableTop, $yTableBottom, $rowHeight);
         } else {
-            foreach ($turnTimestamps as $i => $turnTimestamp) {
-                $xPos = $this->calculateXPos($graph, $timestamps, $turnTimestamp);
 
+            foreach ($turnTimestamps as $i => $turnTimestamp) {
+
+                $xPos = $this->calculateXPos($graph, $timestamps, $turnTimestamp);
                 $graph->img->Line($xPos, $yTableTop, $xPos, $yTableBottom);
 
                 if ($i < count($turnTimestamps) - 1) {
@@ -165,7 +167,6 @@ class GraphController extends Controller
                                 $graph->img->Line($graph->img->left_margin - 20, $yTableTop, $graph->img->left_margin - 20, $yTableBottom);
                                 $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, true, false);
                             } else {
-                                $graph->img->SetColor('red');
                                 $newXPos = $graph->img->left_margin + $graph->img->plotwidth + 40;
                                 $graph->img->SetColor('black');
 
@@ -187,10 +188,10 @@ class GraphController extends Controller
     private function drawTableBorders($graph, $yTableTop, $yTableMiddle, $yTableBottom)
     {
         $graph->img->SetColor('black');
-        $graph->img->Line(0, $yTableTop, 0, $yTableBottom);
-        $graph->img->Line(0, $yTableTop, $graph->img->width - $graph->img->right_margin, $yTableTop);
-        $graph->img->Line(0, $yTableMiddle, $graph->img->width - $graph->img->right_margin, $yTableMiddle);
-        $graph->img->Line(0, $yTableBottom, $graph->img->width - $graph->img->right_margin, $yTableBottom);
+        $graph->img->Line(1, $yTableTop, 1, $yTableBottom);
+        $graph->img->Line(1, $yTableTop, $graph->img->width - $graph->img->right_margin, $yTableTop);
+        $graph->img->Line(1, $yTableMiddle, $graph->img->width - $graph->img->right_margin, $yTableMiddle);
+        $graph->img->Line(1, $yTableBottom, $graph->img->width - $graph->img->right_margin, $yTableBottom);
         $graph->img->Line($graph->img->left_margin, $yTableTop, $graph->img->left_margin, $yTableBottom);
     }
 
@@ -304,7 +305,7 @@ class GraphController extends Controller
     {
         $tableHeight = 40;
         $rowHeight = 20;
-        $margin = 30;
+        $margin = 10;
 
         $yTableTop = $margin;
         $yTableMiddle = $margin + $rowHeight;
@@ -399,10 +400,10 @@ class GraphController extends Controller
     {
 
         $graph->img->SetColor('black');
-        $graph->img->Line(0, $yTableTop, 0, $yTableBottom);
-        $graph->img->Line(0, $yTableTop, $graph->img->width - $graph->img->right_margin, $yTableTop);
-        $graph->img->Line(0, $yTableMiddle, $graph->img->width - $graph->img->right_margin, $yTableMiddle);
-        $graph->img->Line(0, $yTableBottom, $graph->img->width - $graph->img->right_margin, $yTableBottom);
+        $graph->img->Line(1, $yTableTop, 1, $yTableBottom);
+        $graph->img->Line(1, $yTableTop, $graph->img->width - $graph->img->right_margin, $yTableTop);
+        $graph->img->Line(1, $yTableMiddle, $graph->img->width - $graph->img->right_margin, $yTableMiddle);
+        $graph->img->Line(1, $yTableBottom, $graph->img->width - $graph->img->right_margin, $yTableBottom);
         $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
     }
 }

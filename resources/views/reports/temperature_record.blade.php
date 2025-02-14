@@ -31,13 +31,23 @@
             text-align: center;
         }
 
+        .col-1>img {
+            margin-top: 5px;
+        }
+
         .col-2>div {
             text-align: center;
-            width: 60%;
+            width: 65%;
         }
 
         .col-2>div>* {
-            margin: 5px 0px;
+            margin: 2px 0px;
+        }
+
+        #address,
+        #slogan,
+        #rnc {
+            font-size: smaller
         }
 
         #slogan {
@@ -46,17 +56,18 @@
         }
 
         #rnc {
-            font-weight: bolder
+            font-weight: 900
         }
 
-        .section {
-            margin-bottom: 15px;
-            padding: 5px 40px;
+        .record-info {
+            font-size: x-small;
+            margin-bottom: 5px;
+            padding: 0px 40px;
             border: 1px solid #ddd;
             border-radius: 10px;
         }
 
-        .section p {
+        .record-info p {
             margin: 5px 0;
         }
 
@@ -64,48 +75,7 @@
             font-weight: bold;
         }
 
-        .temperature-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .temperature-table th,
-        .temperature-table td {
-            border: 1px solid #ddd;
-            padding: 6px;
-            text-align: center;
-        }
-
-        .temperature-table th {
-            background-color: #f3f3f3;
-        }
-
-        .chart {
-            display: flex;
-            align-items: flex-end;
-            height: 200px;
-            width: 400px;
-            border-left: 2px solid #000;
-            border-bottom: 2px solid #000;
-            margin: 20px;
-        }
-
-        .bar {
-            flex: 1;
-            /* background-color: #007bff; */
-            margin: 0 2px;
-            position: relative;
-        }
-
-        .bar::after {
-            content: attr(data-value);
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-        }
+        .graph-cont {}
     </style>
 </head>
 
@@ -115,15 +85,16 @@
         <table width="100%">
             <tr>
                 <td class="col-1" width="10%">
-                    <img src="{{ public_path('images/clinicLogo.jpg') }}" width="60" height="80">
-                    {{-- <img src="{{ asset('images/clinicLogo.jpg') }}" width="60" height="80"> --}}
+                    {{-- <img src="{{ public_path('images/clinicLogo.jpg') }}" width="50" height="70"> --}}
+                    <img src="{{ asset('images/clinicLogo.jpg') }}" width="50" height="70">
                     <h3 id="clinic-ab">IEMMN</h3>
 
                 </td>
                 <td width="90%" class="col-2">
                     <div>
                         <h1>{{ $clinic->name }}</h1>
-                        <p>{{ $clinic->address }} • Tel.: {{ $clinic->phone }} • Fax.: {{ $clinic->fax }}</p>
+                        <p id="address">{{ $clinic->address }} • Tel.: {{ $clinic->phone }} • Fax.:
+                            {{ $clinic->fax }}</p>
                         <p id="slogan">"{{ $clinic->slogan }}"</p>
                         <p id="rnc">RNC {{ $clinic->rnc }}</p>
                     </div>
@@ -133,8 +104,7 @@
     </div>
 
 
-    {{-- <div class="section"> --}}
-    <table width="100%">
+    <table width="100%" class="record-info">
         <tr>
             <td style="width: 70%; vertical-align: top;">
                 <p><span class="bold">Paciente:</span> {{ $temperatureRecord->admission->patient->first_name }}
@@ -155,9 +125,11 @@
 
 
     {{-- <h3>Gráfico de Temperatura</h3> --}}
-    {{-- <img src="{{ $graphPath }}" width="90%"> --}}
+    <div class="graph-cont">
+        <img src="{{ $graphPath }}" width="100%">
+        {{-- <img src="{{ public_path('storage/temp_chart.jpg') }}" width="100%"> --}}
+    </div>
 
-    <img src="{{ public_path('storage/temp_chart.jpg') }}" width="90%">
 
 </body>
 

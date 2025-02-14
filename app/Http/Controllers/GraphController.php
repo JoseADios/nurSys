@@ -48,7 +48,7 @@ class GraphController extends Controller
     {
         return TemperatureDetail::where('temperature_record_id', $id)
             ->orderBy('updated_at', 'asc')
-            ->get(['temperature', 'evacuations', 'urinations', 'nurse_id', 'updated_at']);
+            ->get(['id', 'temperature', 'evacuations', 'urinations', 'nurse_id', 'updated_at']);
     }
 
     private function jsonResponse($message, $path, $status)
@@ -124,11 +124,11 @@ class GraphController extends Controller
 
         $this->drawTableBorders($graph, $yTableTop, $yTableMiddle, $yTableBottom);
 
-        $headerUrinations = new Text("Micciones", $graph->img->left_margin - 20, $yTableTop + ($rowHeight / 2));
+        $headerUrinations = new Text("Micciones", $graph->img->left_margin - 30, $yTableTop + ($rowHeight / 2));
         $headerUrinations->SetAlign('right', 'center');
         $graph->AddText($headerUrinations);
 
-        $headerEvacuations = new Text("Evacuaciones", $graph->img->left_margin - 20, $yTableBottom - ($rowHeight / 2));
+        $headerEvacuations = new Text("Evacuaciones", $graph->img->left_margin - 30, $yTableBottom - ($rowHeight / 2));
         $headerEvacuations->SetAlign('right', 'center');
         $graph->AddText($headerEvacuations);
 
@@ -139,7 +139,6 @@ class GraphController extends Controller
             $centerXPos = $graph->img->left_margin + ($graph->img->plotwidth / 2);
             $currentTurnData = $details[0];
             $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
-
 
             $this->addTableText($graph, $currentTurnData, $centerXPos, $yTableTop, $yTableBottom, $rowHeight);
         } else {
@@ -155,19 +154,32 @@ class GraphController extends Controller
                     });
 
                     if ($currentTurnData) {
+
                         $nextXPos = $this->calculateXPos($graph, $timestamps, $turnTimestamps[$i + 1]);
                         $cellCenter = ($xPos + $nextXPos) / 2;
 
+                        // si no hay espacio suficiente
                         if ($xPos !== null && abs($xPos - $nextXPos) < 20) {
-                            $newXPos = $graph->img->left_margin + $graph->img->plotwidth + 40;
 
-                            $graph->img->Line($newXPos, $yTableTop, $newXPos, $yTableBottom);
-                            $graph->img->Line($newXPos - 40, $yTableTop, $newXPos, $yTableTop);
-                            $graph->img->Line($newXPos - 40, $yTableMiddle, $newXPos, $yTableMiddle);
-                            $graph->img->Line($newXPos - 40, $yTableBottom, $newXPos, $yTableBottom);
-                            $graph->img->SetColor('white');
+                            // verificar si es el primer registro
+                            if ($currentTurnData->id == $details[0]->id) {
+                                $graph->img->Line($graph->img->left_margin - 20, $yTableTop, $graph->img->left_margin - 20, $yTableBottom);
+                                $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, true, false);
 
-                            $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, $minSpace = true);
+                            } else {
+                                $graph->img->SetColor('red');
+                                $newXPos = $graph->img->left_margin + $graph->img->plotwidth + 40;
+                                $graph->img->SetColor('black');
+
+                                $graph->img->Line($newXPos, $yTableTop, $newXPos, $yTableBottom);
+                                $graph->img->Line($newXPos - 40, $yTableTop, $newXPos, $yTableTop);
+                                $graph->img->Line($newXPos - 40, $yTableMiddle, $newXPos, $yTableMiddle);
+                                $graph->img->Line($newXPos - 40, $yTableBottom, $newXPos, $yTableBottom);
+                                $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, false, true);
+
+                            }
+
+
                         } else {
                             $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight);
                         }
@@ -197,9 +209,12 @@ class GraphController extends Controller
         return max($graph->img->left_margin, min($xPos, $graph->img->width - $graph->img->right_margin));
     }
 
-    private function addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, $minSpace = false)
+    private function addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, $startMinSpace = false, $endMinSpace = false)
     {
-        if ($minSpace) {
+        if ($startMinSpace) {
+            $cellCenter = $graph->img->left_margin - 10;
+        }
+        elseif ($endMinSpace) {
             $cellCenter += 20;
         }
 
@@ -357,7 +372,6 @@ class GraphController extends Controller
                         $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
                     }
                 }
-
             }
             if ($i >= 1) {
                 $graph->img->SetColor('black');

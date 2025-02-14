@@ -106,7 +106,6 @@ class GraphController extends Controller
         $graph->Add($lineplot);
 
         $hline = new PlotLine(HORIZONTAL, 37.0, 'red');
-        // $hline->SetWeight(2);
         $graph->AddLine($hline);
 
         return $graph;
@@ -165,7 +164,6 @@ class GraphController extends Controller
                             if ($currentTurnData->id == $details[0]->id) {
                                 $graph->img->Line($graph->img->left_margin - 20, $yTableTop, $graph->img->left_margin - 20, $yTableBottom);
                                 $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, true, false);
-
                             } else {
                                 $graph->img->SetColor('red');
                                 $newXPos = $graph->img->left_margin + $graph->img->plotwidth + 40;
@@ -176,10 +174,7 @@ class GraphController extends Controller
                                 $graph->img->Line($newXPos - 40, $yTableMiddle, $newXPos, $yTableMiddle);
                                 $graph->img->Line($newXPos - 40, $yTableBottom, $newXPos, $yTableBottom);
                                 $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, false, true);
-
                             }
-
-
                         } else {
                             $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight);
                         }
@@ -213,8 +208,7 @@ class GraphController extends Controller
     {
         if ($startMinSpace) {
             $cellCenter = $graph->img->left_margin - 10;
-        }
-        elseif ($endMinSpace) {
+        } elseif ($endMinSpace) {
             $cellCenter += 20;
         }
 

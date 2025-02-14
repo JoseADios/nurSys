@@ -155,10 +155,9 @@
 
 
     {{-- <h3>Gráfico de Temperatura</h3> --}}
-    {{-- <h3>Gráfico de Temperatura</h3> --}}
-    <img src="{{ $graphPath }}" width="90%">
+    {{-- <img src="{{ $graphPath }}" width="90%"> --}}
 
-    {{-- <img src="{{ public_path('storage/temp_chart.jpg') }}" width="90%"> --}}
+    <img src="{{ public_path('storage/temp_chart.jpg') }}" width="90%">
 
 </body>
 

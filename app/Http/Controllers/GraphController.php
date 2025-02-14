@@ -76,7 +76,7 @@ class GraphController extends Controller
 
         $graph->SetScale("datlin");
         $graph->xaxis->scale->SetTimeAlign(DAYADJ_1);
-        $graph->SetMargin(120, 50, 100, 90);
+        $graph->SetMargin(120, 90, 100, 90);
 
         $turnTimestamps = $this->generateTurnTimestamps($timestamps);
 
@@ -261,10 +261,25 @@ class GraphController extends Controller
         }
 
         $uniqueDays = array_unique(array_map(fn($timestamp) => date('Y-m-d', $timestamp), $timestamps));
+        // Obtener el primer y el último día
+        $firstDay = strtotime($uniqueDays[0]);
+        $lastDay = strtotime(end($uniqueDays));
 
-        if ($timestamps[0] < strtotime($uniqueDays[0] . ' 07:00:00')) {
-            array_unshift($uniqueDays, date('Y-m-d', strtotime($uniqueDays[0] . ' -1 day')));
+        // Generar una lista completa de días entre el primer y el último día
+        $completeDays = [];
+        for ($day = $firstDay; $day <= $lastDay; $day = strtotime('+1 day', $day)) {
+            $completeDays[] = date('Y-m-d', $day);
         }
+
+        // Asegurarse de que todos los días únicos estén presentes en la lista completa
+        $uniqueDays = array_unique(array_merge($completeDays, $uniqueDays));
+
+        // Ordenar los días para asegurarse de que estén en el orden correcto
+        sort($uniqueDays);
+
+        // Agregar un día antes del primer día y un día después del último día
+        array_unshift($uniqueDays, date('Y-m-d', strtotime($uniqueDays[0] . ' -1 day')));
+        $uniqueDays[] = date('Y-m-d', strtotime(end($uniqueDays) . ' +1 day'));
 
         $turnTimestamps = [];
         foreach ($uniqueDays as $day) {
@@ -288,20 +303,19 @@ class GraphController extends Controller
 
         $this->drawTopTableBorders($graph, $yTableTop, $yTableMiddle, $yTableBottom);
 
-        $headerDays = new Text("Fecha", $graph->img->left_margin - 20, $yTableTop + ($rowHeight / 2));
+        $headerDays = new Text("Fecha", $graph->img->left_margin - 40, $yTableTop + ($rowHeight / 2));
         $headerDays->SetAlign('right', 'center');
         $graph->AddText($headerDays);
 
-        $headerDays = new Text("Dias de Hosp.", $graph->img->left_margin - 20, $yTableMiddle + ($rowHeight / 2));
+        $headerDays = new Text("Dias Hosp.", $graph->img->left_margin - 40, $yTableMiddle + ($rowHeight / 2));
         $headerDays->SetAlign('right', 'center');
         $graph->AddText($headerDays);
 
         $uniqueDays = array_unique(array_map(fn($timestamp) => date('Y-m-d', $timestamp), $timestamps));
 
         $j = 0;
-        foreach ($uniqueDays as $day) {
-
-
+        foreach ($uniqueDays as $i => $day) {
+            $firstLowSpace = false;
             $xPos = $this->calculateXPos($graph, $timestamps, strtotime($day . ' 00:00:00'));
 
             $nextXPos = $this->calculateXPos($graph, $timestamps, strtotime($day . ' +1 day 00:00:00'));
@@ -309,16 +323,62 @@ class GraphController extends Controller
 
             $graph->img->Line($xPos, $yTableTop, $xPos, $yTableBottom);
 
-            $textDay = new Text($day, $cellCenter, $yTableTop + ($rowHeight / 2));
-            $textDay->SetAlign('center', 'center');
-            $graph->AddText($textDay);
+            // si hay poco espacio para la casilla
+            if ($xPos !== null && abs($xPos - $nextXPos) < 70) {
+
+                if ($i == 0) {
+                    // poner solo el dia
+                    $firstLowSpace = true;
+                    // y desplazar un poco la linea
+                    $graph->img->SetColor('black');
+                    $graph->img->Line($graph->img->left_margin - 20, $yTableTop, $graph->img->left_margin - 20, $yTableBottom);
+                    $graph->img->Line($nextXPos + 20, $yTableTop, $nextXPos + 20, $yTableBottom);
+
+
+                    // borrar las otras lineas
+                    $graph->img->SetColor('white');
+                    $graph->img->Line($graph->img->left_margin, $yTableTop, $graph->img->left_margin, $yTableBottom);
+                    $graph->img->Line($nextXPos, $yTableTop, $nextXPos, $yTableBottom);
+                }
+                // si es la ultima
+                else {
+                    $graph->img->SetColor('black');
+                    $cellCenter += 45;
+                    $newXPos = $graph->img->left_margin + $graph->img->plotwidth + 80;
+                    $graph->img->Line($newXPos, $yTableTop, $newXPos, $yTableBottom);
+                    $graph->img->Line($newXPos - 80, $yTableTop, $newXPos - 80, $yTableBottom);
+                    $graph->img->Line($newXPos - 80, $yTableTop, $newXPos, $yTableTop);
+                    $graph->img->Line($newXPos - 80, $yTableMiddle, $newXPos, $yTableMiddle);
+                    $graph->img->Line($newXPos - 80, $yTableBottom, $newXPos, $yTableBottom);
+                    $graph->img->SetColor('white');
+
+                    // borrar la linea del borde
+                    if (round($graph->img->left_margin + $graph->img->plotwidth) != round($xPos)) {
+                        $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
+                    }
+                }
+
+            }
+            if ($i >= 1) {
+                $graph->img->SetColor('black');
+            }
+
+            if ($firstLowSpace) {
+                $textDay = new Text(date('d', strtotime($day)), $cellCenter, $yTableTop + ($rowHeight / 2));
+                $textDay->SetAlign('center', 'center');
+                $graph->AddText($textDay);
+            } else {
+                $textDay = new Text($day, $cellCenter, $yTableTop + ($rowHeight / 2));
+                $textDay->SetAlign('center', 'center');
+                $graph->AddText($textDay);
+            }
 
             if ($j == 0) {
                 $textDay = new Text('ADM', $cellCenter, $yTableMiddle + ($rowHeight / 2));
                 $textDay->SetAlign('center', 'center');
                 $graph->AddText($textDay);
             } else {
-                $textDay = new Text(strval($j ), $cellCenter, $yTableMiddle + ($rowHeight / 2));
+                $textDay = new Text(strval($j), $cellCenter, $yTableMiddle + ($rowHeight / 2));
                 $textDay->SetAlign('center', 'center');
                 $graph->AddText($textDay);
             }
@@ -330,8 +390,6 @@ class GraphController extends Controller
     private function drawTopTableBorders($graph, $yTableTop, $yTableMiddle, $yTableBottom)
     {
 
-        $graph->img->SetColor('red');
-        // $graph->img->Line($graph->img->left_margin, $yTableTop, $graph->img->left_margin, $yTableBottom);
         $graph->img->SetColor('black');
         $graph->img->Line(0, $yTableTop, 0, $yTableBottom);
         $graph->img->Line(0, $yTableTop, $graph->img->width - $graph->img->right_margin, $yTableTop);

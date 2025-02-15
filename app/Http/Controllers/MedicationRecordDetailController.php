@@ -56,7 +56,7 @@ class MedicationRecordDetailController extends Controller
         $start_time_24 = Carbon::parse($request->start_time)->format("H:i");
         // Primero guarda el detalle y obtén su ID
 
-        $dose_formatted = $request->dose . $request->dose_metric;
+        $dose_formatted = $request->dose .' - '. $request->dose_metric;
 
 
 
@@ -115,6 +115,8 @@ class MedicationRecordDetailController extends Controller
 
              // Verificar si Ya Existe una notifiacion con medicamentos administrados
              $existingnotification = MedicationNotification::where('medication_record_detail_id', $medicationRecordDetail->id)->first();
+            $dose = DrugDose::all();
+            $route = DrugRoute::all();
 
 
              $Applied = $existingnotification->applied;
@@ -129,7 +131,9 @@ class MedicationRecordDetailController extends Controller
                 ])->withInput();
              }
             return Inertia::render('MedicationRecordDetail/Edit', [
-                'medicationRecordDetail' => $medicationRecordDetail
+                'medicationRecordDetail' => $medicationRecordDetail,
+                'dose' => $dose,
+                'routes' =>$route
             ]);
 
 
@@ -140,7 +144,8 @@ class MedicationRecordDetailController extends Controller
      */
     public function update(Request $request, MedicationRecordDetail  $medicationRecordDetail)
     {
-        if ($request->has('active')) {
+        if ($request->has('suspended_at')) {
+
             $this->restore($medicationRecordDetail->id);
 
         }else{
@@ -257,16 +262,17 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
 
     private function restore($id)
     {
+
         $medicationRecordDetail = MedicationRecordDetail::findOrFail($id);
 
 
         $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();
         foreach ($medicationNotifications as $notification) {
-            $notification->update(['active' => 1]);
+            $notification->update(['suspended_at' => null]);
         }
 
 
-        $medicationRecordDetail->update(['active' => true]);
+        $medicationRecordDetail->update(['suspended_at' => null]);
 
         return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id);
     }
@@ -283,11 +289,11 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
 
         $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();
         foreach ($medicationNotifications as $notification) {
-            $notification->update(['active' => 0]);
+            $notification->update(['suspended_at' => now()]);
         }
 
 
-        $medicationRecordDetail->update(['active' => false]);
+        $medicationRecordDetail->update(['suspended_at' => now()]);
 
         return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id);
     }

@@ -100,8 +100,21 @@ export default defineComponent({
                 },
             },
             annotations: {
-                position: 'back',
-                yaxis: [],
+                yaxis: [
+                    {
+                        y: 37,
+                        borderColor: '#ff0000',
+                        strokeDashArray: 0, // Asegurarse de que la línea no sea discontinua
+                        borderWidth: 2, // Usar borderWidth para aumentar el grosor de la línea roja
+                        label: {
+                            borderColor: '#ff0000',
+                            style: {
+                                color: '#fff',
+                                background: '#ff0000',
+                            },
+                        }
+                    }
+                ],
                 xaxis: []
             },
             tooltip: {
@@ -132,39 +145,34 @@ export default defineComponent({
         ]);
 
         const processTemperatureData = () => {
-            chartOptions.value.xaxis.categories = props.temperatureData.map(item =>
-                new Date(item.updated_at).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+            // Convertir las fechas a objetos Date para mejor manejo
+            const dateObjects = props.temperatureData.map(item => new Date(item.updated_at));
+
+            // Formatear las categorías del eje X
+            chartOptions.value.xaxis.categories = dateObjects.map(date =>
+                date.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
             );
+
             chartSeries.value[0].data = props.temperatureData.map(item => item.temperature);
 
+            // Identificar cambios de día
             const xAxisAnnotations = [];
-            let dayBoundaries = [];
             let currentDay = '';
 
-            // Identificar todas las fronteras de los días
             props.temperatureData.forEach((item, index) => {
                 const date = new Date(item.updated_at);
-                const dayStr = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                const dayStr = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 
                 if (dayStr !== currentDay) {
-                    if (currentDay !== '') {
-                        dayBoundaries.push(index);
-                    }
-                    currentDay = dayStr;
-                }
-            });
-            dayBoundaries.push(props.temperatureData.length);
+                    // Es un nuevo día
+                    const dayNumber = currentDay === '' ? 0 :
+                        xAxisAnnotations.filter(anno => anno.label && anno.label.text &&
+                            (anno.label.text === 'I N G' || anno.label.text.startsWith('Día '))).length;
 
-            // Crear las anotaciones entre las fronteras
-            let previousBoundary = 0;
-            dayBoundaries.forEach((boundary, index) => {
-                const midPoint = previousBoundary + Math.floor((boundary - previousBoundary) / 2);
-
-                if (index < dayBoundaries.length) {
                     xAxisAnnotations.push({
-                        x: chartOptions.value.xaxis.categories[midPoint],
+                        x: chartOptions.value.xaxis.categories[index],
                         strokeDashArray: 0,
-                        borderColor: 'transparent',
+                        borderColor: isDarkMode.value ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
                         label: {
                             borderColor: 'transparent',
                             style: {
@@ -172,31 +180,14 @@ export default defineComponent({
                                 background: isDarkMode.value ? '#374151' : '#e5e7eb',
                                 padding: { left: 10, right: 10, top: 2, bottom: 2 }
                             },
-                            text: index === 0 ? 'I N G' : `Día ${index}`,
+                            text: dayNumber === 0 ? 'I N G' : `Día ${dayNumber}`,
                             position: 'top',
                             orientation: 'horizontal',
                             offsetY: -15
                         }
                     });
-                }
-                previousBoundary = boundary;
-            });
 
-            // Añadir las líneas verticales divisorias por separado
-            dayBoundaries.forEach((boundary, index) => {
-                if (boundary < props.temperatureData.length) {
-                    xAxisAnnotations.push({
-                        x: chartOptions.value.xaxis.categories[boundary],
-                        strokeDashArray: 0,
-                        borderColor: isDarkMode.value ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
-                        label: {
-                            borderColor: 'transparent',
-                            style: {
-                                background: 'transparent'
-                            },
-                            text: '',
-                        }
-                    });
+                    currentDay = dayStr;
                 }
             });
 

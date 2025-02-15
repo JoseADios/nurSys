@@ -14,7 +14,8 @@ class MedicationNotification extends Model
         'administered_time',
         'scheduled_time',
         'nurse_sign',
-        'active'
+        'active',
+        'suspended_at'
     ];
 
     public function nurse(): BelongsTo

@@ -175,6 +175,7 @@ class GraphController extends Controller
                                 $graph->img->Line($newXPos - 40, $yTableMiddle, $newXPos, $yTableMiddle);
                                 $graph->img->Line($newXPos - 40, $yTableBottom, $newXPos, $yTableBottom);
                                 $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, false, true);
+                                $graph->img->SetColor('white');
                             }
                         } else {
                             $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight);

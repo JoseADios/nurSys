@@ -12,7 +12,7 @@
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <button @click="goBack"
+                    <Link :href="route('temperatureRecords.index')"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd"
@@ -20,7 +20,7 @@
                                 clip-rule="evenodd" />
                         </svg>
                         <span class="font-medium">Volver</span>
-                    </button>
+                    </Link>
                     <div class="flex items-center">
                         <button v-if="temperatureRecord.active" @click="downloadRecordReport"
                             class="inline-flex mr-8 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">

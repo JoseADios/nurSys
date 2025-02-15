@@ -24,6 +24,7 @@
         h1 {
             /* text-align: center; */
             font-size: 20px;
+            margin-top: 0px;
             margin-bottom: 10px;
         }
 
@@ -75,7 +76,10 @@
             font-weight: bold;
         }
 
-        .graph-cont {}
+        .graph-cont {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 
@@ -85,8 +89,8 @@
         <table width="100%">
             <tr>
                 <td class="col-1" width="10%">
-                    {{-- <img src="{{ public_path('images/clinicLogo.jpg') }}" width="50" height="70"> --}}
-                    <img src="{{ asset('images/clinicLogo.jpg') }}" width="50" height="70">
+                    <img src="{{ public_path('images/clinicLogo.jpg') }}" width="50" height="70">
+                    {{-- <img src="{{ asset('images/clinicLogo.jpg') }}" width="50" height="70"> --}}
                     <h3 id="clinic-ab">IEMMN</h3>
 
                 </td>
@@ -126,9 +130,33 @@
 
     {{-- <h3>Gráfico de Temperatura</h3> --}}
     <div class="graph-cont">
-        <img src="{{ $graphPath }}" width="100%">
-        {{-- <img src="{{ public_path('storage/temp_chart.jpg') }}" width="100%"> --}}
+        {{-- <img src="{{ $graphPath }}" width="100%"> --}}
+        <img src="{{ public_path('storage/temp_chart.jpg') }}" width="100%">
     </div>
+
+    <div class="bottom-cont">
+        <table width="100%" style="border-collapse: collapse;">
+            <tr>
+                <td style="width: 40%; vertical-align: middle; padding: 2px 0 2px 100px;">
+                    <p><span class="bold">Diagnóstico</span> __________________________</p>
+                </td>
+                <td style="width: 30%; vertical-align: middle; text-align: left; padding: 2px 0;">
+                    <div><span class="bold">Dr.</span> {{ $temperatureRecord->admission->doctor->name }}
+                        {{ $temperatureRecord->admission->doctor->last_name }}</div>
+                </td>
+                <td style="width: 30%; vertical-align: middle; text-align: left; padding: 2px 0;">
+                    <div style="display: flex; align-items: center;">
+                        <span class="bold">Firma enf.</span>
+
+                        @if ($nurseSignaturePath)
+                            <img src="{{ $nurseSignaturePath }}" width="100" style="margin-left: 10px;">
+                        @endif
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
 
 
 </body>

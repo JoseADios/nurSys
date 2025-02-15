@@ -23,9 +23,15 @@ class ReportController extends Controller
         app('App\Http\Controllers\GraphController')->generateGraph($id);
 
         $temperatureRecord = TemperatureRecord::findOrFail($id);
+        // $nurseSignaturePath = asset('storage/' . $temperatureRecord->nurse_sign);
+
+        $nurseSignaturePath = $temperatureRecord->nurse_sign
+            ? public_path('storage/' . $temperatureRecord->nurse_sign)
+            : null;
+
         $clinic = Clinic::get()->first();
         $details = TemperatureDetail::where('temperature_record_id', $id)
-        ->get('id');
+            ->get('id');
 
         if ($details->isEmpty()) {
             return Redirect::route('temperatureRecords.show', $id)->with('error', 'Este registro no tiene detalles');
@@ -35,19 +41,21 @@ class ReportController extends Controller
             return Redirect::route('temperatureRecords.index')->with('error', 'Este registro ha sido eliminado');
         }
 
-        return view('reports.temperature_record', [
-            'temperatureRecord' => $temperatureRecord,
-            'clinic' => $clinic,
-            'graphPath' => asset('storage/temp_chart.jpg')]);
+        // return view('reports.temperature_record', [
+        //     'temperatureRecord' => $temperatureRecord,
+        //     'clinic' => $clinic,
+        //     'nurseSignaturePath' => $nurseSignaturePath,
+        //     'graphPath' => asset('storage/temp_chart.jpg')]);
 
 
         // Generar el PDF con la imagen del gráfico
-        // $pdf = Pdf::loadView('reports.temperature_record', [
-        //     'temperatureRecord' => $temperatureRecord,
-        //     'clinic' => $clinic,
-        //     'graphPath' => asset('storage/temp_chart.jpg')
-        // ])->setPaper('letter', 'landscape');
+        $pdf = Pdf::loadView('reports.temperature_record', [
+            'temperatureRecord' => $temperatureRecord,
+            'clinic' => $clinic,
+            'nurseSignaturePath' => $nurseSignaturePath,
+            'graphPath' => asset('storage/temp_chart.jpg')
+        ])->setPaper('letter', 'landscape');
 
-        // return $pdf->stream('hoja_de_temperatura.pdf');
+        return $pdf->stream('hoja_de_temperatura.pdf');
     }
 }

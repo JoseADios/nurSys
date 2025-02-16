@@ -144,11 +144,15 @@ class MedicationRecordDetailController extends Controller
      */
     public function update(Request $request, MedicationRecordDetail  $medicationRecordDetail)
     {
-        if ($request->has('suspended_at')) {
+        if ($request->suspended_at == true) {
 
             $this->restore($medicationRecordDetail->id);
 
-        }else{
+        }elseif($request->suspended_at == false){
+            $this->suspend($medicationRecordDetail->id);
+        }
+
+        else{
 
         $fc = $request->fc;
         $interval_in_hours = $request->interval_in_hours;
@@ -273,6 +277,22 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
 
 
         $medicationRecordDetail->update(['suspended_at' => null]);
+
+        return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id);
+    }
+     private function suspend($id)
+    {
+
+        $medicationRecordDetail = MedicationRecordDetail::findOrFail($id);
+
+
+        $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();
+        foreach ($medicationNotifications as $notification) {
+            $notification->update(['suspended_at' => now()]);
+        }
+
+
+        $medicationRecordDetail->update(['suspended_at' => now()]);
 
         return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id);
     }

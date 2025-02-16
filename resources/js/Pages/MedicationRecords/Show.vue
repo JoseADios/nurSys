@@ -667,14 +667,13 @@ ToggleActivate(detail) {
             );
         } else {
 
-            this.$inertia.delete(
-                route('medicationRecordDetails.destroy', detail.id),
-                {
+            this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
+                suspended_at: false, preserveState: true, preserveScroll: true,
                     onSuccess: (response) => {
-                        console.log('destroy',response);
+                        console.log('update',response);
                     },
                     onError: (errors) => {
-                        console.error('Error al deshabilitar:', errors);
+                        console.error('Error al habilitar:', errors);
                     },
                 }
             );

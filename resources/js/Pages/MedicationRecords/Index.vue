@@ -41,12 +41,25 @@
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                    <th scope="col" class="px-6 py-3">Admisión</th>
-                    <th scope="col" class="px-6 py-3">Diagnóstico</th>
-                    <th scope="col" class="px-6 py-3">Dieta</th>
-                    <th scope="col" class="px-6 py-3">Referencias</th>
-                    <th scope="col" class="px-6 py-3">Estudios Pendientes</th>
-                    <th scope="col" class="px-6 py-3">Firma del Doctor</th>
+                    <th scope="col" class="px-6 py-3" @click="sort('admission_id')">Admisión <span v-if="form.sortField === 'admission_id'">{{ form.sortDirection === 'asc' ?
+                                '↑' :
+                                '↓'
+                                }}</span></th>
+                    <th scope="col" class="px-6 py-3" @click="sort('diagnosis')">Diagnóstico<span v-if="form.sortField === 'diagnosis'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span></th>
+                    <th scope="col" class="px-6 py-3" @click="sort('diet')">Dieta<span v-if="form.sortField === 'diet'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span></th>
+                    <th scope="col" class="px-6 py-3" @click="sort('referrals')">Referencias<span v-if="form.sortField === 'referrals'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span></th>
+                    <th scope="col" class="px-6 py-3" @click="sort('pending_studies')">Estudios Pendientes<span v-if="form.sortField === 'pending_studies'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span></th>
+                    <th scope="col" class="px-6 py-3" @click="sort('doctor_sign')">Firma del Doctor<span v-if="form.sortField === 'doctor_sign'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span></th>
                     <th scope="col" class="px-6 py-3">Acciones</th>
                 </tr>
             </thead>
@@ -145,6 +158,8 @@ export default {
             form: {
                 search: this.filters.search || '',
                 showDeleted: this.filters.show_deleted,
+                sortField: this.filters.sortField || 'medication_records.updated_at',
+                sortDirection: this.filters.sortDirection || 'asc',
             },
             timeout: 1000,
             recordBeingDisabled: ref(null),
@@ -158,8 +173,13 @@ export default {
             }
             this.timeout
             this.$inertia.get(route('medicationRecords.index'), this.form, {
-
+                preserveState: true,
             });
+        },
+        sort(field) {
+            this.form.sortField = field;
+            this.form.sortDirection = this.form.sortDirection === 'asc' ? 'desc' : 'asc';
+            this.submit();
         },
         toggleShowDeleted() {
             this.form.showDeleted = !this.form.showDeleted;

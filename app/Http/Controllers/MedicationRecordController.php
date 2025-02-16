@@ -37,6 +37,8 @@ class MedicationRecordController extends Controller
     {
         $showDeleted = $request->boolean('showDeleted');
         $search = $request->input('search');
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
 
 
         $query = MedicationRecord::query();
@@ -46,6 +48,13 @@ class MedicationRecordController extends Controller
             $query->where('active',false);
         }else{
             $query->where('active',true);
+        }
+
+        if ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->latest('medication_records.updated_at')
+                ->latest('medication_records.created_at');
         }
 
         if ($search) {
@@ -68,6 +77,8 @@ class MedicationRecordController extends Controller
             'filters' => [
                 'search' => $search,
                 'show_deleted' => $showDeleted,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection,
             ],
             'admission' => $admission,
         ]);

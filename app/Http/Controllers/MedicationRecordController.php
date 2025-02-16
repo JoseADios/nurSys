@@ -141,7 +141,7 @@ class MedicationRecordController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MedicationRecord $medicationRecord)
+    public function show(MedicationRecord $medicationRecord,Request $request)
     {
         try{
         $medicationRecord->load(['admission.patient','admission.bed','doctor','medicationRecordDetail','admission.medicalOrders']);
@@ -152,13 +152,23 @@ class MedicationRecordController extends Controller
         $drug = Drug::all();
         $route = DrugRoute::all();
         $dose = DrugDose::all();
-            if (!$medicationRecord->active) {
-                $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+        $showDeleted = $request->boolean('showDeleted');
 
-            }else{
-                $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active',true)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+            if ($showDeleted || !$medicationRecord->active) {
 
-            }
+                    $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active',false)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+
+                Log::info("message");
+
+
+                }else{
+                    $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active',true)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+
+                }
+
+
+
+
 
 
                 return Inertia::render('MedicationRecords/Show', [
@@ -167,7 +177,10 @@ class MedicationRecordController extends Controller
                     'order' => $allMedicalOrders,
                     'drug' =>$drug,
                     'dose' => $dose,
-                    'routeOptions' => $route
+                    'routeOptions' => $route,
+                    'filters' => [
+                        'show_deleted' => $showDeleted,
+                    ],
                 ]);
 
 

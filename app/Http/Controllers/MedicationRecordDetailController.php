@@ -289,11 +289,11 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
 
         $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();
         foreach ($medicationNotifications as $notification) {
-            $notification->update(['suspended_at' => now()]);
+            $notification->update(['active' => 0]);
         }
 
 
-        $medicationRecordDetail->update(['suspended_at' => now()]);
+        $medicationRecordDetail->update(['active' => 0]);
 
         return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id);
     }

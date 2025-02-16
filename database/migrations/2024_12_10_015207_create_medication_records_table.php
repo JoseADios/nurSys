@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('pending_studies');
             $table->string('doctor_sign');
             $table->boolean('active')->default(true);
-            $table->timestamp('suspended_at')->nullable()->default(time());
+            $table->timestamp('suspended_at')->nullable()->default(null);
             $table->timestamps();
 
         });

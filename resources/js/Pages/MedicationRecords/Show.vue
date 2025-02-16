@@ -121,15 +121,16 @@
     No hay órdenes disponibles.
   </div>
 
-
-                            <div
-  v-for="orders in order"
-  :key="orders.id"
-  :value="orders.description"
-  @click="selectOrder(orders.id)"
+<div v-for="orders in order" class="border rounded-lg">
+    <p class="text-lg ml-2 font-semibold text-gray-900 dark:text-white">Order {{ orders.id }}</p>
+    <div
+  v-for="orderdetail in orders.medical_order_detail"
+  :key="orderdetail.id"
+  :value="orderdetail.description"
+  @click="selectOrder(orderdetail.id)"
   :class="{
-    'bg-blue-500 text-white': selectedOrderId === orders.id && !orders.suspended_at,
-    'bg-white dark:bg-gray-800': selectedOrderId !== orders.id && !orders.suspended_at,
+    'bg-blue-500 text-white': selectedOrderId === orderdetail.id && !orderdetail.suspended_at,
+    'bg-white dark:bg-gray-800': selectedOrderId !== orderdetail.id && !orderdetail.suspended_at,
 
 
 
@@ -138,15 +139,18 @@
 >
 
   <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
-    {{ orders.id }} - Orden
+   Detalle de Orden # - {{ orderdetail.id }}
   </h3>
   <p class="text-lg font-semibold text-gray-900 dark:text-white">
-    {{ orders.order }} <br />
+    {{ orderdetail.order }}  <br />
     <!-- Mostrar régimen solo si la orden está seleccionada -->
-    <span v-if="selectedOrderId === orders.id" class="text-lg font-semibold text-gray-900 dark:text-white">
-      Régimen: {{ orders.regime }}
+    <span v-if="selectedOrderId === orderdetail.id" class="text-lg font-semibold text-gray-900 dark:text-white">
+      Régimen: {{ orderdetail.regime }}
+      {{orderdetail.medicalOrder}}
     </span>
   </p>
+</div>
+
 </div>
 
   </div>

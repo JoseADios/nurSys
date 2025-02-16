@@ -22,6 +22,7 @@ return new class extends Migration
             $table->time('start_time');
             $table->integer('interval_in_hours');
             $table->boolean('active')->default(true);
+          $table->timestamp('suspended_at')->nullable()->default(time());
             $table->timestamps();
         });
     }

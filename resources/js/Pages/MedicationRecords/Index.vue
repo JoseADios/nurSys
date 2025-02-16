@@ -107,17 +107,17 @@
     </div>
     <ConfirmationModal :show="recordBeingDisabled != null" @close="recordBeingDisabled = null">
         <template #title>
-            Eliminar Ingreso
+            Suspender Ficha de Medicamentos
         </template>
         <template #content>
-            ¿Estás seguro de que deseas eliminar este ingreso?
+            ¿Estás seguro de que deseas suspender esta ficha?
         </template>
         <template #footer>
             <SecondaryButton @click="recordBeingDisabled = null">
                 Cancelar
             </SecondaryButton>
             <DangerButton class="ms-3" @click="confirmDisable">
-                Eliminar
+            Suspender
             </DangerButton>
         </template>
     </ConfirmationModal>

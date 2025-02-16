@@ -365,7 +365,16 @@
                             </svg>
                             <span class="font-medium">Notificaciones</span>
                             </Link>
-                            </div>
+                            <Link @click="deleteDetail(detail)"
+                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="font-medium">Eliminar</span>
+                            </Link>  </div>
                             <div v-if="medicationRecord.active"> <!-- Disable -->
                             <Link  @click="ToggleActivate(detail)"
                             :class="[!detail.suspended_at ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
@@ -378,16 +387,8 @@
                             </svg>
                             <span>{{ !detail.suspended_at ? 'Suspender' : 'Habilitar' }}</span>
                             </Link>
-                            <Link @click="deleteDetail(detail)"
-                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <span class="font-medium">Eliminar</span>
-                            </Link></div>
+                           </div>
+
 
 
 

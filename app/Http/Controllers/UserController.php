@@ -30,7 +30,7 @@ class UserController extends Controller
         $role = $request->input('role');
         $specialty = $request->input('specialty');
         $position = $request->input('position');
-        $area = $request->input('area');
+        $email = $request->input('email');
         $show_deleted = $request->boolean('show_deleted');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
@@ -61,8 +61,8 @@ class UserController extends Controller
         if ($position) {
             $query->where('position', 'like', '%' . $position . '%');
         }
-        if ($area) {
-            $query->where('area', 'like', '%' . $area . '%');
+        if ($email) {
+            $query->where('email', 'like', '%' . $email . '%');
         }
 
         // Ordenamiento
@@ -86,7 +86,7 @@ class UserController extends Controller
                 'role' => $role,
                 'specialty' => $specialty,
                 'position' => $position,
-                'area' => $area,
+                'email' => $email,
                 'show_deleted' => $show_deleted,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,

@@ -145,29 +145,27 @@ export default defineComponent({
         ]);
 
         const processTemperatureData = () => {
-            // Convertir las fechas a objetos Date para mejor manejo
+            if (!props.temperatureData.length) return;
+
             const dateObjects = props.temperatureData.map(item => new Date(item.updated_at));
 
-            // Formatear las categorías del eje X
             chartOptions.value.xaxis.categories = dateObjects.map(date =>
                 date.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
             );
 
             chartSeries.value[0].data = props.temperatureData.map(item => item.temperature);
 
-            // Identificar cambios de día
             const xAxisAnnotations = [];
-            let currentDay = '';
+            const firstDate = new Date(props.temperatureData[0].updated_at);
+            let lastProcessedDayStr = '';
 
             props.temperatureData.forEach((item, index) => {
                 const date = new Date(item.updated_at);
-                const dayStr = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+                const dayStr = date.toISOString().split('T')[0];
 
-                if (dayStr !== currentDay) {
-                    // Es un nuevo día
-                    const dayNumber = currentDay === '' ? 0 :
-                        xAxisAnnotations.filter(anno => anno.label && anno.label.text &&
-                            (anno.label.text === 'I N G' || anno.label.text.startsWith('Día '))).length;
+                if (dayStr !== lastProcessedDayStr) {
+                    const diffTime = Math.abs(date - firstDate);
+                    const dayNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
                     xAxisAnnotations.push({
                         x: chartOptions.value.xaxis.categories[index],
@@ -180,20 +178,19 @@ export default defineComponent({
                                 background: isDarkMode.value ? '#374151' : '#e5e7eb',
                                 padding: { left: 10, right: 10, top: 2, bottom: 2 }
                             },
-                            text: dayNumber === 0 ? 'I N G' : `Día ${dayNumber}`,
+                            text: index === 0 ? 'I N G' : `Día ${dayNumber + 1}`,
                             position: 'top',
                             orientation: 'horizontal',
                             offsetY: -15
                         }
                     });
 
-                    currentDay = dayStr;
+                    lastProcessedDayStr = dayStr;
                 }
             });
 
             chartOptions.value.annotations.xaxis = xAxisAnnotations;
         };
-
         watchEffect(() => {
             processTemperatureData();
         });

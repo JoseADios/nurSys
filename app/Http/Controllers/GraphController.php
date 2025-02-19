@@ -237,12 +237,22 @@ class GraphController extends Controller
 
     private function addVerticalLines($graph, $timestamps)
     {
-        $uniqueDays = array_unique(array_map(fn($timestamp) => date('Y-m-d', $timestamp), $timestamps));
+        // Obtener el primer y último día
+        $firstDay = date('Y-m-d', min($timestamps));
+        $lastDay = date('Y-m-d', max($timestamps));
+
+        // Generar array con todos los días entre el primero y el último
+        $allDays = [];
+        $currentDay = $firstDay;
+        while ($currentDay <= $lastDay) {
+            $allDays[] = $currentDay;
+            $currentDay = date('Y-m-d', strtotime($currentDay . ' +1 day'));
+        }
+
         $minTimestamp = min($timestamps);
         $maxTimestamp = max($timestamps);
 
-        foreach ($uniqueDays as $day) {
-
+        foreach ($allDays as $day) {
             $this->addDayLines($graph, $day, $minTimestamp, $maxTimestamp);
         }
     }
@@ -251,16 +261,17 @@ class GraphController extends Controller
     {
         $midnight = strtotime($day . ' 00:00:00');
 
-        // solo agregar la linea si el timestamp es mayor o igual que el min de los timestamps
+        // Agregar línea vertical negra a medianoche
         if ($midnight >= $minTimestamp && $midnight <= $maxTimestamp) {
             $graph->AddLine(new PlotLine(VERTICAL, $midnight, 'black', 2));
         }
 
+        // Agregar líneas verticales grises para cada turno
         $turns = ['07:00:00', '14:00:00', '21:00:00'];
-
         foreach ($turns as $turn) {
-            if (strtotime($day . ' ' . $turn) >= $minTimestamp && strtotime($day . ' ' . $turn) <= $maxTimestamp) {
-                $graph->AddLine(new PlotLine(VERTICAL, strtotime($day . ' ' . $turn), 'lightgray', 1));
+            $turnTimestamp = strtotime($day . ' ' . $turn);
+            if ($turnTimestamp >= $minTimestamp && $turnTimestamp <= $maxTimestamp) {
+                $graph->AddLine(new PlotLine(VERTICAL, $turnTimestamp, 'lightgray', 1));
             }
         }
     }
@@ -322,10 +333,20 @@ class GraphController extends Controller
         $headerDays->SetAlign('right', 'center');
         $graph->AddText($headerDays);
 
-        $uniqueDays = array_unique(array_map(fn($timestamp) => date('Y-m-d', $timestamp), $timestamps));
+        // Obtener el primer y último día de los timestamps
+        $firstDay = date('Y-m-d', min($timestamps));
+        $lastDay = date('Y-m-d', max($timestamps));
+
+        // Generar array con todos los días entre el primero y el último
+        $allDays = [];
+        $currentDay = $firstDay;
+        while ($currentDay <= $lastDay) {
+            $allDays[] = $currentDay;
+            $currentDay = date('Y-m-d', strtotime($currentDay . ' +1 day'));
+        }
 
         $j = 0;
-        foreach ($uniqueDays as $i => $day) {
+        foreach ($allDays as $i => $day) {
             $firstLowSpace = false;
             $xPos = $this->calculateXPos($graph, $timestamps, strtotime($day . ' 00:00:00'));
 
@@ -336,23 +357,18 @@ class GraphController extends Controller
 
             // si hay poco espacio para la casilla
             if ($xPos !== null && abs($xPos - $nextXPos) < 70) {
-
                 if ($i == 0) {
-                    // poner solo el dia
+                    $cellCenter -= 10;
                     $firstLowSpace = true;
-                    // y desplazar un poco la linea
                     $graph->img->SetColor('black');
                     $graph->img->Line($graph->img->left_margin - 20, $yTableTop, $graph->img->left_margin - 20, $yTableBottom);
-                    $graph->img->Line($nextXPos + 20, $yTableTop, $nextXPos + 20, $yTableBottom);
+                    $graph->img->Line($nextXPos, $yTableTop, $nextXPos, $yTableBottom);
 
-
-                    // borrar las otras lineas
                     $graph->img->SetColor('white');
                     $graph->img->Line($graph->img->left_margin, $yTableTop, $graph->img->left_margin, $yTableBottom);
-                    $graph->img->Line($nextXPos, $yTableTop, $nextXPos, $yTableBottom);
-                }
-                // si es la ultima
-                else {
+                    $graph->img->SetColor('black');
+                    // $graph->img->Line($nextXPos, $yTableTop, $nextXPos, $yTableBottom);
+                } else {
                     $graph->img->SetColor('black');
                     $cellCenter += 45;
                     $newXPos = $graph->img->left_margin + $graph->img->plotwidth + 80;
@@ -363,16 +379,17 @@ class GraphController extends Controller
                     $graph->img->Line($newXPos - 80, $yTableBottom, $newXPos, $yTableBottom);
                     $graph->img->SetColor('white');
 
-                    // borrar la linea del borde
                     if (round($graph->img->left_margin + $graph->img->plotwidth) != round($xPos)) {
                         $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
                     }
                 }
             }
+
             if ($i >= 1) {
                 $graph->img->SetColor('black');
             }
 
+            // Mostrar la fecha
             if ($firstLowSpace) {
                 $textDay = new Text(date('d', strtotime($day)), $cellCenter, $yTableTop + ($rowHeight / 2));
                 $textDay->SetAlign('center', 'center');
@@ -383,6 +400,7 @@ class GraphController extends Controller
                 $graph->AddText($textDay);
             }
 
+            // Mostrar el día de hospitalización
             if ($j == 0) {
                 $textDay = new Text('ADM', $cellCenter, $yTableMiddle + ($rowHeight / 2));
                 $textDay->SetAlign('center', 'center');

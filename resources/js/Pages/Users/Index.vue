@@ -126,7 +126,7 @@
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
-                            # <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                            ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('name')">
                             Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
@@ -157,7 +157,7 @@
                     <tr v-for="(user, index) in users.data" :key="user.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
-                            {{ index + 1 }}
+                            {{ user.id }}
                         </td>
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ user.name }} {{ user.last_name }}

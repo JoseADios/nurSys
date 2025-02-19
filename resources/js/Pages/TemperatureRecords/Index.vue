@@ -80,8 +80,11 @@
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">
-                            #
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
+                            ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ?
+                                '↑' :
+                                '↓'
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('in_process')">
                             En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc' ?
@@ -116,7 +119,7 @@
                     <tr v-for="(temperatureRecord, index) in temperatureRecords.data" :key="temperatureRecord.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
-                            {{ index + 1 }}
+                            {{ temperatureRecord.id }}
                         </td>
                         <td class="px-6 py-4">
                             <span v-if="temperatureRecord.in_process"
@@ -125,9 +128,9 @@
                         </td>
                         <td class="px-6 py-4">
                             <div v-if="temperatureRecord.admission.bed">
+                                ING-00{{ temperatureRecord.admission.id }},
                                 Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
-                                    temperatureRecord.admission.bed.room }},
-                                {{ temperatureRecord.admission.created_at }}
+                                    temperatureRecord.admission.bed.room }}
                             </div>
                             <div v-else>{{ temperatureRecord.admission.created_at }} N/A</div>
                         </td>

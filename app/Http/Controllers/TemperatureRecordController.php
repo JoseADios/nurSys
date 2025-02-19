@@ -60,9 +60,11 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         if ($search) {
             $query->where(function (Builder $query) use ($search) {
-                $query->whereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
-                    ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
-                    ->orWhereRaw('CONCAT(beds.room, "-", beds.number) LIKE ?', ['%' . $search . '%']);
+            $query->whereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
+                ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
+                ->orWhereRaw('temperature_records.id LIKE ?', ['%' . $search . '%'])
+                ->orWhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
+                ->orWhereRaw('CONCAT(beds.room, "-", beds.number) LIKE ?', ['%' . $search . '%']);
             });
         }
 

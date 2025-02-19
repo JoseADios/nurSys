@@ -23,7 +23,7 @@ class PatientController extends Controller implements HasMiddleware
         return [
             new Middleware('permission:patient.view', only: ['index', 'show']),
             new Middleware('permission:patient.create', only: ['create', 'store']),
-            new Middleware('permission:patient.update', only: [ 'edit', 'update']),
+            new Middleware('permission:patient.update', only: ['edit', 'update']),
             new Middleware('permission:patient.delete', only: ['destroy']),
         ];
     }
@@ -38,7 +38,6 @@ class PatientController extends Controller implements HasMiddleware
         $days = $request->integer('days');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
-
         $query = Patient::query();
 
         if ($showDeleted) {

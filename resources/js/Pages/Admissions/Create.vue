@@ -16,7 +16,7 @@
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
-                <BedSelector :beds="beds" :errors="form.errors" :initialBedId="form.bed_id"
+                <BedSelector :beds="beds" :errors="form.errors" :initialBedId="selectedbed.id"
                     @update:bedId="updateBedId" />
 
                 <label for="patient"

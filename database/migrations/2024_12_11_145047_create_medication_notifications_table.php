@@ -22,7 +22,6 @@ return new class extends Migration
             $table->dateTime('administered_time')->nullable();
             $table->string('nurse_sign')->nullable();
             $table->boolean('active')->default(true);
-           $table->timestamp('suspended_at')->nullable()->default(null);
             $table->timestamps();
         });
     }

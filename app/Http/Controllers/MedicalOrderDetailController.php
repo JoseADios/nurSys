@@ -65,13 +65,22 @@ class MedicalOrderDetailController extends Controller
     {
        $medicalOrderDetail->update($request->all());
         $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)->first();
-
-        if ($medicationRecordDetail) {
-            $medicationRecordDetail->update(['active' => 0]);
-            Log::info("MedicationRecordDetail actualizado: ", ['id' => $medicationRecordDetail->id, 'active' => 0]);
-        } else {
-            Log::warning("No se encontró un MedicationRecordDetail para MedicalOrderDetail ID: " . $medicalOrderDetail->id);
+        if ($request->suspended_at == null) {
+            if ($medicationRecordDetail) {
+                $medicationRecordDetail->update(['suspended_at' => null]);
+                Log::info("MedicationRecordDetail actualizado: ", ['id' => $medicationRecordDetail->id, 'suspended_at' => null]);
+            } else {
+                Log::warning("No se encontró un MedicationRecordDetail para MedicalOrderDetail ID: " . $medicalOrderDetail->id);
+            }
+        }else{
+            if ($medicationRecordDetail) {
+                $medicationRecordDetail->update(['suspended_at' => now()]);
+                Log::info("MedicationRecordDetail actualizado: ", ['id' => $medicationRecordDetail->id, 'suspended_at' => now()]);
+            } else {
+                Log::warning("No se encontró un MedicationRecordDetail para MedicalOrderDetail ID: " . $medicalOrderDetail->id);
+            }
         }
+
         return back();
     }
 

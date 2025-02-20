@@ -345,7 +345,7 @@
                             </div>
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            <div v-if="detail.active">
+                            <div v-if="detail.active ">
                                  <!-- Editar -->
                             <Link  v-if="!hasApplied(detail)":href="route('medicationRecordDetails.edit', detail.id )"
                                 class="flex items-center space-x-2 text-yellow-600 hover:text-yellow-800 transition-colors">
@@ -368,18 +368,22 @@
                             </svg>
                             <span class="font-medium">Notificaciones</span>
                             </Link>
-                            <Link @click="deleteDetail(detail)"
-                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                           </div>
+                           <Link  @click="ToggleActivate(detail)"
+                            :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
+                                class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
+                            <svg xmlns="http:1//www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                 fill="currentColor">
                                 <path fill-rule="evenodd"
                                     d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <span class="font-medium">Eliminar</span>
-                            </Link>  </div>
+                            <span>{{ detail.active ? 'Eliminar' : 'Restaurar' }}</span>
+                            </Link>
+
+
                             <div v-if="medicationRecord.active"> <!-- Disable -->
-                            <Link  @click="ToggleActivate(detail)"
+                            <Link  @click="ToggleSuspend(detail)"
                             :class="[!detail.suspended_at ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
                                 class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
                             <svg xmlns="http:1//www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
@@ -643,7 +647,8 @@ deleteRecord() {
             this.recordBeingDeleted = false
             this.$inertia.delete(route('medicationRecords.destroy', this.medicationRecord.id));
         },
-deleteDetail(detail){
+ToggleActivate(detail){
+    if (detail.active) {
     this.$inertia.delete(route('medicationRecordDetails.destroy', detail.id), {
          preserveState: true, preserveScroll: true,
                     onSuccess: (response) => {
@@ -654,9 +659,21 @@ deleteDetail(detail){
                     },
                 }
             );
+    }else{
+        this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
+                active: true, preserveState: true, preserveScroll: true,
+                    onSuccess: (response) => {
+                        console.log('update',response);
+                    },
+                    onError: (errors) => {
+                        console.error('Error al habilitar:', errors);
+                    },
+                }
+            );
+    }
 },
 
-ToggleActivate(detail) {
+ToggleSuspend(detail) {
         if (detail.suspended_at) {
 
             this.$inertia.put(route('medicationRecordDetails.update', detail.id), {

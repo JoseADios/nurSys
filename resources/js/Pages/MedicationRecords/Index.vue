@@ -45,6 +45,10 @@
                                 '↑' :
                                 '↓'
                                 }}</span></th>
+                                <th scope="col" class="px-6 py-3" @click="sort('active')">Estado <span v-if="form.sortField === 'active'">{{ form.sortDirection === 'asc' ?
+                                '↑' :
+                                '↓'
+                                }}</span></th>
                     <th scope="col" class="px-6 py-3" @click="sort('diagnosis')">Diagnóstico<span v-if="form.sortField === 'diagnosis'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
                                 }}</span></th>
@@ -72,7 +76,12 @@
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ record.admission ? record.admission.id : 'N/A' }}
                     </td>
-                    <td class="px-6 py-4">{{ record.diagnosis }}</td>
+                    <td class="px-6 py-4  w-2">
+                            <span v-if="record.admission.discharged_date == null"
+                                class="block w-4 h-4 bg-green-500 rounded-full mx-auto">{{  }}</span>
+                            <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
+                        </td>
+                    <td class="px-6 py-4">{{ record.diagnosis }} </td>
                     <td class="px-6 py-4">{{ record.diet }}</td>
                     <td class="px-6 py-4">{{ record.referrals }}</td>
                     <td class="px-6 py-4">{{ record.pending_studies }}</td>

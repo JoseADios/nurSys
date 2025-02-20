@@ -35,6 +35,9 @@
                         Paciente
                     </th>
                     <th scope="col" class="px-6 py-3">
+                        Estado
+                    </th>
+                    <th scope="col" class="px-6 py-3">
                         Doctor
                     </th>
                     <th scope="col" class="px-6 py-3">
@@ -52,9 +55,15 @@
                                 medicalOrder.admission.patient.first_surname }} {{
                                 medicalOrder.admission.patient.second_surname }}
                     </th>
+                    <td class="px-6 py-4  w-2">
+                           <span v-if="medicalOrder.admission.discharged_date == null"
+                                class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
+                            <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
+                        </td>
                     <td class="px-6 py-4">
                         {{ medicalOrder.doctor.name }}
                     </td>
+
                     <td class="px-6 py-4">
                         {{ medicalOrder.created_at }}
                     </td>

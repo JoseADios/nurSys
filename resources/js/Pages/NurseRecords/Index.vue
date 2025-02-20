@@ -34,8 +34,11 @@
                     <th scope="col" class="px-6 py-3">
                         Paciente
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-6 py-3 ">
                         Enfermera
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Estado
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Fecha
@@ -52,9 +55,15 @@
                                 nurseRecord.admission.patient.first_surname }} {{
                                 nurseRecord.admission.patient.second_surname }}
                     </th>
+                    <td class="px-6 py-4 w-2">
+                            <span v-if="nurseRecord.admission.discharged_date == null"
+                                class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
+                            <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
+                        </td>
                     <td class="px-6 py-4">
                         {{ nurseRecord.nurse.name }} {{ nurseRecord.nurse.last_name }}
                     </td>
+
                     <td class="px-6 py-4">
                         {{ nurseRecord.created_at }}
                     </td>

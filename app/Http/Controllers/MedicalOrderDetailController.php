@@ -90,6 +90,16 @@ class MedicalOrderDetailController extends Controller
     public function destroy(MedicalOrderDetail $medicalOrderDetail)
     {
         $medicalOrderDetail->update(['active' => 0]);
+        $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)->first();
+
+
+            if ($medicationRecordDetail) {
+                $medicationRecordDetail->update(['active' => 0]);
+                Log::info("MedicationRecordDetail actualizado: ", ['id' => $medicationRecordDetail->id, 'active' => 0]);
+            } else {
+                Log::warning("No se encontró un MedicationRecordDetail para MedicalOrderDetail ID: " . $medicalOrderDetail->id);
+            }
+
         return Redirect::route('medicalOrders.edit', $medicalOrderDetail->medical_order_id);
     }
 }

@@ -70,9 +70,7 @@
             <tbody>
 
                 <tr v-for="record in medicationRecords.data.filter(record => record.id)" :key="record.id" :class="[
-        'bg-white border-b dark:bg-gray-800 dark:border-gray-700',
-        record.active == 0 && 'transition-colors bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-900/30'
-    ]">
+        'bg-white border-b dark:bg-gray-800 dark:border-gray-700'    ]">
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ record.admission ? record.admission.id : 'N/A' }}
                     </td>

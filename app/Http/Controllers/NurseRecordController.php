@@ -21,12 +21,35 @@ class NurseRecordController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search', '');
+        $showDeleted = $request->boolean('showDeleted');
+
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
+
         $admissionId = $request->input('admission_id');
 
-        $query = NurseRecord::with('nurse', 'admission.patient')
-            ->where('active', true)
-            ->orderBy('updated_at', 'desc')
-            ->orderBy('created_at', 'desc');
+
+        $query = NurseRecord::query()
+    ->with([
+        'admission.patient',
+        'admission.bed',
+        'nurse'
+    ]);
+
+
+        if ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->latest('nurse_records.updated_at')
+                ->latest('nurse_records.created_at');
+        }
+
+
+            if ($showDeleted) {
+                $query->where('active', false);
+            } else {
+                $query->where('active', true);
+            }
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
@@ -52,7 +75,10 @@ class NurseRecordController extends Controller
         return Inertia::render('NurseRecords/Index', [
             'nurseRecords' => $nurseRecords,
             'admission_id' => intval($admissionId),
-            'filters' => ['search' => $search],
+            'filters' => ['search' => $search,
+            'show_deleted' => $showDeleted,
+            'sortField' => $sortField,
+            'sortDirection' => $sortDirection,],
         ]);
     }
 

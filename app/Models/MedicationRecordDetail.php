@@ -18,6 +18,7 @@ class MedicationRecordDetail extends Model
         'active',
         'start_time',
         'medical_order_detail_id',
+        'suspended_at'
     ];
 
     public function medicationRecord(): BelongsTo

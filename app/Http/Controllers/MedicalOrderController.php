@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\MedicalOrder;
 use App\Models\MedicalOrderDetail;
+use App\Models\MedicationRecordDetail;
 use App\Models\Regime;
 use App\Services\FirmService;
 use Illuminate\Http\Request;
@@ -134,11 +135,14 @@ class MedicalOrderController extends Controller
 
 
 
-        if ($request->active === false) {
-            $record = MedicationRecord::where('admission_id', $request->admission_id)->pluck('id');
-            Log::info($record);
-            MedicationRecordDetail::whereIn('medication_record_id', $record)
-                ->update(['active' => false]);
+        if ($request->active === true) {
+            $medicalOrderDetailIds = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->pluck('id');
+            Log::info($medicalOrderDetailIds);
+            $medicationRecordDetails = MedicationRecordDetail::whereIn('medical_order_detail_id', $medicalOrderDetailIds)->get();
+            Log::info($medicationRecordDetails);
+            foreach ($medicationRecordDetails as $medicationRecordDetail) {
+                $medicationRecordDetail->update(['suspended_at' => null]);
+            }
         }
 
 
@@ -159,6 +163,12 @@ class MedicalOrderController extends Controller
     public function destroy(MedicalOrder $medicalOrder)
     {
         $medicalOrder->update(['active'=> 0]);
+
+        $medicalOrderDetailIds = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->pluck('id');
+        $medicationRecordDetails = MedicationRecordDetail::whereIn('medical_order_detail_id', $medicalOrderDetailIds)->get();
+        foreach ($medicationRecordDetails as $medicationRecordDetail) {
+            $medicationRecordDetail->update(['suspended_at' => now()]);
+        }
         return Redirect::route('medicalOrders.index');
     }
 }

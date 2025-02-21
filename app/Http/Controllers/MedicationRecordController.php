@@ -169,7 +169,7 @@ class MedicationRecordController extends Controller
 
                     $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active',false)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
 
-                Log::info("message");
+
 
 
                 }else{

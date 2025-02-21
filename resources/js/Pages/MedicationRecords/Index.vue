@@ -45,7 +45,7 @@
                                 '↑' :
                                 '↓'
                                 }}</span></th>
-                                <th scope="col" class="px-6 py-3" @click="sort('active')">Estado <span v-if="form.sortField === 'active'">{{ form.sortDirection === 'asc' ?
+                                <th scope="col" class="px-6 py-3" @click="sort('admission.discharged_date')">Estado <span v-if="form.sortField === 'admission.discharged_date'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
                                 }}</span></th>

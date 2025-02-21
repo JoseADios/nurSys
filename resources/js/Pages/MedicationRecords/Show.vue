@@ -121,10 +121,10 @@
     No hay órdenes disponibles.
   </div>
 
-<div v-for="orders in order" class="border rounded-lg">
+<div v-for="orders in order.filter(od => od.active === 1)" :key="orders.id"  class="border rounded-lg">
     <p class="text-lg ml-2 font-semibold text-gray-900 dark:text-white">Order {{ orders.id }}</p>
     <div
-  v-for="orderdetail in orders.medical_order_detail"
+    v-for="orderdetail in orders.medical_order_detail.filter(od => od.suspended_at === null || od.active == 1)"
   :key="orderdetail.id"
   :value="orderdetail.description"
   @click="selectOrder(orderdetail.id)"
@@ -137,6 +137,7 @@
 }"
   class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200"
 >
+
 
   <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
    Detalle de Orden # - {{ orderdetail.id }}

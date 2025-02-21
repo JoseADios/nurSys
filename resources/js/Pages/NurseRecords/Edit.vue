@@ -80,9 +80,12 @@
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
-                            </p>
+                            <Link :href="route('patients.show', nurseRecord.admission.patient.id)" as="button"
+                                class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
+                            {{ nurseRecord.admission.patient.first_name }} {{
+                                nurseRecord.admission.patient.first_surname }} {{
+                                nurseRecord.admission.patient.second_surname }}
+                            </Link>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Sala</h3>
@@ -102,7 +105,7 @@
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Registro</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ nurseRecord.created_at }}
+                                {{ formatDate(nurseRecord.created_at) }}
                             </p>
                         </div>
                     </div>
@@ -167,7 +170,7 @@
                                 {{ detail.comment }}
                             </div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                {{ detail.created_at }}
+                                {{ formatDate(detail.created_at) }}
                             </div>
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -263,6 +266,7 @@ import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import moment from 'moment';
 
 export default {
     props: {
@@ -347,7 +351,10 @@ export default {
         restoreRecord() {
             this.formAdmission.active = true
             this.submitAdmission();
-        }
+        },
+        formatDate(date) {
+            return moment(date).format('DD MMM YYYY HH:mm');
+        },
     }
 }
 </script>

@@ -74,7 +74,6 @@ Route::middleware([
     });
 
     // REPORTES
-    Route::get('/reports/patient/{id}', [ReportController::class, 'patientReport'])->name('reports.patient');
     Route::get( '/reports/temperatureRecord/{id}', [ReportController::class, 'temperatureRecordReport'])
         ->name('reports.temperatureRecord');
 });

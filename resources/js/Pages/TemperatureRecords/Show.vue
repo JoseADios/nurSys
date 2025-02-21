@@ -132,9 +132,9 @@
 
 
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Registro</h3>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de creación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ temperatureRecord.created_at.toLocaleString() }}
+                                {{ formatDate(temperatureRecord.created_at) }}
                             </p>
                         </div>
 
@@ -389,6 +389,8 @@ import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { useGoBack } from '@/composables/useGoBack';
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import moment from 'moment';
+import 'moment/locale/es';
 
 export default {
     props: {
@@ -470,7 +472,6 @@ export default {
                 },
                 preserveScroll: true,
             });
-
         },
         submitUpdateRecord() {
             this.isVisibleEditAdm = null
@@ -499,9 +500,16 @@ export default {
             this.formRecord.active = true
             this.submitUpdateRecord()
         },
+        formatDate(date) {
+            return moment(date).format('DD MMM YYYY HH:mm');
+        },
+
         async downloadRecordReport() {
             window.open(route('reports.temperatureRecord', { id: this.temperatureRecord.id }), '_blank');
         }
+    },
+    mounted() {
+        moment.locale('es'); // Cambia el idioma a español
     },
     setup() {
         const { goBack } = useGoBack()

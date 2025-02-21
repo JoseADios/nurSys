@@ -21,7 +21,7 @@
             </Link>
         </div>
 
-        <div class="flex flex-col items-center justify-center mt-10">
+        <div class="flex flex-col items-center justify-center mt-6">
             <Link :href="route('nurseRecords.create', { admission_id: admission_id })"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
             Crear nuevo Registro de Enfermería
@@ -29,7 +29,7 @@
         </div>
 
         <div
-            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
+            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-0 lg:mx-10">
 
             <form @submit.prevent="submitFilters" class="mb-2 relative">
                 <label for="search" class="block my-2 text-md font-large text-gray-900 dark:text-white">
@@ -84,7 +84,7 @@
             </div>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
 
             <table v-if="nurseRecords.data.length"
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -193,7 +193,6 @@ import {
 } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
 import moment from 'moment';
-import 'moment/locale/es';
 
 export default {
     props: {

@@ -14,12 +14,12 @@
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <Link :href="route('nurseRecords.index')"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="font-medium">Volver</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-medium">Volver</span>
                     </Link>
                     <button v-if="nurseRecord.active" @click="recordBeingDeleted = true"
                         class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
@@ -43,9 +43,10 @@
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
                             <div class="">
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
-                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                    {{ nurseRecord.admission_id }}
-                                </p>
+                                <Link :href="route('admissions.show', nurseRecord.admission_id)" as="button"
+                                    class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
+                                ING-00{{ nurseRecord.admission_id }}
+                                </Link>
                             </div>
                             <button @click="toggleEditAdmission" class="text-blue-500 mr-3">Edit</button>
                         </div>
@@ -93,9 +94,9 @@
 
                     <div class="space-y-4">
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermero</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ patient.first_name }} {{ patient.last_name }}
+                                {{ nurse.name }} {{ nurse.last_name }}
                             </p>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">

@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <table v-if="temperatureRecords.data.length"
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -93,7 +93,8 @@
                                 }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.id')">
-                            Ingreso <span v-if="form.sortField === 'admissions.id'">{{ form.sortDirection === 'asc' ? '↑' :
+                            Ingreso <span v-if="form.sortField === 'admissions.id'">{{ form.sortDirection === 'asc' ?
+                                '↑' :
                                 '↓'
                                 }}</span>
                         </th>
@@ -116,7 +117,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(temperatureRecord, index) in temperatureRecords.data" :key="temperatureRecord.id"
+                    <tr v-for="temperatureRecord in temperatureRecords.data" :key="temperatureRecord.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
                             {{ temperatureRecord.id }}
@@ -132,7 +133,9 @@
                                 Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
                                     temperatureRecord.admission.bed.room }}
                             </div>
-                            <div v-else>ING-00{{ temperatureRecord.admission.id }},{{ temperatureRecord.admission.created_at }} N/A</div>
+                            <div v-else>ING-00{{ temperatureRecord.admission.id }},{{
+                                temperatureRecord.admission.created_at }}
+                                N/A</div>
                         </td>
                         <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ temperatureRecord.admission.patient.first_name }} {{
@@ -144,7 +147,7 @@
                                 temperatureRecord.nurse.last_surname }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ temperatureRecord.updated_at }}
+                            {{ formatDate(temperatureRecord.updated_at) }}
                         </td>
                         <td class="px-6 py-4">
                             <button class="ml-2 text-green-500 hover:text-green-800"
@@ -169,6 +172,7 @@ import AccessGate from '@/Components/Access/AccessGate.vue';
 import Pagination from '@/Components/Pagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
+import moment from 'moment';
 
 export default {
     props: {
@@ -217,6 +221,9 @@ export default {
             this.form.sortField = field;
             this.form.sortDirection = this.form.sortDirection === 'asc' ? 'desc' : 'asc';
             this.submitFilters();
+        },
+        formatDate(date) {
+            return moment(date).format('DD/MMM/YYYY HH:mm');
         }
     }
 }

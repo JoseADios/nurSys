@@ -14,12 +14,12 @@
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <Link :href="route('temperatureRecords.index')"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="font-medium">Volver</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-medium">Volver</span>
                     </Link>
                     <div class="flex items-center">
                         <button v-if="temperatureRecord.active" @click="downloadRecordReport"
@@ -64,12 +64,11 @@
                                 <form @submit.prevent="submitUpdateRecord">
 
                                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Seleccionar
-                                        Ingreso</h3>
+                                        Ingreso {{ formRecord.admission_id }}</h3>
                                     <select v-model="formRecord.admission_id"
                                         class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                         <option :value="admission.id" v-for="admission in admissions"
                                             :key="admission.id">
-                                            {{ admission.id }}
                                             {{ admission.created_at }}
                                             {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
                                                 admission.patient.second_surname }}
@@ -245,8 +244,8 @@
                     </div>
                 </AccessGate>
 
+                <!-- Formulario para agregar nuevo detalle -->
                 <AccessGate :permission="['temperatureDetail.create']">
-                    <!-- Formulario para agregar nuevo detalle -->
                     <div v-if="canCreateDetail" class="p-8 ">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura</h3>
 

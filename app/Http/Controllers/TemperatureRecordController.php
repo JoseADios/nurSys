@@ -60,11 +60,11 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         if ($search) {
             $query->where(function (Builder $query) use ($search) {
-            $query->whereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
-                ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
-                ->orWhereRaw('temperature_records.id LIKE ?', ['%' . $search . '%'])
-                ->orWhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
-                ->orWhereRaw('CONCAT(beds.room, " ", beds.number) LIKE ?', ['%' . $search . '%']);
+                $query->whereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('temperature_records.id LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(beds.room, " ", beds.number) LIKE ?', ['%' . $search . '%']);
             });
         }
 
@@ -182,6 +182,14 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             ->whereNotIn('id', $allTemperatureRecords)
             ->whereNull('discharged_date')
             ->get();
+
+        $selectedAdm = Admission::where('id', $temperatureRecord->admission_id)
+            ->with('patient', 'bed')
+            ->first();
+
+        if ($selectedAdm) {
+            $admissions->add($selectedAdm);
+        }
 
         $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->with(['nurse:id,name,last_name']) // Especificar solo las columnas necesarias

@@ -12,31 +12,36 @@
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <button @click="goBack"
+                    <Link :href="route('temperatureRecords.index')"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="font-medium">Volver</span>
-                    </button>
-                    <AccessGate :permission="['temperatureRecord.delete']">
-                        <button v-if="temperatureRecord.active" @click="recordBeingDeleted = true"
-                            class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <span class="font-medium">Eliminar</span>
-                        </button>
-                        <button v-else @click="restoreRecord"
-                            class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
-                            <span class="font-medium">Restaurar</span>
-                        </button>
-                    </AccessGate>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-medium">Volver</span>
+                    </Link>
+                    <div class="flex items-center">
+                        <button v-if="temperatureRecord.active" @click="downloadRecordReport"
+                            class="inline-flex mr-8 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
+                            📄 Crear Reporte </button>
+                        <AccessGate :permission="['temperatureRecord.delete']">
+                            <button v-if="temperatureRecord.active" @click="recordBeingDeleted = true"
+                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <span class="font-medium">Eliminar</span>
+                            </button>
+                            <button v-else @click="restoreRecord"
+                                class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                                <span class="font-medium">Restaurar</span>
+                            </button>
+                        </AccessGate>
+                    </div>
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -59,12 +64,11 @@
                                 <form @submit.prevent="submitUpdateRecord">
 
                                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Seleccionar
-                                        Ingreso</h3>
+                                        Ingreso {{ formRecord.admission_id }}</h3>
                                     <select v-model="formRecord.admission_id"
                                         class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                         <option :value="admission.id" v-for="admission in admissions"
                                             :key="admission.id">
-                                            {{ admission.id }}
                                             {{ admission.created_at }}
                                             {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
                                                 admission.patient.second_surname }}
@@ -128,9 +132,9 @@
 
 
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Registro</h3>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de creación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ temperatureRecord.created_at.toLocaleString() }}
+                                {{ formatDate(temperatureRecord.created_at) }}
                             </p>
                         </div>
 
@@ -184,7 +188,7 @@
 
                 <!-- Chart -->
                 <div class="p-4 mx-8 my-4">
-                    <TemperatureChart :temperatureData="details" :key="chartKey" :height="100" />
+                    <TemperatureChart ref="chart" :temperatureData="details" :key="chartKey" :height="100" />
                 </div>
 
                 <!-- ultima temperatura -->
@@ -240,8 +244,8 @@
                     </div>
                 </AccessGate>
 
+                <!-- Formulario para agregar nuevo detalle -->
                 <AccessGate :permission="['temperatureDetail.create']">
-                    <!-- Formulario para agregar nuevo detalle -->
                     <div v-if="canCreateDetail" class="p-8 ">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura</h3>
 
@@ -385,6 +389,8 @@ import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { useGoBack } from '@/composables/useGoBack';
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import moment from 'moment';
+import 'moment/locale/es';
 
 export default {
     props: {
@@ -455,16 +461,17 @@ export default {
                             urinations: 1,
                         };
                         this.chartKey++;
-                    }
+                    },
+                    preserveScroll: true,
                 });
         },
         updateDetail() {
             this.$inertia.put(route('temperatureDetails.update', this.lastTemperature.id), this.formDetailUpdate, {
                 onSuccess: () => {
                     this.chartKey++;
-                }
+                },
+                preserveScroll: true,
             });
-
         },
         submitUpdateRecord() {
             this.isVisibleEditAdm = null
@@ -492,7 +499,17 @@ export default {
         restoreRecord() {
             this.formRecord.active = true
             this.submitUpdateRecord()
+        },
+        formatDate(date) {
+            return moment(date).format('DD MMM YYYY HH:mm');
+        },
+
+        async downloadRecordReport() {
+            window.open(route('reports.temperatureRecord', { id: this.temperatureRecord.id }), '_blank');
         }
+    },
+    mounted() {
+        moment.locale('es'); // Cambia el idioma a español
     },
     setup() {
         const { goBack } = useGoBack()

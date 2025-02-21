@@ -24,7 +24,6 @@ class Patient extends Model
         'address',
         'ars',
         'active',
-        'active'
     ];
 
     public function admission(): HasMany

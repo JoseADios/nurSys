@@ -85,11 +85,11 @@
 
             <!-- Filtro por área -->
             <div class="relative w-full">
-                <input v-model="form.area" type="text" placeholder="Filtrar por área"
+                <input v-model="form.email" type="text" placeholder="Filtrar por email"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     @input="applyFilters" />
 
-                <button v-if="form.area" @click="form.area = ''; applyFilters()" type="button"
+                <button v-if="form.email" @click="form.email = ''; applyFilters()" type="button"
                     class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
                     <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
@@ -126,7 +126,7 @@
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
-                            # <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                            ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('name')">
                             Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
@@ -146,8 +146,8 @@
                                 '↓'
                                 }}</span>
                         </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('area')">
-                            Área <span v-if="form.sortField === 'area'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('email')">
+                            Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
                                 }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3">Acciones</th>
@@ -157,7 +157,7 @@
                     <tr v-for="(user, index) in users.data" :key="user.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
-                            {{ index + 1 }}
+                            {{ user.id }}
                         </td>
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ user.name }} {{ user.last_name }}
@@ -172,7 +172,7 @@
                             {{ user.position }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ user.area }}
+                            {{ user.email }}
                         </td>
                         <td class="px-6 py-4">
                             <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('users.show', user.id)"
@@ -214,7 +214,7 @@ export default {
                 specialty: this.filters.specialty || '',
                 role: this.filters.role || '',
                 position: this.filters.position || '',
-                area: this.filters.area || '',
+                email: this.filters.email || '',
                 show_deleted: this.filters.show_deleted,
                 sortField: this.filters.sortField || '', // Nuevo campo
                 sortDirection: this.filters.sortDirection || 'asc', // Nuevo campo

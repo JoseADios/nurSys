@@ -8,11 +8,13 @@ use App\Models\NurseRecordDetail;
 use App\Services\FirmService;
 use App\Services\TurnService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+
 class NurseRecordController extends Controller
 {
     /**
@@ -20,39 +22,72 @@ class NurseRecordController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('search', '');
-        $admissionId = $request->input('admission_id');
+        $search = $request->input('search');
+        $showDeleted = $request->boolean('showDeleted');
+        $admissionId = $request->integer('admission_id');
+        $days = $request->integer('days');
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
 
-        $query = NurseRecord::with('nurse', 'admission.patient')
-            ->where('active', true)
-            ->orderBy('updated_at', 'desc')
-            ->orderBy('created_at', 'desc');
 
-        if (!empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('created_at', 'like', '%' . $search . '%')
-                  ->orWhereHas('admission.patient', function ($patientQuery) use ($search) {
-                      $patientQuery->where('first_name', 'like', '%' . $search . '%')
-                                   ->orWhere('first_surname', 'like', '%' . $search . '%')
-                                   ->orWhere('second_surname', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('nurse', function ($nurseQuery) use ($search) {
-                      $nurseQuery->where('name', 'like', '%' . $search . '%')
-                                 ->orWhere('last_name', 'like', '%' . $search . '%');
-                  });
+        $query = NurseRecord::query()
+            ->with('nurse', 'admission.patient', 'admission.bed')
+            ->select('nurse_records.*')
+            ->leftJoin('admissions', 'nurse_records.admission_id', '=', 'admissions.id')
+            ->join('patients', 'admissions.patient_id', '=', 'patients.id')
+            ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
+            ->join('users', 'nurse_records.nurse_id', '=', 'users.id')
+            ->where('nurse_records.active', !$showDeleted);
+
+
+        if ($search) {
+            $query->where(function (Builder $q) use ($search) {
+                $q->whereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('nurse_records.id LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(beds.room, " ", beds.number) LIKE ?', ['%' . $search . '%']);;
             });
         }
 
-        if (!empty($admissionId)) {
-            $query->where('admission_id', intval($admissionId));
+        if ($admissionId) {
+            $query->where('nurse_records.admission_id', intval(value: $admissionId));
+        }
+
+        if ($days) {
+            $query->where('nurse_records.created_at', '>=', now()->subDays($days));
+        }
+
+        if ($sortField == 'in_process') {
+            $query->orderByRaw('CASE WHEN admissions.discharged_date IS NULL THEN 0 ELSE 1 END ' . $sortDirection);
+        } elseif ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->latest('nurse_records.created_at');
         }
 
         $nurseRecords = $query->paginate(10);
 
+        $nurseRecords->getCollection()->transform(function ($record) {
+            if ($record->admission->discharged_date != null) {
+                $record->in_process = false;
+            } else {
+                $record->in_process = true;
+            }
+            return $record;
+        });
+
         return Inertia::render('NurseRecords/Index', [
             'nurseRecords' => $nurseRecords,
             'admission_id' => intval($admissionId),
-            'filters' => ['search' => $search],
+            'filters' => [
+                'search' => $search,
+                'show_deleted' => $showDeleted,
+                'admission_id' => $admissionId,
+                'days' => $days,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection,
+            ]
         ]);
     }
 
@@ -63,10 +98,46 @@ class NurseRecordController extends Controller
     public function create(Request $request)
     {
         $admission_id = $request->has('admission_id') ? $request->admission_id : null;
+        $name = $request->name;
+        $room = $request->room;
+        $bed = $request->bed;
 
-        $admissions = Admission::where('active', true)
+        $admQuery = Admission::query()
+            ->where('admissions.active', true)
+            ->whereNull('admissions.discharged_date')
             ->with('patient', 'bed')
-            ->get();
+            ->leftJoin('patients', 'admissions.patient_id', '=', 'patients.id')
+            ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
+            ->select(
+                'admissions.id',
+                'admissions.bed_id',
+                'admissions.patient_id',
+                'admissions.created_at',
+                'patients.first_name',
+                'patients.first_surname',
+                'patients.second_surname',
+                'beds.id',
+                'beds.number',
+                'beds.room',
+                'beds.floor',
+            );
+
+        if ($name) {
+            $admQuery->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $name . '%']);
+        }
+
+        if ($room) {
+            $admQuery->whereLike('beds.room', '%' . $room . '%');
+        }
+
+        if ($bed) {
+            $admQuery->whereLike('beds.number', '%' . $bed . '%');
+        }
+
+        $admissions = $admQuery->get();
+
+        // dump($admissions);
+
         return Inertia::render('NurseRecords/Create', [
             'admissions' => $admissions,
             'admission_id' => intval($admission_id),
@@ -151,7 +222,7 @@ class NurseRecordController extends Controller
 
         if ($request->signature) {
             $fileName = $firmService
-            ->createImag($request->nurse_sign, $nurseRecord->nurse_sign);
+                ->createImag($request->nurse_sign, $nurseRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
         }
 

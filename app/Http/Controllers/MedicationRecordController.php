@@ -215,14 +215,8 @@ class MedicationRecordController extends Controller
      */
     public function update(Request $request, MedicationRecord $medicationRecord)
     {
-        if ($request->has('suspended_at')) {
 
-            if ($request->suspended_at == true) {
-                $this->Enable($medicationRecord->id);
-            } else {
-                $this->Disable($medicationRecord->id);
-            }
-        }else if ($request->has('active')) {
+     if ($request->has('active')) {
             $this->restore($medicationRecord->id);
         } else {
             $validated = $request->validate([
@@ -292,63 +286,8 @@ class MedicationRecordController extends Controller
          return redirect()->back()->with('success', 'Registro habilitado con éxito.');
         }
 
-        private function Disable($id){
-            Log::info('disable');
-            $record = MedicationRecord::findOrFail($id);
-
-            $medicationRecordDetails = MedicationRecordDetail::where('medication_record_id', $id)->get();
-
-            foreach ($medicationRecordDetails as $detail) {
-                $detail->update(['suspended_at' => now()]);
-            }
 
 
-            $medicationNotificationIds = $medicationRecordDetails->pluck('id');
-
-
-            $medicationNotifications = MedicationNotification::whereIn('medication_record_detail_id', $medicationNotificationIds)->get();
-
-
-            foreach ($medicationNotifications as $notification) {
-                $notification->update(['suspended_at' => now()]);
-            }
-
-            $record->suspended_at = now();
-            $record->save();
-        }
-
-        private function Enable($id)
-        {
-
-            Log::info('enable');
-
-                $record = MedicationRecord::findOrFail($id);
-
-                $medicationRecordDetails = MedicationRecordDetail::where('medication_record_id', $id)->get();
-
-                foreach ($medicationRecordDetails as $detail) {
-                    $detail->update(['suspended_at' => null]);
-                }
-
-
-                $medicationNotificationIds = $medicationRecordDetails->pluck('id');
-
-
-                $medicationNotifications = MedicationNotification::whereIn('medication_record_detail_id', $medicationNotificationIds)->get();
-
-
-                foreach ($medicationNotifications as $notification) {
-                    $notification->update(['suspended_at' => null]);
-                }
-
-                $record->suspended_at = null;
-                $record->save();
-
-
-
-
-            return redirect()->back()->with('success', 'Registro habilitado con éxito.');
-           }
 
 
 

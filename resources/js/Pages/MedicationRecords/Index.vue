@@ -71,7 +71,7 @@
 
                 <tr v-for="record in medicationRecords.data.filter(record => record.id)" :key="record.id" :class="[
         'bg-white border-b dark:bg-gray-800 dark:border-gray-700',
-        record.suspended_at && 'transition-colors bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-900/30'
+        record.active == 0 && 'transition-colors bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-900/30'
     ]">
                     <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ record.admission ? record.admission.id : 'N/A' }}
@@ -97,14 +97,7 @@
                             </button>
                         </div>
 
-                        <div v-if="record.active"><button method="post" :class="[
-            'transition-colors',
-            !record.suspended_at
-                ? 'text-red-500 hover:text-red-800'
-                : 'text-green-500 hover:text-green-800'
-        ]" @click="!record.suspended_at ? openDisableModal(record) : Enable(record)">
-                        {{ !record.suspended_at ? 'Suspender' : 'Habilitar' }}
-                        </button></div>
+
 
                     </td>
 
@@ -114,30 +107,13 @@
         </table>
         <Pagination :pagination="medicationRecords" />
     </div>
-    <ConfirmationModal :show="recordBeingDisabled != null" @close="recordBeingDisabled = null">
-        <template #title>
-            Suspender Ficha de Medicamentos
-        </template>
-        <template #content>
-            ¿Estás seguro de que deseas suspender esta ficha?
-        </template>
-        <template #footer>
-            <SecondaryButton @click="recordBeingDisabled = null">
-                Cancelar
-            </SecondaryButton>
-            <DangerButton class="ms-3" @click="confirmDisable">
-            Suspender
-            </DangerButton>
-        </template>
-    </ConfirmationModal>
+
 
 </AppLayout>
 </template>
 
 <script>
-import ConfirmationModal from '@/Components/ConfirmationModal.vue';
-import DangerButton from '@/Components/DangerButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
+
 import AppLayout from '@/Layouts/AppLayout.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import {
@@ -154,9 +130,7 @@ export default {
     components: {
         AppLayout,
         Link,
-        ConfirmationModal,
-        DangerButton,
-        SecondaryButton,
+
         Pagination,
         AccessGate
 
@@ -171,7 +145,7 @@ export default {
                 sortDirection: this.filters.sortDirection || 'asc',
             },
             timeout: 1000,
-            recordBeingDisabled: ref(null),
+
 
         }
     },
@@ -204,48 +178,7 @@ export default {
         MedicationRecordEdit(id) {
             this.$inertia.get(route('medicationRecords.edit', id));
         },
-        openDisableModal(record) {
-            this.recordBeingDisabled = record;
-        },
-        confirmDisable() {
-            if (this.recordBeingDisabled) {
-                this.$inertia.put(
-                    route('medicationRecords.update', this.recordBeingDisabled.id), {
-                        suspended_at: false
-                }, {
-                        onSuccess: (response) => {
 
-
-                            this.recordBeingDisabled = null;
-                            this.form.showDeleted = null;
-                            toggleShowDeleted();
-                        },
-                        onError: ($error) => {
-                            alert($error, 'Error al intentar deshabilitar el registro.');
-                            console.log($error,'');
-
-                        },
-                    }
-                );
-            }
-        },
-        Enable(record) {
-            this.$inertia.put(
-                route('medicationRecords.update', record.id), {
-                    suspended_at: true
-                }, {
-
-                    onSuccess: (response) => {
-                        this.form.showDeleted = null;
-                        toggleShowDeleted();
-                    },
-                    onError: (errors) => {
-                        console.error('Errores:', errors);
-                        alert('Error al intentar habilitar el registro.');
-                    },
-                }
-            );
-        },
 
 
     }

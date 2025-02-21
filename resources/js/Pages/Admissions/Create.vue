@@ -16,7 +16,7 @@
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
-                <BedSelector :beds="beds" :errors="form.errors" :initialBedId="selectedbed.id"
+                <BedSelector :beds="beds" :errors="form.errors" :initialBedId="form.bed_id"
                     @update:bedId="updateBedId" />
 
                 <label for="patient"
@@ -89,13 +89,16 @@ export default {
         patients: Object,
         errors: [Array, Object],
         selectedPatient: String,
-        selectedbed: String,
+        selectedbed: {
+            type: Object,
+            default: () => ({})
+        },
     },
     data() {
         return {
             form: useForm({
-                bed_id: this.selectedbed,
-                patient_id: this.selectedPatient,
+                bed_id: this.selectedbed || null,
+                patient_id: this.selectedPatient || null,
                 doctor_id: null,
                 admission_dx: null,
                 comment: null,

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+
 class NurseRecordController extends Controller
 {
     /**
@@ -31,15 +32,15 @@ class NurseRecordController extends Controller
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where('created_at', 'like', '%' . $search . '%')
-                  ->orWhereHas('admission.patient', function ($patientQuery) use ($search) {
-                      $patientQuery->where('first_name', 'like', '%' . $search . '%')
-                                   ->orWhere('first_surname', 'like', '%' . $search . '%')
-                                   ->orWhere('second_surname', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('nurse', function ($nurseQuery) use ($search) {
-                      $nurseQuery->where('name', 'like', '%' . $search . '%')
-                                 ->orWhere('last_name', 'like', '%' . $search . '%');
-                  });
+                    ->orWhereHas('admission.patient', function ($patientQuery) use ($search) {
+                        $patientQuery->where('first_name', 'like', '%' . $search . '%')
+                            ->orWhere('first_surname', 'like', '%' . $search . '%')
+                            ->orWhere('second_surname', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('nurse', function ($nurseQuery) use ($search) {
+                        $nurseQuery->where('name', 'like', '%' . $search . '%')
+                            ->orWhere('last_name', 'like', '%' . $search . '%');
+                    });
             });
         }
 
@@ -63,10 +64,46 @@ class NurseRecordController extends Controller
     public function create(Request $request)
     {
         $admission_id = $request->has('admission_id') ? $request->admission_id : null;
+        $name = $request->name;
+        $room = $request->room;
+        $bed = $request->bed;
 
-        $admissions = Admission::where('active', true)
+        $admQuery = Admission::query()
+            ->where('admissions.active', true)
+            ->whereNull('admissions.discharged_date')
             ->with('patient', 'bed')
-            ->get();
+            ->leftJoin('patients', 'admissions.patient_id', '=', 'patients.id')
+            ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
+            ->select(
+                'admissions.id',
+                'admissions.bed_id',
+                'admissions.patient_id',
+                'admissions.created_at',
+                'patients.first_name',
+                'patients.first_surname',
+                'patients.second_surname',
+                'beds.id',
+                'beds.number',
+                'beds.room',
+                'beds.floor',
+            );
+
+        if ($name) {
+            $admQuery->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $name . '%']);
+        }
+
+        if ($room) {
+            $admQuery->whereLike('beds.room', '%' . $room . '%');
+        }
+
+        if ($bed) {
+            $admQuery->whereLike('beds.number', '%' . $bed . '%');
+        }
+
+        $admissions = $admQuery->get();
+
+        // dump($admissions);
+
         return Inertia::render('NurseRecords/Create', [
             'admissions' => $admissions,
             'admission_id' => intval($admission_id),
@@ -151,7 +188,7 @@ class NurseRecordController extends Controller
 
         if ($request->signature) {
             $fileName = $firmService
-            ->createImag($request->nurse_sign, $nurseRecord->nurse_sign);
+                ->createImag($request->nurse_sign, $nurseRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
         }
 

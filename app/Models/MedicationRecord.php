@@ -20,6 +20,7 @@ class MedicationRecord extends Model
         'pending_studies',
         'doctor_sign',
         'active',
+
     ];
 
 

@@ -20,17 +20,42 @@ use Illuminate\Support\Facades\Auth;
 
 class MedicationRecordController extends Controller
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:medicationRecords.view', only: ['index', 'show']),
+            new Middleware('permission:medicationRecords.create', only: ['edit', 'store']),
+            new Middleware('permission:medicationRecords.update', only: ['update']),
+            new Middleware('permission:medicationRecords.delete', only: ['destroy']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-
+        $showDeleted = $request->boolean('showDeleted');
         $search = $request->input('search');
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
 
 
         $query = MedicationRecord::query();
         $admission = Admission::with('patient', 'bed')->get();
+
+        if ($showDeleted) {
+            $query->where('active',false);
+        }else{
+            $query->where('active',true);
+        }
+
+        if ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->latest('medication_records.updated_at')
+                ->latest('medication_records.created_at');
+        }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -43,13 +68,18 @@ class MedicationRecordController extends Controller
                   ->orWhere('doctor_sign', 'like', '%' . $search . '%');
             });
         }
-        Log::info($admission);
+
 
         $medicationRecords = $query->with('admission')->orderByDesc('created_at')->paginate(10);
 
         return Inertia::render('MedicationRecords/Index', [
             'medicationRecords' => $medicationRecords,
-            'filters' => ['search' => $search],
+            'filters' => [
+                'search' => $search,
+                'show_deleted' => $showDeleted,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection,
+            ],
             'admission' => $admission,
         ]);
     }
@@ -62,8 +92,9 @@ class MedicationRecordController extends Controller
 
 
         $diet = Diet::all();
-        $admission = Admission::with('patient','bed','doctor')->get();
-
+        $admission = Admission::with('patient', 'bed', 'doctor')
+        ->whereDoesntHave('medicationRecord')
+        ->get();
 
 
 
@@ -121,32 +152,48 @@ class MedicationRecordController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MedicationRecord $medicationRecord)
+    public function show(MedicationRecord $medicationRecord,Request $request)
     {
         try{
         $medicationRecord->load(['admission.patient','admission.bed','doctor','medicationRecordDetail','admission.medicalOrders']);
-        $allMedicalOrders = MedicalOrder::where('active',true)->where('admission_id',$medicationRecord->admission->id)->pluck('id');
-        $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+        $allMedicalOrders = MedicalOrder::where('active',true)->where('admission_id',$medicationRecord->admission->id)->with('medicalOrderDetail')->get();
 
-        $orderDetails = MedicalOrderDetail::whereIn('medical_order_id',$allMedicalOrders)->whereNull('suspended_at')->get();
+
 
         $drug = Drug::all();
         $route = DrugRoute::all();
         $dose = DrugDose::all();
+        $showDeleted = $request->boolean('showDeleted');
+
+            if ($showDeleted || !$medicationRecord->active) {
+
+                    $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active',false)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
 
 
-            if ($medicationRecord->active) {
+
+
+                }else{
+                    $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active',true)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+
+                }
+
+
+
+
+
+
                 return Inertia::render('MedicationRecords/Show', [
                     'medicationRecord' => $medicationRecord,
                     'details' => $details,
-                    'order' => $orderDetails,
+                    'order' => $allMedicalOrders,
                     'drug' =>$drug,
                     'dose' => $dose,
-                    'routeOptions' => $route
+                    'routeOptions' => $route,
+                    'filters' => [
+                        'show_deleted' => $showDeleted,
+                    ],
                 ]);
-            }else{
-             return redirect()->back()->withErrors()->withInput();
-            }
+
 
     }catch(\Exception $e){
     return redirect()->route('MedicationRecords/Show')->with('error',$e);
@@ -169,8 +216,7 @@ class MedicationRecordController extends Controller
     public function update(Request $request, MedicationRecord $medicationRecord)
     {
 
-
-        if ($request->has('active')) {
+     if ($request->has('active')) {
             $this->restore($medicationRecord->id);
         } else {
             $validated = $request->validate([
@@ -193,6 +239,7 @@ class MedicationRecordController extends Controller
      */
      public function destroy(MedicationRecord $medicationRecord)
      {
+
          $medicationRecord->update(['active' => 0]);
          $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
 
@@ -238,6 +285,10 @@ class MedicationRecordController extends Controller
 
          return redirect()->back()->with('success', 'Registro habilitado con éxito.');
         }
+
+
+
+
 
 
 

@@ -182,7 +182,6 @@
             <Pagination :pagination="nurseRecords" />
         </div>
 
-
     </AppLayout>
 </template>
 

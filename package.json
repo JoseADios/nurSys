@@ -20,6 +20,7 @@
     },
     "dependencies": {
         "apexcharts": "^4.3.0",
+        "moment": "^2.30.1",
         "signature_pad": "^5.0.4",
         "vite": "^6.0.11",
         "vue3-apexcharts": "^1.8.0"

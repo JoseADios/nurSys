@@ -22,14 +22,14 @@
         <div
             class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
 
-            <form @submit.prevent="submitFilter" class="mb-2 relative">
+            <form @submit.prevent="submitFilters" class="mb-2 relative">
                 <label for="search" class="block my-2 text-md font-large text-gray-900 dark:text-white">
                     Buscar:
                 </label>
                 <div class="relative">
-                    <input @input="submitFilter()" class="rounded-lg pr-10" type="text" name="search" id="search"
+                    <input @input="submitFilters()" class="rounded-lg pr-10" type="text" name="search" id="search"
                         v-model="form.search" placeholder="Buscar ..." />
-                    <button v-if="form.search" @click="form.search = ''; submitFilter()" type="button"
+                    <button v-if="form.search" @click="form.search = ''; submitFilters()" type="button"
                         class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
                         <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd"
@@ -41,7 +41,7 @@
             </form>
 
             <div class="flex items-end">
-                <select @change="submitFilter()"
+                <select @change="submitFilters()"
                     class="bg-gray-50 mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     name="days" id="days" v-model="form.days">
                     <option value="">Siempre</option>
@@ -75,13 +75,16 @@
             </div>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <table v-if="temperatureRecords.data.length"
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">
-                            #
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
+                            ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ?
+                                '↑' :
+                                '↓'
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('in_process')">
                             En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc' ?
@@ -89,8 +92,9 @@
                                 '↓'
                                 }}</span>
                         </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('beds.room')">
-                            Ingreso <span v-if="form.sortField === 'beds.room'">{{ form.sortDirection === 'asc' ? '↑' :
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.id')">
+                            Ingreso <span v-if="form.sortField === 'admissions.id'">{{ form.sortDirection === 'asc' ?
+                                '↑' :
                                 '↓'
                                 }}</span>
                         </th>
@@ -113,10 +117,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(temperatureRecord, index) in temperatureRecords.data" :key="temperatureRecord.id"
+                    <tr v-for="temperatureRecord in temperatureRecords.data" :key="temperatureRecord.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
-                            {{ index + 1 }}
+                            {{ temperatureRecord.id }}
                         </td>
                         <td class="px-6 py-4">
                             <span v-if="temperatureRecord.in_process"
@@ -125,11 +129,13 @@
                         </td>
                         <td class="px-6 py-4">
                             <div v-if="temperatureRecord.admission.bed">
+                                ING-00{{ temperatureRecord.admission.id }},
                                 Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
-                                    temperatureRecord.admission.bed.room }},
-                                {{ temperatureRecord.admission.created_at }}
+                                    temperatureRecord.admission.bed.room }}
                             </div>
-                            <div v-else>{{ temperatureRecord.admission.created_at }} N/A</div>
+                            <div v-else>ING-00{{ temperatureRecord.admission.id }},{{
+                                temperatureRecord.admission.created_at }}
+                                N/A</div>
                         </td>
                         <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ temperatureRecord.admission.patient.first_name }} {{
@@ -141,7 +147,7 @@
                                 temperatureRecord.nurse.last_surname }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ temperatureRecord.updated_at }}
+                            {{ formatDate(temperatureRecord.updated_at) }}
                         </td>
                         <td class="px-6 py-4">
                             <button class="ml-2 text-green-500 hover:text-green-800"
@@ -166,6 +172,7 @@ import AccessGate from '@/Components/Access/AccessGate.vue';
 import Pagination from '@/Components/Pagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
+import moment from 'moment';
 
 export default {
     props: {
@@ -200,7 +207,7 @@ export default {
             this.form.showDeleted = !this.form.showDeleted;
             this.$inertia.get(route('temperatureRecords.index', this.form));
         },
-        submitFilter() {
+        submitFilters() {
             if (this.timeout) {
                 clearTimeout(this.timeout);
             }
@@ -213,7 +220,10 @@ export default {
         sort(field) {
             this.form.sortField = field;
             this.form.sortDirection = this.form.sortDirection === 'asc' ? 'desc' : 'asc';
-            this.submitFilter();
+            this.submitFilters();
+        },
+        formatDate(date) {
+            return moment(date).format('DD/MMM/YYYY HH:mm');
         }
     }
 }

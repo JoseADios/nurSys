@@ -15,6 +15,8 @@ use App\Http\Controllers\TemperatureRecordController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DrugController;
 use App\Http\Controllers\DietController;
+use App\Http\Controllers\PDFController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -71,4 +73,7 @@ Route::middleware([
         Route::resource('users', UserController::class);
     });
 
+    // REPORTES
+    Route::get( '/reports/temperatureRecord/{id}', [ReportController::class, 'temperatureRecordReport'])
+        ->name('reports.temperatureRecord');
 });

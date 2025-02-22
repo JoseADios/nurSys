@@ -24,6 +24,7 @@
                         </div>
                     </div>
                     <div class="flex space-x-3">
+
                         <AccessGate :permission="['patient.delete']">
                             <button v-if="patient.active == 1" @click="patientBeingDeleted = true"
                                 class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
@@ -127,6 +128,14 @@
                                 <p class="text-sm text-gray-400">Fecha de nacimiento</p>
                                 <p class="text-gray-200">{{ formatDate(patient.birthdate) }}</p>
                             </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Fecha de creación</p>
+                                <p class="text-gray-200">{{ formatDate(patient.created_at) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Fecha de actualización</p>
+                                <p class="text-gray-200">{{ formatDate(patient.updated_at) }}</p>
+                            </div>
                         </div>
                     </div>
 
@@ -206,7 +215,10 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import moment from 'moment';
+import 'moment/locale/es';
 
+moment.locale('es');
 
 export default {
     props: {
@@ -228,11 +240,7 @@ export default {
     },
     methods: {
         formatDate(date) {
-            return new Date(date).toLocaleDateString('es-ES', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+            return moment(date).format('DD MMM YYYY');
         },
         getInitials(firstName, lastName) {
             return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
@@ -243,7 +251,7 @@ export default {
         },
         restorePatient() {
             this.$inertia.put(route('patients.update', this.patient.id), { active: true });
-        }
+        },
     }
 }
 </script>

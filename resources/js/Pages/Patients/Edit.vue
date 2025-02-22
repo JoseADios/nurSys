@@ -196,10 +196,10 @@
                             Restaurar
                         </button>
                     </AccessGate>
-                    <button @click="goBack" type="button"
+                    <Link :href="route('patients.index')" as="button"
                         class="px-4 py-2 text-sm font-medium text-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                        Cancelar
-                    </button>
+                    Volver
+                    </Link>
                     <button type="submit"
                         class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Guardar

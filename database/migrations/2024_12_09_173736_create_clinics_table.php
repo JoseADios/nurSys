@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('about');
+            $table->text('slogan');
             $table->string('address');
             $table->string('phone');
+            $table->string('fax');
             $table->string('email');
             $table->string('rnc');
             $table->timestamps();

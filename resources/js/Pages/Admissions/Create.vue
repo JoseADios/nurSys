@@ -89,13 +89,16 @@ export default {
         patients: Object,
         errors: [Array, Object],
         selectedPatient: String,
-        selectedbed: String,
+        selectedbed: {
+            type: Object,
+            default: () => ({})
+        },
     },
     data() {
         return {
             form: useForm({
-                bed_id: this.selectedbed,
-                patient_id: this.selectedPatient,
+                bed_id: this.selectedbed || null,
+                patient_id: this.selectedPatient || null,
                 doctor_id: null,
                 admission_dx: null,
                 comment: null,

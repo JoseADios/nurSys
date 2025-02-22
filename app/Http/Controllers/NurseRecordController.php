@@ -109,51 +109,15 @@ class NurseRecordController extends Controller implements HasMiddleware
     public function create(Request $request)
     {
         $admission_id = $request->has('admission_id') ? $request->admission_id : null;
-        $name = $request->name;
-        $room = $request->room;
-        $bed = $request->bed;
 
-        $admQuery = Admission::query()
-            ->where('admissions.active', true)
-            ->whereNull('admissions.discharged_date')
-            ->with('patient', 'bed')
-            ->leftJoin('patients', 'admissions.patient_id', '=', 'patients.id')
-            ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
-            ->select(
-                'admissions.id',
-                'admissions.bed_id',
-                'admissions.patient_id',
-                'admissions.created_at',
-                'patients.first_name',
-                'patients.first_surname',
-                'patients.second_surname',
-                'beds.id',
-                'beds.number',
-                'beds.room',
-                'beds.floor',
-            );
-
-        if ($name) {
-            $admQuery->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $name . '%']);
-        }
-
-        if ($room) {
-            $admQuery->whereLike('beds.room', '%' . $room . '%');
-        }
-
-        if ($bed) {
-            $admQuery->whereLike('beds.number', '%' . $bed . '%');
-        }
-
-        $admissions = $admQuery->get();
-
-        // dump($admissions);
+        $admissions = $this->filterAdmissions($request);
 
         return Inertia::render('NurseRecords/Create', [
             'admissions' => $admissions,
             'admission_id' => intval($admission_id),
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -189,12 +153,13 @@ class NurseRecordController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(NurseRecord $nurseRecord)
+    public function show(NurseRecord $nurseRecord, Request $request)
     {
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
-        $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
+        $admissions = $this->filterAdmissions($request);
+
         $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')
             ->where('active', true)->get();
 
@@ -247,5 +212,52 @@ class NurseRecordController extends Controller implements HasMiddleware
     {
         $nurseRecord->update(['active' => 0]);
         return Redirect::route('nurseRecords.index');
+    }
+
+    /**
+     * function to filter admissions
+     * @param  $request
+     * @return \Illuminate\Database\Eloquent\Collection<int, Admission>
+     */
+    public function filterAdmissions( Request $request ) {
+        $name = $request->name;
+        $room = $request->room;
+        $bed = $request->bed;
+
+        $admQuery = Admission::query()
+            ->where('admissions.active', true)
+            ->whereNull('admissions.discharged_date')
+            ->with('patient', 'bed')
+            ->leftJoin('patients', 'admissions.patient_id', '=', 'patients.id')
+            ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
+            ->select(
+                'admissions.id',
+                'admissions.bed_id',
+                'admissions.patient_id',
+                'admissions.created_at',
+                'patients.first_name',
+                'patients.first_surname',
+                'patients.second_surname',
+                'beds.id',
+                'beds.number',
+                'beds.room',
+                'beds.floor',
+            );
+
+        if ($name) {
+            $admQuery->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $name . '%']);
+        }
+
+        if ($room) {
+            $admQuery->whereLike('beds.room', '%' . $room . '%');
+        }
+
+        if ($bed) {
+            $admQuery->whereLike('beds.number', '%' . $bed . '%');
+        }
+
+        $admissions = $admQuery->get();
+
+        return $admissions;
     }
 }

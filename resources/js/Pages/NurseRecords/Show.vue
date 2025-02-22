@@ -42,57 +42,22 @@
                 <!-- Patient and Record Information -->
                 <div class="grid md:grid-cols-2 gap-6 p-8 bg-gray-50 dark:bg-gray-700">
                     <div class="space-y-4">
-                        <AccessGate :permission="['nurseRecord.delete']">
-                            <div v-if="!isVisible"
-                                class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
-                                <div class="">
-                                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
-                                    <Link :href="route('admissions.show', nurseRecord.admission_id)" as="button"
-                                        class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
-                                    ING-00{{ nurseRecord.admission_id }}
-                                    </Link>
-                                </div>
-                                <button @click="toggleEditAdmission" class="text-blue-500 mr-3">Edit</button>
-                            </div>
 
-                            <div v-if="isVisible" class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                                <form @submit.prevent="submitAdmission">
-
-                                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Seleccionar
-                                        Ingreso</h3>
-                                    <select v-model="formAdmission.admission_id"
-                                        class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                        <option :value="admission.id" v-for="admission in admissions"
-                                            :key="admission.id">
-                                            {{ admission.created_at }}
-                                            {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
-                                                admission.patient.second_surname }}
-                                            Cama {{ admission.bed.number }}, Sala {{ admission.bed.room }}
-                                        </option>
-                                    </select>
-                                    <div class="mt-3">
-                                        <button
-                                            class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                                            @click="toggleEditAdmission">Cancelar</button>
-
-                                        <button type="submit"
-                                            class="focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
-                                            Aceptar</button>
-                                    </div>
-
-                                </form>
-
-                            </div>
-                        </AccessGate>
-                        <AccessGate :except-permission="['nurseRecord.delete']">
-                            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <!-- admission -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center">
+                            <div>
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <Link :href="route('admissions.show', nurseRecord.admission_id)" as="button"
                                     class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
                                 ING-00{{ nurseRecord.admission_id }}
                                 </Link>
                             </div>
-                        </AccessGate>
+                            <AccessGate :permission="['nurseRecord.delete']">
+                                <button @click="showEditAdmission = true" class="text-blue-500 ml-3">Edit</button>
+                            </AccessGate>
+                        </div>
+
+                        <!-- patient name -->
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                             <Link :href="route('patients.show', nurseRecord.admission.patient.id)" as="button"
@@ -102,6 +67,8 @@
                                 nurseRecord.admission.patient.second_surname }}
                             </Link>
                         </div>
+
+                        <!-- Bed info -->
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Sala</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -111,15 +78,18 @@
 
                     </div>
 
-
-
+                    <!-- Rigth col -->
                     <div class="space-y-4">
+
+                        <!-- Nurse -->
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermero</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ nurse.name }} {{ nurse.last_name }}
                             </p>
                         </div>
+
+                        <!-- Created date -->
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Registro</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -269,8 +239,118 @@
                 </section>
             </div>
         </div>
+
+        <!-- Change admission modal -->
+        <Modal :closeable="true" :show="showEditAdmission != null" @close="showEditAdmission == null">
+            <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
+                    <!-- Filtros de búsqueda -->
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4 shadow-sm">
+                        <h3 class="text-base font-medium text-gray-900 dark:text-white mb-3">
+                            Buscar Paciente
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                            <div class="space-y-2">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <input type="text" v-model="filters.name" @input="debounceSearch"
+                                        class="pl-10 w-full rounded-lg border-gray-200 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:bg-gray-800 dark:text-white"
+                                        placeholder="Nombre del paciente...">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0h8v12H6V4z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <input type="text" v-model="filters.room" @input="debounceSearch"
+                                        class="pl-10 w-full rounded-lg border-gray-200 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:bg-gray-800 dark:text-white"
+                                        placeholder="Número de sala...">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20" fill="currentColor">
+                                            <path
+                                                d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zm3 14a1 1 0 100-2 1 1 0 000 2z" />
+                                        </svg>
+                                    </div>
+                                    <input type="number" v-model="filters.bed" @input="debounceSearch"
+                                        class="pl-10 w-full rounded-lg border-gray-200 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:bg-gray-800 dark:text-white"
+                                        placeholder="Número de cama...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de ingresos  -->
+                    <div class="space-y-2">
+                        <h3 class="text-base font-medium text-gray-900 dark:text-white">
+                            Seleccionar Ingreso ({{ admissions.length }} resultados)
+                        </h3>
+                        <div
+                            class="max-h-[250px] overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
+                            <div v-for="admission in filteredAdmissions" :key="admission.id"
+                                @click="selectAdmission(admission)" :class="[
+                                    'p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 transition',
+                                    formAdmission.admission_id === admission.id ? 'bg-purple-100 dark:bg-purple-900/30' : ''
+                                ]">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="font-medium text-gray-900 dark:text-white text-sm">
+                                            {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
+                                                admission.patient.second_surname }}
+                                        </span>
+                                        <span
+                                            class="text-xs ml-2 px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-800 dark:text-gray-300">
+                                            ING-00{{ admission.id }}
+                                        </span>
+                                        <div class="text-xs text-gray-600 dark:text-gray-400">
+                                            Sala {{ admission.bed.room }} - Cama {{ admission.bed.number }}
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ formatDate(admission.created_at) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="flex justify-end mt-4 space-x-3">
+                        <button type="button" @click="showEditAdmission = null"
+                            class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                            Cancelar
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
+                            :disabled="!formAdmission.admission_id">
+                            Aceptar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </Modal>
+
+        <!-- Delete modal -->
         <AccessGate :permission="['nurseRecord.delete']">
-            <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
+            <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted == null">
                 <template #title>
                     Eliminar Ingreso
                 </template>
@@ -290,6 +370,7 @@
                 </template>
             </ConfirmationModal>
         </AccessGate>
+
     </AppLayout>
 </template>
 
@@ -303,6 +384,9 @@ import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import moment from 'moment';
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import Modal from '@/Components/Modal.vue';
+import debounce from 'lodash/debounce';
+
 
 export default {
     props: {
@@ -325,13 +409,14 @@ export default {
         ConfirmationModal,
         DangerButton,
         SecondaryButton,
-        AccessGate
+        AccessGate,
+        Modal
     },
     data() {
         return {
             recordBeingDeleted: ref(null),
-            isVisible: false,
             isVisibleEditSign: ref(null),
+            showEditAdmission: ref(null),
             signatureError: false,
 
             formAdmission: {
@@ -346,16 +431,48 @@ export default {
             formSignature: {
                 nurse_sign: this.nurseRecord.nurse_sign,
                 signature: true,
-            }
+            },
+            filters: {
+                name: '',
+                room: '',
+                bed: '',
+            },
+            debouncedSearch: null,
+        }
+    },
+    created() {
+        this.debouncedSearch = debounce(this.applyFilters, 300)
+    },
+    computed: {
+        filteredAdmissions() {
+            return this.admissions;
         }
     },
     methods: {
-        toggleEditAdmission() {
-            this.isVisible = !this.isVisible;
-        },
         submitAdmission() {
             this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formAdmission)
-            this.isVisible = false
+            this.showEditAdmission = null
+        },
+        selectAdmission(admission) {
+            this.formAdmission.admission_id = admission.id;
+        },
+        debounceSearch() {
+            this.debouncedSearch();
+        },
+        applyFilters() {
+            this.$inertia.get(
+                route('nurseRecords.show', this.nurseRecord.id),
+                {
+                    name: this.filters.name,
+                    room: this.filters.room,
+                    bed: this.filters.bed
+                },
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                    only: ['admissions']
+                }
+            );
         },
         submit() {
             this.$inertia.post(route('nurseRecordDetails.store'),

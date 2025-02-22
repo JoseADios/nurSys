@@ -8,7 +8,7 @@
 
         <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
             <form @submit.prevent="submit" class="max-w-3xl mx-auto">
-                <!-- Filtros de búsqueda (más compacto) -->
+                <!-- Filtros de búsqueda -->
                 <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4 shadow-sm">
                     <h3 class="text-base font-medium text-gray-900 dark:text-white mb-3">
                         Buscar Paciente
@@ -66,7 +66,7 @@
                     </div>
                 </div>
 
-                <!-- Lista de ingresos (más compacta) -->
+                <!-- Lista de ingresos  -->
                 <div class="space-y-2">
                     <h3 class="text-base font-medium text-gray-900 dark:text-white">
                         Seleccionar Ingreso ({{ admissions.length }} resultados)
@@ -98,7 +98,7 @@
                     </div>
                 </div>
 
-                <!-- Botones (alineados en una fila) -->
+                <!-- Botones -->
                 <div class="flex justify-end mt-4 space-x-3">
                     <Link :href="route('nurseRecords.index')"
                         class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">

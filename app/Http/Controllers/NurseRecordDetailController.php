@@ -6,11 +6,22 @@ use App\Models\NurseRecordDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-use function PHPUnit\Framework\returnSelf;
-
-class NurseRecordDetailController extends Controller
+class NurseRecordDetailController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:nurseRecordDetail.view', only: ['index', 'show']),
+            new Middleware('permission:nurseRecordDetail.create', only: ['edit', 'store']),
+            new Middleware('permission:nurseRecordDetail.update', only: ['update']),
+            new Middleware('permission:nurseRecordDetail.delete', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

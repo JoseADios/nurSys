@@ -169,7 +169,7 @@
                         </td>
                         <td class="px-6 py-4">
                             <Link class="ml-2 text-green-500 hover:text-green-800"
-                                :href="route('nurseRecords.edit', nurseRecord.id)" as="button">
+                                :href="route('nurseRecords.show', nurseRecord.id)" as="button">
                             Abrir
                             </Link>
                         </td>

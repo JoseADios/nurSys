@@ -7,16 +7,27 @@ use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
 use App\Services\FirmService;
 use App\Services\TurnService;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class NurseRecordController extends Controller
+class NurseRecordController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:nurseRecord.view', only: ['index', 'show']),
+            new Middleware('permission:nurseRecord.create', only: ['edit', 'store']),
+            new Middleware('permission:nurseRecord.update', only: ['update']),
+            new Middleware('permission:nurseRecord.delete', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -180,14 +191,6 @@ class NurseRecordController extends Controller
      */
     public function show(NurseRecord $nurseRecord)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(NurseRecord $nurseRecord)
-    {
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
@@ -195,7 +198,7 @@ class NurseRecordController extends Controller
         $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')
             ->where('active', true)->get();
 
-        return Inertia::render('NurseRecords/Edit', [
+        return Inertia::render('NurseRecords/Show', [
             'nurseRecord' => $nurseRecord,
             'admissions' => $admissions,
             'patient' => $patient,
@@ -204,6 +207,14 @@ class NurseRecordController extends Controller
             'details' => $details,
             'errors' => !empty($errors) ? $errors : [],
         ]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(NurseRecord $nurseRecord)
+    {
+        //
     }
 
     /**

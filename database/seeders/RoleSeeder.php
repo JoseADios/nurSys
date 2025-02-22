@@ -43,6 +43,7 @@ class RoleSeeder extends Seeder
             'patient.view',
             'patient.create',
             'patient.update',
+            'nurseRecord.view',
         ]);
 
         $role = Role::findByName('receptionist');
@@ -64,6 +65,10 @@ class RoleSeeder extends Seeder
             'bed.view',
             'bed.update',
             'patient.view',
+            'nurseRecord.view',
+            'nurseRecord.create',
+            'nurseRecord.update',
+            'nurseRecord.delete',
         ]);
 
         $user = User::where('name', 'Test User')->first();

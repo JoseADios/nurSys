@@ -47,7 +47,7 @@
                 <!-- Patient and Record Information -->
                 <div class="grid md:grid-cols-2 gap-6 p-8 bg-gray-50 dark:bg-gray-700">
                     <div class="space-y-4">
-                        <AccessGate :role="['admin']">
+                        <AccessGate :permission="['temperatureRecord.delete']">
                             <div v-if="isVisibleEditAdm === null"
                                 class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
                                 <div class="">
@@ -89,7 +89,7 @@
 
                             </div>
                         </AccessGate>
-                        <AccessGate :except-role="['admin']">
+                        <AccessGate :except-permission="['temperatureRecord.delete']">
                             <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <Link :href="route('admissions.show', temperatureRecord.admission_id)" as="button"

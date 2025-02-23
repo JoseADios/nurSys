@@ -54,11 +54,11 @@
         <!-- Lista de ingresos -->
         <div class="space-y-2">
             <h3 class="text-base font-medium text-gray-900 dark:text-white">
-                Seleccionar Ingreso ({{ admissions.length }} resultados)
+                Seleccionar Ingreso ({{ admissions.total }} resultados)
             </h3>
             <div
                 class="max-h-[250px] overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800">
-                <div v-for="admission in admissions" :key="admission.id" @click="selectAdmission(admission)"
+                <div v-for="admission in admissions.data" :key="admission.id" @click="selectAdmission(admission)"
                     :class="['p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20', selectedAdmission === admission.id ? 'bg-purple-100 dark:bg-purple-900/30' : '']">
                     <div class="flex justify-between items-center">
                         <div>
@@ -84,6 +84,16 @@
                     </div>
                 </div>
             </div>
+            <div class="flex justify-start mt-4 space-x-2">
+                <button type="button" @click="prevPage" :disabled="!admissions.prev_page_url"
+                    class="px-3 py-1 bg-gray-500 text-white rounded shadow hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Anterior
+                </button>
+                <button type="button" @click="nextPage" :disabled="!admissions.next_page_url"
+                    class="px-3 py-1 bg-gray-500 text-white rounded shadow hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Siguiente
+                </button>
+            </div>
         </div>
     </div>
 
@@ -102,7 +112,12 @@ export default {
     },
     data() {
         return {
-            admissions: [],
+            admissions: {
+                data: [],
+                total: 0,
+                prev_page_url: null,
+                next_page_url: null,
+            },
             selectedAdmission: this.selectedAdmissionId || null,
             filters: {
                 name: '',
@@ -126,11 +141,12 @@ export default {
         debounceSearch() {
             this.debouncedSearch();
         },
-        async applyFilters() {
+        async applyFilters(pageUrl = null) {
             try {
-                const response = await axios.get(route('admissions.filter'), {
+                const response = await axios.get(pageUrl || route('admissions.filter'), {
                     params: {
-                        filters: this.filters, admission_id: this.selectedAdmission }
+                        filters: this.filters, admission_id: this.selectedAdmission
+                    }
                 });
                 this.admissions = response.data;
             } catch (error) {
@@ -139,6 +155,16 @@ export default {
         },
         formatDate(date) {
             return moment(date).format('DD MMM YYYY, HH:mm');
+        },
+        prevPage() {
+            if (this.admissions.prev_page_url) {
+                this.applyFilters(this.admissions.prev_page_url)
+            }
+        },
+        nextPage() {
+            if (this.admissions.next_page_url) {
+                this.applyFilters(this.admissions.next_page_url)
+            }
         }
     }
 }

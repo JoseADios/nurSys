@@ -325,22 +325,22 @@ class AdmissionController extends Controller
         $admission_id = $request->input('admission_id');
         $filters = $request->input('filters', []);
 
-        Log::info('Filtering admissions with request data: ', $request->all());
-
         $admissions = Admission::with('patient', 'bed')
         ->active()
         ->filterByName($filters['name'] ?? null)
         ->filterByRoom($filters['room'] ?? null)
         ->filterByBed($filters['bed'] ?? null)
-        ->get();
+        ->paginate(15);
 
         if ($admission_id) {
             $selectedAdm = Admission::with('patient', 'bed')->find($admission_id);
         }
 
         if ($selectedAdm && !$admissions->contains('id', $selectedAdm->id)) {
-            $admissions->add($selectedAdm);
-            $admissions = $admissions->sortByDesc('created_at')->values();
+            $admissionsCollection = $admissions->getCollection();
+            $admissionsCollection->add($selectedAdm);
+            $sortedAdmissions = $admissionsCollection->sortByDesc('id')->values();
+            $admissions->setCollection($sortedAdmissions);
         }
 
         return response()->json($admissions);

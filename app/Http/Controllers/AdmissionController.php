@@ -332,15 +332,15 @@ class AdmissionController extends Controller
         ->filterByName($filters['name'] ?? null)
         ->filterByRoom($filters['room'] ?? null)
         ->filterByBed($filters['bed'] ?? null)
-        ->orderBy('created_at', 'desc')
         ->get();
 
         if ($admission_id) {
             $selectedAdm = Admission::with('patient', 'bed')->find($admission_id);
         }
 
-        if ($selectedAdm) {
-            $admissions->prepend($selectedAdm);
+        if ($selectedAdm && !$admissions->contains('id', $selectedAdm->id)) {
+            $admissions->add($selectedAdm);
+            $admissions = $admissions->sortByDesc('created_at')->values();
         }
 
         return response()->json($admissions);

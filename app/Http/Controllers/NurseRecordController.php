@@ -110,10 +110,7 @@ class NurseRecordController extends Controller implements HasMiddleware
     {
         $admission_id = $request->has('admission_id') ? $request->admission_id : null;
 
-        $admissions = $this->filterAdmissions($request);
-
         return Inertia::render('NurseRecords/Create', [
-            'admissions' => $admissions,
             'admission_id' => intval($admission_id),
         ]);
     }
@@ -128,16 +125,19 @@ class NurseRecordController extends Controller implements HasMiddleware
         $turnService = new TurnService();
         $currentTurn = $turnService->getCurrentTurn();
         $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+        $admission_id = $request->admission_id;
 
         $nurseRecordsInTurn = NurseRecord::where('nurse_id', Auth::id())
+            ->where('admission_id', $admission_id)
             ->whereBetween('created_at', [
                 $dateRange['start'],
                 $dateRange['end']
             ])
             ->first();
 
-
+        $prueba = NurseRecord::find(4);
         if ($nurseRecordsInTurn) {
+            dd('no puedes', $nurseRecordsInTurn, $prueba);
             return back()->with('error', 'Ya tienes un registro creado en este mismo turno');
         }
 
@@ -147,25 +147,25 @@ class NurseRecordController extends Controller implements HasMiddleware
             'created_at' => now(),
         ]);
 
-        return Redirect::route('nurseRecords.edit', $nurseRecord->id);
+        return Redirect::route('nurseRecords.show', $nurseRecord->id);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(NurseRecord $nurseRecord, Request $request)
+    public function show(NurseRecord $nurseRecord)
     {
+        // AGREGAR AL METODO NUEVO QUE SE AGREGUE EL INGRESO QUE TIENE EL REGISTRO POR DEFECTO
+
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
-        $admissions = $this->filterAdmissions($request);
 
         $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')
             ->where('active', true)->get();
 
         return Inertia::render('NurseRecords/Show', [
             'nurseRecord' => $nurseRecord,
-            'admissions' => $admissions,
             'patient' => $patient,
             'nurse' => $nurse,
             'bed' => $bed,
@@ -187,6 +187,8 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function update(Request $request, NurseRecord $nurseRecord)
     {
+        // todo: validar el turno
+
         $firmService = new FirmService;
 
 
@@ -212,52 +214,5 @@ class NurseRecordController extends Controller implements HasMiddleware
     {
         $nurseRecord->update(['active' => 0]);
         return Redirect::route('nurseRecords.index');
-    }
-
-    /**
-     * function to filter admissions
-     * @param  $request
-     * @return \Illuminate\Database\Eloquent\Collection<int, Admission>
-     */
-    public function filterAdmissions( Request $request ) {
-        $name = $request->name;
-        $room = $request->room;
-        $bed = $request->bed;
-
-        $admQuery = Admission::query()
-            ->where('admissions.active', true)
-            ->whereNull('admissions.discharged_date')
-            ->with('patient', 'bed')
-            ->leftJoin('patients', 'admissions.patient_id', '=', 'patients.id')
-            ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
-            ->select(
-                'admissions.id',
-                'admissions.bed_id',
-                'admissions.patient_id',
-                'admissions.created_at',
-                'patients.first_name',
-                'patients.first_surname',
-                'patients.second_surname',
-                'beds.id',
-                'beds.number',
-                'beds.room',
-                'beds.floor',
-            );
-
-        if ($name) {
-            $admQuery->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $name . '%']);
-        }
-
-        if ($room) {
-            $admQuery->whereLike('beds.room', '%' . $room . '%');
-        }
-
-        if ($bed) {
-            $admQuery->whereLike('beds.number', '%' . $bed . '%');
-        }
-
-        $admissions = $admQuery->get();
-
-        return $admissions;
     }
 }

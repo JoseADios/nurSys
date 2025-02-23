@@ -43,6 +43,7 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
+    Route::get('/admissions/filter', [AdmissionController::class, 'getFilteredAdmissions'])->name('admissions.filter');
     Route::resource('admissions', AdmissionController::class);
     Route::put('/admissions/{admission}/restore', [AdmissionController::class, 'restore'])->name('admissions.restore');
 

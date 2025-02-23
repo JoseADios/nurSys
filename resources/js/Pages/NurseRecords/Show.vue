@@ -242,95 +242,10 @@
 
         <!-- Change admission modal -->
         <Modal :closeable="true" :show="showEditAdmission != null" @close="showEditAdmission == null">
-            <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+            <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
                 <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
-                    <!-- Filtros de búsqueda -->
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4 shadow-sm">
-                        <h3 class="text-base font-medium text-gray-900 dark:text-white mb-3">
-                            Buscar Paciente
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-                            <div class="space-y-2">
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                    <input type="text" v-model="filters.name" @input="debounceSearch"
-                                        class="pl-10 w-full rounded-lg border-gray-200 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:bg-gray-800 dark:text-white"
-                                        placeholder="Nombre del paciente...">
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0h8v12H6V4z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                    <input type="text" v-model="filters.room" @input="debounceSearch"
-                                        class="pl-10 w-full rounded-lg border-gray-200 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:bg-gray-800 dark:text-white"
-                                        placeholder="Número de sala...">
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 20 20" fill="currentColor">
-                                            <path
-                                                d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zm3 14a1 1 0 100-2 1 1 0 000 2z" />
-                                        </svg>
-                                    </div>
-                                    <input type="number" v-model="filters.bed" @input="debounceSearch"
-                                        class="pl-10 w-full rounded-lg border-gray-200 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:bg-gray-800 dark:text-white"
-                                        placeholder="Número de cama...">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Lista de ingresos  -->
-                    <div class="space-y-2">
-                        <h3 class="text-base font-medium text-gray-900 dark:text-white">
-                            Seleccionar Ingreso ({{ admissions.length }} resultados)
-                        </h3>
-                        <div
-                            class="max-h-[250px] overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
-                            <div v-for="admission in filteredAdmissions" :key="admission.id"
-                                @click="selectAdmission(admission)" :class="[
-                                    'p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 transition',
-                                    formAdmission.admission_id === admission.id ? 'bg-purple-100 dark:bg-purple-900/30' : ''
-                                ]">
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <span class="font-medium text-gray-900 dark:text-white text-sm">
-                                            {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
-                                                admission.patient.second_surname }}
-                                        </span>
-                                        <span
-                                            class="text-xs ml-2 px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-800 dark:text-gray-300">
-                                            ING-00{{ admission.id }}
-                                        </span>
-                                        <div class="text-xs text-gray-600 dark:text-gray-400">
-                                            Sala {{ admission.bed.room }} - Cama {{ admission.bed.number }}
-                                        </div>
-                                    </div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">
-                                        {{ formatDate(admission.created_at) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <AdmissionSelector @update:admission="formAdmission.admission_id = $event" :selected-admission-id="nurseRecord.admission_id" />
 
                     <!-- Botones -->
                     <div class="flex justify-end mt-4 space-x-3">
@@ -346,6 +261,7 @@
                     </div>
                 </form>
             </div>
+
         </Modal>
 
         <!-- Delete modal -->
@@ -385,7 +301,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import moment from 'moment';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import Modal from '@/Components/Modal.vue';
-import debounce from 'lodash/debounce';
+import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 
 
 export default {
@@ -410,7 +326,8 @@ export default {
         DangerButton,
         SecondaryButton,
         AccessGate,
-        Modal
+        Modal,
+        AdmissionSelector
     },
     data() {
         return {
@@ -432,22 +349,9 @@ export default {
                 nurse_sign: this.nurseRecord.nurse_sign,
                 signature: true,
             },
-            filters: {
-                name: '',
-                room: '',
-                bed: '',
-            },
-            debouncedSearch: null,
         }
     },
-    created() {
-        this.debouncedSearch = debounce(this.applyFilters, 300)
-    },
-    computed: {
-        filteredAdmissions() {
-            return this.admissions;
-        }
-    },
+
     methods: {
         submitAdmission() {
             this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formAdmission)

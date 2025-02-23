@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
@@ -310,5 +311,38 @@ class AdmissionController extends Controller
             ->update(['active' => true]);
 
         return Redirect::route('admissions.index');
+    }
+
+
+    /**
+     * function to filter admissions
+     * @param  $request
+     * @return \Illuminate\Database\Eloquent\Collection<int, Admission>
+     */
+    public function getFilteredAdmissions(Request $request)
+    {
+        $selectedAdm = null;
+        $admission_id = $request->input('admission_id');
+        $filters = $request->input('filters', []);
+
+        $admissions = Admission::with('patient', 'bed')
+        ->active()
+        ->filterByName($filters['name'] ?? null)
+        ->filterByRoom($filters['room'] ?? null)
+        ->filterByBed($filters['bed'] ?? null)
+        ->paginate(15);
+
+        if ($admission_id) {
+            $selectedAdm = Admission::with('patient', 'bed')->find($admission_id);
+        }
+
+        if ($selectedAdm && !$admissions->contains('id', $selectedAdm->id)) {
+            $admissionsCollection = $admissions->getCollection();
+            $admissionsCollection->add($selectedAdm);
+            $sortedAdmissions = $admissionsCollection->sortByDesc('id')->values();
+            $admissions->setCollection($sortedAdmissions);
+        }
+
+        return response()->json($admissions);
     }
 }

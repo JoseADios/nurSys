@@ -7,16 +7,27 @@ use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
 use App\Services\FirmService;
 use App\Services\TurnService;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class NurseRecordController extends Controller
+class NurseRecordController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:nurseRecord.view', only: ['index', 'show']),
+            new Middleware('permission:nurseRecord.create', only: ['edit', 'store']),
+            new Middleware('permission:nurseRecord.update', only: ['update']),
+            new Middleware('permission:nurseRecord.delete', only: ['destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -98,51 +109,12 @@ class NurseRecordController extends Controller
     public function create(Request $request)
     {
         $admission_id = $request->has('admission_id') ? $request->admission_id : null;
-        $name = $request->name;
-        $room = $request->room;
-        $bed = $request->bed;
-
-        $admQuery = Admission::query()
-            ->where('admissions.active', true)
-            ->whereNull('admissions.discharged_date')
-            ->with('patient', 'bed')
-            ->leftJoin('patients', 'admissions.patient_id', '=', 'patients.id')
-            ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
-            ->select(
-                'admissions.id',
-                'admissions.bed_id',
-                'admissions.patient_id',
-                'admissions.created_at',
-                'patients.first_name',
-                'patients.first_surname',
-                'patients.second_surname',
-                'beds.id',
-                'beds.number',
-                'beds.room',
-                'beds.floor',
-            );
-
-        if ($name) {
-            $admQuery->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $name . '%']);
-        }
-
-        if ($room) {
-            $admQuery->whereLike('beds.room', '%' . $room . '%');
-        }
-
-        if ($bed) {
-            $admQuery->whereLike('beds.number', '%' . $bed . '%');
-        }
-
-        $admissions = $admQuery->get();
-
-        // dump($admissions);
 
         return Inertia::render('NurseRecords/Create', [
-            'admissions' => $admissions,
             'admission_id' => intval($admission_id),
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -153,16 +125,19 @@ class NurseRecordController extends Controller
         $turnService = new TurnService();
         $currentTurn = $turnService->getCurrentTurn();
         $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+        $admission_id = $request->admission_id;
 
         $nurseRecordsInTurn = NurseRecord::where('nurse_id', Auth::id())
+            ->where('admission_id', $admission_id)
             ->whereBetween('created_at', [
                 $dateRange['start'],
                 $dateRange['end']
             ])
             ->first();
 
-
+        $prueba = NurseRecord::find(4);
         if ($nurseRecordsInTurn) {
+            dd('no puedes', $nurseRecordsInTurn, $prueba);
             return back()->with('error', 'Ya tienes un registro creado en este mismo turno');
         }
 
@@ -172,7 +147,7 @@ class NurseRecordController extends Controller
             'created_at' => now(),
         ]);
 
-        return Redirect::route('nurseRecords.edit', $nurseRecord->id);
+        return Redirect::route('nurseRecords.show', $nurseRecord->id);
     }
 
     /**
@@ -180,24 +155,17 @@ class NurseRecordController extends Controller
      */
     public function show(NurseRecord $nurseRecord)
     {
-        //
-    }
+        // AGREGAR AL METODO NUEVO QUE SE AGREGUE EL INGRESO QUE TIENE EL REGISTRO POR DEFECTO
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(NurseRecord $nurseRecord)
-    {
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
-        $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
+
         $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')
             ->where('active', true)->get();
 
-        return Inertia::render('NurseRecords/Edit', [
+        return Inertia::render('NurseRecords/Show', [
             'nurseRecord' => $nurseRecord,
-            'admissions' => $admissions,
             'patient' => $patient,
             'nurse' => $nurse,
             'bed' => $bed,
@@ -207,10 +175,20 @@ class NurseRecordController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(NurseRecord $nurseRecord)
+    {
+        //
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, NurseRecord $nurseRecord)
     {
+        // todo: validar el turno
+
         $firmService = new FirmService;
 
 

@@ -33,6 +33,48 @@ class Admission extends Model
         ];
     }
 
+    /*
+        SCOPES \\
+    */
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', true)->whereNull('discharged_date');
+    }
+
+    public function scopeFilterByName($query, $name)
+    {
+        if ($name) {
+            return $query->whereHas('patient', function ($q) use ($name) {
+                $q->whereRaw("CONCAT(first_name, ' ', first_surname, ' ', second_surname) like ?", ['%' . $name . '%']);
+            });
+        }
+        return $query;
+    }
+
+    public function scopeFilterByRoom($query, $room)
+    {
+        if ($room) {
+            return $query->whereHas('bed', function ($q) use ($room) {
+                $q->where('room', 'like', "%$room%");
+            });
+        }
+        return $query;
+    }
+
+    public function scopeFilterByBed($query, $bed)
+    {
+        if ($bed) {
+            return $query->whereHas('bed', function ($q) use ($bed) {
+                $q->where('number', $bed);
+            });
+        }
+        return $query;
+    }
+
+
+    // RELATIONS \\
+
     public function receptionist(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -73,4 +115,3 @@ class Admission extends Model
         return $this->belongsTo(Patient::class);
     }
 }
-

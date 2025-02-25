@@ -42,7 +42,6 @@ class MedicationRecordController extends Controller
 
 
         $query = MedicationRecord::query();
-        $admission = Admission::with('patient', 'bed')->get();
 
         if ($showDeleted) {
             $query->where('active',false);
@@ -70,7 +69,7 @@ class MedicationRecordController extends Controller
         }
 
 
-        $medicationRecords = $query->with('admission')->orderByDesc('created_at')->paginate(10);
+        $medicationRecords = $query->with('admission.bed','admission.patient','admission')->orderByDesc('created_at')->paginate(10);
 
         return Inertia::render('MedicationRecords/Index', [
             'medicationRecords' => $medicationRecords,
@@ -80,7 +79,6 @@ class MedicationRecordController extends Controller
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
             ],
-            'admission' => $admission,
         ]);
     }
 //
@@ -156,8 +154,12 @@ class MedicationRecordController extends Controller
     {
         try{
         $medicationRecord->load(['admission.patient','admission.bed','doctor','medicationRecordDetail','admission.medicalOrders']);
-        $allMedicalOrders = MedicalOrder::where('active',true)->where('admission_id',$medicationRecord->admission->id)->with('medicalOrderDetail')->get();
-
+        $allMedicalOrders = MedicalOrder::where('active', true)
+        ->where('admission_id', $medicationRecord->admission->id)
+        ->with(['medicalOrderDetail' => function ($query) {
+            $query->whereNull('suspended_at');
+        }])
+        ->get();
 
 
         $drug = Drug::all();
@@ -237,11 +239,23 @@ class MedicationRecordController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-     public function destroy(MedicationRecord $medicationRecord)
-     {
+    public function destroy(MedicationRecord $medicationRecord)
+{
+    $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
 
-         $medicationRecord->update(['active' => 0]);
-         $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
+    $notificationsapplied = MedicationNotification::whereIn('medication_record_detail_id', $details->pluck('id'))
+        ->pluck('applied');
+
+
+    if ($notificationsapplied->contains(function ($value) {
+        return $value != 0;
+    })) {
+       return redirect()->to(route('medicationRecords.show', $medicationRecord));
+
+    }
+
+
+    $medicationRecord->update(['active' => 0]);
 
 
     foreach ($details as $detail) {
@@ -249,12 +263,12 @@ class MedicationRecordController extends Controller
     }
 
 
-    $notificationIds = $details->pluck('id');
-    MedicationNotification::whereIn('medication_record_detail_id', $notificationIds)
+    MedicationNotification::whereIn('medication_record_detail_id', $details->pluck('id'))
         ->update(['active' => 0]);
 
-     return Redirect::route('medicationRecords.index');
-     }
+   return redirect()->to(route('medicationRecords.show', $medicationRecord));
+
+}
 
 
 

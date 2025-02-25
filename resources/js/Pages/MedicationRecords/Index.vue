@@ -40,11 +40,10 @@
 
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                    <th scope="col" class="px-6 py-3" @click="sort('admission_id')">Admisión <span v-if="form.sortField === 'admission_id'">{{ form.sortDirection === 'asc' ?
-                                '↑' :
+                <tr> <th scope="col" class="px-6 py-3" @click="sort('admission_id')">Ingreso<span v-if="form.sortField === 'admission_id'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
                                 }}</span></th>
+
                                 <th scope="col" class="px-6 py-3" @click="sort('admission.discharged_date')">Estado <span v-if="form.sortField === 'admission.discharged_date'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
@@ -52,9 +51,7 @@
                     <th scope="col" class="px-6 py-3" @click="sort('diagnosis')">Diagnóstico<span v-if="form.sortField === 'diagnosis'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
                                 }}</span></th>
-                    <th scope="col" class="px-6 py-3" @click="sort('diet')">Dieta<span v-if="form.sortField === 'diet'">{{ form.sortDirection === 'asc' ? '↑' :
-                                '↓'
-                                }}</span></th>
+
                     <th scope="col" class="px-6 py-3" @click="sort('referrals')">Referencias<span v-if="form.sortField === 'referrals'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
                                 }}</span></th>
@@ -71,16 +68,17 @@
 
                 <tr v-for="record in medicationRecords.data.filter(record => record.id)" :key="record.id" :class="[
         'bg-white border-b dark:bg-gray-800 dark:border-gray-700'    ]">
-                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ record.admission ? record.admission.id : 'N/A' }}
-                    </td>
+  <td class="px-6 py-4">   ING-00{{ record.admission.id }},
+                                Cama {{ record.admission.bed.number }}, Sala {{
+                                    record.admission.bed.room }}</td>
+                                     <td class="px-6 py-4">{{ record.diagnosis }} </td>
                     <td class="px-6 py-4  w-2">
                             <span v-if="record.admission.discharged_date == null"
                                 class="block w-4 h-4 bg-green-500 rounded-full mx-auto">{{  }}</span>
                             <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
                         </td>
-                    <td class="px-6 py-4">{{ record.diagnosis }} </td>
-                    <td class="px-6 py-4">{{ record.diet }}</td>
+
+
                     <td class="px-6 py-4">{{ record.referrals }}</td>
                     <td class="px-6 py-4">{{ record.pending_studies }}</td>
                     <td class="px-6 py-4">{{ record.doctor_sign }}</td>

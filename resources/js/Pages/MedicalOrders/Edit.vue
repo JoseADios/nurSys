@@ -462,7 +462,7 @@ export default {
 
                 this.$inertia.get(route('medicationRecordDetails.create', { medicationRecordId: this.medicalOrder.admission.medication_record.id }))
             }else{
-                alert('create record')
+
                 this.$inertia.get(route('medicationRecords.create', { admission: this.medicalOrder.admission.id }))
             }
 

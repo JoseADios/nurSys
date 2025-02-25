@@ -156,8 +156,12 @@ class MedicationRecordController extends Controller
     {
         try{
         $medicationRecord->load(['admission.patient','admission.bed','doctor','medicationRecordDetail','admission.medicalOrders']);
-        $allMedicalOrders = MedicalOrder::where('active',true)->where('admission_id',$medicationRecord->admission->id)->with('medicalOrderDetail')->get();
-
+        $allMedicalOrders = MedicalOrder::where('active', true)
+        ->where('admission_id', $medicationRecord->admission->id)
+        ->with(['medicalOrderDetail' => function ($query) {
+            $query->whereNull('suspended_at');
+        }])
+        ->get();
 
 
         $drug = Drug::all();

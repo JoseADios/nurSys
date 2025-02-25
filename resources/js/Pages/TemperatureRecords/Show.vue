@@ -257,6 +257,7 @@
                             </div>
                         </form>
                     </div>
+
                     <!-- TODO: MODIFICAR ESTA PARTE PARA USAR POLICIES -->
                     <!-- si no puede crear ni actualizar mostrar que ya otro enfermero ha registrado una firma en este turno que no puede hacer nada -->
                     <div v-if="!canCreateDetail && !lastTemperature" class="p-8">
@@ -325,7 +326,7 @@
                 <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
                     <form @submit.prevent="submitUpdateRecord" class="max-w-3xl mx-auto">
 
-                        <AdmissionSelector @update:admission="formRecord.admission_id = $event" :selected-admission-id="temperatureRecord.admission_id" />
+                        <AdmissionSelector @update:admission="formRecord.admission_id = $event" :selected-admission-id="temperatureRecord.admission_id" :doesnt-have-temperature-r="true" />
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">
@@ -472,7 +473,7 @@ export default {
             });
         },
         submitUpdateRecord() {
-            this.showEditAdmission = nul
+            this.showEditAdmission = null
             this.$inertia.put(route('temperatureRecords.update', this.temperatureRecord.id), this.formRecord)
             this.isVisibleEditDiagnosis = false
         },

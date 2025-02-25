@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 
 class NurseRecordDetailController extends Controller implements HasMiddleware
 {
+    use AuthorizesRequests;
 
     public static function middleware(): array
     {
@@ -43,6 +47,9 @@ class NurseRecordDetailController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
+        $nurseRecord = NurseRecord::findOrFail($request->nurse_record_id);
+        $this->authorize('create', [NurseRecordDetail::class, $nurseRecord]);
+
         NurseRecordDetail::create([
             'nurse_record_id' => $request->nurse_record_id,
             'medication' =>  $request->medication,
@@ -66,6 +73,7 @@ class NurseRecordDetailController extends Controller implements HasMiddleware
      */
     public function edit(NurseRecordDetail $nurseRecordDetail)
     {
+        $this->authorize('update', $nurseRecordDetail);
         return Inertia::render('NurseRecordDetail/Edit', [
             'nurseRecordDetail' => $nurseRecordDetail
         ]);
@@ -76,6 +84,8 @@ class NurseRecordDetailController extends Controller implements HasMiddleware
      */
     public function update(Request $request, NurseRecordDetail $nurseRecordDetail)
     {
+        $this->authorize('update', $nurseRecordDetail);
+
         $nurseRecordDetail->update($request->all());
         return Redirect::route('nurseRecords.edit', $nurseRecordDetail->nurse_record_id);
     }

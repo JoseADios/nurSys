@@ -107,7 +107,7 @@ import moment from 'moment';
 
 export default {
     props: {
-        initialAdmissions: Object,
+        doesntHaveTemperatureR: Boolean,
         selectedAdmissionId: Number
     },
     data() {
@@ -119,6 +119,7 @@ export default {
                 next_page_url: null,
             },
             selectedAdmission: this.selectedAdmissionId || null,
+            doesntHaveTempR: this.doesntHaveTemperatureR || false,
             filters: {
                 name: '',
                 room: '',
@@ -145,7 +146,9 @@ export default {
             try {
                 const response = await axios.get(pageUrl || route('admissions.filter'), {
                     params: {
-                        filters: this.filters, admission_id: this.selectedAdmission
+                        filters: this.filters,
+                        admission_id: this.selectedAdmission,
+                        doesntHaveTemperatureR: this.doesntHaveTempR
                     }
                 });
                 this.admissions = response.data;

@@ -42,7 +42,6 @@ class MedicationRecordController extends Controller
 
 
         $query = MedicationRecord::query();
-        $admission = Admission::with('patient', 'bed')->get();
 
         if ($showDeleted) {
             $query->where('active',false);
@@ -70,7 +69,7 @@ class MedicationRecordController extends Controller
         }
 
 
-        $medicationRecords = $query->with('admission')->orderByDesc('created_at')->paginate(10);
+        $medicationRecords = $query->with('admission.bed','admission.patient','admission')->orderByDesc('created_at')->paginate(10);
 
         return Inertia::render('MedicationRecords/Index', [
             'medicationRecords' => $medicationRecords,
@@ -80,7 +79,6 @@ class MedicationRecordController extends Controller
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
             ],
-            'admission' => $admission,
         ]);
     }
 //

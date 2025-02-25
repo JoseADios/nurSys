@@ -7,6 +7,7 @@ use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
 use App\Services\FirmService;
 use App\Services\TurnService;
+use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -17,9 +18,12 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TemperatureRecordController extends Controller implements HasMiddleware
 {
+    use AuthorizesRequests;
+
     /**
      * Get the middleware that should be assigned to the controller.
      */
@@ -27,7 +31,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:temperatureRecord.view', only: ['index', 'show']),
-            new Middleware('permission:temperatureRecord.create', only: ['edit', 'store']),
+            new Middleware('permission:temperatureRecord.create', only: ['show', 'store']),
             new Middleware('permission:temperatureRecord.update', only: ['update']),
             new Middleware('permission:temperatureRecord.delete', only: ['destroy']),
         ];
@@ -114,8 +118,17 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function create(Request $request)
     {
+
         $admission_id = $request->has('admission_id') ? $request->admission_id : null;
 
+        if ($admission_id) {
+            $admission = Admission::find($admission_id);
+            $response = Gate::inspect('create', [TemperatureRecord::class, $admission]);
+
+            if (!$response->allowed()) {
+                return back()->with('error', 'Este ingreso no tiene hoja de temperatura');
+            }
+        }
         return Inertia::render('TemperatureRecords/Create', [
             'admission_id' => $admission_id,
         ]);
@@ -126,12 +139,9 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $existingRecord = TemperatureRecord::where('admission_id', $request->admission_id)
-            ->where('active', 1)
-            ->first();
-        if ($existingRecord) {
-            return Redirect::back()->withErrors(['admission_id' => 'A temperature record for this admission already exists.']);
-        }
+        $admission = Admission::find($request->admission_id);
+
+        $this->authorize('create', [TemperatureRecord::class, $admission]);
 
         $temperatureRecord = TemperatureRecord::create([
             'admission_id' => $request->admission_id,
@@ -147,10 +157,9 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function show($id, $admission_id = null)
     {
-        $turnService = new TurnService();
-        $dateRange = $turnService->getDateRangeForTurn($turnService->getCurrentTurn());
-        $user = User::find(Auth::id());
+        // TODO: Esto se modificara con el arreglo de redireccion desde admissions
 
+        // si se pasa el admission id buscar el temperatureRecord relacionado, sino buscar por el id el registro
         $temperatureRecord = $admission_id
             ? TemperatureRecord::where('admission_id', $admission_id)->where('active', 1)->first()
             : TemperatureRecord::find($id);
@@ -158,38 +167,27 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         if (!$temperatureRecord) {
             return Redirect::route('temperatureRecords.create', ['admission_id' => $admission_id]);
         }
-
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
 
+        // verificar si puede crear detalles
+        $responseCreateDetail = Gate::inspect('create', [TemperatureDetail::class, $temperatureRecord->id]);
+        $canCreateDetail = $responseCreateDetail->allowed();
+
+        // ultimo detalle de temperatura
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-            ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'asc')
             ->first();
 
-        $canCreateDetail = !$lastTemperature;
-        $canUpdateSignature = $temperatureRecord->nurse_id == Auth::id() || $user->hasRole('admin');
+        // verificar si puede actualizar detalles
+        $responseUpdateDetail = Gate::inspect('update', [TemperatureDetail::class, $lastTemperature]);
 
-        if ($lastTemperature && $lastTemperature->nurse_id != Auth::id()) {
+        if (!$responseUpdateDetail->allowed()) {
             $lastTemperature = null;
         }
 
-        $allTemperatureRecords = TemperatureRecord::where('active', true)
-            ->whereNot('admission_id', $temperatureRecord->admission_id)
-            ->pluck('admission_id');
-
-        $admissions = Admission::where('active', true)
-            ->with('patient', 'bed')
-            ->whereNotIn('id', $allTemperatureRecords)
-            ->whereNull('discharged_date')
-            ->get();
-
-        $selectedAdm = Admission::where('id', $temperatureRecord->admission_id)
-            ->with('patient', 'bed')
-            ->first();
-
-        if ($selectedAdm) {
-            $admissions->add($selectedAdm);
-        }
+        // verificar si puede editar la firma del registro
+        $responseUpdateRecord = Gate::inspect('updateSignature', $temperatureRecord);
+        $canUpdateSignature = $responseUpdateRecord->allowed();
 
         $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->with(['nurse:id,name,last_name']) // Especificar solo las columnas necesarias
@@ -198,7 +196,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,
-            'admissions' => $admissions,
             'details' => $details,
             'lastTemperature' => $lastTemperature,
             'canCreateDetail' => $canCreateDetail,
@@ -221,6 +218,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function update(Request $request, TemperatureRecord $temperatureRecord)
     {
+        $this->authorize('update', $temperatureRecord);
+
         $firmService = new FirmService;
         $user = User::find(Auth::id());
 
@@ -231,28 +230,20 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             'active' => 'boolean|nullable'
         ]);
 
-        // si encuentra uno relacionado al ingreso nuevo o al ingreso actual
-        if ($request->has('admission_id')) {
-            $admission = Admission::find($request->admission_id);
-        } else {
-            $admission = $temperatureRecord->admission;
+        // si se modifica el ingreso
+        if ($request->has('admission_id') && $request->admission_id !== $temperatureRecord->admission_id) {
+            $this->authorize('updateAdmission', [TemperatureRecord::class, $request->admission_id]);
         }
 
-        $tempRecordAdm = TemperatureRecord::where('admission_id', $admission->id)
-            ->whereNot('id', $temperatureRecord->id)
-            ->where('active', true)->get();
+        // si se modifica la firma
+        if ($request->has('nurse_sign') && $request->nurse_sign !== $temperatureRecord->nurse_sign) {
+            $this->authorize('updateSignature', $temperatureRecord);
 
-        if (!$tempRecordAdm->isEmpty()) {
-            return back()->withErrors('error', 'El ingreso al que quiere asignar este registro ya posee una hoja de temperatura');
-        }
-
-        if (($request->signature && $temperatureRecord->nurse_id == Auth::id()) || $user->hasRole(['admin'])) {
             $fileName = $firmService
                 ->createImag($request->nurse_sign, $temperatureRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
-        } else {
-            return abort(403, 'Acción inautorizada.');
         }
+
 
         $temperatureRecord->update($validated);
 
@@ -264,6 +255,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function destroy(TemperatureRecord $temperatureRecord)
     {
+        $this->authorize('delete', $temperatureRecord);
         $temperatureRecord->update(['active' => 0]);
         return Redirect::route('temperatureRecords.index');
     }

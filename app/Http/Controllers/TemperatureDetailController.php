@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TemperatureDetail;
 use App\Services\TurnService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -12,6 +13,7 @@ use Illuminate\Routing\Controllers\Middleware;
 
 class TemperatureDetailController extends Controller implements HasMiddleware
 {
+    use AuthorizesRequests;
 
     public static function middleware(): array
     {
@@ -44,20 +46,7 @@ class TemperatureDetailController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $turnService = new TurnService();
-        $dateRange = $turnService->getDateRangeForTurn($turnService->getCurrentTurn());
-
-        $lastTemperature = TemperatureDetail::where('temperature_record_id', $request->temperature_record_id)
-            ->whereBetween('created_at', [
-                $dateRange['start'],
-                $dateRange['end']
-            ])
-            ->orderBy('created_at', 'asc')
-            ->first();
-
-        if ($lastTemperature) {
-            return back()->with('error', 'Ya hay una temperatura creada en el mismo turno');
-        }
+        $this->authorize('create', [TemperatureDetail::class, $request->temperature_record_id]);
 
         TemperatureDetail::create([
             'temperature_record_id' => $request->temperature_record_id,
@@ -92,6 +81,8 @@ class TemperatureDetailController extends Controller implements HasMiddleware
      */
     public function update(Request $request, TemperatureDetail $temperatureDetail)
     {
+        $this->authorize('update', $temperatureDetail);
+
         $request->validate([
             'temperature' => 'required|numeric',
             'evacuations' => 'required|integer',

@@ -170,10 +170,15 @@ class MedicalOrderController extends Controller
      */
     public function destroy(MedicalOrder $medicalOrder)
     {
-        $medicalOrder->update(['active'=> 0]);
-
         $medicalOrderDetailIds = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->pluck('id');
         $medicationRecordDetails = MedicationRecordDetail::whereIn('medical_order_detail_id', $medicalOrderDetailIds)->get();
+
+
+          if ($medicationRecordDetails->pluck('medical_order_detail_id')->intersect($medicalOrderDetailIds)->isNotEmpty()) {
+            return redirect()->to(route('medicalOrders.show', $medicalOrder));
+        }
+        $medicalOrder->update(['active'=> 0]);
+
         foreach ($medicationRecordDetails as $medicationRecordDetail) {
             $medicationRecordDetail->update(['suspended_at' => now()]);
         }

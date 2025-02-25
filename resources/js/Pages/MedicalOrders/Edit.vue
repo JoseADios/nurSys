@@ -492,7 +492,7 @@ export default {
             this.isVisibleDetail = true;
         },
         deleteRecord() {
-            this.recordBeingDeleted = false
+            this.recordBeingDeleted = null;
             this.$inertia.delete(route('medicalOrders.destroy', this.medicalOrder.id));
         },
         deleteDetail() {

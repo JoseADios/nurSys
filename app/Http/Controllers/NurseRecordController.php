@@ -186,23 +186,14 @@ class NurseRecordController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(NurseRecord $nurseRecord,Request $request)
+    public function edit(NurseRecord $nurseRecord)
     {
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
-        $showDeleted = $request->boolean('showDeleted');
-
-
-            if ($showDeleted || !$nurseRecord->active) {
-
-                $details = NurseRecordDetail::where('nurse_record_id',  $nurseRecord->id)->orderBy('created_at', 'desc')
-            ->where('active', false)->get();
-            }else{
-                $details = NurseRecordDetail::where('nurse_record_id', $nurseRecord->id)->orderBy('created_at', 'desc')
+        $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')
             ->where('active', true)->get();
-            }
 
         return Inertia::render('NurseRecords/Edit', [
             'nurseRecord' => $nurseRecord,
@@ -212,9 +203,6 @@ class NurseRecordController extends Controller
             'bed' => $bed,
             'details' => $details,
             'errors' => !empty($errors) ? $errors : [],
-            'filters' => [
-                'show_deleted' => $showDeleted,
-            ],
         ]);
     }
 

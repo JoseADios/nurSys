@@ -158,27 +158,8 @@
 
                 <!-- Nurse Record Details -->
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
-                    <div class="flex items-center justify-between">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Eventos del Registro</h3>
-                    <div v-if="nurseRecord.active">
-            <button @click="toggleShowDeleted"
-                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-auto"
-                :class="{
-                    'bg-red-500 hover:bg-red-600 text-white': showDeleted,
-                    'bg-gray-100 hover:bg-gray-100 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-600 dark:text-gray-200': !showDeleted
-                }">
-                {{ showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path v-if="showDeleted" fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                        clip-rule="evenodd" />
-                    <path v-else fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                        clip-rule="evenodd" />
-                </svg>
-            </button>
-        </div>
-                    </div>
+
                     <div v-for="detail in details" :key="detail.id"
                         class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
                         <div class="flex-grow">
@@ -300,7 +281,6 @@ export default {
         nurse: Object,
         bed: Object,
         details: Array,
-        filters: Object,
     },
     components: {
         AppLayout,
@@ -316,7 +296,7 @@ export default {
             isVisible: false,
             isVisibleEditSign: ref(null),
             signatureError: false,
-            showDeleted: this.filters.show_deleted,
+
             formAdmission: {
                 admission_id: this.nurseRecord.admission_id,
                 active: this.nurseRecord.active
@@ -331,18 +311,8 @@ export default {
                 signature: true,
             }
         }
-
     },
     methods: {
-        toggleShowDeleted() {
-    this.showDeleted = !this.showDeleted;
-    this.$inertia.get(route('nurseRecords.edit', { nurseRecord: this.nurseRecord }), {
-        showDeleted: this.showDeleted
-    }, {
-        preserveState: true,
-        preserveScroll: true
-    });
-},
         toggleEditAdmission() {
             this.isVisible = !this.isVisible;
         },

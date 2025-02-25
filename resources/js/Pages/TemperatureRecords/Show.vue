@@ -320,27 +320,29 @@
 
 
         <!-- Change admission modal -->
-        <Modal :closeable="true" :show="showEditAdmission != null" @close="showEditAdmission == null">
-            <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
-                <form @submit.prevent="submitUpdateRecord" class="max-w-3xl mx-auto">
+        <AccessGate :permission="['temperatureRecord.delete']">
+            <Modal :closeable="true" :show="showEditAdmission != null" @close="showEditAdmission == null">
+                <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                    <form @submit.prevent="submitUpdateRecord" class="max-w-3xl mx-auto">
 
-                    <AdmissionSelector @update:admission="formRecord.admission_id = $event" :selected-admission-id="temperatureRecord.admission_id" />
+                        <AdmissionSelector @update:admission="formRecord.admission_id = $event" :selected-admission-id="temperatureRecord.admission_id" />
 
-                    <!-- Botones -->
-                    <div class="flex justify-end mt-4 space-x-3">
-                        <button type="button" @click="showEditAdmission = null"
-                            class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
-                            Cancelar
-                        </button>
-                        <button type="submit"
-                            class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
-                            :disabled="!formRecord.admission_id">
-                            Aceptar
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </Modal>
+                        <!-- Botones -->
+                        <div class="flex justify-end mt-4 space-x-3">
+                            <button type="button" @click="showEditAdmission = null"
+                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
+                                :disabled="!formRecord.admission_id">
+                                Aceptar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
+        </AccessGate>
 
         <!-- delete modal -->
         <AccessGate :permission="['temperatureRecord.delete']">

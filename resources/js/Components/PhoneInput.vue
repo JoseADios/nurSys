@@ -31,8 +31,8 @@ export default {
                 return this.formatDisplay(this.modelValue);
             },
             set(value) {
-                const rawValue = this.cleanNumber(value);
-                this.$emit("update:modelValue", rawValue);
+                const formattedValue = this.formatDisplay(this.cleanNumber(value));
+                this.$emit("update:modelValue", formattedValue);
             },
         },
     },

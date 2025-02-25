@@ -32,6 +32,9 @@
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3">
+                        Ingreso
+                    </th>
+                    <th scope="col" class="px-6 py-3">
                         Paciente
                     </th>
                     <th scope="col" class="px-6 py-3">
@@ -50,11 +53,16 @@
             </thead>
             <tbody>
                 <tr v-for="medicalOrder in medicalOrders.data.filter(medicalOrder => medicalOrder.id)" :key="medicalOrder.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <th scope="row" class="px-6 py-4">   ING-00{{ medicalOrder.admission.id }},
+                                Cama {{ medicalOrder.admission.bed.number }}, Sala {{
+                                    medicalOrder.admission.bed.room }}</th>
+                    <td  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ medicalOrder.admission.patient.first_name }} {{
                                 medicalOrder.admission.patient.first_surname }} {{
                                 medicalOrder.admission.patient.second_surname }}
-                    </th>
+                    </td>
+
+
                     <td class="px-6 py-4  w-2">
                            <span v-if="medicalOrder.admission.discharged_date == null"
                                 class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>

@@ -241,11 +241,23 @@ class MedicationRecordController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-     public function destroy(MedicationRecord $medicationRecord)
-     {
+    public function destroy(MedicationRecord $medicationRecord)
+{
+    $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
 
-         $medicationRecord->update(['active' => 0]);
-         $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
+    $notificationsapplied = MedicationNotification::whereIn('medication_record_detail_id', $details->pluck('id'))
+        ->pluck('applied');
+
+
+    if ($notificationsapplied->contains(function ($value) {
+        return $value != 0;
+    })) {
+       return redirect()->to(route('medicationRecords.show', $medicationRecord));
+
+    }
+
+
+    $medicationRecord->update(['active' => 0]);
 
 
     foreach ($details as $detail) {
@@ -253,12 +265,12 @@ class MedicationRecordController extends Controller
     }
 
 
-    $notificationIds = $details->pluck('id');
-    MedicationNotification::whereIn('medication_record_detail_id', $notificationIds)
+    MedicationNotification::whereIn('medication_record_detail_id', $details->pluck('id'))
         ->update(['active' => 0]);
 
-     return Redirect::route('medicationRecords.index');
-     }
+   return redirect()->to(route('medicationRecords.show', $medicationRecord));
+
+}
 
 
 

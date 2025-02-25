@@ -645,8 +645,13 @@ closeform(){
     errorMessage.classList.add('hidden');
 },
 deleteRecord() {
-            this.recordBeingDeleted = false
-            this.$inertia.delete(route('medicationRecords.destroy', this.medicationRecord.id));
+            this.recordBeingDeleted = null;
+            this.$inertia.delete(route('medicationRecords.destroy', this.medicationRecord.id), {
+                onSuccess: (response) => {
+                        console.log('eliminado correctamente',response);
+                        this.recordBeingDeleted = null;
+                    },
+            });
         },
 ToggleActivate(detail){
     if (detail.active) {

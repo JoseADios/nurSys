@@ -135,9 +135,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             ])
             ->first();
 
-        $prueba = NurseRecord::find(4);
         if ($nurseRecordsInTurn) {
-            dd('no puedes', $nurseRecordsInTurn, $prueba);
             return back()->with('error', 'Ya tienes un registro creado en este mismo turno');
         }
 
@@ -155,8 +153,6 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function show(NurseRecord $nurseRecord)
     {
-        // AGREGAR AL METODO NUEVO QUE SE AGREGUE EL INGRESO QUE TIENE EL REGISTRO POR DEFECTO
-
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
@@ -187,10 +183,25 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function update(Request $request, NurseRecord $nurseRecord)
     {
-        // todo: validar el turno
+        // validar que en este turno no exista una hoja del mismo usuario
+        $turnService = new TurnService();
+        $currentTurn = $turnService->getCurrentTurn();
+        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+        $admission_id = $request->admission_id;
+
+        $nurseRecordsInTurn = NurseRecord::where('nurse_id', Auth::id())
+            ->where('admission_id', $admission_id)
+            ->whereBetween('created_at', [
+                $dateRange['start'],
+                $dateRange['end']
+            ])
+            ->first();
+
+        if ($nurseRecordsInTurn) {
+            return back()->with('error', 'Ya tienes un registro creado en este mismo turno');
+        }
 
         $firmService = new FirmService;
-
 
         $validated = $request->validate([
             'admission_id' => 'numeric',

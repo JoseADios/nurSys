@@ -58,7 +58,7 @@ export default {
             const inputValue = event.target.value.replace(/[^0-9]/g, '');
 
             // Emite el evento de actualización del modelo con solo números
-            this.$emit('update:modelValue', inputValue);
+            this.$emit('update:modelValue', this.formatCedula(inputValue));
         },
         handleKeyDown(event) {
             // Permite borrar incluso con guiones presentes
@@ -72,7 +72,3 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-/* Estilos específicos para el componente si es necesario */
-</style>

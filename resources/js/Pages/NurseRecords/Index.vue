@@ -192,6 +192,7 @@ import {
 } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
 import moment from 'moment';
+import AccessGate from '@/Components/Access/AccessGate.vue';
 
 export default {
     props: {
@@ -205,7 +206,8 @@ export default {
     components: {
         AppLayout,
         Link,
-        Pagination
+        Pagination,
+        AccessGate
     },
     data() {
         return {

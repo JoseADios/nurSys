@@ -97,25 +97,33 @@ class MedicalOrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MedicalOrder $medicalOrder)
+    public function edit(MedicalOrder $medicalOrder,Request $request)
     {
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
 
         $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor','admission.medicationRecord']);
 
-
+        $showDeleted = $request->boolean('showDeleted');
         $regimes = Regime::all();
-        $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
-            ->where('active', true)
-            ->orderBy('updated_at', 'desc')
-            ->orderBy('created_at', 'desc')->get();
 
+
+            if ($showDeleted || !$medicalOrder->active) {
+
+                $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active',false)->orderBy('created_at', 'desc')->get();
+
+            }else{
+                $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active',true)->orderBy('created_at', 'desc')->get();
+
+            }
         return Inertia::render('MedicalOrders/Edit', [
             'medicalOrder' => $medicalOrder,
             'details' => $details,
             'admissions' => $admissions,
             'regimes' => $regimes,
             'previousUrl' => URL::previous(),
+            'filters' => [
+                'show_deleted' => $showDeleted,
+            ],
         ]);
 
     }

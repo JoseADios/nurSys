@@ -15,9 +15,9 @@ class TemperatureRecordPolicy
      */
     public function before(User $user, string $ability): bool|null
     {
-        // if ($user->hasRole('admin')) {
-        //     return true;
-        // }
+        if ($user->hasRole('admin')) {
+            return true;
+        }
 
         return null;
     }
@@ -98,7 +98,7 @@ class TemperatureRecordPolicy
             return Response::deny('No se pueden modificar registros en un ingreso que ha sido dado de alta');
         }
         if ($temperatureRecord->nurse_id !== $user->id) {
-            return Response::deny('No se pueden modificar registros en un ingreso que ha sido dado de alta');
+            return Response::deny('No tienes permiso para firmar este registro');
         }
 
         return Response::allow();

@@ -155,18 +155,9 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show($id, $admission_id = null)
+    public function show(TemperatureRecord $temperatureRecord)
     {
-        // TODO: Esto se modificara con el arreglo de redireccion desde admissions
 
-        // si se pasa el admission id buscar el temperatureRecord relacionado, sino buscar por el id el registro
-        $temperatureRecord = $admission_id
-            ? TemperatureRecord::where('admission_id', $admission_id)->where('active', 1)->first()
-            : TemperatureRecord::find($id);
-
-        if (!$temperatureRecord) {
-            return Redirect::route('temperatureRecords.create', ['admission_id' => $admission_id]);
-        }
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
 
         // verificar si puede crear detalles

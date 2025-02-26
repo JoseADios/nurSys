@@ -60,8 +60,6 @@ Route::middleware([
     Route::resource('medicalOrderDetails', MedicalOrderDetailController::class);
 
     Route::resource('temperatureRecords', TemperatureRecordController::class);
-    Route::get('temperatureRecords/{id}/{admission_id?}', [TemperatureRecordController::class, 'show'])
-        ->name('temperatureRecords.customShow');
     Route::resource('temperatureDetails', TemperatureDetailController::class);
 
     Route::resource('patients', PatientController::class);

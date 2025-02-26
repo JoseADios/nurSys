@@ -221,7 +221,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $this->authorize('update', $temperatureRecord);
 
         $firmService = new FirmService;
-        $user = User::find(Auth::id());
 
         $validated = $request->validate([
             'admission_id' => 'numeric|nullable',
@@ -243,7 +242,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
                 ->createImag($request->nurse_sign, $temperatureRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
         }
-
 
         $temperatureRecord->update($validated);
 

@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
-use App\Models\User;
 use App\Services\FirmService;
-use App\Services\TurnService;
 use Gate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -137,7 +135,7 @@ class NurseRecordController extends Controller implements HasMiddleware
     {
         $admission = Admission::find($request->admission_id);
         $this->authorize('create', [NurseRecord::class, $admission]);
-        $this->authorize('canCreateInTurn', [NurseRecord::class, $admission]);
+        $this->authorize('canCreateInTurn', [NurseRecord::class, $request->admission_id]);
 
         $nurseRecord = NurseRecord::create([
             'admission_id' => $request->admission_id,
@@ -158,7 +156,7 @@ class NurseRecordController extends Controller implements HasMiddleware
         $bed = $nurseRecord->admission->bed;
 
         $response = Gate::inspect('update', $nurseRecord);
-        $canCreateDetail = $response->allowed();
+        $canUpdateRecord = $response->allowed();
 
         $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')
             ->where('active', true)->get();
@@ -168,7 +166,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             'patient' => $patient,
             'nurse' => $nurse,
             'bed' => $bed,
-            'canCreateDetail' => $canCreateDetail,
+            'canUpdateRecord' => $canUpdateRecord,
             'details' => $details,
             'errors' => !empty($errors) ? $errors : [],
         ]);
@@ -187,10 +185,8 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function update(Request $request, NurseRecord $nurseRecord)
     {
-        $admission = Admission::find($request->admission_id);
-
         $this->authorize('update', $nurseRecord);
-        $this->authorize('canCreateInTurn', [NurseRecord::class, $admission]);
+        $this->authorize('canCreateInTurn', [NurseRecord::class, $request->admission_id]);
 
         $firmService = new FirmService;
 

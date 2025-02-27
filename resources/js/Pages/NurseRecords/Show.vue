@@ -21,7 +21,7 @@
                     </svg>
                     <span class="font-medium">Volver</span>
                     </Link>
-                    <AccessGate :permission="['nurseRecord.delete']">
+                    <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
                         <button v-if="nurseRecord.active" @click="recordBeingDeleted = true"
                             class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
@@ -52,7 +52,7 @@
                                 ING-00{{ nurseRecord.admission_id }}
                                 </Link>
                             </div>
-                            <AccessGate :permission="['nurseRecord.delete']">
+                            <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
                                 <button @click="showEditAdmission = true" class="text-blue-500 ml-3">Edit</button>
                             </AccessGate>
                         </div>
@@ -109,7 +109,7 @@
                 <!-- Form -->
                 <!-- Formulario para agregar nuevo detalle -->
                 <AccessGate :permission="['nurseRecordDetail.create']">
-                    <div v-if="canCreateDetail">
+                    <div v-if="canUpdateRecord">
                         <div class="p-8">
                             <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Eventos</h3>
 
@@ -172,7 +172,7 @@
                                 {{ formatDate(detail.created_at) }}
                             </div>
                         </div>
-                        <AccessGate :permission="['nurseRecordDetail.edit']">
+                        <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
                             <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                 <!-- Editar -->
                                 <Link :href="route('nurseRecordDetails.edit', detail.id)"
@@ -209,7 +209,7 @@
                                 </div>
                             </div>
 
-                            <AccessGate :permission="['nurseRecord.edit']">
+                            <AccessGate :permission="['nurseRecord.update']" v-if="canUpdateRecord">
                                 <button @click="isVisibleEditSign = true"
                                     class="mt-4 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
                                     Editar</button>
@@ -218,13 +218,9 @@
                     </div>
 
                     <!-- Campo de firma -->
-                    <AccessGate :permission="['nurseRecord.edit']">
+                    <AccessGate :permission="['nurseRecord.update']" v-if="canUpdateRecord">
                         <div v-show="isVisibleEditSign" class="my-4">
                             <form @submit.prevent="submitSignature" class="flex items-center flex-col justify-center">
-                                <!-- <label for="nurse_sign"
-                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                     Firma
-                                 </label> -->
 
                                 <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" />
                                 <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.
@@ -246,7 +242,7 @@
         </div>
 
         <!-- Change admission modal -->
-        <AccessGate :permission="['nurseRecord.delete']">
+        <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
             <Modal :closeable="true" :show="showEditAdmission != null" @close="showEditAdmission == null">
                 <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
                     <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
@@ -272,7 +268,7 @@
         </AccessGate>
 
         <!-- Delete modal -->
-        <AccessGate :permission="['nurseRecord.delete']">
+        <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
             <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted == null">
                 <template #title>
                     Eliminar Ingreso
@@ -324,7 +320,7 @@ export default {
         nurse: Object,
         bed: Object,
         details: Array,
-        canCreateDetail: Boolean,
+        canUpdateRecord: Boolean,
     },
     components: {
         AppLayout,

@@ -5,9 +5,9 @@ namespace App\Policies;
 use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Services\TurnService;
+use Gate;
 use Illuminate\Auth\Access\Response;
-use Illuminate\Support\Facades\Log;
 
 class NurseRecordDetailPolicy
 {
@@ -42,25 +42,33 @@ class NurseRecordDetailPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, NurseRecord $nurseRecord): bool
+    public function create(User $user, NurseRecord $nurseRecord): Response
     {
-        return $user->hasRole('admin') || $nurseRecord->admission->discharged_date === null;
+        if ($nurseRecord->id !== $user->id) {
+            return Response::deny('No tienes permiso para actualizar este registro');
+        }
+        if ($nurseRecord->admission->discharged_date !== null) {
+            return Response::deny('No se pueden crear registros para un ingreso que ya ha sido dado de alta');
+        }
+
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, NurseRecordDetail $nurseRecordDetail): bool
+    public function update(User $user, NurseRecordDetail $nurseRecordDetail): Response
     {
-        return $user->hasRole('admin') || $nurseRecordDetail->nurseRecord->admission->discharged_date === null;
+        // verificar que el user pueda actualizar el padre
+        return Gate::inspect('update', $nurseRecordDetail->nurseRecord);
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, NurseRecordDetail $nurseRecordDetail): bool
+    public function delete(User $user, NurseRecordDetail $nurseRecordDetail): Response
     {
-        return $user->hasRole('admin') || $nurseRecordDetail->nurseRecord->admission->discharged_date === null;
+        return Gate::inspect('delete', $nurseRecordDetail->nurseRecord);
     }
 
     /**

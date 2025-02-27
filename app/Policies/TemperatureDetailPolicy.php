@@ -7,7 +7,6 @@ use App\Models\TemperatureRecord;
 use App\Models\User;
 use App\Services\TurnService;
 use Illuminate\Auth\Access\Response;
-use Request;
 
 class TemperatureDetailPolicy
 {

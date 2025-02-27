@@ -69,6 +69,11 @@ class RoleSeeder extends Seeder
             'nurseRecord.create',
             'nurseRecord.update',
             'nurseRecord.delete',
+            'nurseRecordDetail.*',
+            'nurseRecordDetail.view',
+            'nurseRecordDetail.update',
+            'nurseRecordDetail.delete',
+            'nurseRecordDetail.delete',
         ]);
 
         $user = User::where('name', 'Test User')->first();

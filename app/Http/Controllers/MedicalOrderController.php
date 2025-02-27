@@ -23,26 +23,36 @@ class MedicalOrderController extends Controller
     {
         $search = $request->input('search', '');
         $admissionId = $request->input('admission_id');
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
+  $showDeleted = $request->boolean('showDeleted');
 
-        $query = MedicalOrder::where('active', true)
-            ->with('admission.patient', 'admission.bed', 'doctor')
-            ->orderBy('created_at', 'desc')
-            ->orderBy('updated_at', 'desc');
+        $query = MedicalOrder::with('admission.patient', 'admission.bed', 'doctor')
+        ->select([
+            'medical_orders.created_at', 'medical_orders.*'
+        ])
+            ->join('admissions', 'medical_orders.admission_id', '=', 'admissions.id')
+            ->join('patients', 'admissions.patient_id', '=', 'patients.id')
+            ->join('beds', 'admissions.bed_id', '=', 'beds.id')
+            ->join('users', 'admissions.doctor_id', '=', 'users.id')
+        ->where('medical_orders.active', !$showDeleted);
+
 
             if (!empty($search)) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('created_at', 'like', '%' . $search . '%')
-                      ->orWhereHas('admission.patient', function ($patientQuery) use ($search) {
-                          $patientQuery->where('first_name', 'like', '%' . $search . '%')
-                                       ->orWhere('first_surname', 'like', '%' . $search . '%')
-                                       ->orWhere('second_surname', 'like', '%' . $search . '%');
-                      })
-                      ->orWhereHas('doctor', function ($doctorQuery) use ($search) {
-                          $doctorQuery->where('name', 'like', '%' . $search . '%');
-                      });
+                    $q->whereRaw('DATE(created_at) LIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%']);
+
                 });
             }
 
+            if ($sortField) {
+                $query->orderBy($sortField, $sortDirection);
+            } else {
+                $query->latest('medical_orders.updated_at')
+                    ->latest('medical_orders.created_at');
+            }
             if (!empty($admissionId)) {
                 $query->where('admission_id', intval($admissionId));
             }

@@ -126,7 +126,7 @@ import {
 import Pagination from '@/Components/Pagination.vue';
 export default {
     props: {
-        medicalOrders: Array,
+        medicalOrders: Object,
         admission_id: Number,
         filters: Object,
     },
@@ -166,7 +166,7 @@ export default {
         },
         toggleShowDeleted() {
             this.form.showDeleted = !this.form.showDeleted;
-            this.$inertia.get(route('medicationRecords.index', {
+            this.$inertia.get(route('medicalOrders.index', {
                 search: this.form.search,
                 showDeleted: this.form.showDeleted
             }));

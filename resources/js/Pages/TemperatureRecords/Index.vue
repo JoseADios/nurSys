@@ -201,7 +201,7 @@ export default {
     },
     methods: {
         temperatureRecordShow(id) {
-            this.$inertia.get(route('temperatureRecords.customShow', { id: id, admission_id: null }));
+            this.$inertia.get(route('temperatureRecords.show', id));
         },
         toggleShowDeleted() {
             this.form.showDeleted = !this.form.showDeleted;

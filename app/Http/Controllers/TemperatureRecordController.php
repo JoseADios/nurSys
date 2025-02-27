@@ -126,7 +126,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $response = Gate::inspect('create', [TemperatureRecord::class, $admission]);
 
             if (!$response->allowed()) {
-                return back()->with('error', 'Este ingreso no tiene hoja de temperatura');
+                return back()->with('error', $response->message());
             }
         }
         return Inertia::render('TemperatureRecords/Create', [

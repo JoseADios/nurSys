@@ -46,11 +46,11 @@ class TemperatureDetailPolicy
         $temperatureRecord = TemperatureRecord::find($temperature_record_id);
 
         if ($temperatureRecord->admission->discharged_date !== null) {
-            return Response::deny('No se pueden crear registros en un ingreso que ha sido dado de alta.');
+            return Response::deny('No se pueden crear registros en un ingreso que ha sido dado de alta');
         }
 
         if ($this->hasTemperatureInCurrentTurn($temperature_record_id)) {
-            return Response::deny('Ya hay una temperatura creada en el mismo turno.');
+            return Response::deny('Ya hay una temperatura creada en el mismo turno');
         }
 
         return Response::deny();
@@ -64,11 +64,15 @@ class TemperatureDetailPolicy
         $temperatureRecord = $temperatureDetail->temperatureRecord;
 
         if ($temperatureRecord->admission->discharged_date !== null) {
-            return Response::deny('No se pueden crear registros en un ingreso que ha sido dado de alta.');
+            return Response::deny('No se pueden crear registros en un ingreso que ha sido dado de alta');
         }
 
-        if (!($temperatureDetail->nurse_id == $user->id && $this->isInCurrentTurn($temperatureDetail))) {
-            return Response::deny('No tienes permiso para actualizar este registro de enfermería.');
+        if ($temperatureDetail->nurse_id !== $user->id) {
+            return Response::deny('No tienes permiso para actualizar este registro de enfermería');
+        }
+
+        if ($this->isInCurrentTurn($temperatureDetail)) {
+            return Response::deny('Ya existe una temperatura registrada en este turno');
         }
 
         return Response::allow();

@@ -6,6 +6,7 @@ use App\Models\Admission;
 use App\Models\Bed;
 use App\Models\Patient;
 use App\Models\User;
+use App\Models\MedicationRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -168,9 +169,10 @@ class AdmissionController extends Controller
         $bed = $admission->bed;
         $doctor = $admission->doctor;
         $daysIngressed = intval($admission->created_at->diffInDays(now()));
-
+        $medicationRecord = MedicationRecord::where('admission_id', $admission->id)->first();
         return Inertia::render('Admissions/Show', [
             'admission' => $admission,
+            'medicationRecord' => $medicationRecord,
             'patient' => $patient,
             'bed' => $bed,
             'daysIngressed' => $daysIngressed,

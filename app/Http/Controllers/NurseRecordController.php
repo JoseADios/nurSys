@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
+use App\Models\User;
 use App\Services\FirmService;
 use App\Services\TurnService;
+use Gate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,9 +16,11 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class NurseRecordController extends Controller implements HasMiddleware
 {
+    use AuthorizesRequests;
 
     public static function middleware(): array
     {
@@ -57,7 +61,8 @@ class NurseRecordController extends Controller implements HasMiddleware
                     ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('nurse_records.id LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
-                    ->orWhereRaw('CONCAT(beds.room, " ", beds.number) LIKE ?', ['%' . $search . '%']);;
+                    ->orWhereRaw('CONCAT(beds.room, " ", beds.number) LIKE ?', ['%' . $search . '%']);
+                ;
             });
         }
 
@@ -110,6 +115,15 @@ class NurseRecordController extends Controller implements HasMiddleware
     {
         $admission_id = $request->has('admission_id') ? $request->admission_id : null;
 
+        if ($admission_id) {
+            $admission = Admission::find($admission_id);
+            $response = Gate::inspect('create', [NurseRecord::class, $admission]);
+
+            if (!$response->allowed()) {
+                return back()->with('error', 'No se pueden crear registros en un ingreso dado de alta');
+            }
+        }
+
         return Inertia::render('NurseRecords/Create', [
             'admission_id' => intval($admission_id),
         ]);
@@ -121,25 +135,9 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        // validar que en este turno no exista una hoja del mismo usuario
-        $turnService = new TurnService();
-        $currentTurn = $turnService->getCurrentTurn();
-        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
-        $admission_id = $request->admission_id;
-
-        $nurseRecordsInTurn = NurseRecord::where('nurse_id', Auth::id())
-            ->where('admission_id', $admission_id)
-            ->whereBetween('created_at', [
-                $dateRange['start'],
-                $dateRange['end']
-            ])
-            ->first();
-
-        $prueba = NurseRecord::find(4);
-        if ($nurseRecordsInTurn) {
-            dd('no puedes', $nurseRecordsInTurn, $prueba);
-            return back()->with('error', 'Ya tienes un registro creado en este mismo turno');
-        }
+        $admission = Admission::find($request->admission_id);
+        $this->authorize('create', [NurseRecord::class, $admission]);
+        $this->authorize('canCreateInTurn', [NurseRecord::class, $admission]);
 
         $nurseRecord = NurseRecord::create([
             'admission_id' => $request->admission_id,
@@ -155,11 +153,12 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function show(NurseRecord $nurseRecord)
     {
-        // AGREGAR AL METODO NUEVO QUE SE AGREGUE EL INGRESO QUE TIENE EL REGISTRO POR DEFECTO
-
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
+
+        $response = Gate::inspect('update', $nurseRecord);
+        $canCreateDetail = $response->allowed();
 
         $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')
             ->where('active', true)->get();
@@ -169,6 +168,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             'patient' => $patient,
             'nurse' => $nurse,
             'bed' => $bed,
+            'canCreateDetail' => $canCreateDetail,
             'details' => $details,
             'errors' => !empty($errors) ? $errors : [],
         ]);
@@ -187,10 +187,12 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function update(Request $request, NurseRecord $nurseRecord)
     {
-        // todo: validar el turno
+        $admission = Admission::find($request->admission_id);
+
+        $this->authorize('update', $nurseRecord);
+        $this->authorize('canCreateInTurn', [NurseRecord::class, $admission]);
 
         $firmService = new FirmService;
-
 
         $validated = $request->validate([
             'admission_id' => 'numeric',
@@ -212,6 +214,8 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function destroy(NurseRecord $nurseRecord)
     {
+        $this->authorize('delete', $nurseRecord);
+
         $nurseRecord->update(['active' => 0]);
         return Redirect::route('nurseRecords.index');
     }

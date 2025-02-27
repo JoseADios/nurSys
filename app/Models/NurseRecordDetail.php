@@ -14,7 +14,7 @@ class NurseRecordDetail extends Model
         'active'
     ];
 
-    public function NurseRecordDetail(): BelongsTo
+    public function nurseRecord(): BelongsTo
     {
         return $this->belongsTo(NurseRecord::class);
     }

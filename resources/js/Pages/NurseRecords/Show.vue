@@ -109,40 +109,45 @@
                 <!-- Form -->
                 <!-- Formulario para agregar nuevo detalle -->
                 <AccessGate :permission="['nurseRecordDetail.create']">
-                    <div class="p-8">
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Eventos</h3>
+                    <div v-if="canCreateDetail">
+                        <div class="p-8">
+                            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Eventos</h3>
 
-                        <form @submit.prevent="submit" class="space-y-4">
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="medication"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Medicamento
-                                    </label>
-                                    <input type="text" id="medication" v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
-                                    focus:outline-none focus:ring-2 focus:ring-blue-500
-                                    dark:bg-gray-800 dark:text-white" placeholder="Nombre del medicamento" />
+                            <form @submit.prevent="submit" class="space-y-4">
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="medication"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Medicamento
+                                        </label>
+                                        <input type="text" id="medication" v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                        focus:outline-none focus:ring-2 focus:ring-blue-500
+                                        dark:bg-gray-800 dark:text-white" placeholder="Nombre del medicamento" />
+                                    </div>
+
+                                    <div>
+                                        <label for="comment"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Comentario
+                                        </label>
+                                        <input type="text" id="comment" v-model="formDetail.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                        focus:outline-none focus:ring-2 focus:ring-blue-500
+                                        dark:bg-gray-800 dark:text-white" placeholder="Comentarios adicionales" />
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <label for="comment"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Comentario
-                                    </label>
-                                    <input type="text" id="comment" v-model="formDetail.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
-                                    focus:outline-none focus:ring-2 focus:ring-blue-500
-                                    dark:bg-gray-800 dark:text-white" placeholder="Comentarios adicionales" />
+                                <div class="pt-4">
+                                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                                    hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                                    transition-colors duration-300">
+                                        Agregar Evento
+                                    </button>
                                 </div>
-                            </div>
-
-                            <div class="pt-4">
-                                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
-                                hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                                transition-colors duration-300">
-                                    Agregar Evento
-                                </button>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
+                    </div>
+                    <div v-else >
+                        <hr class="my-2 border-transparent dark:border-transparent">
                     </div>
                 </AccessGate>
 
@@ -319,6 +324,7 @@ export default {
         nurse: Object,
         bed: Object,
         details: Array,
+        canCreateDetail: Boolean,
     },
     components: {
         AppLayout,
@@ -390,7 +396,9 @@ export default {
                             medication: '',
                             comment: '',
                         };
-                    }
+                    },
+                    preserveScroll: true,
+
                 });
         },
         submitSignature() {

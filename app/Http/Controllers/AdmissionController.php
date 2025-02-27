@@ -6,6 +6,7 @@ use App\Models\Admission;
 use App\Models\Bed;
 use App\Models\Patient;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -323,18 +324,28 @@ class AdmissionController extends Controller
     {
         $selectedAdm = null;
         $admission_id = $request->input('admission_id');
+        $doesntHaveTemperatureR = $request->boolean('doesntHaveTemperatureR');
         $filters = $request->input('filters', []);
 
-        $admissions = Admission::with('patient', 'bed')
+        $query = Admission::query()
+        ->with('patient', 'bed')
         ->active()
         ->filterByName($filters['name'] ?? null)
         ->filterByRoom($filters['room'] ?? null)
         ->filterByBed($filters['bed'] ?? null)
-        ->paginate(15);
+        ;
 
         if ($admission_id) {
             $selectedAdm = Admission::with('patient', 'bed')->find($admission_id);
         }
+
+        if ($doesntHaveTemperatureR === true) {
+            $query->whereDoesntHave('TemperatureRecord', function (Builder $query) {
+                $query->where('active', true);
+            });
+        }
+
+        $admissions = $query->paginate(15);
 
         if ($selectedAdm && !$admissions->contains('id', $selectedAdm->id)) {
             $admissionsCollection = $admissions->getCollection();

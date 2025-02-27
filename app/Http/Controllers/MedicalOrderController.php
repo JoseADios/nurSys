@@ -62,7 +62,12 @@ class MedicalOrderController extends Controller
         return Inertia::render('MedicalOrders/Index', [
             'medicalOrders' => $medicalOrders,
             'admission_id' => $request->admission_id,
-            'filters' => ['search' => $search],
+            'filters' => [
+                'search' => $search,
+                'show_deleted' => $showDeleted,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection,
+            ],
         ]);
     }
 

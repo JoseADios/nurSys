@@ -155,8 +155,9 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(TemperatureRecord $temperatureRecord)
+    public function show(TemperatureRecord $temperatureRecord, Request $request)
     {
+        $admission_id = $request->query('admission_id');
 
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
 
@@ -188,6 +189,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,
             'details' => $details,
+            'admission_id' => $admission_id,
             'lastTemperature' => $lastTemperature,
             'canCreateDetail' => $canCreateDetail,
             'canUpdateSignature' => $canUpdateSignature,

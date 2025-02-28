@@ -94,6 +94,9 @@
                                     {{ medicationRecord.created_at}}
                                 </p>
                             </div>
+                            <div v-if="$page.props.errors.message" class="alert alert-danger">
+      {{ $page.props.errors.message }}
+    </div>
                         </div>
                     </div>
                     <!-- <div v-if="errors.length > 0" class="bg-red-50 border-l-4 border-red-500 p-4 mx-8 my-4">
@@ -715,5 +718,11 @@ ToggleSuspend(detail) {
 
 .max-h-80 {
   max-height: 600px;
+}.alert {
+  color: white;
+  background: red;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 10;
 }
 </style>

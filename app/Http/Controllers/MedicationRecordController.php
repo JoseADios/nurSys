@@ -242,15 +242,17 @@ class MedicationRecordController extends Controller
 {
     $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
 
-    $notificationsapplied = MedicationNotification::whereIn('medication_record_detail_id', $details->pluck('id'))
-        ->pluck('applied');
+    $hasNotifications = MedicationNotification::whereIn('medication_record_detail_id', function ($query) use ($medicationRecord) {
+        $query->select('id')
+            ->from('medication_record_details')
+            ->where('medication_record_id', $medicationRecord->id);
+    })
+    ->where('applied', 1)
+    ->get();
 
 
-    if ($notificationsapplied->contains(function ($value) {
-        return $value != 0;
-    })) {
-       return redirect()->to(route('medicationRecords.show', $medicationRecord));
-
+    if ($hasNotifications->isNotEmpty()) {
+        return Redirect::back()->withErrors(['message' => 'No se puede eliminar esta Ficha de Medicamentos porque tiene notificaciones aplicadas.']);
     }
 
 

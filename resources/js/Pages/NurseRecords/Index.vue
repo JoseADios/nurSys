@@ -8,7 +8,7 @@
 
         <div class="flex items-center justify-between">
             <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-                <div v-if="admission_id" class="inline-flex items-center">
+                <div class="inline-flex items-center"  v-if="admission_id">
                     <Link :href="route('admissions.show', admission_id)"
                         class="inline-flex items-center  hover:text-blue-600 dark:hover:text-white">
                     ING-00{{ admission_id }}
@@ -109,41 +109,40 @@
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
 
-            <table v-if="nurseRecords.data.length"
-                class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('nurse_records.id')">
                             ID <span v-if="form.sortField === 'nurse_records.id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('in_process')">
                             En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.id')">
                             Ingreso <span v-if="form.sortField === 'admissions.id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
                             Paciente <span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
                                 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')">
                             Enfermera <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc'
                                 ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('nurse_records.created_at')">
                             Fecha de Creación<span v-if="form.sortField === 'nurse_records.created_at'">{{
@@ -159,7 +158,7 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody v-if="nurseRecords.data.length">
                     <tr v-for="nurseRecord in nurseRecords.data.filter(nurseRecord => nurseRecord.id)"
                         :key="nurseRecord.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
@@ -191,18 +190,23 @@
                             {{ formatDate(nurseRecord.created_at) }}
                         </td>
                         <td class="px-6 py-4">
-                            <Link class="ml-2 text-green-500 hover:text-green-800"
+                            <Link v-if="admission_id" class="ml-2 text-green-500 hover:text-green-800"
                                 :href="`${route('nurseRecords.show', nurseRecord.id)}?admission_id=${admission_id}`"
+                                as="button">
+                            Abrir
+                            </Link>
+                            <Link v-else class="ml-2 text-green-500 hover:text-green-800"
+                                :href="route('nurseRecords.show', nurseRecord.id)"
                                 as="button">
                             Abrir
                             </Link>
                         </td>
                     </tr>
                 </tbody>
+                <div v-else class="text-center text-gray-500 dark:text-gray-400 py-4">
+                    No hay registros disponibles.
+                </div>
             </table>
-            <div v-else class="text-center text-gray-500 dark:text-gray-400 py-4">
-                No hay registros disponibles.
-            </div>
             <Pagination :pagination="nurseRecords" />
         </div>
 

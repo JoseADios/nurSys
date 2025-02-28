@@ -76,7 +76,7 @@
         </div>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
-            <table v-if="temperatureRecords.data.length"
+            <table
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -116,7 +116,7 @@
                         <th scope="col" class="px-6 py-3"> Acciones </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody v-if="temperatureRecords.data.length">
                     <tr v-for="temperatureRecord in temperatureRecords.data" :key="temperatureRecord.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
@@ -157,10 +157,10 @@
                         </td>
                     </tr>
                 </tbody>
+                <div v-else class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
+                    No hay registros disponibles.
+                </div>
             </table>
-            <div v-else class="text-center text-gray-500 dark:text-gray-400 py-4">
-                No hay registros disponibles.
-            </div>
             <Pagination :pagination="temperatureRecords" />
         </div>
     </AppLayout>

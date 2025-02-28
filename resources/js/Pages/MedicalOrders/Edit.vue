@@ -107,16 +107,13 @@
                             </p>
                         </div>
 
-
+                        <div v-if="$page.props.errors.message" class="alert alert-danger">
+      {{ $page.props.errors.message }}
+    </div>
                     </div>
                 </div>
 
-                <!-- Errors -->
-                <div v-if="errors.length > 0" class="bg-red-50 border-l-4 border-red-500 p-4 mx-8 my-4">
-                    <div class="text-red-700" v-for="error in errors" :key="error">
-                        {{ error }}
-                    </div>
-                </div>
+
 
                 <!-- Form -->
                 <!-- Formulario para agregar nuevo detalle -->
@@ -471,7 +468,9 @@ export default {
 
 
         submitUpdateDetail() {
-       this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail)
+       this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
+                preserveScroll: true,   preserveState: true
+            } ),
             this.isVisibleAdm = false
             this.isVisibleDetail = false
         },
@@ -482,7 +481,7 @@ export default {
             }
             this.signatureError = false;
             this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formSignature, {
-                preserveScroll: true
+                preserveScroll: true,   preserveState: true
             });
             this.isVisibleEditSign = false
         },
@@ -499,7 +498,9 @@ export default {
             this.detailBeingDeleted = false
             this.isVisibleAdm = false
             this.isVisibleDetail = false
-            this.$inertia.delete(route('medicalOrderDetails.destroy', this.selectedDetail.id));
+            this.$inertia.delete(route('medicalOrderDetails.destroy', this.selectedDetail.id),{
+                preserveScroll: true,   preserveState: true
+            } );
         },
         restoreDetail() {
             this.selectedDetail.active = true
@@ -512,3 +513,12 @@ export default {
     }
 }
 </script>
+<style scoped>
+.alert {
+  color: white;
+  background: red;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 10;
+}
+</style>

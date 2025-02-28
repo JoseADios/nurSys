@@ -160,9 +160,9 @@ class MedicalOrderController extends Controller
 
         if ($request->active === true) {
             $medicalOrderDetailIds = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->pluck('id');
-            Log::info($medicalOrderDetailIds);
+
             $medicationRecordDetails = MedicationRecordDetail::whereIn('medical_order_detail_id', $medicalOrderDetailIds)->get();
-            Log::info($medicationRecordDetails);
+
             foreach ($medicationRecordDetails as $medicationRecordDetail) {
                 $medicationRecordDetail->update(['suspended_at' => null]);
             }
@@ -189,9 +189,11 @@ class MedicalOrderController extends Controller
         $medicationRecordDetails = MedicationRecordDetail::whereIn('medical_order_detail_id', $medicalOrderDetailIds)->get();
 
 
-          if ($medicationRecordDetails->pluck('medical_order_detail_id')->intersect($medicalOrderDetailIds)->isNotEmpty()) {
-            return redirect()->to(route('medicalOrders.show', $medicalOrder));
+        if ($medicationRecordDetails->isNotEmpty()) {
+            return Redirect::back()->withErrors(['message' => 'No se puede eliminar esta Orden Medica porque tiene registros de ficha de medicamento asociados.']);
         }
+
+
         $medicalOrder->update(['active'=> 0]);
 
         foreach ($medicationRecordDetails as $medicationRecordDetail) {

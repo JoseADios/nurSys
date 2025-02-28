@@ -1,30 +1,68 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-white leading-tight text-center">
+            <h2 class="font-semibold text-xl text-white leading-tight">
                 Registro de Enfermería
             </h2>
         </template>
 
-        <!-- <div class="text-white">Datos {{ adm_id }}</div> -->
+        <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+
+            <div v-if="admission_id" class="inline-flex items-center">
+                <Link :href="route('admissions.show', admission_id)"
+                    class="inline-flex items-center hover:text-blue-600  dark:hover:text-white">
+                ING-00{{ admission_id }}
+                </Link>
+                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
+                    fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 9 4-4-4-4" />
+                </svg>
+            </div>
+
+            <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
+                class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+            Registros de enfermería
+            </Link>
+            <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"                 fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m1 9 4-4-4-4" />
+            </svg>
+            <div class="ml-2 inline-flex items-center">
+                ENF-00{{ nurseRecord.id }}
+            </div>
+        </div>
 
         <div class="container mx-auto px-4 py-8">
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('nurseRecords.index')"
+                    <div v-if="admission_id">
+                        <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
                             d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
                             clip-rule="evenodd" />
                     </svg>
                     <span class="font-medium">Volver</span>
                     </Link>
+                    </div>
+                    <div v-else>
+                        <Link :href="route('nurseRecords.index')"
+                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-medium">Volver</span>
+                    </Link>
+                    </div>
                     <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
                         <button v-if="nurseRecord.active" @click="recordBeingDeleted = true"
                             class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                            <svg class="h-5 w-5" viewBox="0 0 20 20"
                                 fill="currentColor">
                                 <path fill-rule="evenodd"
                                     d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
@@ -44,7 +82,8 @@
                     <div class="space-y-4">
 
                         <!-- admission -->
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center">
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center">
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <Link :href="route('admissions.show', nurseRecord.admission_id)" as="button"
@@ -111,7 +150,8 @@
                 <AccessGate :permission="['nurseRecordDetail.create']">
                     <div v-if="canUpdateRecord">
                         <div class="p-8">
-                            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Eventos</h3>
+                            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Eventos
+                            </h3>
 
                             <form @submit.prevent="submit" class="space-y-4">
                                 <div class="grid md:grid-cols-2 gap-4">
@@ -120,7 +160,8 @@
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             Medicamento
                                         </label>
-                                        <input type="text" id="medication" v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                        <input type="text" id="medication" v-model="formDetail.medication" required
+                                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
                                         focus:outline-none focus:ring-2 focus:ring-blue-500
                                         dark:bg-gray-800 dark:text-white" placeholder="Nombre del medicamento" />
                                     </div>
@@ -146,7 +187,7 @@
                             </form>
                         </div>
                     </div>
-                    <div v-else >
+                    <div v-else>
                         <hr class="my-2 border-transparent dark:border-transparent">
                     </div>
                 </AccessGate>
@@ -177,7 +218,7 @@
                                 <!-- Editar -->
                                 <Link :href="route('nurseRecordDetails.edit', detail.id)"
                                     class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                <svg class="h-5 w-5" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
@@ -247,7 +288,8 @@
                 <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
                     <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
 
-                        <AdmissionSelector @update:admission="formAdmission.admission_id = $event" :selected-admission-id="nurseRecord.admission_id" />
+                        <AdmissionSelector @update:admission="formAdmission.admission_id = $event"
+                            :selected-admission-id="nurseRecord.admission_id" />
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">
@@ -310,7 +352,7 @@ import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 export default {
     props: {
         nurseRecord: Object,
-        adm_id: Number,
+        admission_id: String,
         errors: {
             type: Array,
             default: () => []

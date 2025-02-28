@@ -37,7 +37,7 @@ class NurseRecordController extends Controller implements HasMiddleware
     {
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
-        $admissionId = $request->integer('admission_id');
+        $admissionId = $request->input('admission_id');
         $days = $request->integer('days');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
@@ -93,7 +93,7 @@ class NurseRecordController extends Controller implements HasMiddleware
 
         return Inertia::render('NurseRecords/Index', [
             'nurseRecords' => $nurseRecords,
-            'admission_id' => intval($admissionId),
+            'admission_id' => $admissionId,
             'filters' => [
                 'search' => $search,
                 'show_deleted' => $showDeleted,
@@ -149,8 +149,9 @@ class NurseRecordController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(NurseRecord $nurseRecord)
+    public function show(NurseRecord $nurseRecord, Request $request)
     {
+        $admission_id = $request->query('admission_id');
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
@@ -166,6 +167,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             'patient' => $patient,
             'nurse' => $nurse,
             'bed' => $bed,
+            'admission_id' => $admission_id,
             'canUpdateRecord' => $canUpdateRecord,
             'details' => $details,
             'errors' => !empty($errors) ? $errors : [],

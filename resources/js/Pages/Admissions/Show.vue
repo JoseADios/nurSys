@@ -72,6 +72,13 @@
                                 {{ formatDate(admission.created_at) }}
                             </p>
                         </div>
+
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Creado por</h3>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ admission.receptionist.name }} {{ admission.receptionist.last_name }}
+                            </p>
+                        </div>
                     </div>
 
                     <div class="space-y-6">

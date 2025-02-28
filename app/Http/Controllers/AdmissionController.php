@@ -147,6 +147,7 @@ class AdmissionController extends Controller
     {
         $this->authorize('view', $admission);
         $user = User::find(Auth::id());
+        $admission->load('receptionist');
 
         $patient = $admission->patient;
         $bed = $admission->bed;
@@ -243,7 +244,7 @@ class AdmissionController extends Controller
             ]);
         }
 
-        if ($request->bed_id) {
+        if ($request->bed_id !== $admission->bed_id) {
             $bed = Bed::find($request->bed_id);
             if (!$bed->isAvailable()) {
                 return back()->with('error', 'La cama seleccionada no está disponible');

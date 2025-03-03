@@ -36,7 +36,7 @@ class PatientController extends Controller implements HasMiddleware
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
-        $hospitalized = $request->input('hospitalized');
+        $hospitalized = $request->input('hospitalized', 'true');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
 

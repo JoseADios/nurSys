@@ -36,13 +36,13 @@ class PatientController extends Controller implements HasMiddleware
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
-        $hospitalized = $request->input('hospitalized', 'true');
+        $hospitalized = $request->input('hospitalized');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
 
         $query = Patient::query()
             ->leftJoin('admissions', 'patients.id', '=', 'admissions.patient_id')
-            ->select('patients.*', \DB::raw('COUNT(CASE WHEN admissions.active = TRUE AND admissions.discharged_date IS NULL then 1 END) AS hospitalized'))
+            ->select('patients.*', \DB::raw('COALESCE(COUNT(CASE WHEN admissions.active = TRUE AND admissions.discharged_date IS NULL THEN 1 END), 0) AS hospitalized'))
             ->groupBy('patients.id', 'admissions.active');
 
         if ($showDeleted) {

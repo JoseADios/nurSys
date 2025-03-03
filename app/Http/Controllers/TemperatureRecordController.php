@@ -46,6 +46,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $showDeleted = $request->boolean('showDeleted');
         $admissionId = $request->integer('admission_id');
         $days = $request->integer('days');
+        $in_process = $request->input('in_process', 'true');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
 
@@ -56,11 +57,18 @@ class TemperatureRecordController extends Controller implements HasMiddleware
                 'nurse'
             ])
             ->select('temperature_records.*')
-            ->join('admissions', 'temperature_records.admission_id', '=', 'admissions.id')
-            ->join('patients', 'admissions.patient_id', '=', 'patients.id')
+            ->leftJoin('admissions', 'temperature_records.admission_id', '=', 'admissions.id')
+            ->leftJoin('patients', 'admissions.patient_id', '=', 'patients.id')
             ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
-            ->join('users', 'temperature_records.nurse_id', '=', 'users.id')
+            ->leftJoin('users', 'temperature_records.nurse_id', '=', 'users.id')
             ->where('temperature_records.active', !$showDeleted);
+
+
+        if ($in_process === 'true') {
+            $query->whereNull('admissions.discharged_date');
+        } elseif ($in_process === 'false') {
+            $query->whereNotNull('admissions.discharged_date');
+        }
 
         if ($search) {
             $query->where(function (Builder $query) use ($search) {
@@ -107,6 +115,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
                 'show_deleted' => $showDeleted,
                 'admission_id' => $admissionId,
                 'days' => $days,
+                'in_process' => $in_process,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
             ]

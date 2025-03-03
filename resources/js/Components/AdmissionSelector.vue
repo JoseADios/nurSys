@@ -68,7 +68,7 @@
                             </span>
                             <span
                                 class="text-xs ml-2 px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-800 dark:text-gray-300">
-                                ING-00{{ admission.id }}
+                                <FormatId :id="admission.id" prefix="ING"></FormatId>
                             </span>
                             <div class="text-xs text-gray-600 dark:text-gray-400">
                                 Sala {{ admission.bed.room }} - Cama {{ admission.bed.number }}
@@ -104,8 +104,12 @@
 import debounce from 'lodash/debounce';
 import axios from 'axios';
 import moment from 'moment';
+import FormatId from './FormatId.vue';
 
 export default {
+    components: {
+        FormatId
+    },
     props: {
         doesntHaveTemperatureR: Boolean,
         selectedAdmissionId: Number

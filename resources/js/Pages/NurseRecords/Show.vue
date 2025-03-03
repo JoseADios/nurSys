@@ -11,7 +11,7 @@
             <div v-if="admission_id" class="inline-flex items-center">
                 <Link :href="route('admissions.show', admission_id)"
                     class="inline-flex items-center hover:text-blue-600  dark:hover:text-white">
-                ING-00{{ admission_id }}
+                <FormatId :id="admission_id" prefix="ING"></FormatId>
                 </Link>
                 <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
                     fill="none" viewBox="0 0 6 10">
@@ -29,7 +29,7 @@
                     d="m1 9 4-4-4-4" />
             </svg>
             <div class="ml-2 inline-flex items-center">
-                ENF-00{{ nurseRecord.id }}
+                <FormatId :id="nurseRecord.id" prefix="ENF"></FormatId>
             </div>
         </div>
 
@@ -347,6 +347,7 @@ import moment from 'moment';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import Modal from '@/Components/Modal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
+import FormatId from '@/Components/FormatId.vue';
 
 
 export default {
@@ -373,7 +374,8 @@ export default {
         SecondaryButton,
         AccessGate,
         Modal,
-        AdmissionSelector
+        AdmissionSelector,
+        FormatId
     },
     data() {
         return {

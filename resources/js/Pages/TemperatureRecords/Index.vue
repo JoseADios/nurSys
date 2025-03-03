@@ -129,12 +129,13 @@
                         </td>
                         <td class="px-6 py-4">
                             <div v-if="temperatureRecord.admission.bed">
-                                ING-00{{ temperatureRecord.admission.id }},
+                                <FormatId :id="temperatureRecord.admission.id" prefix="ING"></FormatId>,
                                 Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
                                     temperatureRecord.admission.bed.room }}
                             </div>
-                            <div v-else>ING-00{{ temperatureRecord.admission.id }},{{
-                                temperatureRecord.admission.created_at }}
+                            <div v-else>
+                                <FormatId :id="temperatureRecord.admission.id" prefix="ING"></FormatId>,
+                                {{ temperatureRecord.admission.created_at }}
                                 N/A</div>
                         </td>
                         <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -169,6 +170,7 @@
 <script>
 
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import FormatId from '@/Components/FormatId.vue';
 import Pagination from '@/Components/Pagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
@@ -184,7 +186,8 @@ export default {
         AppLayout,
         Link,
         Pagination,
-        AccessGate
+        AccessGate,
+        FormatId
     },
     data() {
         return {

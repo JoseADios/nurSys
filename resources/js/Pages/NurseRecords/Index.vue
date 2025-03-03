@@ -8,10 +8,10 @@
 
         <div class="flex items-center justify-between">
             <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-                <div class="inline-flex items-center"  v-if="admission_id">
+                <div class="inline-flex items-center" v-if="admission_id">
                     <Link :href="route('admissions.show', admission_id)"
                         class="inline-flex items-center  hover:text-blue-600 dark:hover:text-white">
-                    ING-00{{ admission_id }}
+                    <FormatId :id="admission_id" prefix="ING"></FormatId>
                     </Link>
                     <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
@@ -19,7 +19,6 @@
                             d="m1 9 4-4-4-4" />
                     </svg>
                 </div>
-
                 <div class="ml-2 inline-flex items-center ">
                     Registros de enfermería
                 </div>
@@ -27,7 +26,8 @@
 
             <Link :href="route('nurseRecords.index')" v-if="admission_id"
                 class="mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
-            Remover filtro de ING-00{{ admission_id }}
+            Remover filtro de
+            <FormatId :id="admission_id" prefix="ING"></FormatId>,
             </Link>
         </div>
 
@@ -116,33 +116,33 @@
                             ID <span v-if="form.sortField === 'nurse_records.id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('in_process')">
                             En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.id')">
                             Ingreso <span v-if="form.sortField === 'admissions.id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
                             Paciente <span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
                                 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')">
                             Enfermera <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc'
                                 ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('nurse_records.created_at')">
                             Fecha de Creación<span v-if="form.sortField === 'nurse_records.created_at'">{{
@@ -171,11 +171,13 @@
                         </td>
                         <td class="px-6 py-4">
                             <div v-if="nurseRecord.admission.bed">
-                                ING-00{{ nurseRecord.admission.id }},
+                                <FormatId :id="nurseRecord.admission.id" prefix="ING"></FormatId>,
                                 Cama {{ nurseRecord.admission.bed.number }}, Sala {{
                                     nurseRecord.admission.bed.room }}
                             </div>
-                            <div v-else>ING-00{{ nurseRecord.admission.id }}, {{ nurseRecord.admission.created_at }} N/A
+                            <div v-else>
+                                <FormatId :id="nurseRecord.admission.id" prefix="ING"></FormatId>,
+                                {{ nurseRecord.admission.created_at }} N/A
                             </div>
                         </td>
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -196,8 +198,7 @@
                             Abrir
                             </Link>
                             <Link v-else class="ml-2 text-green-500 hover:text-green-800"
-                                :href="route('nurseRecords.show', nurseRecord.id)"
-                                as="button">
+                                :href="route('nurseRecords.show', nurseRecord.id)" as="button">
                             Abrir
                             </Link>
                         </td>
@@ -221,6 +222,7 @@ import {
 import Pagination from '@/Components/Pagination.vue';
 import moment from 'moment';
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import FormatId from '@/Components/FormatId.vue';
 
 export default {
     props: {
@@ -232,7 +234,8 @@ export default {
         AppLayout,
         Link,
         Pagination,
-        AccessGate
+        AccessGate,
+        FormatId
     },
     data() {
         return {

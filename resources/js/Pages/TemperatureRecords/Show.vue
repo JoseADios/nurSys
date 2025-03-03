@@ -64,7 +64,7 @@
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <Link :href="route('admissions.show', temperatureRecord.admission_id)" as="button"
                                     class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
-                                ING-00{{ temperatureRecord.admission_id }}
+                                <FormatId :id="temperatureRecord.admission_id" prefix="ING"></FormatId>
                                 </Link>
                             </div>
                             <AccessGate :permission="['temperatureRecord.delete']">
@@ -395,6 +395,7 @@ import moment from 'moment';
 import 'moment/locale/es';
 import Modal from '@/Components/Modal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
+import FormatId from '@/Components/FormatId.vue';
 
 export default {
     props: {
@@ -416,7 +417,8 @@ export default {
         SecondaryButton,
         AccessGate,
         Modal,
-        AdmissionSelector
+        AdmissionSelector,
+        FormatId
     },
     data() {
         return {

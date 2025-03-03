@@ -36,9 +36,14 @@ class PatientController extends Controller implements HasMiddleware
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
+        $hospitalized = $request->input('hospitalized');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
-        $query = Patient::query();
+
+        $query = Patient::query()
+            ->leftJoin('admissions', 'patients.id', '=', 'admissions.patient_id')
+            ->select('patients.*', \DB::raw('COUNT(CASE WHEN admissions.active = TRUE AND admissions.discharged_date IS NULL then 1 END) AS hospitalized'))
+            ->groupBy('patients.id', 'admissions.active');
 
         if ($showDeleted) {
             $query->where('patients.active', false);
@@ -58,20 +63,26 @@ class PatientController extends Controller implements HasMiddleware
         if ($days) {
             $query->where('patients.created_at', '>=', now()->subDays($days));
         }
-
-        if ($sortField === 'is_hospitalized') {
-            $patients = $query->leftJoin('admissions', 'patients.id', '=', 'admissions.patient_id')
-                ->select('patients.*')
-                ->groupBy('patients.id')
-                ->orderByRaw('MAX(admissions.discharged_date IS NULL) ' . $sortDirection)->paginate(10);
-        } elseif ($sortField) {
-            $patients = $query->orderBy($sortField, $sortDirection)->paginate(10);
-        } else {
-            $patients = $query->orderBy('patients.updated_at', 'desc')->paginate(10);
+        // Filtrar por hospitalización
+        if ($hospitalized === 'true') {
+            $query->havingRaw('hospitalized > 0');
+        } elseif ($hospitalized === 'false') {
+            $query->havingRaw('hospitalized = 0');
         }
 
+        // Ordenamiento
+        if ($sortField === 'is_hospitalized') {
+            $query->orderByRaw('hospitalized ' . $sortDirection);
+        } elseif ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->orderBy('patients.updated_at', 'desc');
+        }
+
+        $patients = $query->paginate(10);
+
         $patients->getCollection()->transform(function ($patient) {
-            $patient->is_hospitalized = !$patient->isAvailable();
+            $patient->is_hospitalized = $patient->hospitalized > 0;
             return $patient;
         });
 
@@ -81,6 +92,7 @@ class PatientController extends Controller implements HasMiddleware
                 'search' => $search,
                 'show_deleted' => $showDeleted,
                 'days' => $days,
+                'hospitalized' => $hospitalized,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
             ]

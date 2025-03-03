@@ -39,6 +39,13 @@
             <div class="flex items-end">
                 <select @change="submitFilter()"
                     class="bg-gray-50 mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    name="hospitalized" id="hospitalized" v-model="form.hospitalized">
+                    <option value="true">Hospitalizados</option>
+                    <option value="false">No hospitalizados</option>
+                    <option value="">Todos</option>
+                </select>
+                <select @change="submitFilter()"
+                    class="bg-gray-50 mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     name="days" id="days" v-model="form.days">
                     <option value="">Siempre</option>
                     <option value="1">Último día</option>
@@ -195,6 +202,7 @@ export default {
                 search: this.filters.search || '',
                 showDeleted: this.filters.show_deleted,
                 days: this.filters.days || '',
+                hospitalized: this.filters.hospitalized || '',
                 sortField: this.filters.sortField || '',
                 sortDirection: this.filters.sortDirection || 'asc',
             },

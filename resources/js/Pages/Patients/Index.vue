@@ -78,21 +78,26 @@
         </div>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
-            <table v-if="patients.data.length"
-                class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
-                            ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                            ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
+                                }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('is_hospitalized')">
+                            Ingresado <span v-if="form.sortField === 'is_hospitalized'">{{ form.sortDirection === 'asc'
+                                ? '↑' :
+                                '↓' }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('first_name')">
                             Nombre <span v-if="form.sortField === 'first_name'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('phone')">
                             Teléfono <span v-if="form.sortField === 'phone'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('identification_card')">
                             Cédula <span v-if="form.sortField === 'identification_card'">{{ form.sortDirection === 'asc'
@@ -106,25 +111,25 @@
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('email')">
                             Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('ars')">
                             ARS <span v-if="form.sortField === 'ars'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('is_hospitalized')">
-                            Ingresado <span v-if="form.sortField === 'is_hospitalized'">{{ form.sortDirection === 'asc'
-                                ? '↑' :
-                                '↓' }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3"> Acciones </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody v-if="patients.data.length">
                     <tr v-for="(patient, index) in patients.data" :key="patient.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
-                            {{ patient.id}}
+                            {{ patient.id }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <span v-if="patient.is_hospitalized"
+                                class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
+                            <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
                         </td>
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
@@ -145,11 +150,6 @@
                             {{ patient.ars }}
                         </td>
                         <td class="px-6 py-4">
-                            <span v-if="patient.is_hospitalized"
-                                class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
-                            <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
-                        </td>
-                        <td class="px-6 py-4">
                             <Link class="ml-2 text-blue-500 hover:text-blue-800"
                                 :href="route('patients.show', patient.id)">
                             Ver
@@ -168,10 +168,10 @@
                     </tr>
                 </tbody>
             </table>
-            <div v-else class="text-center text-gray-500 dark:text-gray-400 py-4">
+            <div v-if="!patients.data.length" class="w-full text-center text-gray-500 dark:text-gray-400 py-4">
                 No hay registros disponibles.
             </div>
-            <Pagination :pagination="patients" />
+            <Pagination :pagination="patients" :filters="form" />
         </div>
 
         <div class="pb-4"></div>

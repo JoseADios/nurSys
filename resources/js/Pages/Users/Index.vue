@@ -121,7 +121,7 @@
 
         <!-- Tabla -->
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
-            <table v-if="users.data.length"
+            <table
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -153,7 +153,7 @@
                         <th scope="col" class="px-6 py-3">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody  v-if="users.data.length">
                     <tr v-for="(user, index) in users.data" :key="user.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
@@ -186,7 +186,10 @@
                     </tr>
                 </tbody>
             </table>
-            <Pagination :pagination="users" />
+            <div v-if="!users.data.length" class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
+                No hay registros disponibles.
+            </div>
+            <Pagination :pagination="users" :filters="form"/>
         </div>
         <div class="pb-4"></div>
     </AppLayout>

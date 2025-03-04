@@ -6,6 +6,14 @@
             </h2>
         </template>
 
+        <div class="flex items-center justify-between">
+            <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+                <div class="ml-2 inline-flex items-center ">
+                    Camas
+                </div>
+            </div>
+        </div>
+
         <!-- mostrar toasts -->
         <div v-if="$page.props.flash.success" class="">
             <Toast ref="toast" :message="$page.props.flash.success" type="success" />
@@ -282,7 +290,7 @@ export default {
         FormatId
     },
     props: {
-        beds: Array
+        beds: Array,
     },
     data() {
         return {

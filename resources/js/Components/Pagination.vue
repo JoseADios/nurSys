@@ -20,7 +20,7 @@ const filterQuery = computed(() => {
             a
             <span class="font-medium">{{
                 Math.min(pagination.current_page * pagination.per_page, pagination.total)
-                }}</span>
+            }}</span>
             de
             <span class="font-medium">{{ pagination.total }}</span>
             resultados
@@ -42,7 +42,7 @@ const filterQuery = computed(() => {
 
             <template v-for="(link, index) in pagination.links" :key="index">
                 <template v-if="index !== 0 && index !== pagination.links.length - 1">
-                    <Link v-if="link.url" :href="link.url + '&' + filterQuery" preserve-scroll :class="{
+                    <Link v-if="link.url" :href="link.url + '&' + filterQuery" preserve-scroll preserve-state :class="{
                         'bg-blue-500 dark:bg-blue-600 text-white': link.active,
                         'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600': !link.active
                     }" class="px-3 py-1 rounded-md text-sm font-medium" v-html="link.label" />

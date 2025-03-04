@@ -6,6 +6,14 @@
             </h2>
         </template>
 
+        <div class="flex items-center justify-between">
+            <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+                <div class="ml-2 inline-flex items-center ">
+                    Usuarios
+                </div>
+            </div>
+        </div>
+
         <div class="flex flex-col items-center justify-center mt-10">
             <Link :href="route('users.create')"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">

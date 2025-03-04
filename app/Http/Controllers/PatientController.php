@@ -33,9 +33,14 @@ class PatientController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
+        $search = $request->input('search');
+        $name = $request->input('name');
+        $phone = $request->input('phone');
+        $identificationCard = $request->input('identificationCard');
+        $nationality = $request->input('nationality');
+        $email = $request->input('email');
         $hospitalized = $request->input('hospitalized');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
@@ -51,26 +56,31 @@ class PatientController extends Controller implements HasMiddleware
             $query->where('patients.active', true);
         }
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $search . '%'])
-                    ->orWhere('patients.phone', 'like', '%' . $search . '%')
-                    ->orWhere('patients.identification_card', 'like', '%' . $search . '%')
-                    ->orWhere('patients.nationality', 'like', '%' . $search . '%');
-            });
+        if ($name) {
+            $query->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $name . '%']);
+        }
+        if ($phone) {
+            $query->whereLike('patients.phone', '%' . $phone . '%');
+        }
+        if ($identificationCard) {
+            $query->whereLike('patients.identification_card', '%' . $identificationCard . '%');
+        }
+        if ($nationality) {
+            $query->whereLike('patients.nationality', '%' . $nationality . '%');
+        }
+        if ($email) {
+            $query->whereLike('patients.email', '%' . $email . '%');
         }
 
         if ($days) {
             $query->where('patients.created_at', '>=', now()->subDays($days));
         }
-        // Filtrar por hospitalización
         if ($hospitalized === 'true') {
             $query->havingRaw('hospitalized > 0');
         } elseif ($hospitalized === 'false') {
             $query->havingRaw('hospitalized = 0');
         }
 
-        // Ordenamiento
         if ($sortField === 'is_hospitalized') {
             $query->orderByRaw('hospitalized ' . $sortDirection);
         } elseif ($sortField) {
@@ -78,6 +88,15 @@ class PatientController extends Controller implements HasMiddleware
         } else {
             $query->orderBy('patients.updated_at', 'desc');
         }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $search . '%'])
+                    ->orWhere('patients.phone', 'like', '%' . $search . '%')
+                    ->orWhere('patients.identification_card', 'like', '%' . $search . '%')
+                    ->orWhere('patients.nationality', 'like', '%' . $search . '%');
+            });
+        };
 
         $patients = $query->paginate(10);
 
@@ -90,8 +109,13 @@ class PatientController extends Controller implements HasMiddleware
             'patients' => $patients,
             'filters' => [
                 'search' => $search,
-                'show_deleted' => $showDeleted,
+                'showDeleted' => $showDeleted,
                 'days' => $days,
+                'name' => $name,
+                'phone' => $phone,
+                'identificationCard' => $identificationCard,
+                'nationality' => $nationality,
+                'email' => $email,
                 'hospitalized' => $hospitalized,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,

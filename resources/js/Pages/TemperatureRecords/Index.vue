@@ -6,6 +6,14 @@
             </h2>
         </template>
 
+        <div class="flex items-center justify-between">
+            <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+                <div class="ml-2 inline-flex items-center ">
+                    Hojas de temperatura
+                </div>
+            </div>
+        </div>
+
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
             <Link :href="route('admissions.show', admission_id)"
@@ -90,19 +98,19 @@
                             ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('in_process')">
                             En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.id')">
                             Ingreso <span v-if="form.sortField === 'admissions.id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
                             Paciente <span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
@@ -112,7 +120,7 @@
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')">
                             Enfermera <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ? '↑'
                                 : '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer"
                             @click="sort('temperature_records.updated_at')">
@@ -166,7 +174,8 @@
                     </tr>
                 </tbody>
             </table>
-            <div v-if="!temperatureRecords.data.length" class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
+            <div v-if="!temperatureRecords.data.length"
+                class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
                 No hay registros disponibles.
             </div>
             <Pagination :pagination="temperatureRecords" :filters="form" />

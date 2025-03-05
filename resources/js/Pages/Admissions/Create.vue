@@ -97,7 +97,7 @@ export default {
     data() {
         return {
             form: useForm({
-                bed_id: this.selectedbed || null,
+                bed_id: this.selectedbed.id || null,
                 patient_id: this.selectedPatient || null,
                 doctor_id: null,
                 admission_dx: null,

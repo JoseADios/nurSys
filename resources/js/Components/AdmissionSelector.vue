@@ -3,7 +3,7 @@
         <!-- Filtros de búsqueda -->
         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4">
             <h3 class="text-base font-medium text-gray-900 dark:text-white mb-3">
-                Buscar Paciente
+                Buscar Ingreso
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
@@ -56,7 +56,7 @@
             <h3 class="text-base font-medium text-gray-900 dark:text-white">
                 Seleccionar Ingreso ({{ admissions.total }} resultados)
             </h3>
-            <div
+            <div v-if="admissions.data"
                 class="max-h-[250px] overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800">
                 <div v-for="admission in admissions.data" :key="admission.id" @click="selectAdmission(admission)"
                     :class="['p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20', selectedAdmission === admission.id ? 'bg-purple-100 dark:bg-purple-900/30' : '']">
@@ -71,7 +71,10 @@
                                 <FormatId :id="admission.id" prefix="ING"></FormatId>
                             </span>
                             <div class="text-xs text-gray-600 dark:text-gray-400">
-                                Sala {{ admission.bed.room }} - Cama {{ admission.bed.number }}
+                                <span v-if="admission.bed">
+                                    Sala {{ admission.bed.room }} - Cama {{ admission.bed.number }}
+                                </span>
+                                <span v-else>N/A</span>
                             </div>
                             <div v-if="selectedAdmissionId === admission.id"
                                 class="text-xs text-green-500 dark:text-green-400">
@@ -151,7 +154,7 @@ export default {
                 const response = await axios.get(pageUrl || route('admissions.filter'), {
                     params: {
                         filters: this.filters,
-                        admission_id: this.selectedAdmission,
+                        admission_id: this.selectedAdmissionId,
                         doesntHaveTemperatureR: this.doesntHaveTempR
                     }
                 });

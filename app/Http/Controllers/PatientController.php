@@ -96,7 +96,8 @@ class PatientController extends Controller implements HasMiddleware
                     ->orWhere('patients.identification_card', 'like', '%' . $search . '%')
                     ->orWhere('patients.nationality', 'like', '%' . $search . '%');
             });
-        };
+        }
+        ;
 
         $patients = $query->paginate(10);
 
@@ -261,5 +262,28 @@ class PatientController extends Controller implements HasMiddleware
         }
 
         return Redirect::route('patients.index');
+    }
+
+      public function filterPatients(Request $request)
+    {
+        $query = Patient::query();
+
+        if ($request->filled('filters.name')) {
+            $query->whereRaw(
+                "CONCAT(first_name, ' ', first_surname, ' ', COALESCE(second_surname, '')) LIKE ?",
+                ['%' . $request->input('filters.name') . '%']
+            );
+        }
+
+        $patients = $query->get()->filter->isAvailable();
+        $paginatedPatients = new \Illuminate\Pagination\LengthAwarePaginator(
+            $patients->forPage($request->page, 10),
+            $patients->count(),
+            10,
+            $request->page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return $paginatedPatients;
     }
 }

@@ -62,6 +62,7 @@ Route::middleware([
     Route::resource('temperatureRecords', TemperatureRecordController::class);
     Route::resource('temperatureDetails', TemperatureDetailController::class);
 
+    Route::get('/patients/filter', [PatientController::class, 'filterPatients'])->name('patients.filter');
     Route::resource('patients', PatientController::class);
 
     Route::resource('Drugs', DrugController::class);

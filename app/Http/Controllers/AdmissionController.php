@@ -93,11 +93,9 @@ class AdmissionController extends Controller
         }
 
         $beds = Bed::all()->filter->isAvailable()->values()->toArray();
-        $doctors = User::all();
         $patients = Patient::all()->filter->isAvailable();
 
         return Inertia::render('Admissions/Create', [
-            'doctors' => $doctors,
             'beds' => $beds,
             'patients' => $patients,
             'selectedPatient' => $selectedPatient,

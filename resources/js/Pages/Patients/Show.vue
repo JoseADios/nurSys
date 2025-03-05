@@ -242,7 +242,7 @@
                                 <p class="text-gray-400 text-sm">El paciente no se encuentra ingresado actualmente</p>
                             </div>
                         </div>
-                        <AccessGate :permission="['admission.create']">
+                        <AccessGate :permission="['admission.create']" v-if="patient.active == 1">
                             <Link
                                 class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
                                 :href="route('admissions.create', { patient_id: patient.id })">

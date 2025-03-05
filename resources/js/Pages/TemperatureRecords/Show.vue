@@ -6,6 +6,30 @@
             </h2>
         </template>
 
+        <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+
+            <div v-if="admission_id" class="inline-flex items-center">
+                <Link :href="route('admissions.show', admission_id)"
+                    class="inline-flex items-center hover:text-blue-600  dark:hover:text-white">
+                <FormatId :id="admission_id" prefix="ING"></FormatId>
+                </Link>
+                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none"
+                    viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 9 4-4-4-4" />
+                </svg>
+            </div>
+
+            <div class="ml-2 inline-flex items-center">
+                Hoja de temperatura
+                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 9 4-4-4-4" />
+                </svg>
+                <FormatId :id="temperatureRecord.id" prefix="ENF"></FormatId>
+            </div>
+        </div>
+
         <!-- <div class="text-white">Datos {{ temperatureRecord.id }}</div> -->
 
         <div class="container mx-auto px-4 py-8">
@@ -333,10 +357,12 @@
         <!-- Change admission modal -->
         <AccessGate :permission="['temperatureRecord.delete']">
             <Modal :closeable="true" :show="showEditAdmission != null" @close="showEditAdmission == null">
-                <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                <div
+                    class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
                     <form @submit.prevent="submitUpdateRecord" class="max-w-3xl mx-auto">
 
-                        <AdmissionSelector @update:admission="formRecord.admission_id = $event" :selected-admission-id="temperatureRecord.admission_id" :doesnt-have-temperature-r="true" />
+                        <AdmissionSelector @update:admission="formRecord.admission_id = $event"
+                            :selected-admission-id="temperatureRecord.admission_id" :doesnt-have-temperature-r="true" />
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">

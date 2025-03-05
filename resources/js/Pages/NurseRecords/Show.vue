@@ -6,7 +6,7 @@
             </h2>
         </template>
 
-        <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+        <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
 
             <div v-if="admission_id" class="inline-flex items-center">
                 <Link :href="route('admissions.show', admission_id)"

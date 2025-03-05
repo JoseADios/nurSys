@@ -155,7 +155,8 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import InfoItem from '@/Components/InfoItem.vue';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import FormatRole from '@/Components/FormatRole.vue';
 
 
@@ -182,6 +183,9 @@ export default {
             userBeingDeleted,
         };
     },
+    created() {
+        moment.locale('es');
+    },
     methods: {
         deleteUser() {
             this.userBeingDeleted = false;
@@ -191,7 +195,7 @@ export default {
             this.$inertia.put(route('users.update', this.user.id), { active: true });
         },
         formatDate(date) {
-            return moment(date).format('DD MMM YYYY')
+            return moment(date).format('DD MMMM YYYY');
         }
     },
 

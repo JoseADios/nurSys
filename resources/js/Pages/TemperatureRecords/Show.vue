@@ -417,7 +417,8 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import 'moment/locale/es';
 import Modal from '@/Components/Modal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
@@ -539,7 +540,7 @@ export default {
             this.submitUpdateRecord()
         },
         formatDate(date) {
-            return moment(date).format('DD MMM YYYY HH:mm');
+            return moment(date).format('DD MMMM YYYY HH:mm');
         },
 
         async downloadRecordReport() {

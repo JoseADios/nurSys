@@ -88,7 +88,8 @@
 <script>
 import debounce from 'lodash/debounce';
 import axios from 'axios';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import FormatRole from './FormatRole.vue';
 
 export default {

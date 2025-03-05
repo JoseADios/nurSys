@@ -275,7 +275,8 @@ import Toast from '@/Components/Toast.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import 'moment/locale/es';
 
 export default {

@@ -228,7 +228,8 @@ import {
     Link
 } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import FormatId from '@/Components/FormatId.vue';
 
@@ -279,7 +280,7 @@ export default {
             this.submitFilters();
         },
         formatDate(date) {
-            return moment(date).format('DD/MMM/YYYY HH:mm');
+            return moment(date).format('DD MMM YYYY HH:mm');
         }
     },
 

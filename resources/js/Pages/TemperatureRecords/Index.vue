@@ -195,7 +195,8 @@ import FormatId from '@/Components/FormatId.vue';
 import Pagination from '@/Components/Pagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 
 export default {
     props: {
@@ -247,7 +248,7 @@ export default {
             this.submitFilters();
         },
         formatDate(date) {
-            return moment(date).format('DD/MMM/YYYY HH:mm');
+            return moment(date).format('DD MMM YYYY HH:mm');
         }
     }
 }

@@ -297,7 +297,8 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import 'moment/locale/es';
 
 moment.locale('es');
@@ -322,7 +323,7 @@ export default {
     },
     methods: {
         formatDate(date) {
-            return moment(date).format('DD MMM YYYY');
+            return moment(date).format('DD MMMM YYYY');
         },
         calculateAge(birthdate) {
             return moment().diff(moment(birthdate), 'years');

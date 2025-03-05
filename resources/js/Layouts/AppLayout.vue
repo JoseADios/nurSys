@@ -8,6 +8,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import FormatRole from '@/Components/FormatRole.vue';
 
 defineProps({
     title: String,
@@ -208,11 +209,11 @@ const logout = () => {
                                     <template #content>
                                         <!-- Account Management -->
                                         <div class="block px-4 py-2 text-xs text-gray-400">
-                                            Manage Account
+                                            Administrar cuenta
                                         </div>
 
                                         <DropdownLink :href="route('profile.show')">
-                                            Profile
+                                            Perfil
                                         </DropdownLink>
 
                                         <!-- <DropdownLink v-if="$page.props.jetstream.hasApiFeatures"
@@ -225,7 +226,7 @@ const logout = () => {
                                         <!-- Authentication -->
                                         <form @submit.prevent="logout">
                                             <DropdownLink as="button">
-                                                Log Out
+                                                Cerrar cesión
                                             </DropdownLink>
                                         </form>
                                     </template>
@@ -260,6 +261,44 @@ const logout = () => {
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
                         </ResponsiveNavLink>
+
+                        <ResponsiveNavLink :href="route('beds.index')" :active="route().current('beds.index')">
+                            Camas
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink :href="route('admissions.index')"
+                            :active="route().current('admissions.index')">
+                            Ingresos
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink :href="route('medicationRecords.index')"
+                            :active="route().current('medicationRecords.index')">
+                            Ficha de Medicamentos
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink :href="route('nurseRecords.index')"
+                            :active="route().current('nurseRecords.index')">
+                            Registros de Enfermería
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink :href="route('medicalOrders.index')"
+                            :active="route().current('medicalOrders.index')">
+                            Órdenes Médicas
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink :href="route('temperatureRecords.index')"
+                            :active="route().current('temperatureRecords.index')">
+                            Hojas de Temperatura
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink :href="route('patients.index')" :active="route().current('patients.index')">
+                            Pacientes
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink v-if="$page.props.auth.user.roles.includes('admin')"
+                            :href="route('users.index')" :active="route().current('users.index')">
+                            Usuarios
+                        </ResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->
@@ -271,8 +310,15 @@ const logout = () => {
                             </div>
 
                             <div>
-                                <div class="font-medium text-base text-gray-800 dark:text-gray-200">
+                                <div class="font-medium text-base text-gray-800 dark:text-gray-200 flex items-center">
                                     {{ $page.props.auth.user.name }}
+                                    <span
+                                        class="bg-blue-100 ml-2 text-indigo-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-indigo-900 dark:text-indigo-300">
+                                        <div v-if="$page.props.auth.user.roles">
+                                            <FormatRole :role="$page.props.auth.user.roles[0]" />
+                                        </div>
+                                        <div v-else>N/A</div>
+                                    </span>
                                 </div>
                                 <div class="font-medium text-sm text-gray-500">
                                     {{ $page.props.auth.user.email }}
@@ -282,46 +328,7 @@ const logout = () => {
 
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.show')" :active="route().current('profile.show')">
-                                Profile
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink :href="route('beds.index')" :active="route().current('beds.index')">
-                                Camas
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink :href="route('admissions.index')"
-                                :active="route().current('admissions.index')">
-                                Ingresos
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink :href="route('medicationRecords.index')"
-                                :active="route().current('medicationRecords.index')">
-                                Ficha de Medicamentos
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink :href="route('nurseRecords.index')"
-                                :active="route().current('nurseRecords.index')">
-                                Registros de Enfermería
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink :href="route('medicalOrders.index')"
-                                :active="route().current('medicalOrders.index')">
-                                Órdenes Médicas
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink :href="route('temperatureRecords.index')"
-                                :active="route().current('temperatureRecords.index')">
-                                Hojas de Temperatura
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink :href="route('patients.index')"
-                                :active="route().current('patients.index')">
-                                Pacientes
-                            </ResponsiveNavLink>
-
-                            <ResponsiveNavLink v-if="$page.props.auth.user.roles.includes('admin')"
-                                :href="route('users.index')" :active="route().current('users.index')">
-                                Usuarios
+                                Perfil
                             </ResponsiveNavLink>
 
                             <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures"
@@ -332,7 +339,7 @@ const logout = () => {
                             <!-- Authentication -->
                             <form method="POST" @submit.prevent="logout">
                                 <ResponsiveNavLink as="button">
-                                    Log Out
+                                    Cerrar sesión
                                 </ResponsiveNavLink>
                             </form>
 

@@ -4,7 +4,7 @@
 
   <script>
   export default {
-    name: 'FormatoId',
+    name: 'FormatId',
     props: {
       id: {
         type: [Number, String],

@@ -186,6 +186,10 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $lastTemperature = null;
         }
 
+        if ($lastTemperature !== null) {
+            $canCreateDetail = false;
+        }
+
         // verificar si puede editar la firma del registro
         $responseUpdateRecord = Gate::inspect('updateSignature', $temperatureRecord);
         $canUpdateSignature = $responseUpdateRecord->allowed();

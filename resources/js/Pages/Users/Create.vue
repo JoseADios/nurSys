@@ -69,10 +69,12 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="role" class="block text-sm font-medium text-white">Role</label>
+                                <label for="role" class="block text-sm font-medium text-white">Rol</label>
                                 <select required id="role" v-model="form.role"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
-                                    <option v-for="role in roles" :key="role" :value="role.id">{{ role.name }}</option>
+                                    <option v-for="role in roles" :key="role" :value="role.id">
+                                        <FormatRole :role="role.name" />
+                                    </option>
                                 </select>
                                 <InputError :message="form.errors.role" class="mt-2" />
                             </div>
@@ -100,7 +102,7 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="area" class="block text-sm font-medium text-white">Areas</label>
+                                <label for="area" class="block text-sm font-medium text-white">Áreas</label>
                                 <select required id="area" v-model="form.area"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                                     <option v-for="area in areas" :key="area" :value="area.name">{{ area.name }}</option>
@@ -170,6 +172,7 @@
 import BirthDateInput from '@/Components/BirthDateInput.vue';
 import CedulaInput from '@/Components/CedulaInput.vue';
 import ExequaturInput from '@/Components/ExequaturInput.vue';
+import FormatRole from '@/Components/FormatRole.vue';
 import InputError from '@/Components/InputError.vue';
 import PhoneInput from '@/Components/PhoneInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -183,7 +186,8 @@ export default {
         PhoneInput,
         ExequaturInput,
         CedulaInput,
-        BirthDateInput
+        BirthDateInput,
+        FormatRole
     },
     props: {
         roles: Array,

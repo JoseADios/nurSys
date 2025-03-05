@@ -1,28 +1,21 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-white leading-tight text-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Usuarios
             </h2>
         </template>
 
         <div class="flex items-center justify-between">
-            <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+            <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
                 <div class="ml-2 inline-flex items-center ">
                     Usuarios
                 </div>
             </div>
         </div>
 
-        <div class="flex flex-col items-center justify-center mt-10">
-            <Link :href="route('users.create')"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear Usuario
-            </Link>
-        </div>
-
         <!-- Filtros -->
-        <div class="flex flex-col lg:flex-row items-center justify-center gap-4 mt-10 lg:mx-10">
+        <div class="flex flex-col lg:flex-row items-center justify-center gap-2 mt-4 lg:mx-10">
             <!-- Búsqueda general -->
             <div class="relative w-full">
                 <input v-model="form.search" type="text" placeholder="Buscar por nombre"
@@ -124,44 +117,54 @@
                 </svg>
             </button>
 
+            <AccessGate :permission="['user.create']">
+                    <Link :href="route('users.create')"
+                        class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
+                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Nuevo usuario
+                    </Link>
+                </AccessGate>
+
 
         </div>
 
         <!-- Tabla -->
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
-            <table
-                class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
-                            ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                            ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('name')">
                             Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('role')">
                             Rol <span v-if="form.sortField === 'role'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('specialty')">
                             Especialidad <span v-if="form.sortField === 'specialty'">{{ form.sortDirection === 'asc' ?
                                 '↑' : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('position')">
                             Posición <span v-if="form.sortField === 'position'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('email')">
                             Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3">Acciones</th>
                     </tr>
                 </thead>
-                <tbody  v-if="users.data.length">
+                <tbody v-if="users.data.length">
                     <tr v-for="(user, index) in users.data" :key="user.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
@@ -171,7 +174,10 @@
                             {{ user.name }} {{ user.last_name }}
                         </th>
                         <td class="px-6 py-4">
-                            {{ user.roles[0] ? user.roles[0].name : 'N/A' }}
+                            <div v-if="user.roles[0]">
+                                <FormatRole :role="user.roles[0].name"/>
+                            </div>
+                            <div v-else>N/A</div>
                         </td>
                         <td class="px-6 py-4">
                             {{ user.specialty }}
@@ -197,13 +203,14 @@
             <div v-if="!users.data.length" class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
                 No hay registros disponibles.
             </div>
-            <Pagination :pagination="users" :filters="form"/>
+            <Pagination :pagination="users" :filters="form" />
         </div>
         <div class="pb-4"></div>
     </AppLayout>
 </template>
 
 <script>
+import FormatRole from '@/Components/FormatRole.vue';
 import Pagination from '@/Components/Pagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router } from '@inertiajs/vue3';
@@ -217,6 +224,7 @@ export default {
         AppLayout,
         Link,
         Pagination,
+        FormatRole
     },
     data() {
         return {

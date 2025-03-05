@@ -1,7 +1,7 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-white leading-tight text-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Pacientes
             </h2>
         </template>
@@ -104,19 +104,27 @@
 
         <div
             class="bg-gray-100 dark:bg-gray-900 flex justify-between items-center overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
-            <div>
-                <div class="relative">
-                    <input @input="submitFilter()" class="rounded-lg pr-10" type="text" name="search" id="search"
-                        v-model="form.search" placeholder="Buscar ..." />
-                    <button v-if="form.search" @click="form.search = ''; submitFilter()"
-                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </button>
+            <div class="relative mb-2">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
+                        viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
                 </div>
+
+                <input @input="submitFilter()"
+                    class="block w-full p-3 ps-10 pr-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
+
+                <button v-if="form.search" @click="form.search = ''; submitFilter()"
+                    class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <div class="flex items-center gap-2">
@@ -177,7 +185,7 @@
                     <tr>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
                             ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('is_hospitalized')">
                             Ingresado <span v-if="form.sortField === 'is_hospitalized'">{{ form.sortDirection === 'asc'
@@ -187,11 +195,11 @@
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('first_name')">
                             Nombre <span v-if="form.sortField === 'first_name'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('phone')">
                             Teléfono <span v-if="form.sortField === 'phone'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('identification_card')">
                             Cédula <span v-if="form.sortField === 'identification_card'">{{ form.sortDirection === 'asc'
@@ -205,11 +213,11 @@
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('email')">
                             Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('ars')">
                             ARS <span v-if="form.sortField === 'ars'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3"> Acciones </th>
                     </tr>

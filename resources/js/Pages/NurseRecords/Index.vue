@@ -1,13 +1,13 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-700 dark:text-white leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Registros de Enfermería
             </h2>
         </template>
 
         <div class="flex items-center justify-between">
-            <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+            <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
                 <div class="inline-flex items-center" v-if="admission_id">
                     <Link :href="route('admissions.show', admission_id)"
                         class="inline-flex items-center  hover:text-blue-600 dark:hover:text-white">
@@ -44,35 +44,33 @@
             </Link>
         </div> -->
 
-        <div class="flex flex-col items-center justify-center mt-6">
-            <Link :href="route('nurseRecords.create', { admission_id: admission_id })"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear nuevo Registro de Enfermería
-            </Link>
-        </div>
-
         <div
-            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-0 lg:mx-10">
+            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
 
-            <form @submit.prevent="submitFilters" class="mb-2 relative">
-                <label for="search" class="block my-2 text-md font-large text-gray-900 dark:text-white">
-                    Buscar:
-                </label>
-                <div class="relative">
-                    <input @input="submitFilters()" class="rounded-lg pr-10" type="text" name="search" id="search"
-                        v-model="form.search" placeholder="Buscar ..." />
-                    <button v-if="form.search" @click="form.search = ''; submitFilters()" type="button"
-                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </button>
+            <div class="relative mb-2">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
+                        viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
                 </div>
-            </form>
 
-            <div class="flex items-end">
+                <input @input="submitFilters()"
+                    class="block w-full p-3 ps-10 pr-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
+
+                <button v-if="form.search" @click="form.search = ''; submitFilters()"
+                    class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex items-center">
                 <select @change="submitFilters()"
                     class="bg-gray-50 mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     name="days" id="days" v-model="form.days">
@@ -104,6 +102,16 @@
                         </svg>
                     </button>
                 </AccessGate>
+
+                <AccessGate :permission="['temperatureRecord.create']">
+                    <Link :href="route('temperatureRecords.create')"
+                        class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
+                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Nuevo registro de enfermería
+                    </Link>
+                </AccessGate>
             </div>
         </div>
 
@@ -116,33 +124,33 @@
                             ID <span v-if="form.sortField === 'nurse_records.id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('in_process')">
                             En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.id')">
                             Ingreso <span v-if="form.sortField === 'admissions.id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
                             Paciente <span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
                                 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')">
                             Enfermera <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc'
                                 ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('nurse_records.created_at')">
                             Fecha de Creación<span v-if="form.sortField === 'nurse_records.created_at'">{{

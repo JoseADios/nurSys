@@ -83,7 +83,7 @@
                     <option value="365">Último año</option>
                 </select>
 
-                <AccessGate :permission="['temperatureRecord.delete']">
+                <AccessGate :permission="['nurseRecord.delete']">
                     <!-- Filtro para mostrar registros eliminados -->
                     <button @click="toggleShowDeleted"
                         class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
@@ -103,8 +103,8 @@
                     </button>
                 </AccessGate>
 
-                <AccessGate :permission="['temperatureRecord.create']">
-                    <Link :href="route('temperatureRecords.create')"
+                <AccessGate :permission="['nurseRecord.create']">
+                    <Link :href="route('nurseRecords.create')"
                         class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
                     <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />

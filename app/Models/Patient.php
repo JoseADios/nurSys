@@ -33,6 +33,9 @@ class Patient extends Model
 
     public function isAvailable(): bool
     {
+        if (!$this->active) {
+            return false;
+        }
         return !$this->admission()
             ->whereNull('discharged_date')
             ->where('active', true)

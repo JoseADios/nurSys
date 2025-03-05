@@ -84,12 +84,12 @@ class AdmissionController extends Controller
 
         $selectedPatient = null;
         if ($request->query('patient_id')) {
-            $selectedPatient = $request->query('patient_id');
+            $selectedPatient = $request->integer('patient_id');
         }
 
         $selectedbed = null;
         if ($request->query('bed_id')) {
-            $selectedbed = Bed::find($request->query('bed_id'));
+            $selectedbed = $request->integer('bed_id');
         }
 
         $beds = Bed::all()->filter->isAvailable()->values()->toArray();

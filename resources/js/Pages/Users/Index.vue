@@ -210,6 +210,7 @@
 </template>
 
 <script>
+import AccessGate from '@/Components/Access/AccessGate.vue';
 import FormatRole from '@/Components/FormatRole.vue';
 import Pagination from '@/Components/Pagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -224,7 +225,8 @@ export default {
         AppLayout,
         Link,
         Pagination,
-        FormatRole
+        FormatRole,
+        AccessGate
     },
     data() {
         return {

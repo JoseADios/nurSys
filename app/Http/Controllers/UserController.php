@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\Console\Input\Input;
 
 class UserController extends Controller
 {
@@ -231,6 +232,28 @@ class UserController extends Controller
     {
         $user->update(['active' => false]);
         DB::table('sessions')->where('user_id', $user->id)->delete();
-        return back()->with('success', 'Usuario desactivado y sesión cerrada.');;
+        return back()->with('success', 'Usuario desactivado y sesión cerrada.');
+        ;
+    }
+
+    public function filterUsers(Request $request)
+    {
+        $query = User::query()
+        ->where('active', true);
+
+        if ($request->filled('filters.name')) {
+            $query->whereRaw("CONCAT(name, ' ', last_name) like ?", ['%' . $request->input('filters.name') . '%']);
+        }
+
+        $roles = $request->input('filters.roles');
+
+        if ($roles) {
+            $query->whereHas('roles', function ($q) use ($roles) {
+                $q->whereIn('name', (array) $roles);
+            });
+        }
+        $query->with('roles');
+
+        return $query->paginate(10);
     }
 }

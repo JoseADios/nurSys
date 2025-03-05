@@ -55,7 +55,7 @@ Route::middleware([
     Route::resource('nurseRecordDetails', NurseRecordDetailController::class);
 
     Route::get('/medication-record-details/create/{medicationRecordId}', [MedicationRecordDetailController::class, 'create'])
-        ->name('medicationRecordDetails.create');
+    ->name('medicationRecordDetails.create');
     Route::resource('medicalOrders', MedicalOrderController::class);
     Route::resource('medicalOrderDetails', MedicalOrderDetailController::class);
 
@@ -68,11 +68,12 @@ Route::middleware([
     Route::resource('Diet', DietController::class);
     Route::resource('beds', BedController::class);
 
+    Route::get('/users/filter', [UserController::class, 'filterUsers'])->name('users.filter');
     Route::group(['middleware' => ['role:admin']], function () {
         Route::resource('users', UserController::class);
     });
 
     // REPORTES
     Route::get( '/reports/temperatureRecord/{id}', [ReportController::class, 'temperatureRecordReport'])
-        ->name('reports.temperatureRecord');
+    ->name('reports.temperatureRecord');
 });

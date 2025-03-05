@@ -1,10 +1,18 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-white leading-tight text-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Distribución de Camas
             </h2>
         </template>
+
+        <div class="flex items-center justify-between">
+            <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+                <div class="ml-2 inline-flex items-center ">
+                    Camas
+                </div>
+            </div>
+        </div>
 
         <!-- mostrar toasts -->
         <div v-if="$page.props.flash.success" class="">
@@ -21,19 +29,129 @@
                             Sala {{ room.name }}
                         </h4>
                         <div class="grid grid-cols-4 gap-4 justify-center">
-                            <div v-for="bed in room.beds" :key="bed.id" class="relative">
-                                <div class="relative w-20 h-32 rounded-lg transition-all duration-300 hover:scale-110 flex flex-col items-center"
+                            <div v-for="bed in room.beds" :key="bed.id" class="">
+                                <div class=" w-20 h-32 rounded-lg transition-all duration-300 hover:scale-110 flex flex-col items-center"
                                     :class="{
-                                        'bg-orange-500': bed.admission_id,
+                                        'bg-orange-500': bed.admission,
                                         'bg-yellow-500': bed.status === 'cleaning',
                                         'bg-red-600': bed.status === 'out_of_service',
                                         'bg-green-500': bed.status === 'available'
-                                    }">
+                                    }" @mouseenter="showTooltip = bed.admission ? bed.id : null"
+                                    @mouseleave="showTooltip = null">
+
                                     <!-- Header con número fijo -->
                                     <div
-                                        class="absolute top-0 w-full h-6 bg-gray-700 rounded-t-lg flex items-center justify-center">
+                                        class="top-0 w-full h-6 bg-gray-700 rounded-t-lg flex items-center justify-center">
                                         <span class="text-white text-xs">{{ bed.number }}</span>
                                     </div>
+
+                                    <!-- Tooltip estilo elegante alternativo -->
+                                    <div v-if="showTooltip === bed.id && bed.admission"
+                                        class="absolute z-50 w-72 text-sm bg-white rounded-md shadow-2xl dark:bg-gray-800 top-full left-1/2 -translate-x-1/2 mt-3 overflow-hidden border-0 transform origin-top scale-100 transition-all duration-200">
+                                        <!-- Barra superior de color -->
+                                        <div
+                                            class="h-1.5 bg-gradient-to-r from-teal-400 to-emerald-500 dark:from-teal-600 dark:to-emerald-700">
+                                        </div>
+
+                                        <!-- Encabezado con diseño minimalista -->
+                                        <div
+                                            class="px-5 py-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                                            <h3 class="font-bold text-gray-800 dark:text-gray-200">
+                                                <FormatId :id="bed.admission.id" prefix="ING"></FormatId>
+                                            </h3>
+                                            <div
+                                                class="px-2 py-0.5 bg-teal-50 dark:bg-teal-900/30 rounded-full text-xs text-teal-600 dark:text-teal-400 font-medium">
+                                                {{ daysHospitalized(bed.admission.created_at) }}</div>
+                                        </div>
+
+                                        <!-- Contenido con nueva distribución -->
+                                        <div class="px-5 py-4">
+                                            <div class="grid grid-cols-1 gap-3">
+                                                <div class="flex items-center">
+                                                    <div
+                                                        class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="h-4 w-4 text-gray-500 dark:text-gray-400" fill="none"
+                                                            viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">Paciente</p>
+                                                        <p class="font-medium text-gray-900 dark:text-white">{{
+                                                            bed.admission.patient.first_name }} {{
+                                                                bed.admission.patient.first_surname }}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center">
+                                                    <div
+                                                        class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
+                                                        <svg class="h-4 w-4 text-gray-500 dark:text-gray-400"
+                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">Doctor</p>
+                                                        <p class="font-medium text-gray-900 dark:text-white">{{
+                                                            bed.admission.doctor.name }} {{
+                                                                bed.admission.doctor.last_name }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center">
+                                                    <div
+                                                        class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="h-4 w-4 text-gray-500 dark:text-gray-400" fill="none"
+                                                            viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">Fecha
+                                                        </p>
+                                                        <p class="font-medium text-gray-900 dark:text-white">{{
+                                                            formatDate(bed.admission.created_at) }}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center">
+                                                    <div
+                                                        class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
+                                                        <svg class="h-4 w-4 text-gray-500 dark:text-gray-400"
+                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                            Diagnóstico</p>
+                                                        <p class="font-medium text-gray-900 dark:text-white truncate">
+                                                            {{
+                                                                bed.admission.admission_dx }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Flecha en forma de triángulo elegante -->
+                                        <div
+                                            class="absolute left-1/2 -translate-x-1/2 -top-2.5 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-white dark:border-b-gray-800 filter drop-shadow-sm">
+                                        </div>
+                                    </div>
+
+
 
                                     <!-- Icono de cama centrado -->
                                     <div class="flex-1 flex items-center justify-center mt-5">
@@ -46,16 +164,16 @@
                                     <!-- Contenedor de botones fijo -->
                                     <div class="w-full p-1 space-y-1">
                                         <!-- Botón Ver Ingreso -->
-                                        <div v-if="bed.admission_id" class="w-full">
+                                        <div v-if="bed.admission" class="w-full">
                                             <Link
-                                                :href="route('admissions.show', { id: bed.admission_id, bedsRoute: true })"
+                                                :href="route('admissions.show', { id: bed.admission.id, bedsRoute: true })"
                                                 class="w-full block text-center bg-gray-700 text-white py-1 rounded-md text-xs hover:bg-gray-600 transition-colors">
                                             Ver Ingreso
                                             </Link>
                                         </div>
 
                                         <!-- Botones Editar y Crear -->
-                                        <div v-if="!bed.admission_id"
+                                        <div v-if="!bed.admission"
                                             class="w-full space-y-1 flex justify-evenly items-end">
 
                                             <!-- crear ingreso -->
@@ -150,12 +268,15 @@
 <script>
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import DialogModal from '@/Components/DialogModal.vue';
+import FormatId from '@/Components/FormatId.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Toast from '@/Components/Toast.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import moment from 'moment';
+import 'moment/locale/es';
 
 export default {
     components: {
@@ -166,14 +287,16 @@ export default {
         SecondaryButton,
         Toast,
         AccessGate,
+        FormatId
     },
     props: {
-        beds: Array
+        beds: Array,
     },
     data() {
         return {
             showEditModal: ref(null),
             selectedBed: null,
+            showTooltip: null,
         }
     },
     computed: {
@@ -206,7 +329,10 @@ export default {
     },
     methods: {
         onBedClick(bed) {
-            this.selectedBed = { ...bed };
+            this.selectedBed = {
+                ...bed,
+                admission: undefined
+            };
             this.showEditModal = true;
         },
         submitUpdate() {
@@ -214,6 +340,15 @@ export default {
                 preserveScroll: true
             });
             this.showEditModal = null;
+        },
+        formatDate(date) {
+            moment.locale('es');
+            return moment(date).format('DD MMM YYYY, HH:mm');
+        },
+        daysHospitalized(date) {
+            moment.locale('es');
+            var dated = moment(date);
+            return dated.fromNow();
         }
     }
 }

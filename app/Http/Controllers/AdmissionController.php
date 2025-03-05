@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admission;
 use App\Models\Bed;
 use App\Models\Patient;
+use App\Models\TemperatureRecord;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -83,20 +84,18 @@ class AdmissionController extends Controller
 
         $selectedPatient = null;
         if ($request->query('patient_id')) {
-            $selectedPatient = $request->query('patient_id');
+            $selectedPatient = $request->integer('patient_id');
         }
 
         $selectedbed = null;
         if ($request->query('bed_id')) {
-            $selectedbed = Bed::find($request->query('bed_id'));
+            $selectedbed = $request->integer('bed_id');
         }
 
         $beds = Bed::all()->filter->isAvailable()->values()->toArray();
-        $doctors = User::all();
         $patients = Patient::all()->filter->isAvailable();
 
         return Inertia::render('Admissions/Create', [
-            'doctors' => $doctors,
             'beds' => $beds,
             'patients' => $patients,
             'selectedPatient' => $selectedPatient,
@@ -146,11 +145,15 @@ class AdmissionController extends Controller
     {
         $this->authorize('view', $admission);
         $user = User::find(Auth::id());
+        $admission->load('receptionist');
 
         $patient = $admission->patient;
         $bed = $admission->bed;
         $doctor = $admission->doctor;
         $daysIngressed = intval($admission->created_at->diffInDays(now()));
+        $temperatureRecordId = TemperatureRecord::where('admission_id', $admission->id)
+            ->where('active', true)->first('id');
+
 
         return Inertia::render('Admissions/Show', [
             'admission' => $admission,
@@ -158,6 +161,7 @@ class AdmissionController extends Controller
             'bed' => $bed,
             'daysIngressed' => $daysIngressed,
             'doctor' => $doctor,
+            'temperatureRecordId' => $temperatureRecordId,
             'can' => [
                 'create' => Gate::allows('create', Admission::class),
                 'update' => Gate::allows('update', $admission),
@@ -238,7 +242,7 @@ class AdmissionController extends Controller
             ]);
         }
 
-        if ($request->bed_id) {
+        if ($request->bed_id && ($request->bed_id !== $admission->bed_id)) {
             $bed = Bed::find($request->bed_id);
             if (!$bed->isAvailable()) {
                 return back()->with('error', 'La cama seleccionada no está disponible');
@@ -328,11 +332,11 @@ class AdmissionController extends Controller
         $filters = $request->input('filters', []);
 
         $query = Admission::query()
-        ->with('patient', 'bed')
-        ->active()
-        ->filterByName($filters['name'] ?? null)
-        ->filterByRoom($filters['room'] ?? null)
-        ->filterByBed($filters['bed'] ?? null)
+            ->with('patient', 'bed')
+            ->active()
+            ->filterByName($filters['name'] ?? null)
+            ->filterByRoom($filters['room'] ?? null)
+            ->filterByBed($filters['bed'] ?? null)
         ;
 
         if ($admission_id) {

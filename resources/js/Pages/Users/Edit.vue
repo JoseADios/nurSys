@@ -17,10 +17,6 @@
                     </ul>
                 </div>
 
-                <!-- <div class="text-white">
-                    {{ hasRoles[0] }}
-                </div> -->
-
                 <form @submit.prevent="submit" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Left Column -->
@@ -60,10 +56,11 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="role" class="block text-sm font-medium text-white">Role</label>
+                                <label for="role" class="block text-sm font-medium text-white">Rol</label>
                                 <select required id="role" v-model="form.role" name="role"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
-                                    <option v-for="role in roles" :key="role.id" :value="role.name">{{ role.name }}
+                                    <option v-for="role in roles" :key="role.id" :value="role.name">
+                                        <FormatRole :role="role.name" />
                                     </option>
                                 </select>
                                 <InputError :message="form.errors.role" class="mt-2" />
@@ -89,7 +86,7 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="area" class="block text-sm font-medium text-white">Areas</label>
+                                <label for="area" class="block text-sm font-medium text-white">Áreas</label>
                                 <select required id="area" v-model="form.area"
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                                     <option v-for="area in areas" :key="area" :value="area.name">{{ area.name }}
@@ -237,6 +234,7 @@ import PhoneInput from '@/Components/PhoneInput.vue';
 import CedulaInput from '@/Components/CedulaInput.vue';
 import ExequaturInput from '@/Components/ExequaturInput.vue';
 import BirthDateInput from '@/Components/BirthDateInput.vue';
+import FormatRole from '@/Components/FormatRole.vue';
 
 export default {
     props: {
@@ -257,6 +255,7 @@ export default {
         CedulaInput,
         ExequaturInput,
         BirthDateInput,
+        FormatRole
     },
     data() {
         return {

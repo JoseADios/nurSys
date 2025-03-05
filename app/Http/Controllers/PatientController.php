@@ -33,17 +33,60 @@ class PatientController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
+        $search = $request->input('search');
+        $name = $request->input('name');
+        $phone = $request->input('phone');
+        $identificationCard = $request->input('identificationCard');
+        $nationality = $request->input('nationality');
+        $email = $request->input('email');
+        $hospitalized = $request->input('hospitalized');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
-        $query = Patient::query();
+
+        $query = Patient::query()
+            ->leftJoin('admissions', 'patients.id', '=', 'admissions.patient_id')
+            ->select('patients.*', \DB::raw('COALESCE(COUNT(CASE WHEN admissions.active = TRUE AND admissions.discharged_date IS NULL THEN 1 END), 0) AS hospitalized'))
+            ->groupBy('patients.id', 'admissions.active');
 
         if ($showDeleted) {
             $query->where('patients.active', false);
         } else {
             $query->where('patients.active', true);
+        }
+
+        if ($name) {
+            $query->whereRaw("CONCAT(patients.first_name, ' ', patients.first_surname, ' ', patients.second_surname) like ?", ['%' . $name . '%']);
+        }
+        if ($phone) {
+            $query->whereLike('patients.phone', '%' . $phone . '%');
+        }
+        if ($identificationCard) {
+            $query->whereLike('patients.identification_card', '%' . $identificationCard . '%');
+        }
+        if ($nationality) {
+            $query->whereLike('patients.nationality', '%' . $nationality . '%');
+        }
+        if ($email) {
+            $query->whereLike('patients.email', '%' . $email . '%');
+        }
+
+        if ($days) {
+            $query->where('patients.created_at', '>=', now()->subDays($days));
+        }
+        if ($hospitalized === 'true') {
+            $query->havingRaw('hospitalized > 0');
+        } elseif ($hospitalized === 'false') {
+            $query->havingRaw('hospitalized = 0');
+        }
+
+        if ($sortField === 'is_hospitalized') {
+            $query->orderByRaw('hospitalized ' . $sortDirection);
+        } elseif ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->orderBy('patients.updated_at', 'desc');
         }
 
         if ($search) {
@@ -54,24 +97,12 @@ class PatientController extends Controller implements HasMiddleware
                     ->orWhere('patients.nationality', 'like', '%' . $search . '%');
             });
         }
+        ;
 
-        if ($days) {
-            $query->where('patients.created_at', '>=', now()->subDays($days));
-        }
-
-        if ($sortField === 'is_hospitalized') {
-            $patients = $query->leftJoin('admissions', 'patients.id', '=', 'admissions.patient_id')
-                ->select('patients.*')
-                ->groupBy('patients.id')
-                ->orderByRaw('MAX(admissions.discharged_date IS NULL) ' . $sortDirection)->paginate(10);
-        } elseif ($sortField) {
-            $patients = $query->orderBy($sortField, $sortDirection)->paginate(10);
-        } else {
-            $patients = $query->orderBy('patients.updated_at', 'desc')->paginate(10);
-        }
+        $patients = $query->paginate(10);
 
         $patients->getCollection()->transform(function ($patient) {
-            $patient->is_hospitalized = !$patient->isAvailable();
+            $patient->is_hospitalized = $patient->hospitalized > 0;
             return $patient;
         });
 
@@ -79,8 +110,14 @@ class PatientController extends Controller implements HasMiddleware
             'patients' => $patients,
             'filters' => [
                 'search' => $search,
-                'show_deleted' => $showDeleted,
+                'showDeleted' => $showDeleted,
                 'days' => $days,
+                'name' => $name,
+                'phone' => $phone,
+                'identificationCard' => $identificationCard,
+                'nationality' => $nationality,
+                'email' => $email,
+                'hospitalized' => $hospitalized,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
             ]
@@ -225,5 +262,28 @@ class PatientController extends Controller implements HasMiddleware
         }
 
         return Redirect::route('patients.index');
+    }
+
+      public function filterPatients(Request $request)
+    {
+        $query = Patient::query();
+
+        if ($request->filled('filters.name')) {
+            $query->whereRaw(
+                "CONCAT(first_name, ' ', first_surname, ' ', COALESCE(second_surname, '')) LIKE ?",
+                ['%' . $request->input('filters.name') . '%']
+            );
+        }
+
+        $patients = $query->get()->filter->isAvailable();
+        $paginatedPatients = new \Illuminate\Pagination\LengthAwarePaginator(
+            $patients->forPage($request->page, 10),
+            $patients->count(),
+            10,
+            $request->page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return $paginatedPatients;
     }
 }

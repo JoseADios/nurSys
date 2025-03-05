@@ -6,13 +6,47 @@
             </h2>
         </template>
 
+        <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+
+            <div v-if="admission_id" class="inline-flex items-center">
+                <Link :href="route('admissions.show', admission_id)"
+                    class="inline-flex items-center hover:text-blue-600  dark:hover:text-white">
+                <FormatId :id="admission_id" prefix="ING"></FormatId>
+                </Link>
+                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none"
+                    viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 9 4-4-4-4" />
+                </svg>
+            </div>
+
+            <div class="ml-2 inline-flex items-center">
+                Hoja de temperatura
+                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 9 4-4-4-4" />
+                </svg>
+                <FormatId :id="temperatureRecord.id" prefix="ENF"></FormatId>
+            </div>
+        </div>
+
         <!-- <div class="text-white">Datos {{ temperatureRecord.id }}</div> -->
 
         <div class="container mx-auto px-4 py-8">
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('temperatureRecords.index')"
+                    <Link v-if="admission_id" :href="route('admissions.show', admission_id)"
+                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-medium">Volver</span>
+                    </Link>
+
+                    <Link v-else :href="route('temperatureRecords.index')"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"
@@ -54,7 +88,7 @@
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <Link :href="route('admissions.show', temperatureRecord.admission_id)" as="button"
                                     class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
-                                ING-00{{ temperatureRecord.admission_id }}
+                                <FormatId :id="temperatureRecord.admission_id" prefix="ING"></FormatId>
                                 </Link>
                             </div>
                             <AccessGate :permission="['temperatureRecord.delete']">
@@ -323,10 +357,12 @@
         <!-- Change admission modal -->
         <AccessGate :permission="['temperatureRecord.delete']">
             <Modal :closeable="true" :show="showEditAdmission != null" @close="showEditAdmission == null">
-                <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                <div
+                    class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
                     <form @submit.prevent="submitUpdateRecord" class="max-w-3xl mx-auto">
 
-                        <AdmissionSelector @update:admission="formRecord.admission_id = $event" :selected-admission-id="temperatureRecord.admission_id" :doesnt-have-temperature-r="true" />
+                        <AdmissionSelector @update:admission="formRecord.admission_id = $event"
+                            :selected-admission-id="temperatureRecord.admission_id" :doesnt-have-temperature-r="true" />
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">
@@ -385,11 +421,13 @@ import moment from 'moment';
 import 'moment/locale/es';
 import Modal from '@/Components/Modal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
+import FormatId from '@/Components/FormatId.vue';
 
 export default {
     props: {
         temperatureRecord: Object,
         details: Array,
+        admission_id: String,
         lastTemperature: Object,
         canCreateDetail: Boolean,
         previousUrl: String,
@@ -405,7 +443,8 @@ export default {
         SecondaryButton,
         AccessGate,
         Modal,
-        AdmissionSelector
+        AdmissionSelector,
+        FormatId
     },
     data() {
         return {

@@ -46,6 +46,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $showDeleted = $request->boolean('showDeleted');
         $admissionId = $request->integer('admission_id');
         $days = $request->integer('days');
+        $in_process = $request->input('in_process', 'true');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
 
@@ -56,11 +57,18 @@ class TemperatureRecordController extends Controller implements HasMiddleware
                 'nurse'
             ])
             ->select('temperature_records.*')
-            ->join('admissions', 'temperature_records.admission_id', '=', 'admissions.id')
-            ->join('patients', 'admissions.patient_id', '=', 'patients.id')
+            ->leftJoin('admissions', 'temperature_records.admission_id', '=', 'admissions.id')
+            ->leftJoin('patients', 'admissions.patient_id', '=', 'patients.id')
             ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
-            ->join('users', 'temperature_records.nurse_id', '=', 'users.id')
+            ->leftJoin('users', 'temperature_records.nurse_id', '=', 'users.id')
             ->where('temperature_records.active', !$showDeleted);
+
+
+        if ($in_process === 'true') {
+            $query->whereNull('admissions.discharged_date');
+        } elseif ($in_process === 'false') {
+            $query->whereNotNull('admissions.discharged_date');
+        }
 
         if ($search) {
             $query->where(function (Builder $query) use ($search) {
@@ -107,6 +115,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
                 'show_deleted' => $showDeleted,
                 'admission_id' => $admissionId,
                 'days' => $days,
+                'in_process' => $in_process,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
             ]
@@ -126,7 +135,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $response = Gate::inspect('create', [TemperatureRecord::class, $admission]);
 
             if (!$response->allowed()) {
-                return back()->with('error', 'Este ingreso no tiene hoja de temperatura');
+                return back()->with('error', $response->message());
             }
         }
         return Inertia::render('TemperatureRecords/Create', [
@@ -155,18 +164,10 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show($id, $admission_id = null)
+    public function show(TemperatureRecord $temperatureRecord, Request $request)
     {
-        // TODO: Esto se modificara con el arreglo de redireccion desde admissions
+        $admission_id = $request->query('admission_id');
 
-        // si se pasa el admission id buscar el temperatureRecord relacionado, sino buscar por el id el registro
-        $temperatureRecord = $admission_id
-            ? TemperatureRecord::where('admission_id', $admission_id)->where('active', 1)->first()
-            : TemperatureRecord::find($id);
-
-        if (!$temperatureRecord) {
-            return Redirect::route('temperatureRecords.create', ['admission_id' => $admission_id]);
-        }
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
 
         // verificar si puede crear detalles
@@ -185,6 +186,10 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $lastTemperature = null;
         }
 
+        if ($lastTemperature !== null) {
+            $canCreateDetail = false;
+        }
+
         // verificar si puede editar la firma del registro
         $responseUpdateRecord = Gate::inspect('updateSignature', $temperatureRecord);
         $canUpdateSignature = $responseUpdateRecord->allowed();
@@ -197,6 +202,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,
             'details' => $details,
+            'admission_id' => $admission_id,
             'lastTemperature' => $lastTemperature,
             'canCreateDetail' => $canCreateDetail,
             'canUpdateSignature' => $canUpdateSignature,

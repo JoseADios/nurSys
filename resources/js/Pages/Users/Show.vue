@@ -29,7 +29,11 @@
                                 <h2 class="text-2xl font-bold text-white">{{ user.name }} {{ user.last_name }}</h2>
                                 <div class="flex items-center space-x-2">
                                     <span class="px-2 py-1 bg-white/20 text-white text-sm rounded-full">
-                                        {{ user.roles[0]?.name || 'N/A' }}
+                                        <div v-if="user.roles[0]">
+                                            <FormatRole :role="user.roles[0].name" />
+                                        </div>
+                                        <div v-else>N/A</div>
+
                                     </span>
                                     <span :class="[
                                         'px-2 py-1 text-white text-sm rounded-full',
@@ -152,6 +156,7 @@ import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import InfoItem from '@/Components/InfoItem.vue';
 import moment from 'moment';
+import FormatRole from '@/Components/FormatRole.vue';
 
 
 export default {
@@ -162,6 +167,7 @@ export default {
         DangerButton,
         SecondaryButton,
         InfoItem,
+        FormatRole
     },
     props: {
         user: {
@@ -185,8 +191,8 @@ export default {
             this.$inertia.put(route('users.update', this.user.id), { active: true });
         },
         formatDate(date) {
-        return moment(date).format('DD MMM YYYY')
-    }
+            return moment(date).format('DD MMM YYYY')
+        }
     },
 
 };

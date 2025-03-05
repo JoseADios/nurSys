@@ -72,6 +72,13 @@
                                 {{ formatDate(admission.created_at) }}
                             </p>
                         </div>
+
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Creado por</h3>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ admission.receptionist.name }} {{ admission.receptionist.last_name }}
+                            </p>
+                        </div>
                     </div>
 
                     <div class="space-y-6">
@@ -122,16 +129,30 @@
                             </div>
 
                             <div class="flex flex-col space-y-2 items-center">
-                                <Link
-                                    :href="route('temperatureRecords.customShow', { id: admission.id, admission_id: admission.id })"
-                                    class="flex w-full items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Hoja de Temperatura
-                                </Link>
+                                <div v-if="temperatureRecordId !== null" class=" w-full">
+                                    <Link
+                                        :href="`${route('temperatureRecords.show', temperatureRecordId)}?admission_id=${admission.id}`"
+                                        class="flex w-full items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Hoja de Temperatura
+                                    </Link>
+                                </div>
+                                <div v-else class=" w-full">
+                                    <Link
+                                        :href="route('temperatureRecords.create', {admission_id: admission.id})"
+                                        class="flex w-full items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Nueva hoja de Temperatura
+                                    </Link>
+                                </div>
                             </div>
                             <div class="flex flex-col space-y-2 items-center">
                                 <Link
@@ -241,8 +262,10 @@
             </template>
 
             <template #content>
-                <div v-if="admission.discharged_date == null">¿Estás seguro de que deseas dar de alta a este ingreso?</div>
-                <div v-if="admission.discharged_date != null">¿Estás seguro de que deseas poner en progreso este ingreso?</div>
+                <div v-if="admission.discharged_date == null">¿Estás seguro de que deseas dar de alta a este ingreso?
+                </div>
+                <div v-if="admission.discharged_date != null">¿Estás seguro de que deseas poner en progreso este
+                    ingreso?</div>
             </template>
 
             <template #footer>
@@ -280,6 +303,10 @@ export default {
     props: {
         admission: Object,
         daysIngressed: Number,
+        temperatureRecordId: {
+            type: [Number, Object],
+            default: null
+        },
         can: [Array, Object],
     },
     components: {

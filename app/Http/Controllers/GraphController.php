@@ -345,73 +345,93 @@ class GraphController extends Controller
             $currentDay = date('Y-m-d', strtotime($currentDay . ' +1 day'));
         }
 
-        $j = 0;
-        foreach ($allDays as $i => $day) {
-            $firstLowSpace = false;
-            $xPos = $this->calculateXPos($graph, $timestamps, strtotime($day . ' 00:00:00'));
+        $timestampRange = max($timestamps) - min($timestamps);
 
-            $nextXPos = $this->calculateXPos($graph, $timestamps, strtotime($day . ' +1 day 00:00:00'));
-            $cellCenter = ($xPos + $nextXPos) / 2;
+        // si solo hay un registro
+        if ($timestampRange == 0) {
+            $centerXPos = $graph->img->left_margin + ($graph->img->plotwidth / 2);
+            $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
 
-            $graph->img->Line($xPos, $yTableTop, $xPos, $yTableBottom);
+            // $this->addTableText($graph, $currentTurnData, $centerXPos, $yTableTop, $yTableBottom, $rowHeight);
+            $graph->img->Line($graph->img->left_margin, $yTableTop, $graph->img->left_margin, $yTableBottom);
+            $graph->img->SetColor('black');
+            $textDay = new Text($allDays[0], $centerXPos, $yTableTop + ($rowHeight / 2));
+            $textDay->SetAlign('center', 'center');
+            $graph->AddText($textDay);
+            $textDay = new Text('ADM', $centerXPos, $yTableBottom - ($rowHeight / 2));
+            $textDay->SetAlign('center', 'center');
+            $graph->AddText($textDay);
 
-            // si hay poco espacio para la casilla
-            if ($xPos !== null && abs($xPos - $nextXPos) < 70) {
-                if ($i == 0) {
-                    $cellCenter -= 10;
-                    $firstLowSpace = true;
-                    $graph->img->SetColor('black');
-                    $graph->img->Line($graph->img->left_margin - 20, $yTableTop, $graph->img->left_margin - 20, $yTableBottom);
-                    $graph->img->Line($nextXPos, $yTableTop, $nextXPos, $yTableBottom);
+        } else {
 
-                    $graph->img->SetColor('white');
-                    $graph->img->Line($graph->img->left_margin, $yTableTop, $graph->img->left_margin, $yTableBottom);
-                    $graph->img->SetColor('black');
-                    // $graph->img->Line($nextXPos, $yTableTop, $nextXPos, $yTableBottom);
-                } else {
-                    $graph->img->SetColor('black');
-                    $cellCenter += 45;
-                    $newXPos = $graph->img->left_margin + $graph->img->plotwidth + 80;
-                    $graph->img->Line($newXPos, $yTableTop, $newXPos, $yTableBottom);
-                    $graph->img->Line($newXPos - 80, $yTableTop, $newXPos - 80, $yTableBottom);
-                    $graph->img->Line($newXPos - 80, $yTableTop, $newXPos, $yTableTop);
-                    $graph->img->Line($newXPos - 80, $yTableMiddle, $newXPos, $yTableMiddle);
-                    $graph->img->Line($newXPos - 80, $yTableBottom, $newXPos, $yTableBottom);
-                    $graph->img->SetColor('white');
+            $j = 0;
+            foreach ($allDays as $i => $day) {
+                $firstLowSpace = false;
+                $xPos = $this->calculateXPos($graph, $timestamps, strtotime($day . ' 00:00:00'));
 
-                    if (round($graph->img->left_margin + $graph->img->plotwidth) != round($xPos)) {
-                        $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
+                $nextXPos = $this->calculateXPos($graph, $timestamps, strtotime($day . ' +1 day 00:00:00'));
+                $cellCenter = ($xPos + $nextXPos) / 2;
+
+                $graph->img->Line($xPos, $yTableTop, $xPos, $yTableBottom);
+
+                // si hay poco espacio para la casilla
+                if ($xPos !== null && abs($xPos - $nextXPos) < 70) {
+                    if ($i == 0) {
+                        $cellCenter -= 10;
+                        $firstLowSpace = true;
+                        $graph->img->SetColor('black');
+                        $graph->img->Line($graph->img->left_margin - 20, $yTableTop, $graph->img->left_margin - 20, $yTableBottom);
+                        $graph->img->Line($nextXPos, $yTableTop, $nextXPos, $yTableBottom);
+
+                        $graph->img->SetColor('white');
+                        $graph->img->Line($graph->img->left_margin, $yTableTop, $graph->img->left_margin, $yTableBottom);
+                        $graph->img->SetColor('black');
+                        // $graph->img->Line($nextXPos, $yTableTop, $nextXPos, $yTableBottom);
+                    } else {
+                        $graph->img->SetColor('black');
+                        $cellCenter += 45;
+                        $newXPos = $graph->img->left_margin + $graph->img->plotwidth + 80;
+                        $graph->img->Line($newXPos, $yTableTop, $newXPos, $yTableBottom);
+                        $graph->img->Line($newXPos - 80, $yTableTop, $newXPos - 80, $yTableBottom);
+                        $graph->img->Line($newXPos - 80, $yTableTop, $newXPos, $yTableTop);
+                        $graph->img->Line($newXPos - 80, $yTableMiddle, $newXPos, $yTableMiddle);
+                        $graph->img->Line($newXPos - 80, $yTableBottom, $newXPos, $yTableBottom);
+                        $graph->img->SetColor('white');
+
+                        if (round($graph->img->left_margin + $graph->img->plotwidth) != round($xPos)) {
+                            $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
+                        }
                     }
                 }
-            }
 
-            if ($i >= 1) {
-                $graph->img->SetColor('black');
-            }
+                if ($i >= 1) {
+                    $graph->img->SetColor('black');
+                }
 
-            // Mostrar la fecha
-            if ($firstLowSpace) {
-                $textDay = new Text(date('d', strtotime($day)), $cellCenter, $yTableTop + ($rowHeight / 2));
-                $textDay->SetAlign('center', 'center');
-                $graph->AddText($textDay);
-            } else {
-                $textDay = new Text($day, $cellCenter, $yTableTop + ($rowHeight / 2));
-                $textDay->SetAlign('center', 'center');
-                $graph->AddText($textDay);
-            }
+                // Mostrar la fecha
+                if ($firstLowSpace) {
+                    $textDay = new Text(date('d', strtotime($day)), $cellCenter, $yTableTop + ($rowHeight / 2));
+                    $textDay->SetAlign('center', 'center');
+                    $graph->AddText($textDay);
+                } else {
+                    $textDay = new Text($day, $cellCenter, $yTableTop + ($rowHeight / 2));
+                    $textDay->SetAlign('center', 'center');
+                    $graph->AddText($textDay);
+                }
 
-            // Mostrar el día de hospitalización
-            if ($j == 0) {
-                $textDay = new Text('ADM', $cellCenter, $yTableMiddle + ($rowHeight / 2));
-                $textDay->SetAlign('center', 'center');
-                $graph->AddText($textDay);
-            } else {
-                $textDay = new Text(strval($j), $cellCenter, $yTableMiddle + ($rowHeight / 2));
-                $textDay->SetAlign('center', 'center');
-                $graph->AddText($textDay);
-            }
+                // Mostrar el día de hospitalización
+                if ($j == 0) {
+                    $textDay = new Text('ADM', $cellCenter, $yTableMiddle + ($rowHeight / 2));
+                    $textDay->SetAlign('center', 'center');
+                    $graph->AddText($textDay);
+                } else {
+                    $textDay = new Text(strval($j), $cellCenter, $yTableMiddle + ($rowHeight / 2));
+                    $textDay->SetAlign('center', 'center');
+                    $graph->AddText($textDay);
+                }
 
-            $j += 1;
+                $j += 1;
+            }
         }
     }
 

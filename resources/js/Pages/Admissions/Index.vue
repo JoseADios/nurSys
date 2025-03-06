@@ -24,6 +24,8 @@
                     placeholder="Buscar ..." />
 
             </form>
+
+
                 <button @click="toggleShowDeleted" class="flex mb-2 items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-4" :class="{
             'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
             'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
@@ -43,37 +45,37 @@
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3" @click="sort('patients.first_name')">
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
                             Paciente<span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
                                 }}</span>
                         </th>
-                        <th scope="col" class="px-6 py-3" @click="sort('beds.room')">
-                            Ubicación<span v-if="form.sortField === 'bed.room'">{{ form.sortDirection === 'asc' ?
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('beds.room')">
+                            Ubicación<span v-if="form.sortField === 'beds.room'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
                                 }}</span>
                         </th>
-                        <th scope="col" class="px-6 py-3" @click="sort('users.name')">
-                            Doctor<span v-if="form.sortField === 'doctor_id'">{{ form.sortDirection === 'asc' ?
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')">
+                            Doctor<span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
                                 }}</span>
                         </th>
-                        <th scope="col" class="px-6 py-3" @click="sort('discharged_date')">
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('discharged_date')">
                             Dias ingresado<span v-if="form.sortField === 'discharged_date'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
                                 }}</span>
                         </th>
-                        <th scope="col" class="px-6 py-3" @click="sort('discharged_date')">
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('discharged_date')">
                             Estado<span v-if="form.sortField === 'discharged_date'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
                                 }}</span>
                         </th>
-                        <th scope="col" class="px-6 py-3" @click="sort('created_at')">
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('created_at')">
                             Fecha de ingreso<span v-if="form.sortField === 'created_at'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'

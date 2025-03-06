@@ -7,7 +7,6 @@ use App\Models\NurseRecord;
 use App\Models\User;
 use App\Services\TurnService;
 use Illuminate\Auth\Access\Response;
-use Log;
 
 class NurseRecordPolicy
 {
@@ -44,35 +43,48 @@ class NurseRecordPolicy
      */
     public function create(User $user, Admission $admission): Response
     {
-        if ($admission->discharged_date === null) {
-            Response::allow();
+        if ($admission->discharged_date !== null) {
+            return Response::deny('No se pueden crear registros para un ingreso que ya ha sido dado de alta');
         }
 
-        return Response::deny('No se pueden crear registros para un ingreso que ya ha sido dado de alta.');
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can create a NurseRecord in the current turn.
      */
-    public function canCreateInTurn(User $user, Admission $admission): Response
+    public function canCreateInTurn(User $user, int $admission_id): Response
     {
         $turnService = new TurnService();
         $currentTurn = $turnService->getCurrentTurn();
         $dateRange = $turnService->getDateRangeForTurn($currentTurn);
 
-        $nurseRecordsInTurn = NurseRecord::where('admission_id', $admission->id)
+        $nurseRecordInTurn = NurseRecord::where('admission_id', $admission_id)
             ->where('active', true)
             ->whereBetween('created_at', [
                 $dateRange['start'],
                 $dateRange['end']
             ])
+            ->with('nurse')
             ->first();
 
-        if ($nurseRecordsInTurn === null) {
-            Response::allow();
+        if ($nurseRecordInTurn !== null) {
+            return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
         }
 
-        return Response::deny('Ya hay un registro de enfermería creado para el ingreso en el turno actual');
+        return Response::allow();
+    }
+
+    /**
+     * Determine if recived date is in actual turn.
+     */
+    private function dateIsInActualTurn($date): bool
+    {
+        $turnService = new TurnService();
+        $currentTurn = $turnService->getCurrentTurn();
+        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+
+        return $date >= $dateRange['start'] && $date < $dateRange['end'];
     }
 
     /**
@@ -80,11 +92,19 @@ class NurseRecordPolicy
      */
     public function update(User $user, NurseRecord $nurseRecord): Response
     {
-        if ($nurseRecord->admission->discharged_date === null && $user->id === $nurseRecord->nurse_id) {
-            return Response::allow();
+        if (!$this->dateIsInActualTurn($nurseRecord->created_at)) {
+            return Response::deny('No se pueden actualizar registros de un turno pasado');
         }
 
-        return Response::deny('No tienes permiso para actualizar este registro de enfermería.');
+        if ($nurseRecord->admission->discharged_date !== null) {
+            return Response::deny('No se pueden actualizar registros en un ingreso que ya ha sido dado de alta');
+        }
+
+        if ($user->id !== $nurseRecord->nurse_id) {
+            return Response::deny('No tienes permiso para actualizar este registro de enfermería');
+        }
+
+        return Response::allow();
     }
 
     /**
@@ -92,11 +112,15 @@ class NurseRecordPolicy
      */
     public function delete(User $user, NurseRecord $nurseRecord): Response
     {
-        if ($nurseRecord->admission->discharged_date === null) {
-            Response::allow();
+        if (!$this->dateIsInActualTurn($nurseRecord->created_at)) {
+            return Response::deny('No se pueden eliminar registros de un turno pasado');
         }
 
-        return Response::deny('No se pueden eliminar registros en un ingreso que ya ha sido dado de alta.');
+        if ($nurseRecord->admission->discharged_date !== null) {
+            return Response::deny('No se pueden eliminar registros en un ingreso que ya ha sido dado de alta.');
+        }
+
+        return Response::allow();
     }
 
     /**

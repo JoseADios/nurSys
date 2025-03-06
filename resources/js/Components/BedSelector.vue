@@ -61,10 +61,7 @@ export default {
             type: Object,
             default: () => ({}),
         },
-        initialBedId: {
-            type: [String, Number],
-            default: null,
-        },
+        initialBedId: Number
     },
     emits: ['update:bedId'],
     setup(props, { emit }) {

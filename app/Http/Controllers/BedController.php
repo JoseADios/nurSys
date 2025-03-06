@@ -24,16 +24,16 @@ class BedController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $beds = Bed::with(['admission' => function ($query) {
-            $query->whereNull('discharged_date');
-        }])
+        $beds = Bed::with('admission.patient')
+            ->with('admission.doctor')
+            ->with([
+                'admission' => function ($query) {
+                    $query->active();
+                }
+            ])
             ->orderBy('room', 'asc')
             ->orderBy('number', 'asc')
-            ->get()
-            ->map(function ($bed) {
-                $bed->admission_id = optional($bed->admission)->id;
-                return $bed;
-            });
+            ->get();
 
         return Inertia::render('Beds/Index', [
             'beds' => $beds,

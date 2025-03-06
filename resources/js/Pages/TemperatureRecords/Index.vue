@@ -1,16 +1,24 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-white leading-tight text-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Hojas de Temperatura
             </h2>
         </template>
+
+        <div class="flex items-center justify-between">
+            <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+                <div class="ml-2 inline-flex items-center ">
+                    Hojas de temperatura
+                </div>
+            </div>
+        </div>
 
         <!-- Navigation -->
         <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
             <Link :href="route('admissions.show', admission_id)"
                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
                     d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
                     clip-rule="evenodd" />
@@ -22,25 +30,37 @@
         <div
             class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
 
-            <form @submit.prevent="submitFilters" class="mb-2 relative">
-                <label for="search" class="block my-2 text-md font-large text-gray-900 dark:text-white">
-                    Buscar:
-                </label>
-                <div class="relative">
-                    <input @input="submitFilters()" class="rounded-lg pr-10" type="text" name="search" id="search"
-                        v-model="form.search" placeholder="Buscar ..." />
-                    <button v-if="form.search" @click="form.search = ''; submitFilters()" type="button"
-                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </button>
+            <div class="relative mb-2">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
+                        viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
                 </div>
-            </form>
+
+                <input @input="submitFilters()"
+                    class="block w-full p-3 ps-10 pr-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
+
+                <button v-if="form.search" @click="form.search = ''; submitFilters()"
+                    class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
 
             <div class="flex items-end">
+                <select @change="submitFilters()"
+                    class="bg-gray-50 mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    name="days" id="days" v-model="form.in_process">
+                    <option value="true">En proceso</option>
+                    <option value="false">Dados de alta</option>
+                    <option value="">Todos</option>
+                </select>
                 <select @change="submitFilters()"
                     class="bg-gray-50 mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     name="days" id="days" v-model="form.days">
@@ -76,8 +96,7 @@
         </div>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
-            <table v-if="temperatureRecords.data.length"
-                class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
@@ -116,7 +135,7 @@
                         <th scope="col" class="px-6 py-3"> Acciones </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody v-if="temperatureRecords.data.length">
                     <tr v-for="temperatureRecord in temperatureRecords.data" :key="temperatureRecord.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <td class="px-6 py-4">
@@ -129,13 +148,15 @@
                         </td>
                         <td class="px-6 py-4">
                             <div v-if="temperatureRecord.admission.bed">
-                                ING-00{{ temperatureRecord.admission.id }},
+                                <FormatId :id="temperatureRecord.admission.id" prefix="ING"></FormatId>,
                                 Cama {{ temperatureRecord.admission.bed.number }}, Sala {{
                                     temperatureRecord.admission.bed.room }}
                             </div>
-                            <div v-else>ING-00{{ temperatureRecord.admission.id }},{{
-                                temperatureRecord.admission.created_at }}
-                                N/A</div>
+                            <div v-else>
+                                <FormatId :id="temperatureRecord.admission.id" prefix="ING"></FormatId>,
+                                {{ temperatureRecord.admission.created_at }}
+                                N/A
+                            </div>
                         </td>
                         <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ temperatureRecord.admission.patient.first_name }} {{
@@ -158,10 +179,11 @@
                     </tr>
                 </tbody>
             </table>
-            <div v-else class="text-center text-gray-500 dark:text-gray-400 py-4">
+            <div v-if="!temperatureRecords.data.length"
+                class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
                 No hay registros disponibles.
             </div>
-            <Pagination :pagination="temperatureRecords" />
+            <Pagination :pagination="temperatureRecords" :filters="form" />
         </div>
     </AppLayout>
 </template>
@@ -169,6 +191,7 @@
 <script>
 
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import FormatId from '@/Components/FormatId.vue';
 import Pagination from '@/Components/Pagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
@@ -184,7 +207,8 @@ export default {
         AppLayout,
         Link,
         Pagination,
-        AccessGate
+        AccessGate,
+        FormatId
     },
     data() {
         return {
@@ -201,7 +225,7 @@ export default {
     },
     methods: {
         temperatureRecordShow(id) {
-            this.$inertia.get(route('temperatureRecords.customShow', { id: id, admission_id: null }));
+            this.$inertia.get(route('temperatureRecords.show', id));
         },
         toggleShowDeleted() {
             this.form.showDeleted = !this.form.showDeleted;

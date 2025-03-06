@@ -9,7 +9,7 @@
         <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
             <form @submit.prevent="submit" class="max-w-3xl mx-auto">
 
-                <AdmissionSelector @update:admission="form.admission_id = $event" />
+                <AdmissionSelector @update:admission="form.admission_id = $event" :selected-admission-id="admission_id" />
 
                 <!-- Mostrar mensaje de error si no se selecciona ninguna admisión -->
                 <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
@@ -37,6 +37,12 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
 export default {
+    props: {
+        admission_id: {
+            type: Number,
+            default: null
+        }
+    },
     components: {
         AppLayout,
         Link,
@@ -62,7 +68,3 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-/* Tus estilos aquí */
-</style>

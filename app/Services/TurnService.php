@@ -45,9 +45,12 @@ class TurnService
 
         if (!$turn['crosses_midnight']) {
             // Turno normal (ej: 7-14, 14-21)
+            $start = $now->copy()->startOfDay()->addHours($startHour);
+            $end = $now->copy()->startOfDay()->addHours($endHour);
+
             return [
-                'start' => $now->copy()->startOfDay()->addHours($startHour),
-                'end' => $now->copy()->startOfDay()->addHours($endHour)
+                'start' => $start,
+                'end' => $end
             ];
         } else {
             // Turno nocturno (21-7)

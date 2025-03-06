@@ -238,8 +238,11 @@ class UserController extends Controller
 
     public function filterUsers(Request $request)
     {
+        $selectedUser = null;
+        $user_id = $request->input('user_id');
+
         $query = User::query()
-        ->where('active', true);
+            ->where('active', true);
 
         if ($request->filled('filters.name')) {
             $query->whereRaw("CONCAT(name, ' ', last_name) like ?", ['%' . $request->input('filters.name') . '%']);
@@ -254,6 +257,19 @@ class UserController extends Controller
         }
         $query->with('roles');
 
-        return $query->paginate(10);
+        if ($user_id) {
+            $selectedUser = User::with('roles')->find($user_id);
+        }
+
+        $users = $query->paginate(10);
+
+        if ($selectedUser && !$users->contains('id', $selectedUser->id)) {
+            $usersCollection = $users->getCollection();
+            $usersCollection->add($selectedUser);
+            $sortedUsers = $usersCollection->sortByDesc('id')->values();
+            $users->setCollection($sortedUsers);
+        }
+
+        return $users;
     }
 }

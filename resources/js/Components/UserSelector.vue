@@ -146,10 +146,10 @@ export default {
                             ...this.filters,
                             // Añadir soporte para múltiples roles
                             roles: this.fixedRole || this.filters.role ?
-                                (this.fixedRole || [this.filters.role]) :
-                                null
+                            (this.fixedRole || [this.filters.role]) :
+                            null
                         },
-                        user_id: this.selectedUser
+                        user_id: this.selectedUserId
                     }
                 });
                 this.users = response.data;

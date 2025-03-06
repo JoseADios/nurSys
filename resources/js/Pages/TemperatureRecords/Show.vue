@@ -19,13 +19,18 @@
                         d="m1 9 4-4-4-4" />
                 </svg>
             </div>
-
+            <Link v-if="!admission_id" :href="route('temperatureRecords.index')"
+                class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+            Hojas de temperatura
+            </Link>
+            <span v-else>
+                Hojas de temperatura
+            </span>
+            <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m1 9 4-4-4-4" />
+            </svg>
             <div class="ml-2 inline-flex items-center">
-                Hoja de temperatura
-                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="m1 9 4-4-4-4" />
-                </svg>
                 <FormatId :id="temperatureRecord.id" prefix="ENF"></FormatId>
             </div>
         </div>
@@ -120,11 +125,17 @@
                     </div>
 
                     <div class="space-y-4">
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ temperatureRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
-                            </p>
+                        <div
+                            class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ temperatureRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
+                                </p>
+                            </div>
+                            <AccessGate :permission="['temperatureRecord.delete']">
+                                <button @click="showEditUser = true" class="text-blue-500 ml-3">Edit</button>
+                            </AccessGate>
                         </div>
 
 
@@ -381,6 +392,35 @@
             </Modal>
         </AccessGate>
 
+        <!-- Change patient modal -->
+        <!-- Change admission modal -->
+        <AccessGate :permission="['temperatureRecord.delete']">
+            <Modal :closeable="true" :show="showEditUser != null" @close="showEditUser == null">
+                <div
+                    class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                    <form @submit.prevent="submitUpdateRecord" class="max-w-3xl mx-auto">
+
+                        <UserSelector roles="nurse" :selected-user-id="temperatureRecord.nurse_id"
+                            @update:user="formRecord.nurse_id = $event" />
+
+
+                        <!-- Botones -->
+                        <div class="flex justify-end mt-4 space-x-3">
+                            <button type="button" @click="showEditUser = null"
+                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
+                                :disabled="!formRecord.nurse_id">
+                                Aceptar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
+        </AccessGate>
+
         <!-- delete modal -->
         <AccessGate :permission="['temperatureRecord.delete']">
             <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
@@ -423,6 +463,7 @@ import 'moment/locale/es';
 import Modal from '@/Components/Modal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 import FormatId from '@/Components/FormatId.vue';
+import UserSelector from '@/Components/UserSelector.vue';
 
 export default {
     props: {
@@ -445,13 +486,14 @@ export default {
         AccessGate,
         Modal,
         AdmissionSelector,
-        FormatId
+        FormatId,
+        UserSelector
     },
     data() {
         return {
-            isVisibleEditAdm: ref(null),
             recordBeingDeleted: ref(null),
             showEditAdmission: ref(null),
+            showEditUser: ref(null),
             isVisibleEditSign: ref(null),
             isVisibleEditDiagnosis: false,
             signatureError: false,
@@ -469,6 +511,7 @@ export default {
             },
             formRecord: {
                 admission_id: this.temperatureRecord.admission_id,
+                nurse_id: this.temperatureRecord.nurse_id,
                 impression_diagnosis: this.temperatureRecord.impression_diagnosis,
                 active: this.temperatureRecord.active
             },
@@ -514,6 +557,7 @@ export default {
         },
         submitUpdateRecord() {
             this.showEditAdmission = null
+            this.showEditUser = null
             this.$inertia.put(route('temperatureRecords.update', this.temperatureRecord.id), this.formRecord)
             this.isVisibleEditDiagnosis = false
         },

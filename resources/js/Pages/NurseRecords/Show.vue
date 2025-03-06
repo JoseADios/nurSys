@@ -92,7 +92,7 @@
                                 </Link>
                             </div>
                             <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
-                                <button @click="showEditAdmission = true" class="text-blue-500 ml-3">Edit</button>
+                                <button @click="showEditAdmission = true" class="text-blue-500 ml-3">Editar</button>
                             </AccessGate>
                         </div>
 
@@ -121,11 +121,16 @@
                     <div class="space-y-4">
 
                         <!-- Nurse -->
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermero</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ nurse.name }} {{ nurse.last_name }}
-                            </p>
+                        <div class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermero</h3>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ nurse.name }} {{ nurse.last_name }}
+                                </p>
+                            </div>
+                            <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
+                                <button @click="showEditNurse = true" class="text-blue-500 ml-3">Editar</button>
+                            </AccessGate>
                         </div>
 
                         <!-- Created date -->
@@ -309,6 +314,34 @@
             </Modal>
         </AccessGate>
 
+
+        <!-- Change nurse modal -->
+        <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
+            <Modal :closeable="true" :show="showEditNurse != null" @close="showEditNurse == null">
+                <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                    <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
+
+                        <UserSelector roles="nurse" :selected-user-id="nurseRecord.nurse_id"
+                            @update:user="formAdmission.nurse_id = $event" />
+                        <!-- Botones -->
+                        <div class="flex justify-end mt-4 space-x-3">
+                            <button type="button" @click="showEditNurse = null"
+                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
+                                :disabled="!formAdmission.nurse_id">
+                                Aceptar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </Modal>
+        </AccessGate>
+
+
         <!-- Delete modal -->
         <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
             <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted == null">
@@ -349,6 +382,7 @@ import AccessGate from '@/Components/Access/AccessGate.vue';
 import Modal from '@/Components/Modal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 import FormatId from '@/Components/FormatId.vue';
+import UserSelector from '@/Components/UserSelector.vue';
 
 
 export default {
@@ -376,17 +410,20 @@ export default {
         AccessGate,
         Modal,
         AdmissionSelector,
-        FormatId
+        FormatId,
+        UserSelector
     },
     data() {
         return {
             recordBeingDeleted: ref(null),
             isVisibleEditSign: ref(null),
             showEditAdmission: ref(null),
+            showEditNurse: ref(null),
             signatureError: false,
 
             formAdmission: {
                 admission_id: this.nurseRecord.admission_id,
+                nurse_id: this.nurseRecord.nurse_id,
                 active: this.nurseRecord.active
             },
             formDetail: {
@@ -405,6 +442,7 @@ export default {
         submitAdmission() {
             this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formAdmission)
             this.showEditAdmission = null
+            this.showEditNurse = null
         },
         selectAdmission(admission) {
             this.formAdmission.admission_id = admission.id;

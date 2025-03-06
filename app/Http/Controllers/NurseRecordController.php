@@ -193,8 +193,9 @@ class NurseRecordController extends Controller implements HasMiddleware
         $firmService = new FirmService;
 
         $validated = $request->validate([
-            'admission_id' => 'numeric',
-            'nurse_sign' => 'string',
+            'admission_id' => 'numeric|nullable',
+            'nurse_id' => 'numeric|nullable',
+            'nurse_sign' => 'string|nullable',
             'active' => 'boolean',
         ]);
 

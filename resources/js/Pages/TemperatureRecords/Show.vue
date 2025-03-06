@@ -134,7 +134,7 @@
                                 </p>
                             </div>
                             <AccessGate :permission="['temperatureRecord.delete']">
-                                <button @click="showEditUser = true" class="text-blue-500 ml-3">Edit</button>
+                                <button @click="showEditUser = true" class="text-blue-500 ml-3">Editar</button>
                             </AccessGate>
                         </div>
 
@@ -157,7 +157,7 @@
                                         {{ temperatureRecord.impression_diagnosis }}
                                     </p>
                                 </div>
-                                <button @click="toggleEditRecord" class="text-blue-500 mr-3">Edit</button>
+                                <button @click="toggleEditRecord" class="text-blue-500 mr-3">Editar</button>
                             </div>
 
                             <div v-if="isVisibleEditDiagnosis"

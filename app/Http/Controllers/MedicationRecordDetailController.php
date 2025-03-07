@@ -305,6 +305,12 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
     public function destroy(MedicationRecordDetail $medicationRecordDetail)
     {
 
+        $hasNotifications = MedicationNotification::where('medication_record_detail_id',$medicationRecordDetail->id)->where('applied', 1)->get();
+
+
+        if ($hasNotifications->isNotEmpty()) {
+            return Redirect::back()->withErrors(['message' => 'No se puede eliminar este Detalle de Ficha de Medicamentos porque tiene notificaciones aplicadas.']);
+        }
 
 
         $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();

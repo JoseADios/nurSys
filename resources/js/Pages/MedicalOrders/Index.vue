@@ -24,29 +24,58 @@
         </Link>
     </div>
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
-        <form @submit.prevent="submit" class="mb-2">
-            <input @input="submit()" class="rounded-lg" type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
+        <div class="flex">
+    <form @submit.prevent="submit" class="mb-2 flex-grow">
+        <input @input="submit()" class="rounded-lg " type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
+    </form>
 
-        </form>
+
+        <!-- Filtro para mostrar registros eliminados -->
+        <button @click="toggleShowDeleted" class="flex mb-2 items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-4" :class="{
+            'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
+            'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
+        }">
+            {{ form.showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+            <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path v-if="form.showDeleted" fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
+                    clip-rule="evenodd" />
+                <path v-else fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                    clip-rule="evenodd" />
+            </svg>
+        </button>
+
+</div>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admission_id')"><span v-if="form.sortField === 'admission_id'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span>
                         Ingreso
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')"><span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span>
                         Paciente
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.discharged_date')"><span v-if="form.sortField === 'admissions.discharged_date'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span>
                         Estado
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')"><span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span>
                         Doctor
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('created_at')"><span v-if="form.sortField === 'created_at'">{{ form.sortDirection === 'asc' ? '↑' :
+                                '↓'
+                                }}</span>
                         Fecha
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-6 py-3" >
                         Acciones
                     </th>
                 </tr>
@@ -97,7 +126,7 @@ import {
 import Pagination from '@/Components/Pagination.vue';
 export default {
     props: {
-        medicalOrders: Array,
+        medicalOrders: Object,
         admission_id: Number,
         filters: Object,
     },
@@ -111,6 +140,9 @@ export default {
             recordBeingDisabled: null,
             form: {
                 search: this.filters.search || '',
+                showDeleted: this.filters.show_deleted,
+                sortField: this.filters.sortField || 'medication_records.updated_at',
+                sortDirection: this.filters.sortDirection || 'asc',
             },
             timeout: 1000,
         }
@@ -126,6 +158,18 @@ export default {
             this.$inertia.get(route('medicalOrders.index'), this.form, {
                 preserveState: true,
             });
+        },
+        sort(field) {
+            this.form.sortField = field;
+            this.form.sortDirection = this.form.sortDirection === 'asc' ? 'desc' : 'asc';
+            this.submit();
+        },
+        toggleShowDeleted() {
+            this.form.showDeleted = !this.form.showDeleted;
+            this.$inertia.get(route('medicalOrders.index', {
+                search: this.form.search,
+                showDeleted: this.form.showDeleted
+            }));
         },
     },
 

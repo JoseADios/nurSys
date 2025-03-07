@@ -41,31 +41,30 @@ class MedicationRecordController extends Controller
         $sortDirection = $request->input('sortDirection', 'asc');
 
 
-        $query = MedicationRecord::query();
+        $query = MedicationRecord::query()->select('medication_records.*')
+        ->join('admissions', 'medication_records.admission_id', '=', 'admissions.id')
+        ->where('medication_records.active', !$showDeleted);
 
-        if ($showDeleted) {
-            $query->where('active',false);
-        }else{
-            $query->where('active',true);
+
+
+
+
+        if ($search) {
+            $query->where(function (Builder $q) use ($search) {
+                $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('doctor_id LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('diagnosis LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('referrals LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('pending_studies LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('doctor_sign LIKE ?', ['%' . $search . '%']);
+            });
         }
-
         if ($sortField) {
             $query->orderBy($sortField, $sortDirection);
         } else {
             $query->latest('medication_records.updated_at')
                 ->latest('medication_records.created_at');
-        }
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('admission_id', 'like', '%' . $search . '%')
-                  ->orWhere('doctor_id', 'like', '%' . $search . '%')
-                  ->orWhere('diagnosis', 'like', '%' . $search . '%')
-                  ->orWhere('diet', 'like', '%' . $search . '%')
-                  ->orWhere('referrals', 'like', '%' . $search . '%')
-                  ->orWhere('pending_studies', 'like', '%' . $search . '%')
-                  ->orWhere('doctor_sign', 'like', '%' . $search . '%');
-            });
         }
 
 
@@ -243,15 +242,17 @@ class MedicationRecordController extends Controller
 {
     $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
 
-    $notificationsapplied = MedicationNotification::whereIn('medication_record_detail_id', $details->pluck('id'))
-        ->pluck('applied');
+    $hasNotifications = MedicationNotification::whereIn('medication_record_detail_id', function ($query) use ($medicationRecord) {
+        $query->select('id')
+            ->from('medication_record_details')
+            ->where('medication_record_id', $medicationRecord->id);
+    })
+    ->where('applied', 1)
+    ->get();
 
 
-    if ($notificationsapplied->contains(function ($value) {
-        return $value != 0;
-    })) {
-       return redirect()->to(route('medicationRecords.show', $medicationRecord));
-
+    if ($hasNotifications->isNotEmpty()) {
+        return Redirect::back()->withErrors(['message' => 'No se puede eliminar esta Ficha de Medicamentos porque tiene notificaciones aplicadas.']);
     }
 
 

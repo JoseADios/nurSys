@@ -89,16 +89,17 @@ class MedicalOrderDetailController extends Controller
      */
     public function destroy(MedicalOrderDetail $medicalOrderDetail)
     {
-        $medicalOrderDetail->update(['active' => 0]);
+
         $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)->first();
 
 
             if ($medicationRecordDetail) {
-                $medicationRecordDetail->update(['active' => 0]);
-                Log::info("MedicationRecordDetail actualizado: ", ['id' => $medicationRecordDetail->id, 'active' => 0]);
+                return Redirect::back()->withErrors(['message' => 'No se puede eliminar este Detalle Orden Medica porque tiene registros de detalle de ficha de medicamento asociados.']);
+
             } else {
-                Log::warning("No se encontró un MedicationRecordDetail para MedicalOrderDetail ID: " . $medicalOrderDetail->id);
-            }
+
+            $medicalOrderDetail->update(['active' => 0]);
+                 }
 
         return Redirect::route('medicalOrders.edit', $medicalOrderDetail->medical_order_id);
     }

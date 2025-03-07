@@ -7,6 +7,7 @@ use App\Models\Bed;
 use App\Models\Patient;
 use App\Models\TemperatureRecord;
 use App\Models\User;
+use App\Models\MedicationRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -29,34 +30,46 @@ class AdmissionController extends Controller
     {
         $this->authorize('viewAny', Admission::class);
 
+        $showDeleted = $request->boolean('showDeleted');
         $search = $request->input('search');
-        $query = Admission::query()
-            ->with(['bed', 'patient', 'doctor'])
-            ->where('active', true);
+        $sortField = $request->input('sortField');
+        $sortDirection = $request->input('sortDirection', 'asc');
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('created_at', 'like', '%' . $search . '%')
+        $query = Admission::query()->with('patient','bed','doctor')->select([
+            'admissions.id',
+            'admissions.patient_id',
+            'admissions.bed_id',
+            'admissions.doctor_id',
+            'admissions.created_at',
+            'admissions.discharged_date',
+            'admissions.active'
+        ])
+        ->join('patients', 'admissions.patient_id', '=', 'patients.id')
+        ->join('beds', 'admissions.bed_id', '=', 'beds.id')
+        ->join('users', 'admissions.doctor_id', '=', 'users.id')
+        ->where('admissions.active', !$showDeleted);
 
-                    ->orWhereHas('patient', function ($patientQuery) use ($search) {
-                        $patientQuery->where('first_name', 'like', '%' . $search . '%')
-                            ->orWhere('first_surname', 'like', '%' . $search . '%')
-                            ->orWhere('second_surname', 'like', '%' . $search . '%');
-                    })
-                    ->orWhereHas('bed', function ($bedQuery) use ($search) {
-                        $bedQuery->where('number', 'like', '%' . $search . '%')
-                            ->orWhere('room', 'like', '%' . $search . '%');
-                    })
-                    ->orWhereHas('doctor', function ($doctorQuery) use ($search) {
-                        $doctorQuery->where('name', 'like', '%' . $search . '%')
-                            ->orWhere('last_name', 'like', '%' . $search . '%');
-                    });
-            });
-        }
-        $admissions = $query->select(['id', 'patient_id', 'bed_id', 'doctor_id', 'created_at', 'discharged_date', 'active'])
-            ->orderByDesc('created_at')
-            ->paginate(10)
-            ->through(function ($admission) {
+
+
+            if ($search) {
+                $query->where(function (Builder $q) use ($search) {
+                    $q->whereRaw('DATE(created_at) LIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw('CONCAT(beds.room, " ", beds.number) LIKE ?', ['%' . $search . '%']);
+                });
+            }
+
+            if ($sortField) {
+                $query->orderBy($sortField, $sortDirection);
+            } else {
+                $query->latest('admissions.updated_at')
+                    ->latest('admissions.created_at');
+            }
+
+            $admissions = $query->paginate(10);
+
+        $admissions->getCollection()->transform(function ($admission) {
                 if ($admission->discharged_date) {
                     $admission->days_admitted = intval($admission->created_at->diffInDays($admission->discharged_date));
                 } else {
@@ -70,7 +83,12 @@ class AdmissionController extends Controller
             'can' => [
                 'create' => Gate::allows('create', Admission::class),
             ],
-            'filters' => ['search' => $search],
+            'filters' => [
+                'search' => $search,
+                'show_deleted' => $showDeleted,
+                'sortField' => $sortField,
+                'sortDirection' => $sortDirection,
+            ],
         ]);
     }
 
@@ -151,12 +169,15 @@ class AdmissionController extends Controller
         $bed = $admission->bed;
         $doctor = $admission->doctor;
         $daysIngressed = intval($admission->created_at->diffInDays(now()));
+
         $temperatureRecordId = TemperatureRecord::where('admission_id', $admission->id)
             ->where('active', true)->first('id');
+  $medicationRecord = MedicationRecord::where('admission_id', $admission->id)->first();
 
 
         return Inertia::render('Admissions/Show', [
             'admission' => $admission,
+            'medicationRecord' => $medicationRecord,
             'patient' => $patient,
             'bed' => $bed,
             'daysIngressed' => $daysIngressed,

@@ -143,9 +143,9 @@ class UserController extends Controller
 
         if ($request['saveAndNew'] == True) {
             return Redirect::route('users.create')
-                ->with('success', 'User created successfully.');
+                ->with('flash.toast', 'Usuario creado correctamente');
         }
-        return Redirect::route('users.show', $user->id);
+        return Redirect::route('users.show', $user->id)->with('flash.toast', 'Usuario creado correctamente');
     }
 
     /**
@@ -197,7 +197,7 @@ class UserController extends Controller
                 'password' => Hash::make($validated['password']),
             ]);
 
-            return back()->with('success', 'Password updated successfully.');
+            return back()->with('flash.toast', 'Contraseña actualizada correctamente');
         } else {
             $validated = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
@@ -222,7 +222,7 @@ class UserController extends Controller
             $user->syncRoles($request->role);
         }
 
-        return back()->with('success', 'User updated successfully.');
+        return back()->with('flash.toast', 'Usuario actualizado correctamente');
     }
 
     /**
@@ -232,7 +232,7 @@ class UserController extends Controller
     {
         $user->update(['active' => false]);
         DB::table('sessions')->where('user_id', $user->id)->delete();
-        return back()->with('success', 'Usuario desactivado y sesión cerrada.');
+        return back()->with('flash.toast', 'Usuario desactivado y sesión cerrada.');
         ;
     }
 

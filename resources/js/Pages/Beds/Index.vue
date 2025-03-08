@@ -14,11 +14,6 @@
             </div>
         </div>
 
-        <!-- mostrar toasts -->
-        <div v-if="$page.props.flash.success" class="">
-            <Toast ref="toast" :message="$page.props.flash.success" type="success" />
-        </div>
-
         <div class="container mx-auto px-4 py-6">
             <div v-for="floor in floorPlan" :key="floor.number" class="mb-8">
                 <h3 class="text-2xl font-bold text-white mb-4 text-center">Piso {{ floor.number }}</h3>
@@ -271,7 +266,6 @@ import DialogModal from '@/Components/DialogModal.vue';
 import FormatId from '@/Components/FormatId.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import Toast from '@/Components/Toast.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -286,7 +280,6 @@ export default {
         DialogModal,
         PrimaryButton,
         SecondaryButton,
-        Toast,
         AccessGate,
         FormatId
     },

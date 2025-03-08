@@ -118,7 +118,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             $response = Gate::inspect('create', [NurseRecord::class, $admission]);
 
             if (!$response->allowed()) {
-                return back()->with('error', 'No se pueden crear registros en un ingreso dado de alta');
+                return back()->with('flash.toast', 'No se pueden crear registros en un ingreso dado de alta');
             }
         }
 
@@ -143,7 +143,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             'created_at' => now(),
         ]);
 
-        return Redirect::route('nurseRecords.show', $nurseRecord->id);
+        return Redirect::route('nurseRecords.show', $nurseRecord->id)->with('flash.toast', 'Registro de enfermería creado');
     }
 
     /**
@@ -216,6 +216,6 @@ class NurseRecordController extends Controller implements HasMiddleware
         $this->authorize('delete', $nurseRecord);
 
         $nurseRecord->update(['active' => 0]);
-        return Redirect::route('nurseRecords.index');
+        return Redirect::route('nurseRecords.index')->with('flash.toast', 'Registro de enfermería eliminado');
     }
 }

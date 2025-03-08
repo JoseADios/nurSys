@@ -133,7 +133,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $response = Gate::inspect('create', [TemperatureRecord::class, $admission]);
 
             if (!$response->allowed()) {
-                return back()->with('error', $response->message());
+                return back()->with('flash.toast', $response->message())->with('flash.toastStyle', 'danger');
             }
         }
         return Inertia::render('TemperatureRecords/Create', [
@@ -156,7 +156,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             'impression_diagnosis' => $request->impression_diagnosis,
         ]);
 
-        return Redirect::route('temperatureRecords.show', $temperatureRecord->id);
+        return Redirect::route('temperatureRecords.show', $temperatureRecord->id)->with('flash.toast', 'Registro de temperatura creado correctamente');
     }
 
     /**
@@ -250,7 +250,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         $temperatureRecord->update($validated);
 
-        return back()->with('succes', 'Registro actualizado correctamente');
+        return back()->with('flash.toast', 'Registro actualizado correctamente');
     }
 
     /**
@@ -260,6 +260,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     {
         $this->authorize('delete', $temperatureRecord);
         $temperatureRecord->update(['active' => 0]);
-        return Redirect::route('temperatureRecords.index');
+        return Redirect::route('temperatureRecords.index')->with('flash.toast', 'Registro de temperatura eliminado correctamente');
     }
 }

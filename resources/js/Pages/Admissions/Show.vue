@@ -229,6 +229,7 @@
 
             <template #content>
                 ¿Estás seguro de que deseas eliminar este ingreso?
+                Todos los documentos relacionados al ingreso serán eliminados.
             </template>
 
             <template #footer>

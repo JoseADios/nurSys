@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-
+use App\Services\FirmService;
 class MedicationRecordController extends Controller
 {
 
@@ -216,6 +216,13 @@ class MedicationRecordController extends Controller
      */
     public function update(Request $request, MedicationRecord $medicationRecord)
     {
+        $firmService = new FirmService;
+
+        if ($request->signature) {
+            $fileName = $firmService
+                ->createImag($request->doctor_sign, $medicationRecord->doctor_sign);
+            $validated['doctor_sign'] = $fileName;
+        }
 
      if ($request->has('active')) {
             $this->restore($medicationRecord->id);

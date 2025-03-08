@@ -126,7 +126,8 @@
                     Deshabilitar Usuario
                 </template>
                 <template #content>
-                    ¿Estás seguro de que deseas deshabilitar este usuario?
+                    ¿Estás seguro de que deseas deshabilitar este usuario? <br>
+                    El usuario no podrá acceder al sistema.
                 </template>
                 <template #footer>
                     <SecondaryButton @click="userBeingDeleted = false">

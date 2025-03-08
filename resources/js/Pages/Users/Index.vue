@@ -170,9 +170,10 @@
                         <td class="px-6 py-4">
                             {{ user.id }}
                         </td>
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
+                            <img :src="user.profile_photo_url" alt="Profile Photo" class="w-10 h-10 rounded-full mr-4">
                             {{ user.name }} {{ user.last_name }}
-                        </th>
+                        </td>
                         <td class="px-6 py-4">
                             <div v-if="user.roles[0]">
                                 <FormatRole :role="user.roles[0].name"/>

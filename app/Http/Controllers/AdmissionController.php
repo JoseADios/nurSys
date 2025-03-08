@@ -249,7 +249,8 @@ class AdmissionController extends Controller
         }
 
         $admission->update($validated);
-        return Redirect::route('admissions.show', $admission->id);
+        return Redirect::route('admissions.show', $admission->id)->banner('Ingreso actualizado exitosamente.');
+        ;
     }
 
     /**

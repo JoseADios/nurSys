@@ -55,28 +55,17 @@ const logout = () => {
                                     Dashboard
                                 </NavLink>
                             </div>
+
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('beds.index')" :active="route().current('beds.index')">
                                     Camas
                                 </NavLink>
                             </div>
+
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('admissions.index')"
                                     :active="route().current('admissions.index')">
                                     Ingresos
-                                </NavLink>
-                            </div>
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('medicationRecords.index')"
-                                    :active="route().current('medicationRecords.index')">
-                                    Ficha de Medicamentos
-                                </NavLink>
-                            </div>
-
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('nurseRecords.index')"
-                                    :active="route().current('nurseRecords.index')">
-                                    Registros de Enfermería
                                 </NavLink>
                             </div>
 
@@ -87,6 +76,13 @@ const logout = () => {
                                 </NavLink>
                             </div>
 
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('nurseRecords.index')"
+                                    :active="route().current('nurseRecords.index')">
+                                    Registros de Enfermería
+                                </NavLink>
+                            </div>
+
                             <AccessGate :permission="['temperatureRecord.view']"
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('temperatureRecords.index')"
@@ -94,6 +90,13 @@ const logout = () => {
                                     Hojas de Temperatura
                                 </NavLink>
                             </AccessGate>
+
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('medicationRecords.index')"
+                                    :active="route().current('medicationRecords.index')">
+                                    Ficha de Medicamentos
+                                </NavLink>
+                            </div>
 
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('patients.index')" :active="route().current('patients.index')">
@@ -271,9 +274,9 @@ const logout = () => {
                             Ingresos
                         </ResponsiveNavLink>
 
-                        <ResponsiveNavLink :href="route('medicationRecords.index')"
-                            :active="route().current('medicationRecords.index')">
-                            Ficha de Medicamentos
+                        <ResponsiveNavLink :href="route('medicalOrders.index')"
+                            :active="route().current('medicalOrders.index')">
+                            Órdenes Médicas
                         </ResponsiveNavLink>
 
                         <ResponsiveNavLink :href="route('nurseRecords.index')"
@@ -281,14 +284,14 @@ const logout = () => {
                             Registros de Enfermería
                         </ResponsiveNavLink>
 
-                        <ResponsiveNavLink :href="route('medicalOrders.index')"
-                            :active="route().current('medicalOrders.index')">
-                            Órdenes Médicas
-                        </ResponsiveNavLink>
-
                         <ResponsiveNavLink :href="route('temperatureRecords.index')"
                             :active="route().current('temperatureRecords.index')">
                             Hojas de Temperatura
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink :href="route('medicationRecords.index')"
+                            :active="route().current('medicationRecords.index')">
+                            Ficha de Medicamentos
                         </ResponsiveNavLink>
 
                         <ResponsiveNavLink :href="route('patients.index')" :active="route().current('patients.index')">

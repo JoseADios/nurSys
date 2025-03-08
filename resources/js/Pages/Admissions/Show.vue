@@ -152,7 +152,7 @@
                                 </div>
 
                             </div>
-                            <div v-else>
+                            <div v-if="medicationRecord">
                                 <Link :href="route('medicationRecords.show',medicationRecord)" class="flex w-full items-center justify-center bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                 <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -160,10 +160,15 @@
                                 Ficha de Medicamento
                                 </Link>
                             </div>
-
-                        </div>
-
-                        <div class="flex flex-col space-y-2 items-center">
+                            <div v-else>
+                                <Link :href="route('medicationRecords.create')" class="flex w-full items-center justify-center bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Ficha de Medicamento
+                                </Link>
+                            </div>
+ <div class="flex flex-col space-y-2 items-center">
                             <Link :href="route('medicalOrders.index', { admission_id: admission.id })" class="flex w-full items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg p-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                             <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
@@ -177,6 +182,10 @@
                         </div>
                     </div>
                 </AccessGate>
+
+
+
+
 
                 <div class="flex justify-end space-x-4">
                     <div v-if="can.update">
@@ -213,7 +222,7 @@
                 </div>
             </div>
         </div>
-    </div>
+
 
     <!-- modal para eliminar -->
     <ConfirmationModal :show="admissionBeingDeleted != null" @close="admissionBeingDeleted = null">

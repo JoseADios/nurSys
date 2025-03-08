@@ -15,9 +15,28 @@
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
 
         <div class="flex">
-    <form @submit.prevent="submit" class="mb-2 flex-grow">
-        <input @input="submit()" class="rounded-lg " type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
-    </form>
+   <div class="relative mb-2">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
+                        viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
+                </div>
+
+                <input @input="submitFilters()"
+                    class="block w-full p-3 ps-10 pr-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
+
+                <button v-if="form.search" @click="form.search = ''; submitFilters()"
+                    class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
 
     <AccessGate :permission="['medicationRecords.delete']">
         <!-- Filtro para mostrar registros eliminados -->
@@ -101,7 +120,7 @@
 
             </tbody>
         </table>
-        <Pagination :pagination="medicationRecords" />
+        <Pagination :pagination="medicationRecords" :filters="form" />
     </div>
 
 
@@ -146,27 +165,29 @@ export default {
         }
     },
     methods: {
-        submit() {
-            if (this.timeout) {
-                clearTimeout(this.timeout);
-            }
-            this.timeout
-            this.$inertia.get(route('medicationRecords.index'), this.form, {
-                preserveState: true,
-            });
-        },
+        submitFilters() {
+    if (this.timeout) {
+        clearTimeout(this.timeout);
+    }
+    this.timeout = setTimeout(() => {
+        this.$inertia.get(route('medicationRecords.index'), this.form, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true
+        });
+    }, 300);
+},
+
         sort(field) {
             this.form.sortField = field;
             this.form.sortDirection = this.form.sortDirection === 'asc' ? 'desc' : 'asc';
-            this.submit();
+            this.submitFilters();
         },
         toggleShowDeleted() {
-            this.form.showDeleted = !this.form.showDeleted;
-            this.$inertia.get(route('medicationRecords.index', {
-                search: this.form.search,
-                showDeleted: this.form.showDeleted
-            }));
-        },
+    this.form.showDeleted = !this.form.showDeleted;
+    this.submitFilters();
+},
+
 
         MedicationRecordShow(id) {
             this.$inertia.get(route('medicationRecords.show', id));

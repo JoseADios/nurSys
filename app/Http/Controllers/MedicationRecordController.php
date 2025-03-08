@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Services\FirmService;
+use Illuminate\Database\Eloquent\Builder;
+
 class MedicationRecordController extends Controller
 {
 
@@ -52,7 +54,6 @@ class MedicationRecordController extends Controller
         if ($search) {
             $query->where(function (Builder $q) use ($search) {
                 $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('doctor_id LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('diagnosis LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('referrals LIKE ?', ['%' . $search . '%'])

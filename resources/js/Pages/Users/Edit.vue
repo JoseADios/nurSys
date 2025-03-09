@@ -119,10 +119,7 @@
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"></textarea>
                                 <InputError :message="form.errors.comment" class="mt-2" />
                             </div>
-
-
                         </div>
-
                     </div>
 
                     <div class="space-x-4 pt-4">

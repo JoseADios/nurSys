@@ -16,16 +16,16 @@
 
         <div class="container mx-auto px-4 py-6">
             <div v-for="floor in floorPlan" :key="floor.number" class="mb-8">
-                <h3 class="text-2xl font-bold text-white mb-4 text-center">Piso {{ floor.number }}</h3>
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center">Piso {{ floor.number }}</h3>
                 <div class="flex flex-wrap justify-center gap-6">
                     <div v-for="room in floor.rooms" :key="room.name"
-                        class="bg-gray-800 rounded-lg p-6 shadow-lg w-full max-w-md">
-                        <h4 class="text-xl font-semibold text-white mb-4 text-center">
+                        class="bg-gray-200 dark:bg-gray-800 rounded-lg p-6 shadow-lg w-full max-w-md">
+                        <h4 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 text-center">
                             Sala {{ room.name }}
                         </h4>
                         <div class="grid grid-cols-4 gap-4 justify-center">
                             <div v-for="bed in room.beds" :key="bed.id" class="">
-                                <div class=" w-20 h-32 rounded-lg transition-all duration-300 hover:scale-110 flex flex-col items-center"
+                                <div class="w-20 h-32 rounded-lg transition-all duration-300 hover:scale-110 flex flex-col items-center"
                                     :class="{
                                         'bg-orange-500': bed.admission,
                                         'bg-yellow-500': bed.status === 'cleaning',
@@ -36,13 +36,13 @@
 
                                     <!-- Header con número fijo -->
                                     <div
-                                        class="top-0 w-full h-6 bg-gray-700 rounded-t-lg flex items-center justify-center">
-                                        <span class="text-white text-xs">{{ bed.number }}</span>
+                                        class="top-0 w-full h-6 bg-gray-500 dark:bg-gray-700 rounded-t-lg flex items-center justify-center">
+                                        <span class="text-gray-100 dark:text-white text-xs">{{ bed.number }}</span>
                                     </div>
 
                                     <!-- Tooltip estilo elegante alternativo -->
                                     <div v-if="showTooltip === bed.id && bed.admission"
-                                        class="absolute z-50 w-72 text-sm bg-white rounded-md shadow-2xl dark:bg-gray-800 top-full left-1/2 -translate-x-1/2 mt-3 overflow-hidden border-0 transform origin-top scale-100 transition-all duration-200">
+                                        class="absolute z-50 w-72 text-sm bg-white dark:bg-gray-800 rounded-md shadow-2xl top-full left-1/2 -translate-x-1/2 mt-3 overflow-hidden border-0 transform origin-top scale-100 transition-all duration-200">
                                         <!-- Barra superior de color -->
                                         <div
                                             class="h-1.5 bg-gradient-to-r from-teal-400 to-emerald-500 dark:from-teal-600 dark:to-emerald-700">
@@ -146,8 +146,6 @@
                                         </div>
                                     </div>
 
-
-
                                     <!-- Icono de cama centrado -->
                                     <div class="flex-1 flex items-center justify-center mt-5">
                                         <svg viewBox="0 0 24 14" class="w-12 h-12 text-white">
@@ -162,7 +160,7 @@
                                         <div v-if="bed.admission" class="w-full">
                                             <Link
                                                 :href="route('admissions.show', { id: bed.admission.id, bedsRoute: true })"
-                                                class="w-full block text-center bg-gray-700 text-white py-1 rounded-md text-xs hover:bg-gray-600 transition-colors">
+                                                class="w-full block text-center bg-gray-700 dark:bg-gray-700 text-white py-1 rounded-md text-xs hover:bg-gray-600 transition-colors">
                                             Ver Ingreso
                                             </Link>
                                         </div>
@@ -175,7 +173,7 @@
                                             <AccessGate :role="['receptionist', 'admin']"
                                                 v-if="bed.status === 'available'">
                                                 <Link :href="route('admissions.create', { bed_id: bed.id })"
-                                                    class="text-center h-6 w-8 bg-gray-700 hover:bg-blue-600 text-white rounded-md text-xs transition-colors flex items-center justify-center">
+                                                    class="text-center h-6 w-8 bg-gray-700 dark:bg-gray-700 hover:bg-blue-600 text-white rounded-md text-xs transition-colors flex items-center justify-center">
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round" class="">
@@ -186,7 +184,7 @@
 
                                             <AccessGate :permission="['bed.update']">
                                                 <button @click="onBedClick(bed)"
-                                                    class="h-6 w-8 bg-gray-600 hover:bg-orange-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
+                                                    class="h-6 w-8 bg-gray-600 dark:bg-gray-600 hover:bg-orange-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                         stroke-linejoin="round" class="">

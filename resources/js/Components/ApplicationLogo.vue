@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import LogoNurSys from './LogoNurSys.vue';
+import LogoNurSys from './Icons/LogoNurSys.vue';
 
 </script>
 

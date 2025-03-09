@@ -1,6 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
-import LogoNurSys from './LogoNurSys.vue';
+import LogoNurSys from './Icons/LogoNurSys.vue';
 </script>
 
 <template>

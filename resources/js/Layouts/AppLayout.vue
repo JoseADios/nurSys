@@ -1,11 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Banner from '@/Components/Banner.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import FormatRole from '@/Components/FormatRole.vue';
@@ -21,6 +20,7 @@ import PatientIcon from '@/Components/Icons/PatientIcon.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
 import SidebarIcon from '@/Components/Icons/SidebarIcon.vue';
 import SidebarFilledIcon from '@/Components/Icons/SidebarFilledIcon.vue';
+import Tooltip from '@/Components/Tooltip.vue';
 
 defineProps({
     title: String,
@@ -31,7 +31,15 @@ const sidebarExpanded = ref(true);
 
 const toggleSidebar = () => {
     sidebarExpanded.value = !sidebarExpanded.value;
+    localStorage.setItem('sidebarExpanded', sidebarExpanded.value);
 };
+
+onMounted(() => {
+    const savedSidebarState = localStorage.getItem('sidebarExpanded');
+    if (savedSidebarState !== null) {
+        sidebarExpanded.value = savedSidebarState === 'true';
+    }
+});
 
 const switchToTeam = (team) => {
     router.put(route('current-team.update'), {
@@ -75,112 +83,130 @@ const logout = () => {
                 <!-- Navigation Links -->
                 <div class="flex-1 overflow-y-auto py-6 space-y-1">
                     <div class="px-3">
-                        <Link :href="route('dashboard')" :class="[
-                            route().current('dashboard') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
-                            'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
-                            { 'justify-center': !sidebarExpanded }
-                        ]">
-                        <DashboardIcon
-                            class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                        <span v-if="sidebarExpanded" class="truncate ml-3">Dashboard</span>
-                        </Link>
+                        <Tooltip class="w-full" text="Dashboard" position="right">
+                            <Link :href="route('dashboard')" :class="[
+                                route().current('dashboard') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
+                                'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
+                                { 'justify-center': !sidebarExpanded }
+                            ]">
+                            <DashboardIcon
+                                class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                            <span v-if="sidebarExpanded" class="truncate ml-3">Dashboard</span>
+                            </Link>
+                        </Tooltip>
                     </div>
 
                     <div class="px-3">
-                        <Link :href="route('beds.index')" :class="[
-                            route().current('beds.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
-                            'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
-                            { 'justify-center': !sidebarExpanded }
-                        ]">
-                        <BedIcon
-                            class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                        <span v-if="sidebarExpanded" class="truncate ml-3">Camas</span>
-                        </Link>
+                        <Tooltip class="w-full" text="Camas" position="right">
+                            <Link :href="route('beds.index')" :class="[
+                                route().current('beds.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
+                                'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
+                                { 'justify-center': !sidebarExpanded }
+                            ]">
+                            <BedIcon
+                                class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                            <span v-if="sidebarExpanded" class="truncate ml-3">Camas</span>
+                            </Link>
+                        </Tooltip>
                     </div>
 
                     <div class="px-3">
-                        <Link :href="route('admissions.index')" :class="[
-                            route().current('admissions.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
-                            'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
-                            { 'justify-center': !sidebarExpanded },
-                            { 'justify-center': !sidebarExpanded }
-                        ]">
-                        <AdmissionIcon
-                            class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                        <span v-if="sidebarExpanded" class="truncate ml-3">Ingresos</span>
-                        </Link>
+                        <Tooltip class="w-full" text="Ingresos" position="right">
+                            <Link :href="route('admissions.index')" :class="[
+                                route().current('admissions.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
+                                'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
+                                { 'justify-center': !sidebarExpanded }
+                            ]">
+                            <AdmissionIcon
+                                class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                            <span v-if="sidebarExpanded" class="truncate ml-3">Ingresos</span>
+                            </Link>
+                        </Tooltip>
                     </div>
 
                     <div class="px-3">
-                        <Link :href="route('medicalOrders.index')" :class="[
-                            route().current('medicalOrders.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
-                            'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
-                            { 'justify-center': !sidebarExpanded }
-                        ]">
-                        <MedicalOrderIcon
-                            class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                        <span v-if="sidebarExpanded" class="truncate ml-3">Órdenes Médicas</span>
-                        </Link>
+                        <Tooltip class="w-full" text="Órdenes Médicas" position="right">
+                            <Link :href="route('medicalOrders.index')" :class="[
+                                route().current('medicalOrders.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
+                                'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
+                                { 'justify-center': !sidebarExpanded }
+                            ]">
+                            <MedicalOrderIcon
+                                class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                            <span v-if="sidebarExpanded" class="truncate ml-3">Órdenes Médicas</span>
+                            </Link>
+                        </Tooltip>
                     </div>
 
                     <div class="px-3">
-                        <Link :href="route('nurseRecords.index')" :class="[
-                            route().current('nurseRecords.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
-                            'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
-                            { 'justify-center': !sidebarExpanded }
-                        ]">
-                        <NurseRecordIcon
-                            class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                        <span v-if="sidebarExpanded" class="truncate ml-3">Registros de Enfermería</span>
-                        </Link>
+                        <Tooltip class="w-full" text="Registros de Enfermería"
+                            position="right">
+                            <Link :href="route('nurseRecords.index')" :class="[
+                                route().current('nurseRecords.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
+                                'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
+                                { 'justify-center': !sidebarExpanded }
+                            ]">
+                            <NurseRecordIcon
+                                class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                            <span v-if="sidebarExpanded" class="truncate ml-3">Registros de Enfermería</span>
+                            </Link>
+                        </Tooltip>
                     </div>
 
                     <AccessGate :permission="['temperatureRecord.view']" class="px-3">
-                        <Link :href="route('temperatureRecords.index')" :class="[
-                            route().current('temperatureRecords.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
-                            'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
-                            { 'justify-center': !sidebarExpanded }
-                        ]">
-                        <TemperatureIcon
-                            class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                        <span v-if="sidebarExpanded" class="truncate ml-3">Hojas de Temperatura</span>
-                        </Link>
+                        <Tooltip class="w-full" text="Hojas de Temperatura" position="right">
+                            <Link :href="route('temperatureRecords.index')" :class="[
+                                route().current('temperatureRecords.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
+                                'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
+                                { 'justify-center': !sidebarExpanded }
+                            ]">
+                            <TemperatureIcon
+                                class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                            <span v-if="sidebarExpanded" class="truncate ml-3">Hojas de Temperatura</span>
+                            </Link>
+                        </Tooltip>
                     </AccessGate>
 
                     <div class="px-3">
-                        <Link :href="route('medicationRecords.index')" :class="[
-                            route().current('medicationRecords.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
-                            'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
-                            { 'justify-center': !sidebarExpanded }
-                        ]">
-                        <MedicationIcon
-                            class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                        <span v-if="sidebarExpanded" class="truncate ml-3">Ficha de Medicamentos</span>
-                        </Link>
+                        <Tooltip class="w-full" text="Ficha de Medicamentos" position="right">
+                            <Link :href="route('medicationRecords.index')" :class="[
+                                route().current('medicationRecords.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
+                                'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
+                                { 'justify-center': !sidebarExpanded }
+                            ]">
+                            <MedicationIcon
+                                class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                            <span v-if="sidebarExpanded" class="truncate ml-3">Ficha de Medicamentos</span>
+                            </Link>
+                        </Tooltip>
                     </div>
 
                     <div class="px-3">
-                        <Link :href="route('patients.index')" :class="[
-                            route().current('patients.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
-                            'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
-                            { 'justify-center': !sidebarExpanded }
-                        ]">
-                        <PatientIcon
-                            class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                        <span v-if="sidebarExpanded" class="truncate ml-3">Pacientes</span>
-                        </Link>
+                        <Tooltip class="w-full" text="Pacientes" position="right">
+                            <Link :href="route('patients.index')" :class="[
+                                route().current('patients.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
+                                'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
+                                { 'justify-center': !sidebarExpanded }
+                            ]">
+                            <PatientIcon
+                                class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                            <span v-if="sidebarExpanded" class="truncate ml-3">Pacientes</span>
+                            </Link>
+                        </Tooltip>
                     </div>
 
                     <AccessGate :permission="['user.view']" class="px-3">
-                        <Link :href="route('users.index')" :class="[
-                            route().current('users.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
-                            'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
-                            { 'justify-center': !sidebarExpanded }
-                        ]">
-                        <UserIcon
-                            class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
-                        <span v-if="sidebarExpanded" class="truncate ml-3">Usuarios</span>
-                        </Link>
+                        <Tooltip class="w-full" text="Usuarios" position="right">
+                            <Link :href="route('users.index')" :class="[
+                                route().current('users.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
+                                'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
+                                { 'justify-center': !sidebarExpanded }
+                            ]">
+                            <UserIcon
+                                class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                            <span v-if="sidebarExpanded" class="truncate ml-3">Usuarios</span>
+                            </Link>
+                        </Tooltip>
                     </AccessGate>
                 </div>
 

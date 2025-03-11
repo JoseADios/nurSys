@@ -8,23 +8,22 @@
 
         <div class="flex items-center justify-between">
             <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+                <div class="inline-flex items-center" v-if="form.admission_id">
+                    <Link :href="route('admissions.show', form.admission_id)"
+                        class="inline-flex items-center  hover:text-blue-600 dark:hover:text-white">
+                    <FormatId :id="form.admission_id" prefix="ING"></FormatId>
+                    </Link>
+                    <ChevronRightIcon class="size-5 text-gray-400 mx-1" />
+                </div>
                 <div class="ml-2 inline-flex items-center ">
                     Hojas de temperatura
                 </div>
             </div>
-        </div>
 
-        <!-- Navigation -->
-        <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-            <Link :href="route('admissions.show', admission_id)"
-                class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                    clip-rule="evenodd" />
-            </svg>
-            <span class="font-medium">Volver</span>
-            </Link>
+            <button v-if="form.admission_id" @click="form.admission_id = null; submitFilters()"
+                class="mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
+                Remover filtro de <FormatId :id="form.admission_id" prefix="ING" class="ml-1"></FormatId>
+            </button>
         </div>
 
         <div
@@ -32,11 +31,7 @@
 
             <div class="relative mb-2">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
-                        viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
+                    <SearchIcon class="w-4 h-4 text-gray-500 dark:text-gray-400" />
                 </div>
 
                 <input @input="submitFilters()"
@@ -45,11 +40,7 @@
 
                 <button v-if="form.search" @click="form.search = ''; submitFilters()"
                     class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <XIcon class="size-4"/>
                 </button>
             </div>
 
@@ -82,14 +73,8 @@
                             'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
                         }">
                         {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                        <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path v-if="form.showDeleted" fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                                clip-rule="evenodd" />
-                            <path v-else fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                        <CircleXIcon v-else class="ml-1 h-5 w-5" />
                     </button>
                 </AccessGate>
             </div>
@@ -197,6 +182,12 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import moment from "moment/moment";
 import 'moment/locale/es';
+import BackIcon from '@/Components/Icons/BackIcon.vue';
+import SearchIcon from '@/Components/Icons/SearchIcon.vue';
+import XIcon from '@/Components/Icons/XIcon.vue';
+import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
+import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
+import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
 
 export default {
     props: {
@@ -209,7 +200,14 @@ export default {
         Link,
         Pagination,
         AccessGate,
-        FormatId
+        FormatId,
+        BackIcon,
+        SearchIcon,
+        XIcon,
+        CirclePlusIcon,
+        CircleXIcon,
+        FormatId,
+        ChevronRightIcon
     },
     data() {
         return {

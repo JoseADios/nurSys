@@ -50,14 +50,15 @@ class NurseRecordDetailController extends Controller implements HasMiddleware
         $nurseRecord = NurseRecord::findOrFail($request->nurse_record_id);
         $this->authorize('create', [NurseRecordDetail::class, $nurseRecord]);
 
-        NurseRecordDetail::create([
-            'nurse_record_id' => $request->nurse_record_id,
-            'medication' =>  $request->medication,
-            'comment' => $request->comment,
-            'created_at' => now()
+        $validated = $request->validate([
+            'nurse_record_id' => 'integer',
+            'medication' => 'string|max:255',
+            'comment' => 'string'
         ]);
 
-        return back()->with('success', 'Detalle agregado exitosamente');
+        NurseRecordDetail::create($validated);
+
+        return back()->with('flash.toast', 'Detalle agregado exitosamente');
     }
 
     /**
@@ -84,10 +85,18 @@ class NurseRecordDetailController extends Controller implements HasMiddleware
      */
     public function update(Request $request, NurseRecordDetail $nurseRecordDetail)
     {
+        $showDeleted = $request->boolean('showDeleted');
         $this->authorize('update', $nurseRecordDetail);
 
-        $nurseRecordDetail->update($request->all());
-        return Redirect::route('nurseRecords.edit', $nurseRecordDetail->nurse_record_id);
+        $validated = $request->validate([
+            'nurse_record_id' => 'integer',
+            'medication' => 'string|max:255',
+            'comment' => 'string',
+            'active' => 'boolean'
+        ]);
+
+        $nurseRecordDetail->update($validated);
+        return Redirect::route('nurseRecords.show', ['nurseRecord' => $nurseRecordDetail->nurse_record_id, 'showDeleted' => $showDeleted])->with('flash.toast', 'Evento actualizado exitosamente');
     }
 
     /**
@@ -96,6 +105,6 @@ class NurseRecordDetailController extends Controller implements HasMiddleware
     public function destroy(NurseRecordDetail $nurseRecordDetail)
     {
         $nurseRecordDetail->update(['active' => 0]);
-        return Redirect::route('nurseRecords.edit', $nurseRecordDetail->nurse_record_id);
+        return Redirect::route('nurseRecords.show', $nurseRecordDetail->nurse_record_id)->with('flash.toast', 'Evento eliminado exitosamente');
     }
 }

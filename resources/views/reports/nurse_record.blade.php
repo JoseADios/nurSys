@@ -253,7 +253,7 @@
                     @endforeach
 
                     <!-- Agregar filas vacías si hay pocos registros para mantener la estructura -->
-                    @if (count($details) < 10)
+                    @if (count($details) < 5)
                         @for ($i = 0; $i < 10 - count($details); $i++)
                             <tr>
                                 <td>&nbsp;</td>

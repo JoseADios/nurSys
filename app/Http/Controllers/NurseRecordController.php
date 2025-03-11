@@ -151,6 +151,7 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function show(NurseRecord $nurseRecord, Request $request)
     {
+        $showDeleted = $request->boolean('showDeleted');
         $admission_id = $request->query('admission_id');
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
@@ -159,8 +160,17 @@ class NurseRecordController extends Controller implements HasMiddleware
         $response = Gate::inspect('update', $nurseRecord);
         $canUpdateRecord = $response->allowed();
 
-        $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')
-            ->where('active', true)->get();
+        $queryDetails = NurseRecordDetail::query()
+            ->where('nurse_record_id', operator: $nurseRecord->id)
+            ->orderBy('created_at', 'desc');
+
+        if ($showDeleted) {
+            $queryDetails->where('active', false);
+        } else {
+            $queryDetails->where('active', true);
+        }
+
+        $details = $queryDetails->get();
 
         return Inertia::render('NurseRecords/Show', [
             'nurseRecord' => $nurseRecord,
@@ -170,6 +180,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             'admission_id' => $admission_id,
             'canUpdateRecord' => $canUpdateRecord,
             'details' => $details,
+            'showDeleted' => $showDeleted,
             'errors' => !empty($errors) ? $errors : [],
         ]);
     }
@@ -206,6 +217,8 @@ class NurseRecordController extends Controller implements HasMiddleware
         }
 
         $nurseRecord->update($validated);
+
+        return back()->with('flash.toast', 'Registro actualizado exitosamente');
     }
 
     /**

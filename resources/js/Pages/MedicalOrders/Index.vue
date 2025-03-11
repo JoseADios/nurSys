@@ -25,7 +25,7 @@
                     </svg>
                 </div>
                 <div class="ml-2 inline-flex items-center ">
-                    Fichas de Medicamentos
+                    Ordenes Medicas
                 </div>
             </div>
 
@@ -38,7 +38,7 @@
         </div>
 
         <div
-            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
+            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-2 lg:mx-10">
 
             <div class="relative ">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -76,7 +76,7 @@
                     <option value="365">Último año</option>
                 </select>
         <!-- Filtro para mostrar registros eliminados -->
-        <button @click="toggleShowDeleted" class="flex mb-2 items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-4" :class="{
+        <button @click="toggleShowDeleted" class="flex  items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-4" :class="{
             'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
             'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
         }">

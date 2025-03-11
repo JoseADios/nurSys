@@ -107,16 +107,13 @@
                             </p>
                         </div>
 
-
+                        <div v-if="$page.props.errors.message" class="alert alert-danger">
+      {{ $page.props.errors.message }}
+    </div>
                     </div>
                 </div>
 
-                <!-- Errors -->
-                <div v-if="errors.length > 0" class="bg-red-50 border-l-4 border-red-500 p-4 mx-8 my-4">
-                    <div class="text-red-700" v-for="error in errors" :key="error">
-                        {{ error }}
-                    </div>
-                </div>
+
 
                 <!-- Form -->
                 <!-- Formulario para agregar nuevo detalle -->
@@ -160,8 +157,27 @@
 
                 <!-- Nurse Record Details -->
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
+                    <div class="flex items-center justify-between">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro</h3>
-
+                    <div v-if="medicalOrder.active">
+            <button @click="toggleShowDeleted"
+                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-auto"
+                :class="{
+                    'bg-red-500 hover:bg-red-600 text-white': showDeleted,
+                    'bg-gray-100 hover:bg-gray-100 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-600 dark:text-gray-200': !showDeleted
+                }">
+                {{ showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path v-if="showDeleted" fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
+                        clip-rule="evenodd" />
+                    <path v-else fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                        clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+        </div>
                     <div v-for="detail in details" :key="detail.id" :class="[
                         'rounded-lg p-4 shadow-md flex justify-between items-center transition-colors',
                         detail.suspended_at
@@ -374,6 +390,7 @@ export default {
         admissions: Array,
         details: Array,
         regimes: Array,
+        filters: Object,
     },
     data() {
         return {
@@ -399,10 +416,20 @@ export default {
             formSignature: {
                 doctor_sign: this.medicalOrder.doctor_sign,
                 signature: true,
-            }
+            },
+            showDeleted: this.filters.show_deleted,
         }
     },
     methods: {
+        toggleShowDeleted() {
+    this.showDeleted = !this.showDeleted;
+    this.$inertia.get(route('medicalOrders.edit', { medicalOrder: this.medicalOrder }), {
+        showDeleted: this.showDeleted
+    }, {
+        preserveState: true,
+        preserveScroll: true
+    });
+},
         toggleEditAdmission() {
             this.isVisibleAdm = !this.isVisibleAdm;
         },
@@ -432,7 +459,7 @@ export default {
 
                 this.$inertia.get(route('medicationRecordDetails.create', { medicationRecordId: this.medicalOrder.admission.medication_record.id }))
             }else{
-                alert('create record')
+
                 this.$inertia.get(route('medicationRecords.create', { admission: this.medicalOrder.admission.id }))
             }
 
@@ -441,7 +468,9 @@ export default {
 
 
         submitUpdateDetail() {
-       this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail)
+       this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
+                preserveScroll: true,   preserveState: true
+            } ),
             this.isVisibleAdm = false
             this.isVisibleDetail = false
         },
@@ -452,7 +481,7 @@ export default {
             }
             this.signatureError = false;
             this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formSignature, {
-                preserveScroll: true
+                preserveScroll: true,   preserveState: true
             });
             this.isVisibleEditSign = false
         },
@@ -462,14 +491,16 @@ export default {
             this.isVisibleDetail = true;
         },
         deleteRecord() {
-            this.recordBeingDeleted = false
+            this.recordBeingDeleted = null;
             this.$inertia.delete(route('medicalOrders.destroy', this.medicalOrder.id));
         },
         deleteDetail() {
             this.detailBeingDeleted = false
             this.isVisibleAdm = false
             this.isVisibleDetail = false
-            this.$inertia.delete(route('medicalOrderDetails.destroy', this.selectedDetail.id));
+            this.$inertia.delete(route('medicalOrderDetails.destroy', this.selectedDetail.id),{
+                preserveScroll: true,   preserveState: true
+            } );
         },
         restoreDetail() {
             this.selectedDetail.active = true
@@ -482,3 +513,12 @@ export default {
     }
 }
 </script>
+<style scoped>
+.alert {
+  color: white;
+  background: red;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 10;
+}
+</style>

@@ -216,7 +216,7 @@
                     No hay registros disponibles.
                 </div>
             </table>
-            <Pagination :pagination="nurseRecords" />
+            <Pagination :pagination="nurseRecords" :filters="form"  />
         </div>
 
     </AppLayout>

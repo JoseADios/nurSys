@@ -37,7 +37,7 @@ class NurseRecordController extends Controller implements HasMiddleware
     {
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
-        $admissionId = $request->input('admission_id');
+        $admissionId = $request->integer('admission_id');
         $days = $request->integer('days');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');

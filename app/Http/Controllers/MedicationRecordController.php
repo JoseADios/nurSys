@@ -41,7 +41,7 @@ class MedicationRecordController extends Controller
         $search = $request->input('search');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
-
+        $days = $request->integer('days');
 
         $query = MedicationRecord::query()->select('medication_records.*')
         ->join('admissions', 'medication_records.admission_id', '=', 'admissions.id')
@@ -66,6 +66,9 @@ class MedicationRecordController extends Controller
         } else {
             $query->latest('medication_records.updated_at')
                 ->latest('medication_records.created_at');
+        }
+        if ($days) {
+            $query->where('medication_records.created_at', '>=', now()->subDays($days));
         }
 
 

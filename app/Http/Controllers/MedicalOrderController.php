@@ -26,6 +26,7 @@ class MedicalOrderController extends Controller
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
   $showDeleted = $request->boolean('showDeleted');
+  $days = $request->integer('days');
 
         $query = MedicalOrder::with('admission.patient', 'admission.bed', 'doctor')
         ->select([
@@ -45,6 +46,10 @@ class MedicalOrderController extends Controller
                         ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%']);
 
                 });
+            }
+
+            if ($days) {
+                $query->where('medical_orders.created_at', '>=', now()->subDays($days));
             }
 
             if ($sortField) {

@@ -37,7 +37,7 @@ class NurseRecordController extends Controller implements HasMiddleware
     {
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
-        $admissionId = $request->input('admission_id');
+        $admissionId = $request->integer('admission_id');
         $days = $request->integer('days');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
@@ -152,7 +152,7 @@ class NurseRecordController extends Controller implements HasMiddleware
     public function show(NurseRecord $nurseRecord, Request $request)
     {
         $showDeleted = $request->boolean('showDeleted');
-        $admission_id = $request->query('admission_id');
+        $admission_id = $request->integer('admission_id');
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;

@@ -7,27 +7,28 @@
         </template>
 
         <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-
             <div v-if="admission_id" class="inline-flex items-center">
                 <Link :href="route('admissions.show', admission_id)"
                     class="inline-flex items-center hover:text-blue-600  dark:hover:text-white">
                 <FormatId :id="admission_id" prefix="ING"></FormatId>
                 </Link>
-                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none"
-                    viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="m1 9 4-4-4-4" />
-                </svg>
+                <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
             </div>
 
-            <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
-                class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
-            Registros de enfermería
-            </Link>
-            <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m1 9 4-4-4-4" />
-            </svg>
+            <div v-if="admission_id">
+                <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
+                    class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+                Registros de enfermería
+                </Link>
+            </div>
+
+            <div v-if="!admission_id">
+                <Link :href="route('nurseRecords.index')"
+                    class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+                Registros de enfermería
+                </Link>
+            </div>
+            <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
             <div class="ml-2 inline-flex items-center">
                 <FormatId :id="nurseRecord.id" prefix="ENF"></FormatId>
             </div>
@@ -40,22 +41,14 @@
                     <div v-if="admission_id">
                         <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
                             class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <BackIcon class="size-5" />
                         <span class="font-medium">Volver</span>
                         </Link>
                     </div>
                     <div v-else>
                         <Link :href="route('nurseRecords.index')"
                             class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <BackIcon class="size-5" />
                         <span class="font-medium">Volver</span>
                         </Link>
                     </div>
@@ -95,7 +88,9 @@
                                 </Link>
                             </div>
                             <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
-                                <button @click="showEditAdmission = true" class="text-blue-500 flex"><EditIcon class="size-5" /></button>
+                                <button @click="showEditAdmission = true" class="text-blue-500 flex">
+                                    <EditIcon class="size-5" />
+                                </button>
                             </AccessGate>
                         </div>
 
@@ -133,7 +128,9 @@
                                 </p>
                             </div>
                             <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
-                                <button @click="showEditNurse = true" class="text-blue-500 flex"><EditIcon class="size-5" /></button>
+                                <button @click="showEditNurse = true" class="text-blue-500 flex">
+                                    <EditIcon class="size-5" />
+                                </button>
                             </AccessGate>
                         </div>
 
@@ -167,7 +164,7 @@
                                     <div>
                                         <label for="medication"
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Medicamento
+                                            Medicación
                                         </label>
                                         <input maxlength="255" type="text" id="medication"
                                             v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
@@ -178,7 +175,7 @@
                                     <div>
                                         <label for="comment"
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Comentario
+                                            Observaciones
                                         </label>
                                         <input type="text" id="comment" v-model="formDetail.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
                                         focus:outline-none focus:ring-2 focus:ring-blue-500
@@ -217,14 +214,8 @@
                                 'bg-gray-400 hover:bg-gray-500 text-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200': !showDeletedLocal
                             }">
                             {{ showDeletedLocal ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                            <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path v-if="showDeletedLocal" fill-rule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                                    clip-rule="evenodd" />
-                                <path v-else fill-rule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                                    clip-rule="evenodd" />
-                            </svg>
+                            <CirclePlusIcon v-if="showDeletedLocal" class="ml-1 h-5 w-5" />
+                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
                         </button>
                     </div>
 
@@ -427,12 +418,16 @@ import TrashIcon from '@/Components/Icons/TrashIcon.vue';
 import EditIcon from '@/Components/Icons/EditIcon.vue';
 import ReportIcon from '@/Components/Icons/ReportIcon.vue';
 import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
+import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
+import BackIcon from '@/Components/Icons/BackIcon.vue';
+import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
+import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 
 
 export default {
     props: {
         nurseRecord: Object,
-        admission_id: String,
+        admission_id: Number,
         errors: {
             type: Array,
             default: () => []
@@ -460,7 +455,11 @@ export default {
         TrashIcon,
         EditIcon,
         ReportIcon,
-        RestoreIcon
+        RestoreIcon,
+        ChevronRightIcon,
+        BackIcon,
+        CirclePlusIcon,
+        CircleXIcon
     },
     data() {
         return {
@@ -534,7 +533,9 @@ export default {
         toggleShowDeleted() {
             this.showDeletedLocal = !this.showDeletedLocal;
             this.$inertia.get(route('nurseRecords.show', this.nurseRecord.id),
-                { showDeleted: this.showDeletedLocal }, {
+                { showDeleted: this.showDeletedLocal,
+                    admission_id: this.admission_id !== 0 ? this.admission_id : null
+                 }, {
                 preserveScroll: true
             });
         },

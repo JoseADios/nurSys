@@ -59,22 +59,29 @@
                     <span class="font-medium">Volver</span>
                     </Link>
                     </div>
-                    <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
-                        <button v-if="nurseRecord.active" @click="recordBeingDeleted = true"
-                            class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                            <svg class="h-5 w-5" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <span class="font-medium">Eliminar</span>
-                        </button>
-                        <button v-else @click="restoreRecord"
-                            class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
-                            <span class="font-medium">Restaurar</span>
-                        </button>
-                    </AccessGate>
+                    <div class="flex items-center">
+
+                        <button v-if="nurseRecord.active" @click="downloadRecordReport"
+                            class="inline-flex mr-8 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
+                            📄 Crear Reporte </button>
+
+                        <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
+                            <button v-if="nurseRecord.active" @click="recordBeingDeleted = true"
+                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <span class="font-medium">Eliminar</span>
+                            </button>
+                            <button v-else @click="restoreRecord"
+                                class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                                <span class="font-medium">Restaurar</span>
+                            </button>
+                        </AccessGate>
+                    </div>
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -502,6 +509,9 @@ export default {
         formatDate(date) {
             return moment(date).format('DD MMMM YYYY HH:mm');
         },
+        async downloadRecordReport() {
+            window.open(route('reports.nurseRecord', { id: this.nurseRecord.id }), '_blank');
+        }
     }
 }
 </script>

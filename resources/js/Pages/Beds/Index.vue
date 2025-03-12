@@ -6,10 +6,41 @@
             </h2>
         </template>
 
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between mb-4">
             <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-                <div class="ml-2 inline-flex items-center ">
+                <div class="ml-2 inline-flex items-center">
+                    <BedIcon class="w-5 h-5 mr-2 text-gray-600 dark:text-gray-400" />
                     Camas
+                </div>
+            </div>
+
+            <!-- Botón para mostrar/ocultar leyenda en móviles -->
+            <button @click="showLegend = !showLegend"
+                class="md:hidden mr-4 p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                <InformationCircleIcon class="w-5 h-5" />
+            </button>
+        </div>
+
+        <!-- Leyenda de colores - Visible siempre en desktop, condicional en móvil -->
+        <div :class="{'hidden': !showLegend && isMobile, 'block': showLegend || !isMobile}"
+            class="mx-4 mb-4 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estado de camas:</h4>
+            <div class="flex flex-wrap gap-x-4 gap-y-2">
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-emerald-400 dark:bg-emerald-500 mr-1.5"></div>
+                    <span class="text-xs text-gray-600 dark:text-gray-400">Disponible</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-orange-400 dark:bg-orange-500 mr-1.5"></div>
+                    <span class="text-xs text-gray-600 dark:text-gray-400">Ocupada</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-yellow-400 dark:bg-yellow-500 mr-1.5"></div>
+                    <span class="text-xs text-gray-600 dark:text-gray-400">Limpieza</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-red-500 dark:bg-red-600 mr-1.5"></div>
+                    <span class="text-xs text-gray-600 dark:text-gray-400">Fuera de servicio</span>
                 </div>
             </div>
         </div>
@@ -20,109 +51,100 @@
                 </h3>
                 <div class="flex flex-wrap justify-center gap-6">
                     <div v-for="room in floor.rooms" :key="room.name"
-                        class="bg-gray-200 dark:bg-gray-800 rounded-lg p-6 shadow-lg w-full max-w-md">
+                        class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg w-full max-w-md border border-gray-200 dark:border-gray-700">
                         <h4 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 text-center">
                             Sala {{ room.name }}
                         </h4>
-                        <div class="grid grid-cols-4 gap-4 justify-center">
+                        <!-- Ajuste de grid para mejor visualización en dispositivos móviles -->
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 justify-center">
                             <div v-for="bed in room.beds" :key="bed.id" class="">
-                                <div class="w-20 h-32 rounded-lg transition-all duration-300 hover:scale-110 flex flex-col items-center"
+                                <div class="w-full max-w-[80px] mx-auto h-32 rounded-lg transition-all duration-300 hover:scale-105 flex flex-col items-center shadow-md"
                                     :class="{
-                                        'bg-orange-500': bed.admission,
-                                        'bg-yellow-500': bed.status === 'cleaning',
-                                        'bg-red-600': bed.status === 'out_of_service',
-                                        'bg-green-500': bed.status === 'available'
+                                        'bg-orange-400 dark:bg-orange-500': bed.admission,
+                                        'bg-yellow-400 dark:bg-yellow-500': bed.status === 'cleaning',
+                                        'bg-red-500 dark:bg-red-600': bed.status === 'out_of_service',
+                                        'bg-emerald-400 dark:bg-emerald-500': bed.status === 'available'
                                     }" @mouseenter="showTooltip = bed.admission ? bed.id : null"
                                     @mouseleave="showTooltip = null">
 
                                     <!-- Header con número fijo -->
                                     <div
-                                        class="top-0 w-full h-6 bg-gray-500 dark:bg-gray-700 rounded-t-lg flex items-center justify-center">
-                                        <span class="text-gray-100 dark:text-white text-xs">{{ bed.number }}</span>
+                                        class="top-0 w-full h-6 bg-gray-600 dark:bg-gray-700 rounded-t-lg flex items-center justify-center">
+                                        <span class="text-white text-xs font-medium">{{ bed.number }}</span>
                                     </div>
 
                                     <!-- Tooltip estilo elegante alternativo -->
                                     <div v-if="showTooltip === bed.id && bed.admission"
-                                        class="absolute z-50 w-72 text-sm bg-white dark:bg-gray-800 rounded-md shadow-2xl top-full left-1/2 -translate-x-1/2 mt-3 overflow-hidden border-0 transform origin-top scale-100 transition-all duration-200">
+                                        class="absolute z-50 w-72 text-sm bg-white dark:bg-gray-800 rounded-md shadow-2xl top-full left-1/2 -translate-x-1/2 mt-3 overflow-hidden border border-gray-200 dark:border-gray-700 transform origin-top scale-100 transition-all duration-200">
                                         <!-- Barra superior de color -->
-                                        <div
-                                            class="h-1.5 bg-gradient-to-r from-teal-400 to-emerald-500 dark:from-teal-600 dark:to-emerald-700">
+                                        <div class="h-1.5 bg-gradient-to-r from-blue-400 to-emerald-400 dark:from-blue-500 dark:to-emerald-500">
                                         </div>
 
                                         <!-- Encabezado con diseño minimalista -->
-                                        <div
-                                            class="px-5 py-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                                        <div class="px-5 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                                             <h3 class="font-bold text-gray-800 dark:text-gray-200">
                                                 <FormatId :id="bed.admission.id" prefix="ING"></FormatId>
                                             </h3>
-                                            <div
-                                                class="px-2 py-0.5 bg-teal-50 dark:bg-teal-900/30 rounded-full text-xs text-teal-600 dark:text-teal-400 font-medium">
-                                                {{ daysHospitalized(bed.admission.created_at) }}</div>
+                                            <div class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                                                {{ daysHospitalized(bed.admission.created_at) }}
+                                            </div>
                                         </div>
 
                                         <!-- Contenido con nueva distribución -->
                                         <div class="px-5 py-4">
                                             <div class="grid grid-cols-1 gap-3">
                                                 <div class="flex items-center">
-                                                    <div
-                                                        class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
-                                                        <UserIcon class="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 mr-3">
+                                                        <UserIcon class="h-4 w-4 text-gray-600 dark:text-gray-400" />
                                                     </div>
                                                     <div>
                                                         <p class="text-xs text-gray-500 dark:text-gray-400">Paciente</p>
-                                                        <p class="font-medium text-gray-900 dark:text-white">{{
-                                                            bed.admission.patient.first_name }} {{
-                                                                bed.admission.patient.first_surname }}</p>
+                                                        <p class="font-medium text-gray-900 dark:text-white">
+                                                            {{ bed.admission.patient.first_name }} {{ bed.admission.patient.first_surname }}
+                                                        </p>
                                                     </div>
                                                 </div>
 
                                                 <div class="flex items-center">
-                                                    <div
-                                                        class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
-                                                        <StethoscopeIcon class="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 mr-3">
+                                                        <StethoscopeIcon class="h-4 w-4 text-gray-600 dark:text-gray-400" />
                                                     </div>
                                                     <div>
                                                         <p class="text-xs text-gray-500 dark:text-gray-400">Doctor</p>
-                                                        <p class="font-medium text-gray-900 dark:text-white">{{
-                                                            bed.admission.doctor.name }} {{
-                                                                bed.admission.doctor.last_name }}
+                                                        <p class="font-medium text-gray-900 dark:text-white">
+                                                            {{ bed.admission.doctor.name }} {{ bed.admission.doctor.last_name }}
                                                         </p>
                                                     </div>
                                                 </div>
 
                                                 <div class="flex items-center">
-                                                    <div
-                                                        class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
-                                                        <DateIcon class="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 mr-3">
+                                                        <DateIcon class="h-4 w-4 text-gray-600 dark:text-gray-400" />
                                                     </div>
                                                     <div>
-                                                        <p class="text-xs text-gray-500 dark:text-gray-400">Fecha
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">Fecha</p>
+                                                        <p class="font-medium text-gray-900 dark:text-white">
+                                                            {{ formatDate(bed.admission.created_at) }}
                                                         </p>
-                                                        <p class="font-medium text-gray-900 dark:text-white">{{
-                                                            formatDate(bed.admission.created_at) }}</p>
                                                     </div>
                                                 </div>
 
                                                 <div class="flex items-center">
-                                                    <div
-                                                        class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
-                                                        <ClipBoardIcon
-                                                            class="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 mr-3">
+                                                        <ClipBoardIcon class="h-4 w-4 text-gray-600 dark:text-gray-400" />
                                                     </div>
                                                     <div>
-                                                        <p class="text-xs text-gray-500 dark:text-gray-400">
-                                                            Diagnóstico</p>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">Diagnóstico</p>
                                                         <p class="font-medium text-gray-900 dark:text-white truncate">
-                                                            {{
-                                                                bed.admission.admission_dx }}</p>
+                                                            {{ bed.admission.admission_dx }}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- Flecha en forma de triángulo elegante -->
-                                        <div
-                                            class="absolute left-1/2 -translate-x-1/2 -top-2.5 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-white dark:border-b-gray-800 filter drop-shadow-sm">
+                                        <div class="absolute left-1/2 -translate-x-1/2 -top-2.5 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-white dark:border-b-gray-800 filter drop-shadow-sm">
                                         </div>
                                     </div>
 
@@ -236,7 +258,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import moment from "moment/moment";
 import 'moment/locale/es';
 import 'moment/locale/es';
@@ -252,6 +274,7 @@ import ClipBoardIcon from '@/Components/Icons/ClipBoardIcon.vue';
 import Bed2Icon from '@/Components/Icons/Bed2Icon.vue';
 import BroomIcon from '@/Components/Icons/BroomIcon.vue';
 import BanIcon from '@/Components/Icons/BanIcon.vue';
+import InformationCircleIcon from '@/Components/Icons/InformationCircleIcon.vue';
 
 export default {
     components: {
@@ -271,16 +294,22 @@ export default {
         ClipBoardIcon,
         PlusIcon,
         EditIcon,
-        BanIcon
+        BanIcon,
+        InformationCircleIcon
     },
     props: {
         beds: Array,
     },
     data() {
         return {
-            showEditModal: ref(null),
+            showEditModal: null,
             selectedBed: null,
             showTooltip: null,
+            showLegend: false,
+            isMobile: window.innerWidth < 768,
+            form: {
+                status: '',
+            }
         }
     },
     computed: {
@@ -334,6 +363,11 @@ export default {
             var dated = moment(date);
             return dated.fromNow();
         }
+    },
+    mounted() {
+        window.addEventListener('resize', () => {
+            this.isMobile = window.innerWidth < 768;
+        });
     }
 }
 </script>

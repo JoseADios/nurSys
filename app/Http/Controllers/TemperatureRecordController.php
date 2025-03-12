@@ -174,14 +174,16 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         // ultimo detalle de temperatura
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-            ->orderBy('created_at', 'asc')
+            ->orderBy('updated_at', 'desc')
             ->first();
 
         // verificar si puede actualizar detalles
-        $responseUpdateDetail = Gate::inspect('update', [TemperatureDetail::class, $lastTemperature]);
+        if ($lastTemperature !== null) {
+            $responseUpdateDetail = Gate::inspect('update', [TemperatureDetail::class, $lastTemperature]);
 
-        if (!$responseUpdateDetail->allowed()) {
-            $lastTemperature = null;
+            if (!$responseUpdateDetail->allowed()) {
+                $lastTemperature = null;
+            }
         }
 
         if ($lastTemperature !== null) {

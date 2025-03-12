@@ -88,7 +88,8 @@
 <script>
 import debounce from 'lodash/debounce';
 import axios from 'axios';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import FormatRole from './FormatRole.vue';
 
 export default {
@@ -145,10 +146,10 @@ export default {
                             ...this.filters,
                             // Añadir soporte para múltiples roles
                             roles: this.fixedRole || this.filters.role ?
-                                (this.fixedRole || [this.filters.role]) :
-                                null
+                            (this.fixedRole || [this.filters.role]) :
+                            null
                         },
-                        user_id: this.selectedUser
+                        user_id: this.selectedUserId
                     }
                 });
                 this.users = response.data;

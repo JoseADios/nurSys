@@ -6,10 +6,38 @@
             </h2>
         </template>
 
+        <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+            <div v-if="admission_id" class="inline-flex items-center">
+                <Link :href="route('admissions.show', admission_id)"
+                    class="inline-flex items-center hover:text-blue-600  dark:hover:text-white">
+                <FormatId :id="admission_id" prefix="ING"></FormatId>
+                </Link>
+                <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
+            </div>
+
+             <div v-if="admission_id">
+                 <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
+                     class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+                 Registros de enfermería
+                 </Link>
+             </div>
+             <div v-if="!admission_id">
+                 <Link :href="route('nurseRecords.index')"
+                     class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+                 Registros de enfermería
+                 </Link>
+             </div>
+            <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
+            <div class="ml-2 inline-flex items-center">
+                Crear
+            </div>
+        </div>
+
         <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
             <form @submit.prevent="submit" class="max-w-3xl mx-auto">
 
-                <AdmissionSelector @update:admission="form.admission_id = $event" :selected-admission-id="admission_id" />
+                <AdmissionSelector @update:admission="form.admission_id = $event"
+                    :selected-admission-id="admission_id" />
 
                 <!-- Mostrar mensaje de error si no se selecciona ninguna admisión -->
                 <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
@@ -21,8 +49,7 @@
                     Cancelar
                     </Link>
                     <button type="submit"
-                        class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
-                        >
+                        class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition">
                         Aceptar
                     </button>
                 </div>
@@ -33,6 +60,8 @@
 
 <script>
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
+import FormatId from '@/Components/FormatId.vue';
+import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
@@ -46,7 +75,9 @@ export default {
     components: {
         AppLayout,
         Link,
-        AdmissionSelector
+        AdmissionSelector,
+        ChevronRightIcon,
+        FormatId
     },
     data() {
         return {

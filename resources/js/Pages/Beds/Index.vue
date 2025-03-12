@@ -14,23 +14,19 @@
             </div>
         </div>
 
-        <!-- mostrar toasts -->
-        <div v-if="$page.props.flash.success" class="">
-            <Toast ref="toast" :message="$page.props.flash.success" type="success" />
-        </div>
-
         <div class="container mx-auto px-4 py-6">
             <div v-for="floor in floorPlan" :key="floor.number" class="mb-8">
-                <h3 class="text-2xl font-bold text-white mb-4 text-center">Piso {{ floor.number }}</h3>
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center">Piso {{ floor.number }}
+                </h3>
                 <div class="flex flex-wrap justify-center gap-6">
                     <div v-for="room in floor.rooms" :key="room.name"
-                        class="bg-gray-800 rounded-lg p-6 shadow-lg w-full max-w-md">
-                        <h4 class="text-xl font-semibold text-white mb-4 text-center">
+                        class="bg-gray-200 dark:bg-gray-800 rounded-lg p-6 shadow-lg w-full max-w-md">
+                        <h4 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 text-center">
                             Sala {{ room.name }}
                         </h4>
                         <div class="grid grid-cols-4 gap-4 justify-center">
                             <div v-for="bed in room.beds" :key="bed.id" class="">
-                                <div class=" w-20 h-32 rounded-lg transition-all duration-300 hover:scale-110 flex flex-col items-center"
+                                <div class="w-20 h-32 rounded-lg transition-all duration-300 hover:scale-110 flex flex-col items-center"
                                     :class="{
                                         'bg-orange-500': bed.admission,
                                         'bg-yellow-500': bed.status === 'cleaning',
@@ -41,13 +37,13 @@
 
                                     <!-- Header con número fijo -->
                                     <div
-                                        class="top-0 w-full h-6 bg-gray-700 rounded-t-lg flex items-center justify-center">
-                                        <span class="text-white text-xs">{{ bed.number }}</span>
+                                        class="top-0 w-full h-6 bg-gray-500 dark:bg-gray-700 rounded-t-lg flex items-center justify-center">
+                                        <span class="text-gray-100 dark:text-white text-xs">{{ bed.number }}</span>
                                     </div>
 
                                     <!-- Tooltip estilo elegante alternativo -->
                                     <div v-if="showTooltip === bed.id && bed.admission"
-                                        class="absolute z-50 w-72 text-sm bg-white rounded-md shadow-2xl dark:bg-gray-800 top-full left-1/2 -translate-x-1/2 mt-3 overflow-hidden border-0 transform origin-top scale-100 transition-all duration-200">
+                                        class="absolute z-50 w-72 text-sm bg-white dark:bg-gray-800 rounded-md shadow-2xl top-full left-1/2 -translate-x-1/2 mt-3 overflow-hidden border-0 transform origin-top scale-100 transition-all duration-200">
                                         <!-- Barra superior de color -->
                                         <div
                                             class="h-1.5 bg-gradient-to-r from-teal-400 to-emerald-500 dark:from-teal-600 dark:to-emerald-700">
@@ -70,13 +66,7 @@
                                                 <div class="flex items-center">
                                                     <div
                                                         class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="h-4 w-4 text-gray-500 dark:text-gray-400" fill="none"
-                                                            viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                        </svg>
+                                                        <UserIcon class="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                                     </div>
                                                     <div>
                                                         <p class="text-xs text-gray-500 dark:text-gray-400">Paciente</p>
@@ -89,12 +79,7 @@
                                                 <div class="flex items-center">
                                                     <div
                                                         class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
-                                                        <svg class="h-4 w-4 text-gray-500 dark:text-gray-400"
-                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                                                        </svg>
+                                                        <StethoscopeIcon class="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                                     </div>
                                                     <div>
                                                         <p class="text-xs text-gray-500 dark:text-gray-400">Doctor</p>
@@ -108,13 +93,7 @@
                                                 <div class="flex items-center">
                                                     <div
                                                         class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="h-4 w-4 text-gray-500 dark:text-gray-400" fill="none"
-                                                            viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                        </svg>
+                                                        <DateIcon class="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                                     </div>
                                                     <div>
                                                         <p class="text-xs text-gray-500 dark:text-gray-400">Fecha
@@ -127,12 +106,8 @@
                                                 <div class="flex items-center">
                                                     <div
                                                         class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 mr-3">
-                                                        <svg class="h-4 w-4 text-gray-500 dark:text-gray-400"
-                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                        </svg>
+                                                        <ClipBoardIcon
+                                                            class="h-4 w-4 text-gray-500 dark:text-gray-400" />
                                                     </div>
                                                     <div>
                                                         <p class="text-xs text-gray-500 dark:text-gray-400">
@@ -151,14 +126,12 @@
                                         </div>
                                     </div>
 
-
-
                                     <!-- Icono de cama centrado -->
                                     <div class="flex-1 flex items-center justify-center mt-5">
-                                        <svg viewBox="0 0 24 14" class="w-12 h-12 text-white">
-                                            <path fill="currentColor"
-                                                d="M3 11h18v3H3zm1.5-3h15c.83 0 1.5.67 1.5 1.5V11H3V9.5C3 8.67 3.67 8 4.5 8zm2-2h10c.83 0 1.5.67 1.5 1.5V8H5v-.5C5 6.67 5.67 6 6.5 6z" />
-                                        </svg>
+                                        <BedIcon v-if="bed.admission" class="w-10 h-10 text-white" />
+                                        <BroomIcon v-else-if="bed.status === 'cleaning'" class="w-10 h-10 text-white" />
+                                        <BanIcon v-else-if="bed.status === 'out_of_service'" class="w-10 h-10 text-white" />
+                                        <Bed2Icon v-else class="w-8 h-8 text-white" />
                                     </div>
 
                                     <!-- Contenedor de botones fijo -->
@@ -167,7 +140,7 @@
                                         <div v-if="bed.admission" class="w-full">
                                             <Link
                                                 :href="route('admissions.show', { id: bed.admission.id, bedsRoute: true })"
-                                                class="w-full block text-center bg-gray-700 text-white py-1 rounded-md text-xs hover:bg-gray-600 transition-colors">
+                                                class="w-full block text-center bg-gray-700 dark:bg-gray-700 text-white py-1 rounded-md text-xs hover:bg-gray-600 transition-colors">
                                             Ver Ingreso
                                             </Link>
                                         </div>
@@ -180,25 +153,15 @@
                                             <AccessGate :role="['receptionist', 'admin']"
                                                 v-if="bed.status === 'available'">
                                                 <Link :href="route('admissions.create', { bed_id: bed.id })"
-                                                    class="text-center h-6 w-8 bg-gray-700 hover:bg-blue-600 text-white rounded-md text-xs transition-colors flex items-center justify-center">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" class="">
-                                                    <path d="M12 5v14M5 12h14" />
-                                                </svg>
+                                                    class="text-center h-6 w-8 bg-gray-700 dark:bg-gray-700 hover:bg-blue-600 text-white rounded-md text-xs transition-colors flex items-center justify-center">
+                                                <PlusIcon width="14" height="14" />
                                                 </Link>
                                             </AccessGate>
 
                                             <AccessGate :permission="['bed.update']">
                                                 <button @click="onBedClick(bed)"
-                                                    class="h-6 w-8 bg-gray-600 hover:bg-orange-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round" class="">
-                                                        <path
-                                                            d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                                        <path d="M13.5 6.5l4 4" />
-                                                    </svg>
+                                                    class="h-6 w-8 bg-gray-600 dark:bg-gray-600 hover:bg-orange-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
+                                                    <EditIcon width="14" height="14" />
                                                 </button>
                                             </AccessGate>
                                         </div>
@@ -271,12 +234,24 @@ import DialogModal from '@/Components/DialogModal.vue';
 import FormatId from '@/Components/FormatId.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import Toast from '@/Components/Toast.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import moment from 'moment';
+import moment from "moment/moment";
 import 'moment/locale/es';
+import 'moment/locale/es';
+
+// Importar los nuevos componentes de iconos
+import BedIcon from '@/Components/Icons/BedIcon.vue';
+import DateIcon from '@/Components/Icons/DateIcon.vue';
+import PlusIcon from '@/Components/Icons/PlusIcon.vue';
+import EditIcon from '@/Components/Icons/EditIcon.vue';
+import StethoscopeIcon from '@/Components/Icons/StethoscopeIcon.vue';
+import UserIcon from '@/Components/Icons/UserIcon.vue';
+import ClipBoardIcon from '@/Components/Icons/ClipBoardIcon.vue';
+import Bed2Icon from '@/Components/Icons/Bed2Icon.vue';
+import BroomIcon from '@/Components/Icons/BroomIcon.vue';
+import BanIcon from '@/Components/Icons/BanIcon.vue';
 
 export default {
     components: {
@@ -285,9 +260,18 @@ export default {
         DialogModal,
         PrimaryButton,
         SecondaryButton,
-        Toast,
         AccessGate,
-        FormatId
+        FormatId,
+        BedIcon,
+        Bed2Icon,
+        BroomIcon,
+        UserIcon,
+        StethoscopeIcon,
+        DateIcon,
+        ClipBoardIcon,
+        PlusIcon,
+        EditIcon,
+        BanIcon
     },
     props: {
         beds: Array,

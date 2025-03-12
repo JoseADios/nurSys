@@ -163,7 +163,7 @@ class PatientController extends Controller implements HasMiddleware
 
         Patient::create($validated);
 
-        return Redirect::route('patients.index');
+        return Redirect::route('patients.index')->with('flash.toast', 'Registro creado exitosamente');
     }
 
     /**
@@ -241,7 +241,7 @@ class PatientController extends Controller implements HasMiddleware
 
         $patient->update($validated);
 
-        return back()->with('success', 'Registro actualizado exitosamente');
+        return back()->with('flash.toast', 'Registro actualizado exitosamente');
     }
 
     /**
@@ -261,7 +261,7 @@ class PatientController extends Controller implements HasMiddleware
             }
         }
 
-        return Redirect::route('patients.index');
+        return Redirect::route('patients.index')->with('flash.toast', 'Registro eliminado exitosamente');
     }
 
       public function filterPatients(Request $request)

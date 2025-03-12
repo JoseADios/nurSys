@@ -18,13 +18,7 @@
                 <div class="p-6">
                     <div class="flex flex-col md:flex-row items-center justify-between">
                         <div class="flex items-center space-x-4 mb-4 md:mb-0">
-                            <div class="h-20 w-20 rounded-full bg-white/20 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                            </div>
+                            <img :src="user.profile_photo_url" alt="Foto de Perfil" class="w-20 h-20 rounded-full">
                             <div>
                                 <h2 class="text-2xl font-bold text-white">{{ user.name }} {{ user.last_name }}</h2>
                                 <div class="flex items-center space-x-2">
@@ -47,27 +41,22 @@
                         <div class="flex space-x-3">
                             <Link :href="route('users.index')"
                                 class="inline-flex items-center px-4 py-2 bg-gray-500/90 text-gray-200 text-sm rounded-lg hover:bg-gray-400/50 transition-all duration-200">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                            </svg>
+                            <BackIcon class="w-4 h-4 mr-2" />
                             Volver
                             </Link>
                             <Link :href="route('users.edit', user.id)"
                                 class="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all duration-200 flex items-center space-x-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
+                            <EditIcon class="h-4 w-4" />
                             <span>Editar</span>
                             </Link>
                             <button v-if="user.active === '1'" @click="userBeingDeleted = true"
-                                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200">
+                                class="px-4 flex items-center py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200">
+                                <TrashIcon class="w-4 h-4 mr-2" />
                                 Deshabilitar
                             </button>
                             <button v-else @click="restoreUser"
                                 class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200">
+                                <RestoreIcon class="w-4 h-4 mr-2" />
                                 Habilitar
                             </button>
                         </div>
@@ -129,10 +118,14 @@
             <!-- Modal de Confirmación -->
             <ConfirmationModal :show="userBeingDeleted" @close="userBeingDeleted = false">
                 <template #title>
-                    Deshabilitar Usuario
+                    <div class="flex items-center text-red-500">
+                        <TrashIcon class="w-6 h-6 mr-2" />
+                        Deshabilitar Usuario
+                    </div>
                 </template>
                 <template #content>
-                    ¿Estás seguro de que deseas deshabilitar este usuario?
+                    ¿Estás seguro de que deseas deshabilitar este usuario? <br>
+                    El usuario no podrá acceder al sistema.
                 </template>
                 <template #footer>
                     <SecondaryButton @click="userBeingDeleted = false">
@@ -155,9 +148,13 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import InfoItem from '@/Components/InfoItem.vue';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import FormatRole from '@/Components/FormatRole.vue';
-
+import BackIcon from '@/Components/Icons/BackIcon.vue';
+import EditIcon from '@/Components/Icons/EditIcon.vue';
+import TrashIcon from '@/Components/Icons/TrashIcon.vue';
+import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
 
 export default {
     components: {
@@ -167,7 +164,11 @@ export default {
         DangerButton,
         SecondaryButton,
         InfoItem,
-        FormatRole
+        FormatRole,
+        BackIcon,
+        EditIcon,
+        TrashIcon,
+        RestoreIcon
     },
     props: {
         user: {
@@ -182,6 +183,9 @@ export default {
             userBeingDeleted,
         };
     },
+    created() {
+        moment.locale('es');
+    },
     methods: {
         deleteUser() {
             this.userBeingDeleted = false;
@@ -191,7 +195,7 @@ export default {
             this.$inertia.put(route('users.update', this.user.id), { active: true });
         },
         formatDate(date) {
-            return moment(date).format('DD MMM YYYY')
+            return moment(date).format('DD MMMM YYYY');
         }
     },
 

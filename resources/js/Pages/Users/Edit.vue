@@ -119,10 +119,7 @@
                                     class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"></textarea>
                                 <InputError :message="form.errors.comment" class="mt-2" />
                             </div>
-
-
                         </div>
-
                     </div>
 
                     <div class="space-x-4 pt-4">
@@ -164,7 +161,7 @@
                                             </button>
                                             <button type="submit"
                                                 class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
-                                                Cambiar contraseña
+                                                Actualizar
                                             </button>
                                         </div>
 
@@ -201,11 +198,12 @@
         <!-- Modal para confirmar eliminacion -->
         <ConfirmationModal :show="userBeingDeleted != null" @close="userBeingDeleted = null">
             <template #title>
-                Deshabilitar Ingreso
+                Deshabilitar Usuario
             </template>
 
             <template #content>
-                ¿Estás seguro de que deseas deshabilitar este ingreso?
+                ¿Estás seguro de que deseas deshabilitar este usuario? <br>
+                El usuario no podrá acceder al sistema.
             </template>
 
             <template #footer>
@@ -291,14 +289,19 @@ export default {
             });
         },
         deleteUser() {
-            this.userBeingDeleted = false
+            this.userBeingDeleted = null;
             this.$inertia.delete(route('users.destroy', this.user.id));
         },
         restoreUser() {
             this.$inertia.put(route('users.update', this.user.id), { active: true });
         },
         changePassword() {
-            this.$inertia.put(route('users.update', this.user.id), this.formPassword);
+            this.$inertia.put(route('users.update', this.user.id), this.formPassword, {
+                onSuccess: () => {
+                    this.formPassword.password = null;
+                    this.formPassword.password_confirmation = null;
+                },
+            });
         }
     },
     setup() {

@@ -23,11 +23,7 @@
                     @input="applyFilters" />
                 <button v-if="form.search" @click="form.search = ''; applyFilters()" type="button"
                     class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                            clip-rule="evenodd" />
-                    </svg>
+                    <XIcon class="h-5 w-5" />
                 </button>
             </div>
 
@@ -44,11 +40,7 @@
 
                 <button v-if="form.role" @click="form.role = ''; applyFilters()" type="button"
                     class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                            clip-rule="evenodd" />
-                    </svg>
+                    <XIcon class="h-5 w-5" />
                 </button>
             </div>
 
@@ -60,11 +52,7 @@
 
                 <button v-if="form.specialty" @click="form.specialty = ''; applyFilters()" type="button"
                     class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                            clip-rule="evenodd" />
-                    </svg>
+                    <XIcon class="h-5 w-5" />
                 </button>
             </div>
 
@@ -76,11 +64,7 @@
 
                 <button v-if="form.position" @click="form.position = ''; applyFilters()" type="button"
                     class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                            clip-rule="evenodd" />
-                    </svg>
+                    <XIcon class="h-5 w-5" />
                 </button>
             </div>
 
@@ -92,11 +76,7 @@
 
                 <button v-if="form.email" @click="form.email = ''; applyFilters()" type="button"
                     class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                            clip-rule="evenodd" />
-                    </svg>
+                    <XIcon class="h-5 w-5" />
                 </button>
             </div>
 
@@ -107,22 +87,18 @@
                     'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.show_deleted
                 }">
                 {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path v-if="form.show_deleted" fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                        clip-rule="evenodd" />
-                    <path v-else fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                        clip-rule="evenodd" />
-                </svg>
+                <span v-if="form.show_deleted">
+                    <CircleXIcon class="ml-1 h-5 w-5" />
+                </span>
+                <span v-else>
+                    <CirclePlusIcon class="ml-1 h-5 w-5" />
+                </span>
             </button>
 
             <AccessGate :permission="['user.create']">
                     <Link :href="route('users.create')"
                         class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
-                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
+                    <PlusIcon class="h-5 w-5 mr-2" />
                     Nuevo usuario
                     </Link>
                 </AccessGate>
@@ -170,9 +146,10 @@
                         <td class="px-6 py-4">
                             {{ user.id }}
                         </td>
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
+                            <img :src="user.profile_photo_url" alt="Profile Photo" class="w-10 h-10 rounded-full mr-4">
                             {{ user.name }} {{ user.last_name }}
-                        </th>
+                        </td>
                         <td class="px-6 py-4">
                             <div v-if="user.roles[0]">
                                 <FormatRole :role="user.roles[0].name"/>
@@ -212,6 +189,10 @@
 <script>
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import FormatRole from '@/Components/FormatRole.vue';
+import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
+import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
+import PlusIcon from '@/Components/Icons/PlusIcon.vue';
+import XIcon from '@/Components/Icons/XIcon.vue';
 import Pagination from '@/Components/Pagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router } from '@inertiajs/vue3';
@@ -226,7 +207,11 @@ export default {
         Link,
         Pagination,
         FormatRole,
-        AccessGate
+        AccessGate,
+        XIcon,
+        PlusIcon,
+        CirclePlusIcon,
+        CircleXIcon
     },
     data() {
         return {

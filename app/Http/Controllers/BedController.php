@@ -82,7 +82,7 @@ class BedController extends Controller implements HasMiddleware
 
         $bed->update($validated);
 
-        return back()->with('success', 'El registro fue actualizado con éxito.');
+        return back()->with('flash.toast', 'El registro fue actualizado con éxito.');
     }
 
     /**

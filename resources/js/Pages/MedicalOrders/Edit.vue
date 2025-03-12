@@ -12,15 +12,20 @@
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('medicalOrders.index')"
-                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="font-medium">Volver</span>
-                    </Link>
+                    <div
+                        class="flex items-center space-x-2  text-gray-700 dark:text-gray-400 ">
+                        <Link :href="route('medicalOrders.index')"
+    class="inline-flex  items-center hover:text-blue-600 dark:hover:text-white">
+Ordenes Medicas
+</Link>
+<svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true"                 fill="none" viewBox="0 0 6 10">
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="m1 9 4-4-4-4" />
+</svg>
+<div class="ml-2 inline-flex items-center">
+    <FormatId :id="medicalOrder.id" prefix="ORD"></FormatId>
+</div>
+                    </div>
                     <button v-if="medicalOrder.active" @click="recordBeingDeleted = true"
                         class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -372,6 +377,7 @@ import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue'
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import FormatId from '@/Components/FormatId.vue';
 
 
 export default {
@@ -383,6 +389,7 @@ export default {
         ConfirmationModal,
         DangerButton,
         SecondaryButton,
+        FormatId
     },
     props: {
         medicalOrder: Object,
@@ -391,6 +398,7 @@ export default {
         details: Array,
         regimes: Array,
         filters: Object,
+
     },
     data() {
         return {

@@ -12,10 +12,10 @@
         <div class="flex items-center justify-between ">
             <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
             <div class=" inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-                <div class="inline-flex items-center" v-if="admission_id">
-                    <Link :href="route('admissions.show', admission_id)"
+                <div class="inline-flex items-center" v-if="medicationRecords.admission_id">
+                    <Link :href="route('admissions.show', medicationRecords.admission_id)"
                         class="inline-flex items-center  hover:text-blue-600 dark:hover:text-white">
-                    <FormatId :id="admission_id" prefix="ING"></FormatId>
+                    <FormatId :id="medicationRecords.admission_id" prefix="ING"></FormatId>
                     </Link>
                     <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
@@ -28,10 +28,10 @@
                 </div>
             </div>
 
-            <Link :href="route('nurseRecords.index')" v-if="admission_id"
+            <Link :href="route('nurseRecords.index')" v-if="medicationRecords.admission_id"
                 class="mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
             Remover filtro de
-            <FormatId :id="admission_id" prefix="ING"></FormatId>,
+            <FormatId :id="medicationRecords.admission_id" prefix="ING"></FormatId>,
             </Link>
         </div>
         </div>
@@ -196,7 +196,8 @@ export default {
         Link,
 
         Pagination,
-        AccessGate
+        AccessGate,
+        FormatId
 
     },
     data() {

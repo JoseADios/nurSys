@@ -80,7 +80,9 @@ class BedController extends Controller implements HasMiddleware
             'status' => 'required|string|in:available,cleaning,out_of_service',
         ]);
 
-        $bed->update($validated);
+        $bed->update([
+            'status' => $validated['status']
+        ]);
 
         return back()->with('flash.toast', 'El registro fue actualizado con éxito.');
     }

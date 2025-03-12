@@ -21,6 +21,8 @@ import UserIcon from '@/Components/Icons/UserIcon.vue';
 import SidebarIcon from '@/Components/Icons/SidebarIcon.vue';
 import SidebarFilledIcon from '@/Components/Icons/SidebarFilledIcon.vue';
 import Tooltip from '@/Components/Tooltip.vue';
+import SunIcon from '@/Components/Icons/SunIcon.vue';
+import MoonIcon from '@/Components/Icons/MoonIcon.vue';
 
 defineProps({
     title: String,
@@ -28,6 +30,13 @@ defineProps({
 
 const showingNavigationDropdown = ref(false);
 const sidebarExpanded = ref(true);
+const isDarkMode = ref(false);
+
+const toggleDarkMode = () => {
+    isDarkMode.value = !isDarkMode.value;
+    localStorage.setItem('darkMode', isDarkMode.value);
+    document.documentElement.classList.toggle('dark');
+};
 
 const toggleSidebar = () => {
     sidebarExpanded.value = !sidebarExpanded.value;
@@ -38,6 +47,18 @@ onMounted(() => {
     const savedSidebarState = localStorage.getItem('sidebarExpanded');
     if (savedSidebarState !== null) {
         sidebarExpanded.value = savedSidebarState === 'true';
+    }
+
+    // Inicializar el modo oscuro
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode !== null) {
+        isDarkMode.value = savedDarkMode === 'true';
+        if (isDarkMode.value) {
+            document.documentElement.classList.add('dark');
+        }
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        isDarkMode.value = true;
+        document.documentElement.classList.add('dark');
     }
 });
 
@@ -413,8 +434,18 @@ const logout = () => {
                     </div>
 
                     <!-- Perfil en la esquina superior derecha cuando el sidebar está expandido -->
-                    <div class="hidden sm:flex sm:items-center sm:justify-end p-4">
-                        <Dropdown align="right" width="48">
+                    <div class="hidden sm:flex sm:items-center sm:ms-6">
+                        <!-- Botón de modo oscuro -->
+                        <button
+                            @click="toggleDarkMode"
+                            class="p-1.5 mr-8 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full focus:outline-none"
+                        >
+                            <SunIcon v-if="isDarkMode" class="h-5 w-5" />
+                            <MoonIcon v-else class="h-5 w-5" />
+                        </button>
+
+                        <!-- Teams Dropdown -->
+                        <Dropdown align="right" width="48" class="mr-4">
                             <template #trigger>
                                 <button class="flex items-center text-sm">
                                     <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 mr-3">

@@ -1,7 +1,21 @@
 <template>
 <AppLayout>
     <div class="container mx-auto px-4 py-8">
+      <div class="inline-flex items-center ml-12 mb-2">
+        <Link :href="route('admissions.index')"
+    class="inline-flex ml-12  items-center hover:text-blue-600  text-gray-400 dark:hover:text-white">
+Ingresos
+</Link>
+<svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true"                 fill="none" viewBox="0 0 6 10">
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="m1 9 4-4-4-4" />
+</svg>
+<div class="ml-2 inline-flex items-center text-gray-400">
+    <FormatId :id="admission.id" prefix="ORD"></FormatId>
+</div>
+      </div>
         <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-xl overflow-hidden">
+
             <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
                 <div class="flex justify-between items-center">
                     <h2 class="text-2xl font-bold text-white">Detalles del Ingreso</h2>
@@ -289,6 +303,7 @@ import DangerButton from '@/Components/DangerButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import FormatId from '@/Components/FormatId.vue';
 import {
     Link
 } from '@inertiajs/vue3';
@@ -315,6 +330,7 @@ export default {
         DangerButton,
         SecondaryButton,
         PrimaryButton,
+        FormatId
     },
     data() {
         return {

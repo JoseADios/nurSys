@@ -11,7 +11,7 @@ import FormatRole from '@/Components/FormatRole.vue';
 import Toast from '@/Components/Toast.vue';
 import BedIcon from '@/Components/Icons/BedIcon.vue';
 import DashboardIcon from '@/Components/Icons/DashboardIcon.vue';
-import AdmissionIcon from '@/Components/Icons/AdmissionIcon.vue';
+import AdmissionIcon from '@/Components/Icons/ClipBoardIcon.vue';
 import MedicalOrderIcon from '@/Components/Icons/MedicalOrderIcon.vue';
 import NurseRecordIcon from '@/Components/Icons/NurseRecordIcon.vue';
 import TemperatureIcon from '@/Components/Icons/TemperatureIcon.vue';

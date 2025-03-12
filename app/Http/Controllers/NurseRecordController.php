@@ -118,7 +118,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             $response = Gate::inspect('create', [NurseRecord::class, $admission]);
 
             if (!$response->allowed()) {
-                return back()->with('error', 'No se pueden crear registros en un ingreso dado de alta');
+                return back()->with('flash.toast', 'No se pueden crear registros en un ingreso dado de alta');
             }
         }
 
@@ -143,7 +143,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             'created_at' => now(),
         ]);
 
-        return Redirect::route('nurseRecords.show', $nurseRecord->id);
+        return Redirect::route('nurseRecords.show', $nurseRecord->id)->with('flash.toast', 'Registro de enfermería creado');
     }
 
     /**
@@ -151,7 +151,8 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function show(NurseRecord $nurseRecord, Request $request)
     {
-        $admission_id = $request->query('admission_id');
+        $showDeleted = $request->boolean('showDeleted');
+        $admission_id = $request->integer('admission_id');
         $patient = $nurseRecord->admission->patient;
         $nurse = $nurseRecord->nurse;
         $bed = $nurseRecord->admission->bed;
@@ -159,8 +160,17 @@ class NurseRecordController extends Controller implements HasMiddleware
         $response = Gate::inspect('update', $nurseRecord);
         $canUpdateRecord = $response->allowed();
 
-        $details = NurseRecordDetail::where('nurse_record_id', operator: $nurseRecord->id)->orderBy('created_at', 'desc')
-            ->where('active', true)->get();
+        $queryDetails = NurseRecordDetail::query()
+            ->where('nurse_record_id', operator: $nurseRecord->id)
+            ->orderBy('created_at', 'desc');
+
+        if ($showDeleted) {
+            $queryDetails->where('active', false);
+        } else {
+            $queryDetails->where('active', true);
+        }
+
+        $details = $queryDetails->get();
 
         return Inertia::render('NurseRecords/Show', [
             'nurseRecord' => $nurseRecord,
@@ -170,6 +180,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             'admission_id' => $admission_id,
             'canUpdateRecord' => $canUpdateRecord,
             'details' => $details,
+            'showDeleted' => $showDeleted,
             'errors' => !empty($errors) ? $errors : [],
         ]);
     }
@@ -193,8 +204,9 @@ class NurseRecordController extends Controller implements HasMiddleware
         $firmService = new FirmService;
 
         $validated = $request->validate([
-            'admission_id' => 'numeric',
-            'nurse_sign' => 'string',
+            'admission_id' => 'numeric|nullable',
+            'nurse_id' => 'numeric|nullable',
+            'nurse_sign' => 'string|nullable',
             'active' => 'boolean',
         ]);
 
@@ -205,6 +217,8 @@ class NurseRecordController extends Controller implements HasMiddleware
         }
 
         $nurseRecord->update($validated);
+
+        return back()->with('flash.toast', 'Registro actualizado exitosamente');
     }
 
     /**
@@ -215,6 +229,6 @@ class NurseRecordController extends Controller implements HasMiddleware
         $this->authorize('delete', $nurseRecord);
 
         $nurseRecord->update(['active' => 0]);
-        return Redirect::route('nurseRecords.index');
+        return Redirect::route('nurseRecords.index')->with('flash.toast', 'Registro de enfermería eliminado');
     }
 }

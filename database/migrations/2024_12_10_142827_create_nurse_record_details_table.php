@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('nurse_record_id')
                 ->constrained()->onDelete('restrict');
             $table->string('medication');
-            $table->string('comment')->nullable();
+            $table->text('comment')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

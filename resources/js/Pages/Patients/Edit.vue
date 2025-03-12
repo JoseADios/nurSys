@@ -11,11 +11,7 @@
                 <!-- Personal Information Section -->
                 <div class="p-6 border-b border-gray-700">
                     <h3 class="text-lg font-semibold text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
+                        <UserIcon class="h-5 w-5 mr-2 text-purple-600" />
                         Información Personal
                     </h3>
 
@@ -60,11 +56,7 @@
                 <!-- Identification Section -->
                 <div class="p-6 border-b border-gray-700">
                     <h3 class="text-lg font-semibold text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                        </svg>
+                        <Id2Icon class="h-5 w-5 mr-2 text-purple-600" />
                         Identificación y Nacionalidad
                     </h3>
 
@@ -95,11 +87,7 @@
                 <!-- Contact Information -->
                 <div class="p-6 border-b border-gray-700">
                     <h3 class="text-lg font-semibold text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
+                        <MailIcon class="h-5 w-5 mr-2 text-purple-600" />
                         Información de Contacto
                     </h3>
 
@@ -127,11 +115,7 @@
                 <!-- Additional Information -->
                 <div class="p-6 ">
                     <h3 class="text-lg font-semibold text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
+                        <FileInfoIcon class="h-5 w-5 mr-2 text-purple-600" />
                         Información Adicional
                     </h3>
 
@@ -243,6 +227,10 @@ import { useGoBack } from '@/composables/useGoBack';
 import CedulaInput from '@/Components/CedulaInput.vue';
 import PhoneInput from '@/Components/PhoneInput.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import UserIcon from '@/Components/Icons/UserIcon.vue';
+import Id2Icon from '@/Components/Icons/Id2Icon.vue';
+import MailIcon from '@/Components/Icons/MailIcon.vue';
+import FileInfoIcon from '@/Components/Icons/FileInfoIcon.vue';
 
 export default {
     props: {
@@ -261,7 +249,11 @@ export default {
         InputError,
         CedulaInput,
         PhoneInput,
-        AccessGate
+        AccessGate,
+        UserIcon,
+        Id2Icon,
+        MailIcon,
+        FileInfoIcon
     },
     data() {
         return {

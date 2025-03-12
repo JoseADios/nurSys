@@ -1,97 +1,54 @@
+<script setup>
+import { ref, watchEffect } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+const show = ref(false);
+const style = ref('success');
+const message = ref('');
+
+watchEffect(() => {
+    if (page.props.jetstream.flash?.toast) {
+        style.value = page.props.jetstream.flash?.toastStyle || 'success';
+        message.value = page.props.jetstream.flash?.toast || '';
+        show.value = true;
+
+        // Hide the toast after 3 seconds
+        setTimeout(() => {
+            show.value = false;
+        }, 3000);
+    }
+});
+</script>
+
 <template>
-    <div v-show="visible"
-        class="fixed bottom-5 right-5 flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800 transition-opacity duration-300 ease-in-out"
-        :class="toastClasses">
-        <!-- Ícono dinámico -->
-        <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg" :class="iconClasses">
-            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15.147 15.085a7.159 7.159 0 0 1-6.189 3.307A6.713 6.713 0 0 1 3.1 15.444c-2.679-4.513.287-8.737.888-9.548A4.373 4.373 0 0 0 5 1.608c1.287.953 6.445 3.218 5.537 10.5 1.5-1.122 2.706-3.01 2.853-6.14 1.433 1.049 3.993 5.395 1.757 9.117Z" />
-            </svg>
-            <span class="sr-only">Fire icon</span>
-        </div>
+    <div v-if="show" class="fixed bottom-5 right-5 z-50">
+        <div :class="{ 'bg-indigo-500': style == 'success', 'bg-red-700': style == 'danger' }" class="rounded-lg shadow-lg p-4 flex items-center">
+            <span class="flex p-2 rounded-lg" :class="{ 'bg-indigo-600': style == 'success', 'bg-red-600': style == 'danger' }">
+                <svg v-if="style == 'success'" class="size-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
 
-        <!-- Mensaje -->
-        <div class="ms-3 text-sm font-normal">
-            {{ message }}
-        </div>
+                <svg v-if="style == 'danger'" class="size-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+            </span>
 
-        <!-- Botón de cierre -->
-        <button type="button"
-            class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
-            @click="closeToast" aria-label="Close">
-            <span class="sr-only">Close</span>
-            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-            </svg>
-        </button>
+            <p class="ms-3 font-medium text-sm text-white truncate">
+                {{ message }}
+            </p>
+
+            <button
+                type="button"
+                class="ms-3 flex p-2 rounded-md focus:outline-none transition"
+                :class="{ 'hover:bg-indigo-600 focus:bg-indigo-600': style == 'success', 'hover:bg-red-600 focus:bg-red-600': style == 'danger' }"
+                aria-label="Dismiss"
+                @click.prevent="show = false"
+            >
+                <svg class="size-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
     </div>
 </template>
-
-<script>
-export default {
-    props: {
-        message: {
-            type: String,
-            required: true,
-        },
-        type: {
-            type: String,
-            default: 'info', // Puede ser 'success', 'error', 'warning', 'info'
-        },
-        duration: {
-            type: Number,
-            default: 3000,
-        },
-    },
-    data() {
-        return {
-            visible: false,
-        };
-    },
-    computed: {
-        toastClasses() {
-            return {
-                'bg-green-100': this.type === 'success',
-                'bg-red-100': this.type === 'error',
-                'bg-yellow-100': this.type === 'warning',
-                'bg-blue-100': this.type === 'info',
-            };
-        },
-        iconClasses() {
-            return {
-                'text-green-500': this.type === 'success',
-                'text-red-500': this.type === 'error',
-                'text-yellow-500': this.type === 'warning',
-                'text-blue-500': this.type === 'info',
-            };
-        },
-    },
-    watch: {
-        message(newValue) {
-            if (newValue) {
-                this.show();
-            }
-        }
-    },
-    methods: {
-        show() {
-            this.visible = true;
-            if (this.duration > 0) {
-                setTimeout(() => {
-                    this.closeToast();
-                }, this.duration);
-            }
-        },
-        closeToast() {
-            this.visible = false;
-        },
-    },
-    mounted() {
-        if (this.message) {
-            this.show();
-        }
-    }
-};
-</script>

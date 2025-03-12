@@ -13,24 +13,21 @@
                     class="inline-flex items-center hover:text-blue-600  dark:hover:text-white">
                 <FormatId :id="admission_id" prefix="ING"></FormatId>
                 </Link>
-                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none"
-                    viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="m1 9 4-4-4-4" />
-                </svg>
+                <ChevronRightIcon class="w-3 h-3 text-gray-400 mx-1" />
             </div>
-
+            <Link v-if="!admission_id" :href="route('temperatureRecords.index')"
+                class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+            Hojas de temperatura
+            </Link>
+            <Link v-if="admission_id" :href="route('temperatureRecords.index', { admission_id: admission_id })"
+                class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+            Hojas de temperatura
+            </Link>
+            <ChevronRightIcon class="w-3 h-3 text-gray-400 mx-1" />
             <div class="ml-2 inline-flex items-center">
-                Hoja de temperatura
-                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="m1 9 4-4-4-4" />
-                </svg>
                 <FormatId :id="temperatureRecord.id" prefix="ENF"></FormatId>
             </div>
         </div>
-
-        <!-- <div class="text-white">Datos {{ temperatureRecord.id }}</div> -->
 
         <div class="container mx-auto px-4 py-8">
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
@@ -38,36 +35,24 @@
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <Link v-if="admission_id" :href="route('admissions.show', admission_id)"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
+                    <BackIcon class="size-5" />
                     <span class="font-medium">Volver</span>
                     </Link>
 
                     <Link v-else :href="route('temperatureRecords.index')"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
+                    <BackIcon class="size-5" />
                     <span class="font-medium">Volver</span>
                     </Link>
                     <div class="flex items-center">
                         <button v-if="temperatureRecord.active" @click="downloadRecordReport"
                             class="inline-flex mr-8 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
-                            📄 Crear Reporte </button>
+                            <ReportIcon class="size-5 mr-1" /> Crear Reporte
+                        </button>
                         <AccessGate :permission="['temperatureRecord.delete']">
                             <button v-if="temperatureRecord.active" @click="recordBeingDeleted = true"
                                 class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
-                                        clip-rule="evenodd" />
-                                </svg>
+                                <TrashIcon class="size-5" />
                                 <span class="font-medium">Eliminar</span>
                             </button>
                             <button v-else @click="restoreRecord"
@@ -92,7 +77,9 @@
                                 </Link>
                             </div>
                             <AccessGate :permission="['temperatureRecord.delete']">
-                                <button @click="showEditAdmission = true" class="text-blue-500 ml-3">Edit</button>
+                                <button @click="showEditAdmission = true" class="text-blue-500 ml-3">
+                                    <EditIcon class="size-5" />
+                                </button>
                             </AccessGate>
                         </div>
 
@@ -120,11 +107,19 @@
                     </div>
 
                     <div class="space-y-4">
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ temperatureRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
-                            </p>
+                        <div
+                            class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ temperatureRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
+                                </p>
+                            </div>
+                            <AccessGate :permission="['temperatureRecord.delete']">
+                                <button @click="showEditUser = true" class="text-blue-500 ml-3">
+                                    <EditIcon class="size-5" />
+                                </button>
+                            </AccessGate>
                         </div>
 
 
@@ -146,7 +141,9 @@
                                         {{ temperatureRecord.impression_diagnosis }}
                                     </p>
                                 </div>
-                                <button @click="toggleEditRecord" class="text-blue-500 mr-3">Edit</button>
+                                <button @click="toggleEditRecord" class="text-blue-500 mr-3">
+                                    <EditIcon class="size-5" />
+                                </button>
                             </div>
 
                             <div v-if="isVisibleEditDiagnosis"
@@ -381,6 +378,35 @@
             </Modal>
         </AccessGate>
 
+        <!-- Change patient modal -->
+        <!-- Change admission modal -->
+        <AccessGate :permission="['temperatureRecord.delete']">
+            <Modal :closeable="true" :show="showEditUser != null" @close="showEditUser == null">
+                <div
+                    class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                    <form @submit.prevent="submitUpdateRecord" class="max-w-3xl mx-auto">
+
+                        <UserSelector roles="nurse" :selected-user-id="temperatureRecord.nurse_id"
+                            @update:user="formRecord.nurse_id = $event" />
+
+
+                        <!-- Botones -->
+                        <div class="flex justify-end mt-4 space-x-3">
+                            <button type="button" @click="showEditUser = null"
+                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
+                                :disabled="!formRecord.nurse_id">
+                                Aceptar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
+        </AccessGate>
+
         <!-- delete modal -->
         <AccessGate :permission="['temperatureRecord.delete']">
             <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
@@ -417,11 +443,18 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import 'moment/locale/es';
 import Modal from '@/Components/Modal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 import FormatId from '@/Components/FormatId.vue';
+import UserSelector from '@/Components/UserSelector.vue';
+import BackIcon from '@/Components/Icons/BackIcon.vue';
+import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
+import TrashIcon from '@/Components/Icons/TrashIcon.vue';
+import ReportIcon from '@/Components/Icons/ReportIcon.vue';
+import EditIcon from '@/Components/Icons/EditIcon.vue';
 
 export default {
     props: {
@@ -444,13 +477,19 @@ export default {
         AccessGate,
         Modal,
         AdmissionSelector,
-        FormatId
+        FormatId,
+        UserSelector,
+        BackIcon,
+        ChevronRightIcon,
+        TrashIcon,
+        ReportIcon,
+        EditIcon
     },
     data() {
         return {
-            isVisibleEditAdm: ref(null),
             recordBeingDeleted: ref(null),
             showEditAdmission: ref(null),
+            showEditUser: ref(null),
             isVisibleEditSign: ref(null),
             isVisibleEditDiagnosis: false,
             signatureError: false,
@@ -468,6 +507,7 @@ export default {
             },
             formRecord: {
                 admission_id: this.temperatureRecord.admission_id,
+                nurse_id: this.temperatureRecord.nurse_id,
                 impression_diagnosis: this.temperatureRecord.impression_diagnosis,
                 active: this.temperatureRecord.active
             },
@@ -513,6 +553,7 @@ export default {
         },
         submitUpdateRecord() {
             this.showEditAdmission = null
+            this.showEditUser = null
             this.$inertia.put(route('temperatureRecords.update', this.temperatureRecord.id), this.formRecord)
             this.isVisibleEditDiagnosis = false
         },
@@ -539,7 +580,7 @@ export default {
             this.submitUpdateRecord()
         },
         formatDate(date) {
-            return moment(date).format('DD MMM YYYY HH:mm');
+            return moment(date).format('DD MMMM YYYY HH:mm');
         },
 
         async downloadRecordReport() {

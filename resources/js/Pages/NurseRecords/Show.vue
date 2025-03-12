@@ -7,27 +7,28 @@
         </template>
 
         <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-
             <div v-if="admission_id" class="inline-flex items-center">
                 <Link :href="route('admissions.show', admission_id)"
                     class="inline-flex items-center hover:text-blue-600  dark:hover:text-white">
                 <FormatId :id="admission_id" prefix="ING"></FormatId>
                 </Link>
-                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
-                    fill="none" viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="m1 9 4-4-4-4" />
-                </svg>
+                <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
             </div>
 
-            <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
-                class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
-            Registros de enfermería
-            </Link>
-            <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"                 fill="none" viewBox="0 0 6 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m1 9 4-4-4-4" />
-            </svg>
+            <div v-if="admission_id">
+                <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
+                    class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+                Registros de enfermería
+                </Link>
+            </div>
+
+            <div v-if="!admission_id">
+                <Link :href="route('nurseRecords.index')"
+                    class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+                Registros de enfermería
+                </Link>
+            </div>
+            <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
             <div class="ml-2 inline-flex items-center">
                 <FormatId :id="nurseRecord.id" prefix="ENF"></FormatId>
             </div>
@@ -39,42 +40,37 @@
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <div v-if="admission_id">
                         <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
-                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="font-medium">Volver</span>
-                    </Link>
+                            class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                        <BackIcon class="size-5" />
+                        <span class="font-medium">Volver</span>
+                        </Link>
                     </div>
                     <div v-else>
                         <Link :href="route('nurseRecords.index')"
-                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="font-medium">Volver</span>
-                    </Link>
+                            class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                        <BackIcon class="size-5" />
+                        <span class="font-medium">Volver</span>
+                        </Link>
                     </div>
-                    <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
-                        <button v-if="nurseRecord.active" @click="recordBeingDeleted = true"
-                            class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                            <svg class="h-5 w-5" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <span class="font-medium">Eliminar</span>
+                    <div class="flex items-center">
+
+                        <button v-if="nurseRecord.active" @click="downloadRecordReport"
+                            class="inline-flex mr-8 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
+                            <ReportIcon class="size-5 mr-2" /> Crear Reporte
                         </button>
-                        <button v-else @click="restoreRecord"
-                            class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
-                            <span class="font-medium">Restaurar</span>
-                        </button>
-                    </AccessGate>
+
+                        <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
+                            <button v-if="nurseRecord.active" @click="recordBeingDeleted = true"
+                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                                <TrashIcon class="size-5" />
+                                <span class="font-medium">Eliminar</span>
+                            </button>
+                            <button v-else @click="restoreRecord"
+                                class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                                <span class="font-medium">Restaurar</span>
+                            </button>
+                        </AccessGate>
+                    </div>
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -92,7 +88,9 @@
                                 </Link>
                             </div>
                             <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
-                                <button @click="showEditAdmission = true" class="text-blue-500 ml-3">Edit</button>
+                                <button @click="showEditAdmission = true" class="text-blue-500 flex">
+                                    <EditIcon class="size-5" />
+                                </button>
                             </AccessGate>
                         </div>
 
@@ -121,11 +119,19 @@
                     <div class="space-y-4">
 
                         <!-- Nurse -->
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermero</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ nurse.name }} {{ nurse.last_name }}
-                            </p>
+                        <div
+                            class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermero</h3>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ nurse.name }} {{ nurse.last_name }}
+                                </p>
+                            </div>
+                            <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
+                                <button @click="showEditNurse = true" class="text-blue-500 flex">
+                                    <EditIcon class="size-5" />
+                                </button>
+                            </AccessGate>
                         </div>
 
                         <!-- Created date -->
@@ -158,10 +164,10 @@
                                     <div>
                                         <label for="medication"
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Medicamento
+                                            Medicación
                                         </label>
-                                        <input type="text" id="medication" v-model="formDetail.medication" required
-                                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                        <input maxlength="255" type="text" id="medication"
+                                            v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
                                         focus:outline-none focus:ring-2 focus:ring-blue-500
                                         dark:bg-gray-800 dark:text-white" placeholder="Nombre del medicamento" />
                                     </div>
@@ -169,7 +175,7 @@
                                     <div>
                                         <label for="comment"
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Comentario
+                                            Observaciones
                                         </label>
                                         <input type="text" id="comment" v-model="formDetail.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
                                         focus:outline-none focus:ring-2 focus:ring-blue-500
@@ -198,11 +204,24 @@
 
                 <!-- Nurse Record Details -->
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
-                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Eventos del Registro</h3>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Eventos del Registro</h3>
+
+                        <button @click="toggleShowDeleted"
+                            class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
+                            :class="{
+                                'bg-red-500 hover:bg-red-600 text-white': showDeletedLocal,
+                                'bg-gray-400 hover:bg-gray-500 text-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200': !showDeletedLocal
+                            }">
+                            {{ showDeletedLocal ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                            <CirclePlusIcon v-if="showDeletedLocal" class="ml-1 h-5 w-5" />
+                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                        </button>
+                    </div>
 
                     <div v-for="detail in details" :key="detail.id"
                         class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
-                        <div class="flex-grow">
+                        <div class="flex-grow pr-10">
                             <div class="font-semibold text-gray-900 dark:text-white">
                                 {{ detail.medication }}
                             </div>
@@ -213,21 +232,38 @@
                                 {{ formatDate(detail.created_at) }}
                             </div>
                         </div>
-                        <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                <!-- Editar -->
-                                <Link :href="route('nurseRecordDetails.edit', detail.id)"
-                                    class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                                <svg class="h-5 w-5" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                                <span class="font-medium">Editar</span>
-                                </Link>
-                            </div>
-                        </AccessGate>
+                        <div>
+                            <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
+                                <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                    <!-- Editar -->
+                                    <Link :href="route('nurseRecordDetails.edit', detail.id)"
+                                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                                    <EditIcon class="size-5" />
+                                    <span class="font-medium">Editar</span>
+                                    </Link>
+                                </div>
+                            </AccessGate>
+                            <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
+                                <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                    <!-- eliminar -->
+                                    <div v-if="detail.active === 1">
+                                        <button @click="deleteDetail(detail.id)"
+                                            class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                                            <TrashIcon class="size-5" />
+                                            <span class="font-medium">Eliminar</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- restaurar -->
+                                    <button @click="restoreDetail(detail)" v-else
+                                        class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                                        <RestoreIcon class="size-5" />
+                                        <span class="font-medium">Restaurar</span>
+                                    </button>
+                                </div>
+                            </AccessGate>
+
+                        </div>
                     </div>
 
                     <div v-if="details.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">
@@ -288,7 +324,7 @@
                 <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
                     <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
 
-                        <AdmissionSelector @update:admission="formAdmission.admission_id = $event"
+                        <AdmissionSelector @update:admission="formRecord.admission_id = $event"
                             :selected-admission-id="nurseRecord.admission_id" />
 
                         <!-- Botones -->
@@ -299,7 +335,7 @@
                             </button>
                             <button type="submit"
                                 class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
-                                :disabled="!formAdmission.admission_id">
+                                :disabled="!formRecord.admission_id">
                                 Aceptar
                             </button>
                         </div>
@@ -308,6 +344,34 @@
 
             </Modal>
         </AccessGate>
+
+
+        <!-- Change nurse modal -->
+        <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
+            <Modal :closeable="true" :show="showEditNurse != null" @close="showEditNurse == null">
+                <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                    <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
+
+                        <UserSelector roles="nurse" :selected-user-id="nurseRecord.nurse_id"
+                            @update:user="formRecord.nurse_id = $event" />
+                        <!-- Botones -->
+                        <div class="flex justify-end mt-4 space-x-3">
+                            <button type="button" @click="showEditNurse = null"
+                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
+                                :disabled="!formRecord.nurse_id">
+                                Aceptar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </Modal>
+        </AccessGate>
+
 
         <!-- Delete modal -->
         <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
@@ -343,17 +407,27 @@ import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import Modal from '@/Components/Modal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 import FormatId from '@/Components/FormatId.vue';
+import UserSelector from '@/Components/UserSelector.vue';
+import TrashIcon from '@/Components/Icons/TrashIcon.vue';
+import EditIcon from '@/Components/Icons/EditIcon.vue';
+import ReportIcon from '@/Components/Icons/ReportIcon.vue';
+import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
+import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
+import BackIcon from '@/Components/Icons/BackIcon.vue';
+import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
+import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 
 
 export default {
     props: {
         nurseRecord: Object,
-        admission_id: String,
+        admission_id: Number,
         errors: {
             type: Array,
             default: () => []
@@ -364,6 +438,7 @@ export default {
         bed: Object,
         details: Array,
         canUpdateRecord: Boolean,
+        showDeleted: Boolean
     },
     components: {
         AppLayout,
@@ -375,19 +450,32 @@ export default {
         AccessGate,
         Modal,
         AdmissionSelector,
-        FormatId
+        FormatId,
+        UserSelector,
+        TrashIcon,
+        EditIcon,
+        ReportIcon,
+        RestoreIcon,
+        ChevronRightIcon,
+        BackIcon,
+        CirclePlusIcon,
+        CircleXIcon
     },
     data() {
         return {
             recordBeingDeleted: ref(null),
             isVisibleEditSign: ref(null),
             showEditAdmission: ref(null),
+            showEditNurse: ref(null),
             signatureError: false,
+            showDeletedLocal: this.showDeleted || false,
 
-            formAdmission: {
+            formRecord: {
                 admission_id: this.nurseRecord.admission_id,
-                active: this.nurseRecord.active
+                nurse_id: this.nurseRecord.nurse_id,
+                active: this.nurseRecord.active,
             },
+
             formDetail: {
                 nurse_record_id: this.nurseRecord.id,
                 medication: null,
@@ -402,11 +490,12 @@ export default {
 
     methods: {
         submitAdmission() {
-            this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formAdmission)
+            this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formRecord)
             this.showEditAdmission = null
+            this.showEditNurse = null
         },
         selectAdmission(admission) {
-            this.formAdmission.admission_id = admission.id;
+            this.formRecord.admission_id = admission.id;
         },
         debounceSearch() {
             this.debouncedSearch();
@@ -441,6 +530,15 @@ export default {
 
                 });
         },
+        toggleShowDeleted() {
+            this.showDeletedLocal = !this.showDeletedLocal;
+            this.$inertia.get(route('nurseRecords.show', this.nurseRecord.id),
+                { showDeleted: this.showDeletedLocal,
+                    admission_id: this.admission_id !== 0 ? this.admission_id : null
+                 }, {
+                preserveScroll: true
+            });
+        },
         submitSignature() {
             if (!this.formSignature.nurse_sign) {
                 this.signatureError = true;
@@ -457,12 +555,30 @@ export default {
             this.$inertia.delete(route('nurseRecords.destroy', this.nurseRecord.id));
         },
         restoreRecord() {
-            this.formAdmission.active = true
+            this.formRecord.active = true
             this.submitAdmission();
         },
-        formatDate(date) {
-            return moment(date).format('DD MMM YYYY HH:mm');
+        deleteDetail(id) {
+            this.$inertia.delete(route('nurseRecordDetails.destroy', id), {
+                preserveScroll: true
+            });
         },
+        restoreDetail(detail) {
+            detail.active = true
+            this.$inertia.put(route('nurseRecordDetails.update', detail.id),
+                {
+                    ...detail,
+                    showDeleted: this.showDeletedLocal
+                }, {
+                preserveScroll: true
+            });
+        },
+        formatDate(date) {
+            return moment(date).format('DD MMMM YYYY HH:mm');
+        },
+        async downloadRecordReport() {
+            window.open(route('reports.nurseRecord', { id: this.nurseRecord.id }), '_blank');
+        }
     }
 }
 </script>

@@ -23,15 +23,8 @@
                         <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mr-4">Filtros Avanzados</h3>
                         <button @click="toggleAdditionalFilters"
                             class="text-blue-500 hover:text-blue-600 flex items-center transition-colors">
-                            <svg v-if="!showAdditionalFilters" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4" />
-                            </svg>
-                            <svg v-else class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                            <PlusIcon v-if="!showAdditionalFilters" class="size-5 mr-2" />
+                            <XIcon v-else class="size-5 mr-2" />
                             {{ showAdditionalFilters ? 'Ocultar filtros' : 'Mostrar filtros' }}
                         </button>
                     </div>
@@ -106,11 +99,7 @@
             class="bg-gray-100 dark:bg-gray-900 flex justify-between items-center overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
             <div class="relative mb-2">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
-                        viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
+                    <SearchIcon class="w-4 h-4 text-gray-500 dark:text-gray-400" />
                 </div>
 
                 <input @input="submitFilter()"
@@ -119,11 +108,7 @@
 
                 <button v-if="form.search" @click="form.search = ''; submitFilter()"
                     class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <XIcon class="h-5 w-5" />
                 </button>
             </div>
 
@@ -156,23 +141,15 @@
                             'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
                         }">
                         {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                        <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path v-if="form.showDeleted" fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                                clip-rule="evenodd" />
-                            <path v-else fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                        <CircleXIcon v-else class="ml-1 h-5 w-5" />
                     </button>
                 </AccessGate>
 
                 <AccessGate :permission="['patient.create']">
                     <Link :href="route('patients.create')"
                         class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
-                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
+                    <PlusIcon class="h-5 w-5 mr-2" />
                     Nuevo paciente
                     </Link>
                 </AccessGate>
@@ -185,7 +162,7 @@
                     <tr>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
                             ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('is_hospitalized')">
                             Ingresado <span v-if="form.sortField === 'is_hospitalized'">{{ form.sortDirection === 'asc'
@@ -195,11 +172,11 @@
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('first_name')">
                             Nombre <span v-if="form.sortField === 'first_name'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('phone')">
                             Teléfono <span v-if="form.sortField === 'phone'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('identification_card')">
                             Cédula <span v-if="form.sortField === 'identification_card'">{{ form.sortDirection === 'asc'
@@ -213,11 +190,11 @@
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('email')">
                             Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('ars')">
                             ARS <span v-if="form.sortField === 'ars'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3"> Acciones </th>
                     </tr>
@@ -283,6 +260,11 @@
 
 <script>
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
+import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
+import PlusIcon from '@/Components/Icons/PlusIcon.vue';
+import SearchIcon from '@/Components/Icons/SearchIcon.vue';
+import XIcon from '@/Components/Icons/XIcon.vue';
 import Pagination from '@/Components/Pagination.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
@@ -298,6 +280,12 @@ export default {
         Link,
         Pagination,
         AccessGate,
+        CirclePlusIcon,
+        CircleXIcon,
+        PlusIcon,
+        PlusIcon,
+        SearchIcon,
+        XIcon,
     },
     data() {
         return {

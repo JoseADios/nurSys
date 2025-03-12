@@ -112,7 +112,6 @@
         <tr>
             <td style="width: 70%; vertical-align: top;">
                 <p><span class="bold">Paciente:</span> {{ $temperatureRecord->admission->patient->first_name }}
-                    {{ $temperatureRecord->admission->patient->last_name }}
                     {{ $temperatureRecord->admission->patient->first_surname }}
                     {{ $temperatureRecord->admission->patient->second_surname }}</p>
                 <p><span class="bold">Dirección:</span> {{ $temperatureRecord->admission->patient->address }}</p>

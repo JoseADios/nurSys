@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
@@ -275,7 +274,7 @@ class AdmissionController extends Controller
         }
 
         $admission->update($validated);
-        return Redirect::route('admissions.show', $admission->id);
+        return Redirect::route('admissions.show', $admission->id)->with('succes', 'Ingreso actualizado exitosamente.');
     }
 
     /**

@@ -15,9 +15,9 @@ class TemperatureDetailPolicy
      */
     public function before(User $user, string $ability): bool|null
     {
-        if ($user->hasRole('admin')) {
-            return true;
-        }
+        // if ($user->hasRole('admin')) {
+        //     return true;
+        // }
 
         return null;
     }
@@ -49,11 +49,15 @@ class TemperatureDetailPolicy
             return Response::deny('No se pueden crear registros en un ingreso que ha sido dado de alta');
         }
 
+        if (!$user->hasRole('admin') && !$user->hasRole('nurse')) {
+            return Response::deny('No tienes permiso para crear registros de temperatura');
+        }
+
         if ($this->hasTemperatureInCurrentTurn($temperature_record_id)) {
             return Response::deny('Ya hay una temperatura creada en el mismo turno');
         }
 
-        return Response::deny();
+        return Response::allow();
     }
 
     /**
@@ -67,12 +71,16 @@ class TemperatureDetailPolicy
             return Response::deny('No se pueden crear registros en un ingreso que ha sido dado de alta');
         }
 
+        if (!$user->hasRole('admin') && !$user->hasRole('nurse')) {
+            return Response::deny('No tienes permiso para actualizar registros de temperatura');
+        }
+
         if ($temperatureDetail->nurse_id !== $user->id) {
             return Response::deny('No tienes permiso para actualizar este registro de enfermería');
         }
 
-        if ($this->isInCurrentTurn($temperatureDetail)) {
-            return Response::deny('Ya existe una temperatura registrada en este turno');
+        if (!$this->isInCurrentTurn($temperatureDetail)) {
+            return Response::deny('No se puede actualizar una temperatura de un turno pasado');
         }
 
         return Response::allow();
@@ -82,9 +90,9 @@ class TemperatureDetailPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, TemperatureDetail $temperatureDetail): bool
+    public function delete(User $user, TemperatureDetail $temperatureDetail): Response
     {
-        return false;
+        return Response::deny('No tienes permiso para eliminar registros de temperatura');
     }
 
     /**

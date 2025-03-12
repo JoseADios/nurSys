@@ -6,7 +6,6 @@ use App\Models\Admission;
 use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
 use App\Services\FirmService;
-use App\Services\TurnService;
 use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +14,6 @@ use Inertia\Inertia;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -135,7 +133,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $response = Gate::inspect('create', [TemperatureRecord::class, $admission]);
 
             if (!$response->allowed()) {
-                return back()->with('error', $response->message());
+                return back()->with('flash.toast', $response->message())->with('flash.toastStyle', 'danger');
             }
         }
         return Inertia::render('TemperatureRecords/Create', [
@@ -158,7 +156,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             'impression_diagnosis' => $request->impression_diagnosis,
         ]);
 
-        return Redirect::route('temperatureRecords.show', $temperatureRecord->id);
+        return Redirect::route('temperatureRecords.show', $temperatureRecord->id)->with('flash.toast', 'Registro de temperatura creado correctamente');
     }
 
     /**
@@ -176,14 +174,16 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         // ultimo detalle de temperatura
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-            ->orderBy('created_at', 'asc')
+            ->orderBy('updated_at', 'desc')
             ->first();
 
         // verificar si puede actualizar detalles
-        $responseUpdateDetail = Gate::inspect('update', [TemperatureDetail::class, $lastTemperature]);
+        if ($lastTemperature !== null) {
+            $responseUpdateDetail = Gate::inspect('update', [TemperatureDetail::class, $lastTemperature]);
 
-        if (!$responseUpdateDetail->allowed()) {
-            $lastTemperature = null;
+            if (!$responseUpdateDetail->allowed()) {
+                $lastTemperature = null;
+            }
         }
 
         if ($lastTemperature !== null) {
@@ -230,6 +230,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         $validated = $request->validate([
             'admission_id' => 'numeric|nullable',
+            'nurse_id' => 'numeric|nullable',
             'impression_diagnosis' => 'string|nullable',
             'nurse_sign' => 'string|nullable',
             'active' => 'boolean|nullable'
@@ -251,7 +252,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         $temperatureRecord->update($validated);
 
-        return back()->with('succes', 'Registro actualizado correctamente');
+        return back()->with('flash.toast', 'Registro actualizado correctamente');
     }
 
     /**
@@ -261,6 +262,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     {
         $this->authorize('delete', $temperatureRecord);
         $temperatureRecord->update(['active' => 0]);
-        return Redirect::route('temperatureRecords.index');
+        return Redirect::route('temperatureRecords.index')->with('flash.toast', 'Registro de temperatura eliminado correctamente');
     }
 }

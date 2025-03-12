@@ -106,7 +106,8 @@
 <script>
 import debounce from 'lodash/debounce';
 import axios from 'axios';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import FormatId from './FormatId.vue';
 
 export default {

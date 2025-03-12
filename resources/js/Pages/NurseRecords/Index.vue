@@ -13,47 +13,25 @@
                         class="inline-flex items-center  hover:text-blue-600 dark:hover:text-white">
                     <FormatId :id="admission_id" prefix="ING"></FormatId>
                     </Link>
-                    <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m1 9 4-4-4-4" />
-                    </svg>
+                    <ChevronRightIcon class="size-5 text-gray-400 mx-1" />
                 </div>
                 <div class="ml-2 inline-flex items-center ">
                     Registros de enfermería
                 </div>
             </div>
 
-            <Link :href="route('nurseRecords.index')" v-if="admission_id"
+            <button v-if="admission_id" @click="form.admission_id = null; submitFilters()"
                 class="mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
-            Remover filtro de
-            <FormatId :id="admission_id" prefix="ING"></FormatId>,
-            </Link>
+                Remover filtro de <FormatId :id="admission_id" prefix="ING" class="ml-1"></FormatId>
+            </button>
         </div>
-
-        <!-- Navigation -->
-        <!-- <div v-if="admission_id" class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-            <Link :href="route('admissions.show', admission_id)"
-                class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                    clip-rule="evenodd" />
-            </svg>
-            <span class="font-medium">Volver</span>
-            </Link>
-        </div> -->
 
         <div
             class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
 
             <div class="relative mb-2">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
-                        viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
+                    <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                 </div>
 
                 <input @input="submitFilters()"
@@ -62,11 +40,7 @@
 
                 <button v-if="form.search" @click="form.search = ''; submitFilters()"
                     class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <XIcon class="h-5 w-5" />
                 </button>
             </div>
 
@@ -92,25 +66,27 @@
                             'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
                         }">
                         {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                        <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path v-if="form.showDeleted" fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                                clip-rule="evenodd" />
-                            <path v-else fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                        <CircleXIcon v-else class="ml-1 h-5 w-5" />
                     </button>
                 </AccessGate>
 
                 <AccessGate :permission="['nurseRecord.create']">
-                    <Link :href="route('nurseRecords.create')"
-                        class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
-                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Nuevo registro de enfermería
-                    </Link>
+                    <div v-if="!admission_id">
+                        <Link :href="route('nurseRecords.create')"
+                            class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
+                        <PlusIcon class="size-5 mr-2" />
+                        Nuevo registro de enfermería
+                        </Link>
+                    </div>
+                    <div v-if="admission_id">
+                        <Link :href="route('nurseRecords.create', { admission_id: admission_id })"
+                            class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
+                        <PlusIcon class="size-5 mr-2" />
+
+                        Nuevo registro de enfermería
+                        </Link>
+                    </div>
                 </AccessGate>
             </div>
         </div>
@@ -124,33 +100,33 @@
                             ID <span v-if="form.sortField === 'nurse_records.id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('in_process')">
                             En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.id')">
                             Ingreso <span v-if="form.sortField === 'admissions.id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
                             Paciente <span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
                                 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')">
                             Enfermera <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc'
                                 ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('nurse_records.created_at')">
                             Fecha de Creación<span v-if="form.sortField === 'nurse_records.created_at'">{{
@@ -216,7 +192,9 @@
                     No hay registros disponibles.
                 </div>
             </table>
+
             <Pagination :pagination="nurseRecords" :filters="form"  />
+
         </div>
 
     </AppLayout>
@@ -224,33 +202,44 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import {
-    Link
-} from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
-import moment from 'moment';
+import moment from "moment/moment";
+import 'moment/locale/es';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import FormatId from '@/Components/FormatId.vue';
+import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
+import PlusIcon from '@/Components/Icons/PlusIcon.vue';
+import SearchIcon from '@/Components/Icons/SearchIcon.vue';
+import XIcon from '@/Components/Icons/XIcon.vue';
+import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
+import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 
 export default {
     props: {
         nurseRecords: Object,
         filters: Object,
-        admission_id: String
+        admission_id: Number
     },
     components: {
         AppLayout,
         Link,
         Pagination,
         AccessGate,
-        FormatId
+        FormatId,
+        ChevronRightIcon,
+        PlusIcon,
+        SearchIcon,
+        XIcon,
+        CirclePlusIcon,
+        CircleXIcon
     },
     data() {
         return {
             form: {
                 search: this.filters.search || '',
                 in_process: this.filters.in_process || '',
-                admission_id: this.filters.admission_id,
+                admission_id: this.filters.admission_id !== 0 ? this.filters.admission_id : null,
                 showDeleted: this.filters.show_deleted,
                 days: this.filters.days || '',
                 sortField: this.filters.sortField || 'nurse_records.created_at',
@@ -279,7 +268,7 @@ export default {
             this.submitFilters();
         },
         formatDate(date) {
-            return moment(date).format('DD/MMM/YYYY HH:mm');
+            return moment(date).format('DD MMM YYYY HH:mm');
         }
     },
 

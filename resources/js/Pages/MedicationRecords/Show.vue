@@ -1,17 +1,25 @@
 <template>
     <AppLayout>
-        <div class="container mx-auto px-4 py-8">
+
+        <div class="container mx-auto px-4   py-8">
            <!-- Navigation -->
            <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('medicationRecords.index')"
-                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="font-medium">Volver</span>
-                    </Link>
+
+            <div class="ml-12 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+
+
+<Link :href="route('medicationRecords.index')"
+    class="inline-flex  ml-12 items-center hover:text-blue-600 dark:hover:text-white">
+Ficha de Medicamentos
+</Link>
+<svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true"                 fill="none" viewBox="0 0 6 10">
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="m1 9 4-4-4-4" />
+</svg>
+<div class="ml-2 inline-flex items-center">
+    <FormatId :id="medicationRecord.id" prefix="FIC"></FormatId>
+</div>
+</div>  
                     <button v-if="medicationRecord.active" @click="recordBeingDeleted = true"
                         class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -212,6 +220,7 @@
 
                     </div>
 
+
                  <!-- Contenedor para la Dosis y el selector -->
                  <div class="flex items-center space-x-4 mt-6">
                     <!-- Dosis -->
@@ -409,6 +418,46 @@
                     <div v-if="details.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">
                         No hay detalles de registro disponibles
                     </div>
+
+                </div>
+
+                <!-- mostrar imagen firma -->
+                <div v-show="!isVisibleEditSign" class="my-4 flex items-center flex-col justify-center">
+                    <div>
+                        <h2 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Firma
+                        </h2>
+                        <img v-if="medicationRecord.doctor_sign" :src="`/storage/${medicationRecord.doctor_sign}`" alt="Firma">
+                        <div v-else>
+                            <div class="text-gray-500 dark:text-gray-400 my-16">
+                                No hay firma disponible
+                            </div>
+                        </div>
+                    </div>
+                    <button @click="isVisibleEditSign = true"
+                        class="mt-4 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                        Editar</button>
+                </div>
+                <!-- Campo de firma -->
+                <div v-show="isVisibleEditSign" class="my-4">
+                    <form @submit.prevent="submitSignature" class=" flex items-center flex-col justify-center">
+                        <label for="doctor_sign"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Firma
+                        </label>
+
+                        <SignaturePad v-model="formSignature.doctor_sign" input-name="doctor_sign" />
+                        <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
+
+                        <div class="my-4">
+                            <button type="button"
+                                class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                @click="isVisibleEditSign = false">Cancelar</button>
+                            <button
+                                class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
+                                type="submit">Guardar firma</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -487,6 +536,9 @@ import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
+import FormatId from '@/Components/FormatId.vue';
+
 export default{
     props: {
         medicationRecord: Object,
@@ -504,7 +556,9 @@ export default{
         DangerButton,
         SecondaryButton,
         DialogModal,
-        AccessGate
+        AccessGate,
+        SignaturePad,
+        FormatId
     },
     data(){
         return{
@@ -524,9 +578,15 @@ export default{
             selectedOrderId: null,
             errorMessage: "",
             isVisible: false,
+            isVisibleEditSign: ref(null),
+            signatureError: false,
             modalform:{
                 description: '',
                 name: '',
+            },
+            formSignature: {
+                nurse_sign: this.medicationRecord.nurse_sign,
+                signature: true,
             },
         }
     },
@@ -540,7 +600,17 @@ export default{
         preserveScroll: true
     });
 },
-
+submitSignature() {
+            if (!this.formSignature.doctor_sign) {
+                this.signatureError = true;
+                return;
+            }
+            this.signatureError = false;
+            this.$inertia.put(route('medicationRecords.update', this.medicationRecord.id), this.formSignature, {
+                preserveScroll: true
+            });
+            this.isVisibleEditSign = false
+        },
 
 
         openCreateModal() {

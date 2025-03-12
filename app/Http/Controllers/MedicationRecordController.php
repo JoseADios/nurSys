@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Services\FirmService;
+use Illuminate\Database\Eloquent\Builder;
 
 class MedicationRecordController extends Controller
 {
@@ -39,7 +41,7 @@ class MedicationRecordController extends Controller
         $search = $request->input('search');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
-
+        $days = $request->integer('days');
 
         $query = MedicationRecord::query()->select('medication_records.*')
         ->join('admissions', 'medication_records.admission_id', '=', 'admissions.id')
@@ -52,7 +54,6 @@ class MedicationRecordController extends Controller
         if ($search) {
             $query->where(function (Builder $q) use ($search) {
                 $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('doctor_id LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('diagnosis LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('referrals LIKE ?', ['%' . $search . '%'])
@@ -65,6 +66,9 @@ class MedicationRecordController extends Controller
         } else {
             $query->latest('medication_records.updated_at')
                 ->latest('medication_records.created_at');
+        }
+        if ($days) {
+            $query->where('medication_records.created_at', '>=', now()->subDays($days));
         }
 
 
@@ -216,6 +220,13 @@ class MedicationRecordController extends Controller
      */
     public function update(Request $request, MedicationRecord $medicationRecord)
     {
+        $firmService = new FirmService;
+
+        if ($request->signature) {
+            $fileName = $firmService
+                ->createImag($request->doctor_sign, $medicationRecord->doctor_sign);
+            $validated['doctor_sign'] = $fileName;
+        }
 
      if ($request->has('active')) {
             $this->restore($medicationRecord->id);

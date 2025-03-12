@@ -53,7 +53,7 @@ class MedicationRecordDetailController extends Controller
     public function store(Request $request)
     {
 
-        $start_time_24 = Carbon::parse($request->start_time)->format("H:i");
+        $start_time_24 = Carbon::parse($request->start_time);
         // Primero guarda el detalle y obtén su ID
 
         $dose_formatted = $request->dose .' - '. $request->dose_metric;

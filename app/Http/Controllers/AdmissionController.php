@@ -33,6 +33,7 @@ class AdmissionController extends Controller
         $search = $request->input('search');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
+        $days = $request->integer('days');
 
         $query = Admission::query()->with('patient','bed','doctor')->select([
             'admissions.id',
@@ -64,6 +65,9 @@ class AdmissionController extends Controller
             } else {
                 $query->latest('admissions.updated_at')
                     ->latest('admissions.created_at');
+            }
+            if ($days) {
+                $query->where('admissions.created_at', '>=', now()->subDays($days));
             }
 
             $admissions = $query->paginate(10);

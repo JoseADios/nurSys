@@ -3,16 +3,32 @@
         <template #header>
 
             <div class="container mx-auto px-4 py-8">
+
+                <div class="ml-12 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+
+
+<Link :href="route('medicationRecords.index')"
+    class="inline-flex ml-8  items-center hover:text-blue-600 dark:hover:text-white">
+Ficha de Medicamentos
+</Link>
+<svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true"                 fill="none" viewBox="0 0 6 10">
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="m1 9 4-4-4-4" />
+</svg>
+<Link :href="route('medicationRecords.show',details.medication_record_id)">
+<div class="ml-2 inline-flex items-center dark:hover:text-white">
+    <FormatId :id="details.medication_record_id" prefix="FIC"></FormatId>
+</div>
+</Link>
+<svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true"                 fill="none" viewBox="0 0 6 10">
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="m1 9 4-4-4-4" />
+</svg>
+<div class="ml-2 inline-flex items-center">
+    <FormatId :id="details.id" prefix="NOT"></FormatId>
+</div>
+</div>
             <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-xl overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-600 to-blue-600 p-6">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold text-white">Notificaciones</h2>
-                        <Link :href="route('medicationRecords.show',details.medication_record_id)"
-                            class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out">
-                            Volver
-                        </Link>
-                    </div>
-                </div>
 
 
 
@@ -103,7 +119,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
-
+import FormatId from '@/Components/FormatId.vue';
 
 export default {
     props: {
@@ -113,6 +129,7 @@ export default {
     components: {
         AppLayout,
         Link,
+        FormatId
     },
 
     methods: {

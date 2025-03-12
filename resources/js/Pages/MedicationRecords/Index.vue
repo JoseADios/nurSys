@@ -6,18 +6,75 @@
         </h2>
     </template>
 
-    <div class="flex flex-col items-center justify-center mt-10">
-        <Link as="button" :href="route('medicationRecords.create')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-        Crear Nueva Ficha Medica
-        </Link>
-    </div>
 
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
 
-        <div class="flex">
-    <form @submit.prevent="submit" class="mb-2 flex-grow">
-        <input @input="submit()" class="rounded-lg " type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
-    </form>
+
+        <div class="flex items-center justify-between ">
+            <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+            <div class=" inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+                <div class="inline-flex items-center" v-if="medicationRecords.admission_id">
+                    <Link :href="route('admissions.show', medicationRecords.admission_id)"
+                        class="inline-flex items-center  hover:text-blue-600 dark:hover:text-white">
+                    <FormatId :id="medicationRecords.admission_id" prefix="ING"></FormatId>
+                    </Link>
+                    <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 9 4-4-4-4" />
+                    </svg>
+                </div>
+                <div class="ml-2 inline-flex items-center ">
+                    Fichas de Medicamentos
+                </div>
+            </div>
+
+            <Link :href="route('nurseRecords.index')" v-if="medicationRecords.admission_id"
+                class="mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
+            Remover filtro de
+            <FormatId :id="medicationRecords.admission_id" prefix="ING"></FormatId>,
+            </Link>
+        </div>
+        </div>
+
+        <div
+            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
+
+
+   <div class="relative ">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
+                        viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
+                </div>
+
+                <input @input="submitFilters()"
+                    class="block   p-3 ps-10 pr-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
+
+                <button v-if="form.search" @click="form.search = ''; submitFilters()"
+                    class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+            </div>
+            <div class="flex items-center">
+            <select @change="submitFilters()"
+                    class="bg-gray-50 w-full  mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    name="days" id="days" v-model="form.days">
+                    <option value="">Siempre</option>
+                    <option value="1">Último día</option>
+                    <option value="7">Últimos 7 días</option>
+                    <option value="30">Últimos 30 días</option>
+                    <option value="90">Últimos 90 días</option>
+                    <option value="180">Últimos 180 días</option>
+                    <option value="365">Último año</option>
+                </select>
 
     <AccessGate :permission="['medicationRecords.delete']">
         <!-- Filtro para mostrar registros eliminados -->
@@ -36,7 +93,18 @@
             </svg>
         </button>
     </AccessGate>
+    <AccessGate :permission="['medicationRecords.create']">
+                    <Link :href="route('medicationRecords.create')"
+                        class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
+                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Nueva Ficha de Medicamentos
+                    </Link>
+                </AccessGate>
 </div>
+</div>
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
 
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -101,7 +169,7 @@
 
             </tbody>
         </table>
-        <Pagination :pagination="medicationRecords" />
+        <Pagination :pagination="medicationRecords" :filters="form" />
     </div>
 
 
@@ -116,7 +184,7 @@ import {
     Link
 } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
-import { ref } from 'vue';
+import FormatId from '@/Components/FormatId.vue';
 export default {
     props: {
         medicationRecords: Object,
@@ -128,7 +196,8 @@ export default {
         Link,
 
         Pagination,
-        AccessGate
+        AccessGate,
+        FormatId
 
     },
     data() {
@@ -139,6 +208,7 @@ export default {
                 showDeleted: this.filters.show_deleted,
                 sortField: this.filters.sortField || 'medication_records.updated_at',
                 sortDirection: this.filters.sortDirection || 'asc',
+                days: this.filters.days || '',
             },
             timeout: 1000,
 
@@ -146,27 +216,29 @@ export default {
         }
     },
     methods: {
-        submit() {
-            if (this.timeout) {
-                clearTimeout(this.timeout);
-            }
-            this.timeout
-            this.$inertia.get(route('medicationRecords.index'), this.form, {
-                preserveState: true,
-            });
-        },
+        submitFilters() {
+    if (this.timeout) {
+        clearTimeout(this.timeout);
+    }
+    this.timeout = setTimeout(() => {
+        this.$inertia.get(route('medicationRecords.index'), this.form, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true
+        });
+    }, 300);
+},
+
         sort(field) {
             this.form.sortField = field;
             this.form.sortDirection = this.form.sortDirection === 'asc' ? 'desc' : 'asc';
-            this.submit();
+            this.submitFilters();
         },
         toggleShowDeleted() {
-            this.form.showDeleted = !this.form.showDeleted;
-            this.$inertia.get(route('medicationRecords.index', {
-                search: this.form.search,
-                showDeleted: this.form.showDeleted
-            }));
-        },
+    this.form.showDeleted = !this.form.showDeleted;
+    this.submitFilters();
+},
+
 
         MedicationRecordShow(id) {
             this.$inertia.get(route('medicationRecords.show', id));

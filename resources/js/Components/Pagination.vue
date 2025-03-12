@@ -8,8 +8,14 @@ const props = defineProps({
 });
 
 const filterQuery = computed(() => {
-    return new URLSearchParams(props.filters).toString();
+    const params = new URLSearchParams(props.filters).toString();
+    return params ? `&${params}` : '';
 });
+
+const buildUrl = (url) => {
+    if (!url) return '';
+    return url.includes('?') ? `${url}${filterQuery.value}` : `${url}?${filterQuery.value.substring(1)}`;
+};
 </script>
 
 <template>
@@ -28,7 +34,7 @@ const filterQuery = computed(() => {
 
         <div class="inline-flex space-x-1">
             <template v-if="pagination.prev_page_url">
-                <Link :href="pagination.prev_page_url + '&' + filterQuery" preserve-scroll
+                <Link :href="buildUrl(pagination.prev_page_url)" preserve-scroll preserve-state
                     class="px-3 py-1 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
                 Anterior
                 </Link>
@@ -42,7 +48,7 @@ const filterQuery = computed(() => {
 
             <template v-for="(link, index) in pagination.links" :key="index">
                 <template v-if="index !== 0 && index !== pagination.links.length - 1">
-                    <Link v-if="link.url" :href="link.url + '&' + filterQuery" preserve-scroll preserve-state :class="{
+                    <Link v-if="link.url" :href="buildUrl(link.url)" preserve-scroll :class="{
                         'bg-blue-500 dark:bg-blue-600 text-white': link.active,
                         'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600': !link.active
                     }" class="px-3 py-1 rounded-md text-sm font-medium" v-html="link.label" />
@@ -50,7 +56,7 @@ const filterQuery = computed(() => {
             </template>
 
             <template v-if="pagination.next_page_url">
-                <Link :href="pagination.next_page_url + '&' + filterQuery" preserve-scroll
+                <Link :href="buildUrl(pagination.next_page_url)" preserve-scroll preserve-state
                     class="px-3 py-1 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
                 Siguiente
                 </Link>

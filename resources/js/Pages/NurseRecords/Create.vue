@@ -82,7 +82,7 @@ export default {
     data() {
         return {
             form: {
-                admission_id: null
+                admission_id: this.admission_id || null
             },
             error: null
         };

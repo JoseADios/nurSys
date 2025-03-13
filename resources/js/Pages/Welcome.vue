@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 
 defineProps({
     canLogin: {
@@ -24,6 +25,17 @@ function handleImageError() {
     document.getElementById('docs-card-content')?.classList.add('!flex-row');
     document.getElementById('background')?.classList.add('!hidden');
 }
+
+// Inicializar el modo oscuro al cargar la página
+onMounted(() => {
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'true') {
+        document.documentElement.classList.add('dark');
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches && savedDarkMode === null) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('darkMode', 'true');
+    }
+});
 </script>
 
 <template>

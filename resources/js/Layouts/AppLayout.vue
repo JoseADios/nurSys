@@ -440,8 +440,8 @@ const logout = () => {
                             @click="toggleDarkMode"
                             class="p-1.5 mr-8 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full focus:outline-none"
                         >
-                            <SunIcon v-if="isDarkMode" class="h-5 w-5" />
-                            <MoonIcon v-else class="h-5 w-5" />
+                            <SunIcon v-if="isDarkMode" class="h-5 w-5 text-yellow-400 dark:text-yellow-300 hover:text-yellow-500 dark:hover:text-yellow-400" />
+                            <MoonIcon v-else class="h-5 w-5 text-indigo-600 dark:text-indigo-300 hover:text-indigo-500 dark:hover:text-indigo-400" />
                         </button>
 
                         <!-- Teams Dropdown -->
@@ -453,7 +453,6 @@ const logout = () => {
                                             :src="$page.props.auth.user.profile_photo_url"
                                             :alt="$page.props.auth.user.name">
                                     </div>
-
                                 </button>
                             </template>
                             <template #content>

@@ -1,10 +1,10 @@
 <template>
     <div class="space-y-2">
-        <label for="birthdate" class="block text-sm font-medium text-white">
+        <label for="birthdate" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
             Fecha de Nacimiento
         </label>
         <input type="date" id="birthdate" :value="modelValue" @input="updateValue($event.target.value)"
-            class="block w-full rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
             required>
         <div v-if="birthdateError" class="text-red-500 text-sm mt-2">
             {{ birthdateError }}

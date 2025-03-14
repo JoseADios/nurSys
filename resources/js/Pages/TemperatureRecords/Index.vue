@@ -77,10 +77,28 @@
                         <CircleXIcon v-else class="ml-1 h-5 w-5" />
                     </button>
                 </AccessGate>
+
+                <AccessGate :permission="['nurseRecord.create']">
+                    <div v-if="!admission_id">
+                        <Link :href="route('temperatureRecords.create')"
+                            class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
+                        <PlusIcon class="size-5 mr-2" />
+                        Nueva hoja de temperatura
+                        </Link>
+                    </div>
+                    <div v-if="admission_id">
+                        <Link :href="route('temperatureRecords.create', { admission_id: admission_id })"
+                            class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
+                        <PlusIcon class="size-5 mr-2" />
+
+                        Nueva hoja de temperatura
+                        </Link>
+                    </div>
+                </AccessGate>
             </div>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
+        <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 sm:rounded-lg mt-4 lg:mx-10">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -188,6 +206,7 @@ import XIcon from '@/Components/Icons/XIcon.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
+import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 
 export default {
     props: {
@@ -207,7 +226,8 @@ export default {
         CirclePlusIcon,
         CircleXIcon,
         FormatId,
-        ChevronRightIcon
+        ChevronRightIcon,
+        PlusIcon
     },
     data() {
         return {

@@ -10,11 +10,11 @@
             <div class="max-w-6xl mx-auto">
                 <!-- Tarjeta del perfil principal -->
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-xl border border-gray-200 dark:border-gray-700 mb-8 transform transition-all duration-300">
+                    class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 mb-8 transform transition-all duration-300">
                     <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div class="flex items-center gap-5">
                             <div
-                                class="size-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+                                class="size-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border border-gray-200 dark:border-gray-700">
                                 <span class="text-2xl text-white font-bold">
                                     {{ getInitials(patient.first_name, patient.first_surname) }}
                                 </span>
@@ -42,12 +42,12 @@
                         <div class="flex flex-wrap gap-3">
                             <AccessGate :permission="['patient.delete']">
                                 <button v-if="patient.active == 1" @click="patientBeingDeleted = true"
-                                    class="inline-flex items-center px-4 py-2 bg-red-500 dark:bg-red-600 text-white rounded-lg hover:bg-red-600 dark:hover:bg-red-700 transition-all duration-200 shadow-lg">
+                                    class="inline-flex items-center px-4 py-2 bg-red-500 dark:bg-red-600 text-white rounded-lg hover:bg-red-600 dark:hover:bg-red-700 transition-all duration-200 border border-gray-200 dark:border-gray-700">
                                     <TrashIcon class="w-4 h-4 mr-2" />
                                     Eliminar
                                 </button>
                                 <button v-else @click="restorePatient"
-                                    class="inline-flex items-center px-4 py-2 bg-emerald-500 dark:bg-emerald-600 text-white rounded-lg hover:bg-emerald-600 dark:hover:bg-emerald-700 transition-all duration-200 shadow-lg">
+                                    class="inline-flex items-center px-4 py-2 bg-emerald-500 dark:bg-emerald-600 text-white rounded-lg hover:bg-emerald-600 dark:hover:bg-emerald-700 transition-all duration-200 border border-gray-200 dark:border-gray-700">
                                     <RestoreIcon class="w-4 h-4 mr-2" />
                                     Restaurar
                                 </button>
@@ -55,14 +55,14 @@
 
                             <AccessGate :permission="['patient.update']">
                                 <Link :href="route('patients.edit', patient.id)"
-                                    class="inline-flex items-center px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-all duration-200 shadow-lg">
+                                    class="inline-flex items-center px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-all duration-200 border border-gray-200 dark:border-gray-700">
                                 <EditIcon class="w-4 h-4 mr-2" />
                                 Editar
                                 </Link>
                             </AccessGate>
 
                             <Link :href="route('patients.index')"
-                                class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 shadow-lg">
+                                class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 border border-gray-200 dark:border-gray-700">
                             <BackIcon class="w-4 h-4 mr-2" />
                             Volver
                             </Link>
@@ -73,9 +73,9 @@
                 <!-- Layout de tarjetas informativas -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Tarjeta de Información de contacto -->
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
-                            <div class="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg">
+                            <div class="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg border border-gray-200 dark:border-gray-700">
                                 <MailIcon class="w-6 h-6 text-white" />
                             </div>
                             <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información de contacto</h3>
@@ -100,9 +100,9 @@
                     </div>
 
                     <!-- Tarjeta de Información personal -->
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
-                            <div class="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg">
+                            <div class="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg border border-gray-200 dark:border-gray-700">
                                 <UserIcon class="w-6 h-6 text-white" />
                             </div>
                             <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información personal</h3>
@@ -136,9 +136,9 @@
                     </div>
 
                     <!-- Tarjeta de Información laboral -->
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
-                            <div class="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg">
+                            <div class="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg border border-gray-200 dark:border-gray-700">
                                 <BriefCaseIcon class="w-6 h-6 text-white" />
                             </div>
                             <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información laboral</h3>
@@ -157,7 +157,7 @@
                 </div>
 
                 <!-- Estado de ingreso -->
-                <div class="mt-8 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                <div class="mt-8 bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                     <div v-if="inProcessAdmssion" class="flex flex-col sm:flex-row items-center justify-between">
                         <div class="flex items-center mb-4 sm:mb-0">
                             <div class="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-full mr-4">
@@ -169,7 +169,7 @@
                             </div>
                         </div>
                         <Link
-                            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-200"
+                            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-green-600 hover:to-green-700 transition-all duration-200"
                             :href="route('admissions.show', inProcessAdmssion)">
                         <EyeIcon class="w-5 h-5 mr-2" />
                         Ir al ingreso
@@ -187,7 +187,7 @@
                         </div>
                         <AccessGate :permission="['admission.create']" v-if="patient.active == 1">
                             <Link
-                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
+                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
                                 :href="route('admissions.create', { patient_id: patient.id })">
                             <PlusIcon class="w-5 h-5 mr-2" />
                             Crear ingreso

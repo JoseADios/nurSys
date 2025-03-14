@@ -126,7 +126,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     public function create(Request $request)
     {
 
-        $admission_id = $request->has('admission_id') ? $request->admission_id : null;
+        $admission_id = $request->has('admission_id') ? $request->integer('admission_id') : null;
 
         if ($admission_id) {
             $admission = Admission::find($admission_id);

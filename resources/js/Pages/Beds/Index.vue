@@ -23,43 +23,48 @@
 
         <!-- Leyenda de colores - Visible siempre en desktop, condicional en móvil -->
         <div :class="{ 'hidden': !showLegend && isMobile, 'block': showLegend || !isMobile }"
-            class="mx-4 mb-4 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estado de camas:</h4>
-            <div class="flex flex-wrap gap-x-4 gap-y-2">
+            class="mx-4 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-sm">
+            <div class="flex flex-wrap gap-x-4 gap-y-2 items-center">
+                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Estado de camas:</h4>
                 <div class="flex items-center">
-                    <div class="w-4 h-4 rounded-full bg-emerald-400 dark:bg-emerald-500 mr-1.5"></div>
+                    <div class="w-4 h-4 rounded-full bg-emerald-400/90 dark:bg-emerald-500/90 mr-1.5"></div>
                     <span class="text-xs text-gray-600 dark:text-gray-400">Disponible</span>
                 </div>
                 <div class="flex items-center">
-                    <div class="w-4 h-4 rounded-full bg-orange-400 dark:bg-orange-500 mr-1.5"></div>
+                    <div class="w-4 h-4 rounded-full bg-orange-400/90 dark:bg-orange-500/90 mr-1.5"></div>
                     <span class="text-xs text-gray-600 dark:text-gray-400">Ocupada</span>
                 </div>
                 <div class="flex items-center">
-                    <div class="w-4 h-4 rounded-full bg-yellow-400 dark:bg-yellow-500 mr-1.5"></div>
+                    <div class="w-4 h-4 rounded-full bg-yellow-400/90 dark:bg-yellow-500/90 mr-1.5"></div>
                     <span class="text-xs text-gray-600 dark:text-gray-400">Limpieza</span>
                 </div>
                 <div class="flex items-center">
-                    <div class="w-4 h-4 rounded-full bg-red-500 dark:bg-red-600 mr-1.5"></div>
+                    <div class="w-4 h-4 rounded-full bg-red-500/90 dark:bg-red-600/90 mr-1.5"></div>
                     <span class="text-xs text-gray-600 dark:text-gray-400">Fuera de servicio</span>
                 </div>
             </div>
         </div>
 
-        <div class="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
+        <div class="container mx-auto px-2 sm:px-4 py-2 sm:py-6">
             <!-- Selector de pisos -->
-            <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col sm:flex-row items-center justify-between">
+            <div
+                class="mb-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-sm p-4 flex flex-col sm:flex-row items-center justify-between">
                 <div class="flex items-center mb-4 sm:mb-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Filtrar por piso</h3>
                 </div>
                 <div class="flex items-center space-x-2 w-full sm:w-auto">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                     </svg>
                     <select v-model="selectedFloor"
-                        class="form-select rounded-md shadow-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full sm:w-auto">
+                        class="form-select rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full sm:w-auto">
                         <option value="all">Todos los pisos</option>
                         <option v-for="floor in availableFloors" :key="floor.number" :value="floor.number">
                             {{ floor.label }}
@@ -69,26 +74,28 @@
             </div>
 
             <div v-for="floor in filteredFloorPlan" :key="floor.number" class="mb-6 sm:mb-8">
-                <h3 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4 text-center">Piso {{ floor.number }}
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4 text-center">Piso {{
+                    floor.number }}
                 </h3>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 justify-center">
                     <div v-for="(room, index) in floor.rooms" :key="index"
                         :class="[
-                            'bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700',
-                            {
-                                'p-3': room.beds.length === 1, // Padding más pequeño para salas con 1 cama
-                                'p-4': room.beds.length === 2, // Padding mediano para salas con 2 camas
-                                'p-5': room.beds.length === 3, // Padding grande para salas con 3 camas
-                                'p-6': room.beds.length > 3,   // Padding extra grande para salas con más de 3 camas
-                                'col-span-1': room.beds.length === 1, // Salas con 1 cama ocupan 1 columna
-                                'col-span-2': room.beds.length > 1,   // Salas con más de 1 cama ocupan toda la fila en móvil
-                                'sm:col-span-2': room.beds.length === 2, // En tablets, salas con 2 camas ocupan 2 columnas
-                                'sm:col-span-3': room.beds.length === 3 || room.beds.length > 3, // En tablets, salas con 3+ camas ocupan 3 columnas
-                                'md:col-span-3': room.beds.length === 3, // En desktop, salas con 3 camas ocupan 3 columnas
-                                'md:col-span-4': room.beds.length > 3    // En desktop, salas con más de 3 camas ocupan 4 columnas
-                            }
-                        ]">
-                        <h4 class="text-sm sm:text-lg font-semibold text-gray-800 dark:text-white mb-2 sm:mb-3 text-center">
+                            'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
+                        {
+                            'p-3': room.beds.length === 1, // Padding más pequeño para salas con 1 cama
+                            'p-4': room.beds.length === 2, // Padding mediano para salas con 2 camas
+                            'p-5': room.beds.length === 3, // Padding grande para salas con 3 camas
+                            'p-6': room.beds.length > 3,   // Padding extra grande para salas con más de 3 camas
+                            'col-span-1': room.beds.length === 1, // Salas con 1 cama ocupan 1 columna
+                            'col-span-2': room.beds.length > 1,   // Salas con más de 1 cama ocupan toda la fila en móvil
+                            'sm:col-span-2': room.beds.length === 2, // En tablets, salas con 2 camas ocupan 2 columnas
+                            'sm:col-span-3': room.beds.length === 3 || room.beds.length > 3, // En tablets, salas con 3+ camas ocupan 3 columnas
+                            'md:col-span-3': room.beds.length === 3, // En desktop, salas con 3 camas ocupan 3 columnas
+                            'md:col-span-4': room.beds.length > 3    // En desktop, salas con más de 3 camas ocupan 4 columnas
+                        }
+                    ]">
+                        <h4
+                            class="text-sm sm:text-lg font-semibold text-gray-800 dark:text-white mb-2 sm:mb-3 text-center">
                             Sala {{ room.name }}
                         </h4>
                         <!-- Ajuste de grid para adaptarse al número de camas -->
@@ -103,15 +110,14 @@
                         ]">
                             <div v-for="(bed, index) in room.beds" :key="index" class="flex justify-center">
                                 <div :class="[
-                                    'mx-auto rounded-lg transition-all duration-300 hover:scale-105 flex flex-col items-center shadow-md w-[90px] h-32',
+                                    'mx-auto rounded-lg transition-all duration-300 hover:scale-105 flex flex-col items-center w-[90px] h-32',
                                     {
-                                        'bg-orange-400 dark:bg-orange-500': bed.admission,
-                                        'bg-yellow-400 dark:bg-yellow-500': bed.status === 'cleaning',
-                                        'bg-red-500 dark:bg-red-600': bed.status === 'out_of_service',
-                                        'bg-emerald-400 dark:bg-emerald-500': bed.status === 'available'
+                                        'bg-orange-400/90 dark:bg-orange-500/90': bed.admission,
+                                        'bg-yellow-400/90 dark:bg-yellow-500/90': bed.status === 'cleaning',
+                                        'bg-red-500/90 dark:bg-red-600/90': bed.status === 'out_of_service',
+                                        'bg-emerald-400/90 dark:bg-emerald-500/90': bed.status === 'available'
                                     }
-                                ]" @mouseenter="handleTooltip(bed.id)"
-                                    @mouseleave="handleTooltip(null)">
+                                ]" @mouseenter="handleTooltip(bed.id)" @mouseleave="handleTooltip(null)">
 
                                     <!-- Header con número fijo -->
                                     <div
@@ -121,14 +127,12 @@
 
                                     <!-- Tooltip estilo elegante alternativo para desktop -->
                                     <div v-if="showTooltip === bed.id && bed.admission"
-                                        :ref="el => tooltipRefs[bed.id] = el"
-                                        :class="{
+                                        :ref="el => tooltipRefs[bed.id] = el" :class="{
                                             'top-auto bottom-full mb-3': shouldShowAbove(bed.id),
                                             'top-full mt-3': !shouldShowAbove(bed.id)
                                         }"
-                                        class="hidden lg:block absolute z-50 w-64 text-sm bg-white dark:bg-gray-800 rounded-md shadow-2xl left-1/2 -translate-x-1/2 overflow-hidden border border-gray-200 dark:border-gray-700 transform origin-top scale-100 transition-all duration-200"
-                                        @mouseenter="handleTooltip(bed.id)"
-                                        @mouseleave="handleTooltip(null)">
+                                        class="hidden lg:block absolute z-50 w-64 text-sm bg-white/95 dark:bg-gray-800/95 rounded-md border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-sm left-1/2 -translate-x-1/2 overflow-hidden transform origin-top scale-100 transition-all duration-200"
+                                        @mouseenter="handleTooltip(bed.id)" @mouseleave="handleTooltip(null)">
                                         <!-- Barra superior de color -->
                                         <div
                                             class="h-1.5 bg-gradient-to-r from-blue-400 to-emerald-400 dark:from-blue-500 dark:to-emerald-500">
@@ -158,7 +162,7 @@
                                                         <p class="text-xs text-gray-500 dark:text-gray-400">Paciente</p>
                                                         <p class="font-medium text-gray-900 dark:text-white">
                                                             {{ bed.admission.patient.first_name }} {{
-                                                            bed.admission.patient.first_surname }}
+                                                                bed.admission.patient.first_surname }}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -173,7 +177,7 @@
                                                         <p class="text-xs text-gray-500 dark:text-gray-400">Doctor</p>
                                                         <p class="font-medium text-gray-900 dark:text-white">
                                                             {{ bed.admission.doctor.name }} {{
-                                                            bed.admission.doctor.last_name }}
+                                                                bed.admission.doctor.last_name }}
                                                         </p>
                                                     </div>
                                                 </div>

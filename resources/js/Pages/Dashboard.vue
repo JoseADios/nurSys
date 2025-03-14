@@ -23,7 +23,7 @@ defineProps({
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-4">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden border border-gray-200 dark:border-gray-700/60 sm:rounded-lg p-4">
                     <!-- Grid de estadísticas -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- Admisiones -->
@@ -73,7 +73,7 @@ defineProps({
                     </div>
 
                     <!-- Gráfico de ingresos -->
-                    <div class="mt-6 bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+                    <div class="mt-6 bg-white dark:bg-gray-800 overflow-hidden border border-gray-200/60 dark:border-gray-700/60 sm:rounded-lg">
                         <div class="border-b border-gray-200 dark:border-gray-700 px-4 py-3">
                             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
                                 Ingresos de la Semana

@@ -17,7 +17,7 @@
         <div
             class="bg-gray-100 dark:bg-gray-900 flex justify-end items-end overflow-x-auto sm:rounded-lg mt-2 lg:mx-10">
 
-            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-md border border-slate-200 dark:border-slate-700">
+            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
                 <div class="p-4">
                     <div class="flex justify-between items-center ">
                         <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mr-4">Filtros Avanzados</h3>
@@ -41,7 +41,7 @@
                                     class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Nombre</label>
                                 <input v-model="form.name" @input="submitFilter()" type="text"
                                     placeholder="Buscar por nombre"
-                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
+                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
                             </div>
 
                             <div>
@@ -49,7 +49,7 @@
                                     class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Cédula</label>
                                 <input v-model="form.identificationCard" @input="submitFilter()" type="text"
                                     placeholder="Número de identificación"
-                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
+                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
                             </div>
 
                             <div>
@@ -57,7 +57,7 @@
                                     class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Nacionalidad</label>
                                 <input v-model="form.nationality" @input="submitFilter()" type="text"
                                     placeholder="País de origen"
-                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
+                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
                             </div>
 
                             <div>
@@ -65,7 +65,7 @@
                                     class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Teléfono</label>
                                 <input v-model="form.phone" @input="submitFilter()" type="text"
                                     placeholder="Número de contacto"
-                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
+                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
                             </div>
 
                             <div>
@@ -73,7 +73,7 @@
                                     class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Correo</label>
                                 <input v-model="form.email" @input="submitFilter()" type="text"
                                     placeholder="Correo electrónico"
-                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
+                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
                             </div>
                         </div>
                     </transition>
@@ -156,7 +156,7 @@
             </div>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-10 lg:mx-10">
+        <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 sm:rounded-lg mt-10 lg:mx-10">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>

@@ -30,7 +30,7 @@
         </div>
 
         <div class="container mx-auto px-4 py-8">
-            <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
+            <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <Link v-if="admission_id" :href="route('admissions.show', admission_id)"
@@ -68,7 +68,7 @@
                     <div class="space-y-4">
                         <!-- admission -->
                         <div
-                            class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center">
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 flex justify-between items-center">
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <Link :href="route('admissions.show', temperatureRecord.admission_id)" as="button"
@@ -83,7 +83,7 @@
                             </AccessGate>
                         </div>
 
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                             <Link :href="route('patients.show', temperatureRecord.admission.patient.id)" as="button"
                                 class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
@@ -93,7 +93,7 @@
                             </Link>
                         </div>
 
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             <div v-if="temperatureRecord.admission.bed">
@@ -108,7 +108,7 @@
 
                     <div class="space-y-4">
                         <div
-                            class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -123,7 +123,7 @@
                         </div>
 
 
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de creación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ formatDate(temperatureRecord.created_at) }}
@@ -132,7 +132,7 @@
 
                         <AccessGate :permission="['temperatureRecord.update']">
                             <div v-if="!isVisibleEditDiagnosis"
-                                class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
+                                class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 flex justify-between">
                                 <div class="">
                                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de
                                         impresión
@@ -147,14 +147,14 @@
                             </div>
 
                             <div v-if="isVisibleEditDiagnosis"
-                                class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                                class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                                 <form @submit.prevent="submitUpdateRecord">
 
                                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de
                                         impresión
                                     </h3>
                                     <textarea v-model="formRecord.impression_diagnosis"
-                                        class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             </textarea>
                                     <div class="mt-3">
                                         <button
@@ -169,7 +169,7 @@
                             </div>
                         </AccessGate>
                         <AccessGate :except-permission="['temperatureRecord.update']">
-                            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de
                                     impresión
                                 </h3>
@@ -200,7 +200,7 @@
                                         Temperatura
                                     </label>
                                     <input type="number" step="0.1" id="temperature"
-                                        v-model="formDetailUpdate.temperature" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                        v-model="formDetailUpdate.temperature" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
                                     focus:outline-none focus:ring-2 focus:ring-blue-500
                                     dark:bg-gray-800 dark:text-white" placeholder="Temperatura del paciente (°C)" />
                                 </div>
@@ -211,7 +211,7 @@
                                         Evacuaciones
                                     </label>
                                     <input type="number" id="evacuations" v-model="formDetailUpdate.evacuations"
-                                        required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                        required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
                                     focus:outline-none focus:ring-2 focus:ring-blue-500
                                     dark:bg-gray-800 dark:text-white"
                                         placeholder="Num. de evacuaciones del paciente" />
@@ -222,7 +222,7 @@
                                         Micciones
                                     </label>
                                     <input type="text" id="urinations" v-model="formDetailUpdate.urinations" required
-                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
                                     focus:outline-none focus:ring-2 focus:ring-blue-500
                                     dark:bg-gray-800 dark:text-white" placeholder="Num. de micciones del paciente" />
                                 </div>
@@ -252,7 +252,7 @@
                                         Temperatura
                                     </label>
                                     <input type="number" step="0.1" id="temperature" v-model="formDetail.temperature"
-                                        required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                        required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
                                     focus:outline-none focus:ring-2 focus:ring-blue-500
                                     dark:bg-gray-800 dark:text-white" placeholder="Temperatura del paciente (°C)" />
                                 </div>
@@ -263,7 +263,7 @@
                                         Evacuaciones
                                     </label>
                                     <input type="number" id="evacuations" v-model="formDetail.evacuations" required
-                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
                                     focus:outline-none focus:ring-2 focus:ring-blue-500
                                     dark:bg-gray-800 dark:text-white"
                                         placeholder="Num. de evacuaciones del paciente" />
@@ -273,7 +273,7 @@
                                         class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                         Micciones
                                     </label>
-                                    <input type="text" id="urinations" v-model="formDetail.urinations" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                    <input type="text" id="urinations" v-model="formDetail.urinations" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
                                     focus:outline-none focus:ring-2 focus:ring-blue-500
                                     dark:bg-gray-800 dark:text-white" placeholder="Num. de micciones del paciente" />
                                 </div>
@@ -355,7 +355,7 @@
         <AccessGate :permission="['temperatureRecord.delete']">
             <Modal :closeable="true" :show="showEditAdmission != null" @close="showEditAdmission == null">
                 <div
-                    class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                    class="relative overflow-hidden border border-gray-200 dark:border-gray-700/60 sm:rounded-xl my-8 lg:mx-8 bg-white dark:bg-gray-800 p-4">
                     <form @submit.prevent="submitUpdateRecord" class="max-w-3xl mx-auto">
 
                         <AdmissionSelector @update:admission="formRecord.admission_id = $event"
@@ -383,12 +383,11 @@
         <AccessGate :permission="['temperatureRecord.delete']">
             <Modal :closeable="true" :show="showEditUser != null" @close="showEditUser == null">
                 <div
-                    class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                    class="relative overflow-hidden border border-gray-200 dark:border-gray-700/60 sm:rounded-xl my-8 lg:mx-8 bg-white dark:bg-gray-800 p-4">
                     <form @submit.prevent="submitUpdateRecord" class="max-w-3xl mx-auto">
 
                         <UserSelector roles="nurse" :selected-user-id="temperatureRecord.nurse_id"
                             @update:user="formRecord.nurse_id = $event" />
-
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">

@@ -186,8 +186,8 @@ Ficha de Medicamentos
     <div class="w-full mb-2">
          <label for="drug"
                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Medicamento</label>
-                       <DrugSelector @update:drug="form = $event" class=" p-2 border border-gray-600 rounded-lg"/>
-                       <InputError :message="form.errors" class="mt-2" />
+                       <DrugSelector @update:drug="updateSelectedDrug" class=" p-2 border border-gray-600 rounded-lg"/>
+                       <InputError :message="form.errors.drug" class="mt-2" />
 
     </div>
 
@@ -520,7 +520,7 @@ Ficha de Medicamentos
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import { ref } from "vue";
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
@@ -530,6 +530,7 @@ import AccessGate from '@/Components/Access/AccessGate.vue';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 import FormatId from '@/Components/FormatId.vue';
 import DrugSelector from '@/Components/DrugSelector.vue';
+import InputError from '@/Components/InputError.vue';
 export default{
     props: {
         medicationRecord: Object,
@@ -539,6 +540,7 @@ export default{
         routeOptions: Array,
         dose: Array,
         filters: Object,
+        selectedDrug: Array,
     },
     components: {
         AppLayout,
@@ -550,13 +552,14 @@ export default{
         AccessGate,
         SignaturePad,
         FormatId,
-        DrugSelector
+        DrugSelector,
+        InputError
     },
     data(){
         return{
-            form: {
+            form:useForm({
                 medication_record_id: this.medicationRecord.id,
-                drug: '',
+                drug: this.selectedDrug || null,
                 dose: '',
                 route: '',
                 fc: '',
@@ -565,7 +568,7 @@ export default{
                 dose_metric: '',
                 selectedOrderId: null,
                 showDeleted: this.filters.show_deleted,
-            },
+             }),
             recordBeingDeleted: ref(null),
             selectedOrderId: null,
             errorMessage: "",
@@ -638,6 +641,10 @@ submitSignature() {
                 }
             );
         },
+        updateSelectedDrug(drug) {
+        this.form.drug = drug.name;
+        this.selectedDrug = drug.id;
+    },
         submit() {
             if (!this.form.selectedOrderId) {
             this.errorMessage = "Debe seleccionar una orden antes de guardar.";

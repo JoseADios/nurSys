@@ -157,7 +157,7 @@ export default {
         },
         selectDrug(drug) {
             this.selectedDrug = drug.id;
-            this.$emit('update:drug', drug.id);
+            this.$emit('update:drug', { id: drug.id, name: drug.name });
         },
         async applyFilters(pageUrl = null) {
             try {

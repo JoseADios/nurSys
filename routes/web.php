@@ -64,6 +64,7 @@ Route::middleware([
     Route::get('/patients/filter', [PatientController::class, 'filterPatients'])->name('patients.filter');
     Route::resource('patients', PatientController::class);
 
+    Route::get('/drugs/filter', [DrugController::class, 'filterDrugs'])->name('drugs.filter');
     Route::resource('Drugs', DrugController::class);
     Route::resource('Diet', DietController::class);
     Route::resource('beds', BedController::class);

@@ -63,6 +63,25 @@ class DrugController extends Controller
             return redirect()->back()->with('success', 'Medicamento creado correctamente');
 
     }
+    public function filterDrugs(Request $request)
+    {
+        $query = Drug::query();
+
+        if ($request->filled('filters.name')) {
+            $query->where('name', 'LIKE', '%' . $request->input('filters.name') . '%');
+        }
+
+        $drugs = $query->get();
+        $paginatedDrugs = new \Illuminate\Pagination\LengthAwarePaginator(
+            $drugs->forPage($request->page, 10),
+            $drugs->count(),
+            10,
+            $request->page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return $paginatedDrugs;
+    }
 
 
     /**

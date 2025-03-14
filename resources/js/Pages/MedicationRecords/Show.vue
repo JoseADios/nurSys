@@ -183,24 +183,15 @@ Ficha de Medicamentos
     <input type="hidden" v-model="form.selectedOrderId" />
 
     <!-- Selector de Medicamento -->
-    <div class="w-2/3 mb-2">
-        <label for="drug-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-            Medicamento
-        </label>
-        <select id="drug-select" required v-model="form.drug"
-            class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-            <option v-for="drugs in drug" :key="drugs.id" :value="drugs.name">
-                {{ drugs.name }} - {{ drugs.description }}
-            </option>
-        </select>
+    <div class="w-full mb-2">
+         <label for="drug"
+                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Medicamento</label>
+                       <DrugSelector @update:drug="form = $event" class=" p-2 border border-gray-600 rounded-lg"/>
+                       <InputError :message="form.errors" class="mt-2" />
+
     </div>
 
-    <!-- Botón Crear Medicamento -->
-    <button  @click="openCreateModal"
-        class="ml-2 mt-3 flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
 
-        <span class="font-medium">Crear Medicamento</span>
-    </button>
 </div>
 
 
@@ -538,7 +529,7 @@ import DialogModal from '@/Components/DialogModal.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 import FormatId from '@/Components/FormatId.vue';
-
+import DrugSelector from '@/Components/DrugSelector.vue';
 export default{
     props: {
         medicationRecord: Object,
@@ -558,7 +549,8 @@ export default{
         DialogModal,
         AccessGate,
         SignaturePad,
-        FormatId
+        FormatId,
+        DrugSelector
     },
     data(){
         return{

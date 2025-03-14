@@ -222,11 +222,13 @@ class MedicationRecordController extends Controller
     {
         $firmService = new FirmService;
 
-        if ($request->signature) {
-            $fileName = $firmService
-                ->createImag($request->doctor_sign, $medicationRecord->doctor_sign);
-            $validated['doctor_sign'] = $fileName;
-        }
+       if ($request->has('signature')) {
+        $fileName = $firmService->createImag($request->doctor_sign, $medicationRecord->doctor_sign);
+        $medicationRecord->update(['doctor_sign' => $fileName]);
+
+        return back()->with('flash.toast', 'Registro actualizado correctamente');
+
+    }
 
      if ($request->has('active')) {
             $this->restore($medicationRecord->id);
@@ -241,8 +243,7 @@ class MedicationRecordController extends Controller
         }
 
 
-        return redirect()->route('medicationRecords.index')
-                         ->with('success', 'Medication record updated successfully.');
+        return back()->with('flash.toast', 'Registro actualizado correctamente');
     }
 
 

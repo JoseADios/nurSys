@@ -154,7 +154,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $temperatureRecord = TemperatureRecord::create([
             'admission_id' => $request->admission_id,
             'nurse_id' => Auth::id(),
-            'impression_diagnosis' => $request->impression_diagnosis,
         ]);
 
         if ($has_admission_id) {
@@ -241,7 +240,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $validated = $request->validate([
             'admission_id' => 'numeric|nullable',
             'nurse_id' => 'numeric|nullable',
-            'impression_diagnosis' => 'string|nullable',
             'nurse_sign' => 'string|nullable',
             'active' => 'boolean|nullable'
         ]);

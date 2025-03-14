@@ -19,7 +19,8 @@
                 class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
             Hojas de temperatura
             </Link>
-            <Link v-if="admission_id" :href="route('temperatureRecords.index', { admission_id: admission_id, in_process: '' })"
+            <Link v-if="admission_id"
+                :href="route('temperatureRecords.index', { admission_id: admission_id, in_process: '' })"
                 class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
             Hojas de temperatura
             </Link>
@@ -30,7 +31,8 @@
         </div>
 
         <div class="container mx-auto px-4 py-8">
-            <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
+            <div
+                class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <Link v-if="admission_id" :href="route('admissions.show', admission_id)"
@@ -83,7 +85,8 @@
                             </AccessGate>
                         </div>
 
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                             <Link :href="route('patients.show', temperatureRecord.admission.patient.id)" as="button"
                                 class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
@@ -93,7 +96,8 @@
                             </Link>
                         </div>
 
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             <div v-if="temperatureRecord.admission.bed">
@@ -123,61 +127,23 @@
                         </div>
 
 
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de creación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ formatDate(temperatureRecord.created_at) }}
                             </p>
                         </div>
 
-                        <AccessGate :permission="['temperatureRecord.update']">
-                            <div v-if="!isVisibleEditDiagnosis"
-                                class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 flex justify-between">
-                                <div class="">
-                                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de
-                                        impresión
-                                    </h3>
-                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                        {{ temperatureRecord.impression_diagnosis }}
-                                    </p>
-                                </div>
-                                <button @click="toggleEditRecord" class="text-blue-500 mr-3">
-                                    <EditIcon class="size-5" />
-                                </button>
-                            </div>
-
-                            <div v-if="isVisibleEditDiagnosis"
-                                class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
-                                <form @submit.prevent="submitUpdateRecord">
-
-                                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de
-                                        impresión
-                                    </h3>
-                                    <textarea v-model="formRecord.impression_diagnosis"
-                                        class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </textarea>
-                                    <div class="mt-3">
-                                        <button
-                                            class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                                            @click="toggleEditRecord">Cancelar</button>
-
-                                        <button type="submit"
-                                            class="focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
-                                            Aceptar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </AccessGate>
-                        <AccessGate :except-permission="['temperatureRecord.update']">
-                            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
-                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de
-                                    impresión
-                                </h3>
-                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                    {{ temperatureRecord.impression_diagnosis }}
-                                </p>
-                            </div>
-                        </AccessGate>
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de
+                                impresión
+                            </h3>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ temperatureRecord.admission.admission_dx }}
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -507,7 +473,6 @@ export default {
             formRecord: {
                 admission_id: this.temperatureRecord.admission_id,
                 nurse_id: this.temperatureRecord.nurse_id,
-                impression_diagnosis: this.temperatureRecord.impression_diagnosis,
                 active: this.temperatureRecord.active
             },
         }

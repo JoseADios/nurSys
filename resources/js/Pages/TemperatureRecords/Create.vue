@@ -36,16 +36,8 @@
         <div
             class="relative mb-4 overflow-x-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 sm:rounded-lg mt-4 p-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-2xl mx-auto">
-
                 <AdmissionSelector @update:admission="form.admission_id = $event"
                     :selected-admission-id="admission_id" />
-
-                <label for="impression_diagnosis"
-                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico de
-                    impresión</label>
-
-                <textarea required id="impression_diagnosis" v-model="form.impression_diagnosis"
-                    class="bg-gray-50 resize-none border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
 
                 <div class="flex justify-end mt-6 mb-2">
                     <Link v-if="admission_id" :href="route('admissions.show', admission_id)"
@@ -84,7 +76,6 @@ export default {
         return {
             form: {
                 admission_id: this.admission_id || null,
-                impression_diagnosis: null,
                 has_admission_id: this.admission_id ? true : false
             }
         }

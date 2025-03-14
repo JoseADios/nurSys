@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('admission_id')->constrained()->onDelete('restrict');
             $table->foreignId('nurse_id')->constrained('users')->onDelete('restrict');
-            $table->text('impression_diagnosis')->nullable();
             $table->string('nurse_sign')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();

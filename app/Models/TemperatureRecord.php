@@ -13,7 +13,6 @@ class TemperatureRecord extends Model
     protected $fillable = [
         'admission_id',
         'nurse_id',
-        'impression_diagnosis',
         'nurse_sign',
         'active',
         'created_at',

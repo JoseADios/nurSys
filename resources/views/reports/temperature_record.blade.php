@@ -95,7 +95,7 @@
 
                 </td>
                 <td width="90%" class="col-2">
-                    <div>
+                    <div style="margin-left: 10%">
                         <h1>{{ $clinic->name }}</h1>
                         <p id="address">{{ $clinic->address }} • Tel.: {{ $clinic->phone }} • Fax.:
                             {{ $clinic->fax }}</p>
@@ -116,7 +116,7 @@
                     {{ $temperatureRecord->admission->patient->second_surname }}</p>
                 <p><span class="bold">Dirección:</span> {{ $temperatureRecord->admission->patient->address }}</p>
                 <p><span class="bold">Diagnóstico de impresión:</span>
-                    {{ $temperatureRecord->impression_diagnosis }}</p>
+                    {{ $temperatureRecord->admission->admission_dx }}</p>
             </td>
             <td style="width: 30%; vertical-align: top;">
                 <p><span class="bold">Sala:</span> {{ $temperatureRecord->admission->bed->room }}</p>
@@ -136,9 +136,6 @@
     <div class="bottom-cont">
         <table width="100%" style="border-collapse: collapse;">
             <tr>
-                <td style="width: 40%; vertical-align: middle; padding: 2px 0 2px 100px;">
-                    <p><span class="bold">Diagnóstico</span> __________________________</p>
-                </td>
                 <td style="width: 30%; vertical-align: middle; text-align: left; padding: 2px 0;">
                     <div><span class="bold">Dr.</span> {{ $temperatureRecord->admission->doctor->name }}
                         {{ $temperatureRecord->admission->doctor->last_name }}</div>
@@ -151,6 +148,9 @@
                             <img src="{{ $nurseSignaturePath }}" width="100" style="margin-left: 10px;">
                         @endif
                     </div>
+                </td>
+                <td style="width: 40%; vertical-align: middle; padding: 2px 0 2px 100px;">
+                    <p>Generado a las {{now()->locale('es')->isoFormat('h:mm A [del] d [de] MMMM')}} </p>
                 </td>
             </tr>
         </table>

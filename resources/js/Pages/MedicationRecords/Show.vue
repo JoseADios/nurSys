@@ -1,11 +1,11 @@
 <template>
     <AppLayout>
 
-        <div class="container mx-auto px-4   py-8">
+        <div class="container mx-auto px-12   py-8">
            <!-- Navigation -->
-           <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+           <div class="p-4 bg-gray-100 dark:bg-gray-900  flex justify-between items-center">
 
-            <div class="ml-12 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+            <div class=" my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
 
 
 <Link :href="route('medicationRecords.index')"
@@ -19,7 +19,7 @@ Ficha de Medicamentos
 <div class="ml-2 inline-flex items-center">
     <FormatId :id="medicationRecord.id" prefix="FIC"></FormatId>
 </div>
-</div>  
+</div>
                     <button v-if="medicationRecord.active" @click="recordBeingDeleted = true"
                         class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -27,7 +27,7 @@ Ficha de Medicamentos
                                 d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <span class="font-medium">Eliminar</span>
+                        <span class="font-medium ">Eliminar</span>
                     </button>
                     <button v-else @click="restoreRecord(medicationRecord)"
                         class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
@@ -123,9 +123,9 @@ Ficha de Medicamentos
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:mx-10 mt-6 hidden" id="formcreaterecord">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 shadow-xl rounded-lg mt-2 gap-6  lg:mx-10 mt-6 hidden" id="formcreaterecord">
         <!-- Tarjeta para información del Medical Order -->
-        <div class="relative overflow-hidden rounded-lg shadow-md bg-white dark:bg-gray-800 mb-5">
+        <div class="relative overflow-hidden rounded-lg  bg-white dark:bg-gray-800 mb-5">
 
                         <div class="max-h-80 overflow-y-auto  shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
                             <div v-if="order.length === 0" class="text-center text-gray-500 dark:text-gray-300 p-4">
@@ -173,7 +173,7 @@ Ficha de Medicamentos
 
         </div>
 
-                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg   lg:mx-10">
+                    <div class="relative overflow-x-auto  sm:rounded-lg   lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
 

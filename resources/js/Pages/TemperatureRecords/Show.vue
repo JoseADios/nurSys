@@ -19,13 +19,13 @@
                 class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
             Hojas de temperatura
             </Link>
-            <Link v-if="admission_id" :href="route('temperatureRecords.index', { admission_id: admission_id })"
+            <Link v-if="admission_id" :href="route('temperatureRecords.index', { admission_id: admission_id, in_process: '' })"
                 class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
             Hojas de temperatura
             </Link>
             <ChevronRightIcon class="w-3 h-3 text-gray-400 mx-1" />
             <div class="ml-2 inline-flex items-center">
-                <FormatId :id="temperatureRecord.id" prefix="ENF"></FormatId>
+                <FormatId :id="temperatureRecord.id" prefix="TEMP"></FormatId>
             </div>
         </div>
 

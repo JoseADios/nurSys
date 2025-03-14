@@ -134,6 +134,8 @@ class NurseRecordController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         $admission = Admission::find($request->admission_id);
+        $has_admission_id = $request->input('has_admission_id');
+
         $this->authorize('create', [NurseRecord::class, $admission]);
         $this->authorize('canCreateInTurn', [NurseRecord::class, $request->admission_id]);
 
@@ -143,7 +145,15 @@ class NurseRecordController extends Controller implements HasMiddleware
             'created_at' => now(),
         ]);
 
-        return Redirect::route('nurseRecords.show', $nurseRecord->id)->with('flash.toast', 'Registro de enfermería creado');
+        if ($has_admission_id) {
+            return Redirect::route('nurseRecords.show', [
+                'nurseRecord' => $nurseRecord->id,
+                'admission_id' => $admission->id,
+            ]
+            )->with('flash.toast', 'Registro de enfermería creado');
+        } else {
+            return Redirect::route('nurseRecords.show', $nurseRecord->id)->with('flash.toast', 'Registro de enfermería creado');
+        }
     }
 
     /**

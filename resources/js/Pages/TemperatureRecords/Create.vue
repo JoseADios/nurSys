@@ -15,29 +15,30 @@
                 <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
             </div>
 
-             <div v-if="admission_id">
-                 <Link :href="route('temperatureRecords.index', { admission_id: admission_id })"
-                     class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
-                 Hojas de temperatura
-                 </Link>
-             </div>
-             <div v-if="!admission_id">
-                 <Link :href="route('temperatureRecords.index')"
-                     class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
-                 Hojas de temperatura
-                 </Link>
-             </div>
+            <div v-if="admission_id">
+                <Link :href="route('temperatureRecords.index', { admission_id: admission_id })"
+                    class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+                Hojas de temperatura
+                </Link>
+            </div>
+            <div v-if="!admission_id">
+                <Link :href="route('temperatureRecords.index')"
+                    class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
+                Hojas de temperatura
+                </Link>
+            </div>
             <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
             <div class="ml-2 inline-flex items-center">
                 Crear
             </div>
         </div>
 
-        <div class="relative mb-4 overflow-x-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 sm:rounded-lg mt-4 p-4 lg:mx-10">
+        <div
+            class="relative mb-4 overflow-x-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 sm:rounded-lg mt-4 p-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-2xl mx-auto">
 
                 <AdmissionSelector @update:admission="form.admission_id = $event"
-                :selected-admission-id="admission_id" />
+                    :selected-admission-id="admission_id" />
 
                 <label for="impression_diagnosis"
                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico de
@@ -82,8 +83,9 @@ export default {
     data() {
         return {
             form: {
-                admission_id: this.admission_id,
+                admission_id: this.admission_id || null,
                 impression_diagnosis: null,
+                has_admission_id: this.admission_id ? true : false
             }
         }
     },

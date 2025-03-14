@@ -82,7 +82,8 @@ export default {
     data() {
         return {
             form: {
-                admission_id: this.admission_id || null
+                admission_id: this.admission_id || null,
+                has_admission_id: this.admission_id ? true : false
             },
             error: null
         };

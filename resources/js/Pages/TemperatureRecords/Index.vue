@@ -244,7 +244,12 @@ export default {
     },
     methods: {
         temperatureRecordShow(id) {
-            this.$inertia.get(route('temperatureRecords.show', id));
+            if (this.form.admission_id) {
+
+                this.$inertia.get(`${route('temperatureRecords.show', id)}?admission_id=${this.form.admission_id}`);
+            } else {
+                this.$inertia.get(route('temperatureRecords.show', id));
+            }
         },
         toggleShowDeleted() {
             this.form.showDeleted = !this.form.showDeleted;

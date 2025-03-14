@@ -131,7 +131,7 @@
                                             'top-auto bottom-full mb-3': shouldShowAbove(bed.id),
                                             'top-full mt-3': !shouldShowAbove(bed.id)
                                         }"
-                                        class="hidden lg:block absolute z-50 w-64 text-sm bg-white/95 dark:bg-gray-800/95 rounded-md border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-sm left-1/2 -translate-x-1/2 overflow-hidden transform origin-top scale-100 transition-all duration-200"
+                                        class="hidden lg:block absolute z-50 w-60 text-sm bg-white/95 dark:bg-gray-800/95 rounded-md border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-sm left-1/2 -translate-x-1/2 overflow-hidden transform origin-top scale-100 transition-all duration-200"
                                         @mouseenter="handleTooltip(bed.id)" @mouseleave="handleTooltip(null)">
                                         <!-- Barra superior de color -->
                                         <div

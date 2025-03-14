@@ -24,7 +24,8 @@ export default defineComponent({
     },
     setup(props) {
         const chart = ref(null);
-        const isDarkMode = ref(false);
+        const isDarkMode = document.documentElement.classList.contains('dark');;
+
 
         const getChartImage = async () => {
             if (chart.value?.chart) {
@@ -38,7 +39,7 @@ export default defineComponent({
                 height: props.height,
                 type: 'line',
                 background: 'transparent',
-                foreColor: isDarkMode.value ? '#e5e7eb' : '#374151',
+                foreColor: isDarkMode.value ? '#e5e7eb' : '#1f2937',
                 toolbar: {
                     show: false
                 }
@@ -58,7 +59,7 @@ export default defineComponent({
             },
             colors: ['#3b82f6'],
             grid: {
-                borderColor: isDarkMode.value ? '#374151' : '#e5e7eb',
+                borderColor: isDarkMode.value ? '#374151' : 'rgba(209, 213, 219, 0.3)',
                 strokeDashArray: 5,
                 padding: {
                     top: 20,
@@ -71,30 +72,32 @@ export default defineComponent({
                 categories: [],
                 labels: {
                     style: {
-                        colors: isDarkMode.value ? '#e5e7eb' : '#374151',
+                        colors: isDarkMode.value ? '#e5e7eb' : '#1f2937',
                         fontSize: '11px',
                     },
                     rotate: -45,
                     rotateAlways: false,
                 },
-                axisBorder: {
-                    color: isDarkMode.value ? '#4b5563' : '#d1d5db',
-                },
-                axisTicks: {
-                    color: isDarkMode.value ? '#4b5563' : '#d1d5db',
+                xaxis: {
+                    axisBorder: {
+                        color: isDarkMode.value ? '#4b5563' : '#e5e7eb', // Gris más claro
+                    },
+                    axisTicks: {
+                        color: isDarkMode.value ? '#4b5563' : '#e5e7eb', // Gris más claro
+                    },
                 },
             },
             yaxis: {
                 title: {
                     text: 'Temperatura (°C)',
                     style: {
-                        color: isDarkMode.value ? '#e5e7eb' : '#374151',
+                        color: isDarkMode.value ? '#e5e7eb' : '#1f2937',
                         fontSize: '12px',
                     },
                 },
                 labels: {
                     style: {
-                        colors: isDarkMode.value ? '#e5e7eb' : '#374151',
+                        colors: isDarkMode.value ? '#e5e7eb' : '#1f2937',
                         fontSize: '11px',
                     },
                 },
@@ -109,13 +112,25 @@ export default defineComponent({
                         label: {
                             borderColor: '#ff0000',
                             style: {
-                                color: '#fff',
-                                background: '#ff0000',
-                            },
+                                background: isDarkMode.value ? '#374151' : '#ffffff', // Fondo blanco puro
+                                border: '1px solid #e5e7eb' // Borde sutil
+                            }
                         }
                     }
                 ],
-                xaxis: []
+                xaxis: [
+                    {
+                        borderColor: isDarkMode.value ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
+                        label: {
+                            style: {
+                                color: isDarkMode.value ? '#e5e7eb' : '#1f2937',
+                                background: isDarkMode.value ? '#374151' : '#ffffff',
+                                border: '1px solid #e5e7eb',
+                                padding: { left: 10, right: 10, top: 4, bottom: 4 }
+                            }
+                        }
+                    }
+                ]
             },
             tooltip: {
                 theme: isDarkMode.value ? 'dark' : 'light',
@@ -132,7 +147,7 @@ export default defineComponent({
             markers: {
                 size: 4,
                 colors: ['#3b82f6'],
-                strokeColors: isDarkMode.value ? '#fff' : '#000',
+                strokeColors: isDarkMode.value ? '#fff' : '#e5e7eb',
                 strokeWidth: 2,
             },
         }));
@@ -196,12 +211,6 @@ export default defineComponent({
         });
 
         // Detectar el modo oscuro/claro
-        const detectDarkMode = () => {
-            isDarkMode.value = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        };
-
-        detectDarkMode();
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', detectDarkMode);
 
         return {
             chart,

@@ -51,14 +51,15 @@ class AdmissionController extends Controller
 
 
 
-            if ($search) {
-                $query->where(function (Builder $q) use ($search) {
-                    $q->whereRaw('DATE(created_at) LIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw('CONCAT(beds.room, " ", beds.number) LIKE ?', ['%' . $search . '%']);
-                });
-            }
+        if ($search) {
+            $query->where(function (Builder $q) use ($search) {
+                $q->whereRaw('DATE(admissions.created_at) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(beds.room, " ", beds.number) LIKE ?', ['%' . $search . '%']);
+            });
+        }
+
 
             if ($sortField) {
                 $query->orderBy($sortField, $sortDirection);

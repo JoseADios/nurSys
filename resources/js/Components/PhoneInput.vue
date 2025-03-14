@@ -51,5 +51,8 @@ export default {
             return value.replace(/\D/g, "").slice(0, 10); // Solo números y límite de 10 dígitos
         },
     },
+    mounted() {
+        this.$emit("update:modelValue", this.formattedPhone);
+    },
 };
 </script>

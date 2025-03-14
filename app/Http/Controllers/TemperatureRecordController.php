@@ -173,6 +173,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function show(TemperatureRecord $temperatureRecord, Request $request)
     {
+        $this->authorize('view', $temperatureRecord);
+
         $admission_id = $request->query('admission_id');
 
         $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);

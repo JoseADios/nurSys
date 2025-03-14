@@ -260,7 +260,7 @@
                     <div v-if="!canCreateDetail && !lastTemperature" class="p-8">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Información</h3>
                         <p class="text-lg text-gray-700 dark:text-gray-300">
-                            Ya otro enfermero ha registrado una firma en este turno. No puede realizar ninguna acción.
+                            No puede realizar ninguna acción.
                         </p>
                     </div>
                 </AccessGate>

@@ -161,6 +161,8 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function show(NurseRecord $nurseRecord, Request $request)
     {
+        $this->authorize('view', $nurseRecord);
+
         $showDeleted = $request->boolean('showDeleted');
         $admission_id = $request->integer('admission_id');
         $patient = $nurseRecord->admission->patient;

@@ -32,9 +32,6 @@ export default defineComponent({
             isDarkMode.value = false;
         }
 
-        console.log(localStorage.getItem('darkMode'));
-        console.log(typeof isDarkMode.value);
-
         const getChartImage = async () => {
             if (chart.value?.chart) {
                 return await chart.value.chart.dataURI();

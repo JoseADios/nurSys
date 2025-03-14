@@ -15,9 +15,9 @@ class TemperatureDetailPolicy
      */
     public function before(User $user, string $ability): bool|null
     {
-        // if ($user->hasRole('admin')) {
-        //     return true;
-        // }
+        if ($user->hasRole('admin')) {
+            return true;
+        }
 
         return null;
     }
@@ -49,6 +49,10 @@ class TemperatureDetailPolicy
             return Response::deny('No se pueden crear registros en un ingreso que ha sido dado de alta');
         }
 
+        if (!$temperatureRecord->active) {
+            return Response::deny('No se pueden modificar registros eliminados');
+        }
+
         if (!$user->hasRole('admin') && !$user->hasRole('nurse')) {
             return Response::deny('No tienes permiso para crear registros de temperatura');
         }
@@ -69,6 +73,10 @@ class TemperatureDetailPolicy
 
         if ($temperatureRecord->admission->discharged_date !== null) {
             return Response::deny('No se pueden crear registros en un ingreso que ha sido dado de alta');
+        }
+
+        if (!$temperatureRecord->active) {
+            return Response::deny('No se pueden modificar registros eliminados');
         }
 
         if (!$user->hasRole('admin') && !$user->hasRole('nurse')) {

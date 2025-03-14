@@ -69,6 +69,9 @@ export default {
                 this.$emit('update:modelValue', newValue);
             }
         }
+    },
+    mounted() {
+        this.$emit('update:modelValue', this.formattedValue);
     }
 };
 </script>

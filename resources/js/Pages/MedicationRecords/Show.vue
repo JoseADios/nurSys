@@ -107,11 +107,7 @@ Ficha de Medicamentos
     </div>
                         </div>
                     </div>
-                    <!-- <div v-if="errors.length > 0" class="bg-red-50 border-l-4 border-red-500 p-4 mx-8 my-4">
-                    <div class="text-red-700" v-for="error in errors" :key="error">
-                        {{ error }}
-                    </div>
-                </div> -->
+
                 <div class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
                     <div>
@@ -186,7 +182,7 @@ Ficha de Medicamentos
     <div class="w-full mb-2">
          <label for="drug"
                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Medicamento</label>
-                       <DrugSelector @update:drug="updateSelectedDrug" class=" p-2 border border-gray-600 rounded-lg"/>
+                       <DrugSelector @update:drug="updateSelectedDrug" />
                        <InputError :message="form.errors.drug" class="mt-2" />
 
     </div>
@@ -572,6 +568,7 @@ export default{
             recordBeingDeleted: ref(null),
             selectedOrderId: null,
             errorMessage: "",
+            errors: '',
             isVisible: false,
             isVisibleEditSign: ref(null),
             signatureError: false,

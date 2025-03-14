@@ -128,7 +128,7 @@ class UserController extends Controller
             'address' => ['required', 'string', 'max:255'],
             'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
             'position' => ['required', 'string', 'max:255'],
-            'comments' => ['string', 'max:255'],
+            'comments' => ['string'],
 
         ])->validate();
 
@@ -212,7 +212,7 @@ class UserController extends Controller
                 'address' => ['required', 'string', 'max:255'],
                 'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
                 'position' => ['required', 'string', 'max:255'],
-                'comments' => ['string', 'max:255'],
+                'comments' => ['string'],
             ])->validate();
         }
 

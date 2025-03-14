@@ -114,7 +114,7 @@
                         <!-- Dirección -->
                         <div class="md:col-span-2">
                             <label for="address" class="block text-sm font-medium text-gray-800 dark:text-white">Dirección</label>
-                            <textarea id="address" v-model="form.address" rows="3"
+                            <textarea id="address" v-model="form.address" rows="3" maxlength="255"
                                 class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required></textarea>
                             <InputError :message="form.errors.address" class="mt-2" />

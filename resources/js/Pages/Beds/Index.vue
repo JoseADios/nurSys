@@ -245,7 +245,7 @@
                                             class="w-full space-y-1 flex justify-evenly items-end">
 
                                             <!-- crear ingreso -->
-                                            <AccessGate :role="['receptionist', 'admin']">
+                                            <AccessGate :role="['receptionist', 'admin']" v-if="bed.status !== 'cleaning' && bed.status !== 'out_of_service'">
                                                 <Link :href="route('admissions.create', { bed_id: bed.id })"
                                                     class="text-center h-6 w-8 bg-gray-700 dark:bg-gray-700 hover:bg-blue-600 dark:hover:bg-blue-600 text-white rounded-md text-xs transition-colors flex items-center justify-center">
                                                 <PlusIcon width="14" height="14" />

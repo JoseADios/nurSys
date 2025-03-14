@@ -24,8 +24,16 @@ export default defineComponent({
     },
     setup(props) {
         const chart = ref(null);
-        const isDarkMode = document.documentElement.classList.contains('dark');;
+        const isDarkMode = ref(null);
 
+        if (localStorage.getItem('darkMode') === 'true') {
+            isDarkMode.value = true;
+        } else if (localStorage.getItem('darkMode') === 'false') {
+            isDarkMode.value = false;
+        }
+
+        console.log(localStorage.getItem('darkMode'));
+        console.log(typeof isDarkMode.value);
 
         const getChartImage = async () => {
             if (chart.value?.chart) {

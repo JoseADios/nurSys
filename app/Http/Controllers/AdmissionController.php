@@ -354,6 +354,7 @@ class AdmissionController extends Controller
         $selectedAdm = null;
         $admission_id = $request->input('admission_id');
         $doesntHaveTemperatureR = $request->boolean('doesntHaveTemperatureR');
+        $doesntHaveMedicationR = $request->boolean('doesntHaveMedicationR');
         $filters = $request->input('filters', []);
 
         $query = Admission::query()
@@ -370,6 +371,11 @@ class AdmissionController extends Controller
 
         if ($doesntHaveTemperatureR === true) {
             $query->whereDoesntHave('TemperatureRecord', function (Builder $query) {
+                $query->where('active', true);
+            });
+        }
+        if ($doesntHaveMedicationR === true) {
+            $query->whereDoesntHave('MedicationRecord', function (Builder $query) {
                 $query->where('active', true);
             });
         }

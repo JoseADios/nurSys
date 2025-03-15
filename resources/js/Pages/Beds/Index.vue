@@ -432,8 +432,8 @@ export default {
             plan.forEach(floor => {
                 floor.rooms.sort((a, b) => {
                     // Extraer el número de la habitación para ordenar numéricamente
-                    const numA = parseInt(a.name.replace(/\D/g, '')) || 0;
-                    const numB = parseInt(b.name.replace(/\D/g, '')) || 0;
+                    const numA = parseInt(a.id) || 0;
+                    const numB = parseInt(b.id) || 0;
                     return numA - numB;
                 });
             });

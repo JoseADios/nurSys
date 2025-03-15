@@ -444,7 +444,7 @@ const logout = () => {
                     <div class="hidden sm:flex sm:items-center sm:ms-6">
                         <!-- Botón de modo oscuro -->
                         <button @click="toggleDarkMode"
-                            class="p-1.5 mr-8 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full focus:outline-none">
+                            class="p-1.5 mr-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full focus:outline-none">
                             <SunIcon v-if="isDarkMode"
                                 class="h-5 w-5 text-yellow-400 dark:text-yellow-300 hover:text-yellow-500 dark:hover:text-yellow-400" />
                             <MoonIcon v-else

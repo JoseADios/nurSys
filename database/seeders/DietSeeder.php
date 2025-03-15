@@ -19,8 +19,16 @@ class DietSeeder extends Seeder
         ]);
 
         Diet::create([
-            'name' => 'Proteína',
-            'description' => 'Esta es una descripcion de la proteina',
+            'name' => 'Suave',
+            'description' => 'Esta es una descripcion de la Suave',
+        ]);
+        Diet::create([
+            'name' => 'Hiposodica',
+            'description' => 'Esta es una descripcion de la Hiposodica',
+        ]);
+        Diet::create([
+            'name' => 'Liquida',
+            'description' => 'Esta es una descripcion de la Liquida',
         ]);
     }
 }

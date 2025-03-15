@@ -43,8 +43,10 @@ class MedicationRecordController extends Controller
         $sortDirection = $request->input('sortDirection', 'asc');
         $days = $request->integer('days');
 
-        $query = MedicationRecord::query()->select('medication_records.*')
+        $query = MedicationRecord::query()
+        ->select('medication_records.*', 'patients.first_name', 'patients.first_surname', 'patients.second_surname')
         ->join('admissions', 'medication_records.admission_id', '=', 'admissions.id')
+        ->join('patients', 'admissions.patient_id', '=', 'patients.id')
         ->where('medication_records.active', !$showDeleted);
 
 
@@ -58,7 +60,7 @@ class MedicationRecordController extends Controller
                   ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('referrals LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('pending_studies LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('doctor_sign LIKE ?', ['%' . $search . '%']);
+                  ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%']);
             });
         }
         if ($sortField) {
@@ -145,8 +147,8 @@ class MedicationRecordController extends Controller
         ]);
 
         // Redirigir o retornar una respuesta exitosa
-        return redirect()->route('medicationRecords.index')->with('success', 'Medication Record created successfully');
-    }
+        return redirect()->route('MedicationRecords/index')->with('flash.toast', 'Registro guardado correctamente');
+      }
 
 
 

@@ -111,6 +111,13 @@
                 <tr> <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admission_id')">Ingreso<span v-if="form.sortField === 'admission_id'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
                                 }}</span></th>
+                                <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
+                            Paciente <span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
+                                'asc' ?
+                                '↑' :
+                                '↓'
+                                }}</span>
+                        </th>
 
                                 <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('diagnosis')">Diagnóstico <span v-if="form.sortField === 'diagnosis'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
@@ -126,9 +133,7 @@
                     <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('pending_studies')">Estudios Pendientes<span v-if="form.sortField === 'pending_studies'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
                                 }}</span></th>
-                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('doctor_sign')">Firma del Doctor<span v-if="form.sortField === 'doctor_sign'">{{ form.sortDirection === 'asc' ? '↑' :
-                                '↓'
-                                }}</span></th>
+
                     <th scope="col" class="px-6 py-3 ">Acciones</th>
                 </tr>
             </thead>
@@ -139,6 +144,9 @@
   <td class="px-6 py-4">   ING-00{{ record.admission.id }},
                                 Cama {{ record.admission.bed.number }}, Sala {{
                                     record.admission.bed.room }}</td>
+                                    <td class="px-6 py-4"> {{ record.admission.patient.first_name }} {{
+                                record.admission.patient.first_surname }} {{
+                                record.admission.patient.second_surname }}</td>
                                      <td class="px-6 py-4">{{ record.diagnosis }} </td>
                     <td class="px-6 py-4  w-2">
                             <span v-if="record.admission.discharged_date == null"
@@ -149,7 +157,7 @@
 
                     <td class="px-6 py-4">{{ record.referrals }}</td>
                     <td class="px-6 py-4">{{ record.pending_studies }}</td>
-                    <td class="px-6 py-4">{{ record.doctor_sign }}</td>
+
                     <td class="px-6 py-4 flex items-center space-x-4">
 
                             <button class="text-blue-500 hover:text-blue-800" @click="MedicationRecordShow(record.id)">

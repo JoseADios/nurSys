@@ -155,7 +155,7 @@
                 <!-- ultima temperatura -->
 
                 <!-- Formulario para actualizar ultimo detalle -->
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="flex justify-center">
                     <AccessGate :permission="['temperatureDetail.update']">
                         <div v-if="lastTemperature" class="p-8 ">
                             <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Ultima temperatura</h3>
@@ -215,7 +215,7 @@
                     </AccessGate>
                 </div>
 
-                <div class="max-w-xl mx-auto">
+                <div class="flex justify-center">
                     <!-- formulario para actualizar ultimas eliminaciones -->
                     <div v-if="lastEliminations && canUpdateElimination" class="p-8 ">
                         <h3 class="text-xl text-center font-semibold text-gray-800 dark:text-white mb-6">Actualizar eliminaciones</h3>

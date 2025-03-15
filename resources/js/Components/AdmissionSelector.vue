@@ -117,6 +117,7 @@ export default {
     props: {
         doesntHaveTemperatureR: Boolean,
         doesntHaveMedicationR: Boolean,
+        doesntHaveMedicalOrder: Boolean,
         selectedAdmissionId: Number
     },
     data() {
@@ -130,6 +131,7 @@ export default {
             selectedAdmission: this.selectedAdmissionId || null,
             doesntHaveTempR: this.doesntHaveTemperatureR || false,
             doesntHaveMedicationR: this.doesntHaveMedicationR || false,
+            doesntHaveMedicalOrder: this.doesntHaveMedicalOrder || false,
             filters: {
                 name: '',
                 room: '',
@@ -159,7 +161,8 @@ export default {
                         filters: this.filters,
                         admission_id: this.selectedAdmissionId,
                         doesntHaveTemperatureR: this.doesntHaveTempR,
-                        doesntHaveMedicationR: this.doesntHaveMedicationR
+                        doesntHaveMedicationR: this.doesntHaveMedicationR,
+                        doesntHaveMedicalOrder: this.doesntHaveMedicalOrder,
                     }
                 });
                 this.admissions = response.data;

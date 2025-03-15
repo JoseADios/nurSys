@@ -14,8 +14,10 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class MedicalOrderController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -155,13 +157,11 @@ class MedicalOrderController extends Controller
     {
         $firmService = new FirmService;
 
-        $validated = $request->validate([
-            'admission_id' => 'numeric',
-            'doctor_sign' => 'string',
-            'active' => 'boolean',
-        ]);
 
 
+        if ($request->has('admission_id') && $request->admission_id !== $medicalOrder->admission_id) {
+            $this->authorize('updateAdmission', [MedicalOrder::class, $request->admission_id]);
+        }
 
         if ($request->active === true) {
             $medicalOrderDetailIds = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->pluck('id');
@@ -179,7 +179,11 @@ class MedicalOrderController extends Controller
                 ->createImag($request->doctor_sign, $medicalOrder->doctor_sign);
             $validated['doctor_sign'] = $fileName;
         }
-
+        $validated = $request->validate([
+            'admission_id' => 'numeric',
+            'doctor_sign' => 'string',
+            'active' => 'boolean',
+        ]);
         $medicalOrder->update($validated);
 
         return back()->with('succes', 'Registro actualizado correctamente');

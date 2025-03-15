@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Policies;
-
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\MedicalOrder;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-
+use App\Models\Admission;
 class MedicalOrderPolicy
 {
     /**
@@ -62,5 +62,20 @@ class MedicalOrderPolicy
     public function forceDelete(User $user, MedicalOrder $medicalOrder): bool
     {
         return false;
+    }
+    public function updateAdmission(User $user, $new_admission_id): Response
+    {
+        // Validar que la nueva admisión no tenga otra hoja de temperatura activa
+        $newAdmission = Admission::where('id', $new_admission_id)
+            ->whereDoesntHave('medicalOrders', function (Builder $query) {
+                $query->where('active', true);
+            })
+            ->first();
+
+        if ($newAdmission) {
+            return Response::allow();
+        }
+
+        return Response::deny('El nuevo ingreso ya tiene una Orden Medica activa.');
     }
 }

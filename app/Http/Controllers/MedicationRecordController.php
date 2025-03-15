@@ -120,16 +120,16 @@ class MedicationRecordController extends Controller
             'admission_id' => 'required|exists:admissions,id', // Validamos que exista en la tabla admissions
             'diagnosis' => 'required|string',
             'diet' => 'required|string',
-            'referrals' => 'nullable|string',
-            'pending_studies' => 'nullable|string',
-            'doctor_sign' => 'required|string',
+
+
+
         ]);
 
         // Verificar si ya existe un MedicationRecord para la admisión especificada
-        $existingRecord = MedicationRecord::where('admission_id', $request->admission_id)->first();
+        $existingRecord = MedicationRecord::where('admission_id', $request->admission_id)->where('active',true)->first();
 
         if ($existingRecord) {
-            // Si ya existe, redirigir con un mensaje de error
+
             return redirect()->back()->withErrors([
                 'admission_id' => 'Ya Existe una ficha de Medicamentos con ese numero de Admision.',
             ])->withInput();
@@ -141,13 +141,12 @@ class MedicationRecordController extends Controller
             'doctor_id' => Auth::id(),
             'diagnosis' => $request->diagnosis,
             'diet' => $request->diet,
-            'referrals' => $request->referrals,
-            'pending_studies' => $request->pending_studies,
-            'doctor_sign' => $request->doctor_sign,
+
+
         ]);
 
         // Redirigir o retornar una respuesta exitosa
-        return redirect()->route('MedicationRecords/index')->with('flash.toast', 'Registro guardado correctamente');
+        return redirect()->route('medicationRecords.index')->with('flash.toast', 'Registro guardado correctamente');
       }
 
 

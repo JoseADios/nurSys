@@ -127,10 +127,7 @@
                                 '↓'
                                 }}</span></th>
 
-                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('referrals')">Referencias<span v-if="form.sortField === 'referrals'">{{ form.sortDirection === 'asc' ? '↑' :
-                                '↓'
-                                }}</span></th>
-                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('pending_studies')">Estudios Pendientes<span v-if="form.sortField === 'pending_studies'">{{ form.sortDirection === 'asc' ? '↑' :
+                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('diet')">Referencias<span v-if="form.sortField === 'diet'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
                                 }}</span></th>
 
@@ -155,8 +152,8 @@
                         </td>
 
 
-                    <td class="px-6 py-4">{{ record.referrals }}</td>
-                    <td class="px-6 py-4">{{ record.pending_studies }}</td>
+                    <td class="px-6 py-4">{{ record.diet }}</td>
+
 
                     <td class="px-6 py-4 flex items-center space-x-4">
 

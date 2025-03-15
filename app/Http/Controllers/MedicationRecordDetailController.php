@@ -52,7 +52,16 @@ class MedicationRecordDetailController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'medication_record_id' => 'required|exists:medication_records,id',
+            'drug' => 'required|string',
+            'dose' => 'required|string',
+            'route' => 'required|string',
+            'fc' => 'required|integer',
+            'interval_in_hours' => 'required|integer',
+            'start_time' => 'required',
 
+        ]);
         $start_time_24 = Carbon::parse($request->start_time);
         // Primero guarda el detalle y obtén su ID
 
@@ -95,7 +104,7 @@ class MedicationRecordDetailController extends Controller
 
         return redirect()
             ->route('medicationRecords.show', $request->medication_record_id)
-            ->with('success', 'Detalle y notificaciones agregados exitosamente.');
+            ->with('flash.toast', 'Detalle de Ficha de Medicamento creada correctamente');
     }
 
     /**
@@ -147,7 +156,7 @@ class MedicationRecordDetailController extends Controller
 
         if ($request->has('active')) {
             $medicationRecordDetail->update($request->all());
-            return back()->with('success', 'Detalle agregado exitosamente');
+            return back()->with('flash.toast', 'Detalle Ficha de Medicamento actualizado correctamente');
         }
         if ($request->suspended_at == true) {
 
@@ -265,7 +274,7 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
 
 
         $medicationRecordDetail->update($request->all());
-        return Redirect::route('medicationNotification.show', $medicationRecordDetail->id);
+        return Redirect::route('medicationNotification.show', $medicationRecordDetail->id)->with('flash.toast', 'Detalle Ficha de Medicamento actualizada correctamente');
     }
 
 
@@ -281,7 +290,7 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
 
         $medicationRecordDetail->update(['suspended_at' => null]);
 
-        return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id);
+        return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->with('flash.toast', 'Detalle Ficha de Medicamento restaurada correctamente');
     }
      private function suspend($id)
     {
@@ -294,7 +303,7 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
 
         $medicationRecordDetail->update(['suspended_at' => now()]);
 
-        return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id);
+        return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->with('flash.toast', 'Detalle Ficha de Medicamento suspendida correctamente');
     }
 
 
@@ -321,6 +330,6 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
 
         $medicationRecordDetail->update(['active' => 0]);
 
-        return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id);
+        return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->with('flash.toast', 'Detalle Ficha de Medicamento eliminada correctamente');
     }
 }

@@ -7,6 +7,8 @@ use App\Models\EliminationRecord;
 use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
 use App\Services\FirmService;
+use App\Services\TurnService;
+use Carbon\Carbon;
 use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -188,6 +190,35 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             'eliminationRecords'
         ]);
 
+        $eliminationsRecords = $temperatureRecord->eliminationRecords;
+        $temperatureDetails = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->with('nurse')->get();
+
+        $turnService = new TurnService();
+        $details = [];
+
+        foreach ($temperatureDetails as $temperature) {
+            // Obtener el turno de la fecha de la temperatura
+            $currentTurn = $turnService->getCurrentTurnForDate($temperature->updated_at);
+            $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+
+            // Buscar el registro de eliminación dentro del mismo turno
+            $elimination = $eliminationsRecords->first(function ($el) use ($dateRange) {
+                return Carbon::parse($el->updated_at)->between($dateRange['start'], $dateRange['end']);
+            });
+
+            // Agregar los datos combinados
+            $details[] = [
+                'temperature' => $temperature->temperature,
+                'urinations' => $elimination ? $elimination->urinations : 0,
+                'evacuations' => $elimination ? $elimination->evacuations : 0,
+                'nurse' => [
+                    'name' => $temperature->nurse->name,
+                    'last_name' => $temperature->nurse->last_name,
+                ],
+                'updated_at' => $temperature->created_at
+            ];
+        }
+
         // verificar si puede crear detalles
         $responseCreateElimination = Gate::inspect('create', [EliminationRecord::class, $temperatureRecord->id]);
         $canCreateElimination = $responseCreateElimination->allowed();
@@ -214,6 +245,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,
             'admission_id' => $admission_id,
+            'details' => $details,
             'lastTemperature' => $lastTemperature,
             'lastEliminations' => $lastEliminations,
             'canCreateElimination' => $canCreateElimination,

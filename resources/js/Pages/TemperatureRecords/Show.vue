@@ -149,8 +149,7 @@
 
                 <!-- Chart -->
                 <div class="p-4 mx-8 my-4">
-                    <TemperatureChart ref="chart" :temperatureData="temperatureRecord.temperature_details"
-                        :elimination-data="temperatureRecord.elimination_records" :key="chartKey" :height="100" />
+                    <TemperatureChart ref="chart" :temperatureData="details" :key="chartKey" :height="100" />
                 </div>
 
                 <!-- ultima temperatura -->

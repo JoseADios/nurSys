@@ -74,7 +74,7 @@ class TemperatureDetailPolicy
             return Response::deny('No se pueden modificar registros eliminados');
         }
 
-        if (!$user->hasRole('admin') && !$user->hasRole('nurse')) {
+        if (!$user->hasRole('nurse')) {
             return Response::deny('No tienes permiso para actualizar registros de temperatura');
         }
 

@@ -194,12 +194,14 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $temperatureDetails = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->with('nurse')->get();
 
         $turnService = new TurnService();
+        $currentTurn = $turnService->getCurrentTurn();
+        $currentDateRange = $turnService->getDateRangeForTurn($currentTurn);
         $details = [];
 
         foreach ($temperatureDetails as $temperature) {
             // Obtener el turno de la fecha de la temperatura
-            $currentTurn = $turnService->getCurrentTurnForDate($temperature->updated_at);
-            $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+            $temperatureTurn = $turnService->getCurrentTurnForDate($temperature->updated_at);
+            $dateRange = $turnService->getDateRangeForTurn($temperatureTurn);
 
             // Buscar el registro de eliminación dentro del mismo turno
             $elimination = $eliminationsRecords->first(function ($el) use ($dateRange) {
@@ -219,17 +221,30 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             ];
         }
 
-        // verificar si puede crear detalles
+        // verificar si puede crear elimination
         $responseCreateElimination = Gate::inspect('create', [EliminationRecord::class, $temperatureRecord->id]);
         $canCreateElimination = $responseCreateElimination->allowed();
 
+        // verificar si puede crear detalles
+        $responseCreateDetail = Gate::inspect('create', [TemperatureDetail::class, $temperatureRecord->id]);
+        $canCreateDetail = $responseCreateDetail->allowed();
+
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->orderBy('updated_at', 'desc')
+            ->whereBetween('updated_at',[$currentDateRange['start'], $currentDateRange['end']])
             ->first();
 
         $lastEliminations = EliminationRecord::where('temperature_record_id', $temperatureRecord->id)
             ->orderBy('updated_at', 'desc')
             ->first();
+
+        // verificar si puede actualizar temperatura
+        $canUpdateDetail = false;
+        if ($lastTemperature) {
+            $responseUpdateDetail = Gate::inspect('update', [TemperatureDetail::class, $lastTemperature]);
+            $canUpdateDetail = $responseUpdateDetail->allowed();
+            $lastTemperature = $canUpdateDetail ? $lastTemperature : null;
+        }
 
         // verificar si puede actualizar elimination
         $canUpdateElimination = false;

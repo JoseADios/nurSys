@@ -62,14 +62,13 @@
 
         .record-info {
             font-size: x-small;
-            margin-bottom: 5px;
             padding: 0px 40px;
             border: 1px solid #ddd;
             border-radius: 10px;
         }
 
         .record-info p {
-            margin: 5px 0;
+            margin: 2px 0;
         }
 
         .bold {
@@ -77,8 +76,8 @@
         }
 
         .graph-cont {
-            margin-top: 20px;
-            margin-bottom: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -89,7 +88,7 @@
         <table width="100%">
             <tr>
                 <td class="col-1" width="10%">
-                    <img src="{{ public_path('images/clinicLogo.jpg') }}" width="50" height="70">
+                    <img src="{{ public_path('images/clinicLogo.jpg') }}" width="50" height="60">
                     {{-- <img src="{{ asset('images/clinicLogo.jpg') }}" width="50" height="70"> --}}
                     <h3 id="clinic-ab">IEMMN</h3>
 
@@ -136,7 +135,7 @@
     <div class="bottom-cont">
         <table width="100%" style="border-collapse: collapse;">
             <tr>
-                <td style="width: 30%; vertical-align: middle; text-align: left; padding: 2px 0;">
+                <td style="width: 25%; vertical-align: middle; text-align: left; padding: 2px 0;">
                     <div><span class="bold">Dr.</span> {{ $temperatureRecord->admission->doctor->name }}
                         {{ $temperatureRecord->admission->doctor->last_name }}</div>
                 </td>
@@ -149,8 +148,8 @@
                         @endif
                     </div>
                 </td>
-                <td style="width: 40%; vertical-align: middle; padding: 2px 0 2px 100px;">
-                    <p>Generado a las {{now()->locale('es')->isoFormat('h:mm A [del] d [de] MMMM')}} </p>
+                <td style="width: 45%; vertical-align: middle; padding: 2px 0 2px 100px;">
+                    <p>Generado a las {{now()->locale('es')->isoFormat('h:mm A [del] d [de] MMMM [de] YYYY')}} </p>
                 </td>
             </tr>
         </table>

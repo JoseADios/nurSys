@@ -262,7 +262,7 @@
                             </h3>
 
                             <form @submit.prevent="submitCreateEliminations" class="space-y-4">
-                                <div class="grid md:grid-cols-3 gap-4">
+                                <div class="grid md:grid-cols-2 gap-4">
                                     <div>
                                         <label for="evacuations"
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -295,16 +295,15 @@
                                 </div>
                             </form>
                         </div>
-
-                        <!-- TODO: MODIFICAR ESTA PARTE PARA USAR POLICIES -->
-                        <!-- si no puede crear ni actualizar mostrar que ya otro enfermero ha registrado una firma en este turno que no puede hacer nada -->
-                        <div v-if="!lastTemperature" class="p-8">
-                            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Información</h3>
-                            <p class="text-lg text-gray-700 dark:text-gray-300">
-                                No puede realizar ninguna acción.
-                            </p>
-                        </div>
                     </AccessGate>
+
+                    <!-- si no puede crear ni actualizar mostrar que ya otro enfermero ha registrado una firma en este turno que no puede hacer nada -->
+                    <div v-if="!lastTemperature && !canCreateElimination && !canUpdateElimination" class="p-8">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Información</h3>
+                        <p class="text-lg text-gray-700 dark:text-gray-300">
+                            No puede realizar ninguna acción.
+                        </p>
+                    </div>
 
                 </div>
 

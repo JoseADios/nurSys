@@ -41,7 +41,7 @@ class MedicalOrderController extends Controller
 
             if (!empty($search)) {
                 $query->where(function ($q) use ($search) {
-                    $q->whereRaw('DATE(created_at) LIKE ?', ['%' . $search . '%'])
+                    $q->whereRaw('DATE(medical_orders.created_at) LIKE ?', ['%' . $search . '%'])
                         ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
                         ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%']);
 

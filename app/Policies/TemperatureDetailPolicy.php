@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
 use App\Models\User;
-use App\Services\TurnService;
 use Illuminate\Auth\Access\Response;
 
 class TemperatureDetailPolicy
@@ -57,10 +56,6 @@ class TemperatureDetailPolicy
             return Response::deny('No tienes permiso para crear registros de temperatura');
         }
 
-        if ($this->hasTemperatureInCurrentTurn($temperature_record_id)) {
-            return Response::deny('Ya hay una temperatura creada en el mismo turno');
-        }
-
         return Response::allow();
     }
 
@@ -84,12 +79,9 @@ class TemperatureDetailPolicy
         }
 
         if ($temperatureDetail->nurse_id !== $user->id) {
-            return Response::deny('No tienes permiso para actualizar este registro de enfermería');
+            return Response::deny('No tienes permiso para actualizar este registro de temperatura');
         }
 
-        if (!$this->isInCurrentTurn($temperatureDetail)) {
-            return Response::deny('No se puede actualizar una temperatura de un turno pasado');
-        }
 
         return Response::allow();
 
@@ -119,33 +111,4 @@ class TemperatureDetailPolicy
         return false;
     }
 
-
-    /**
-     * Check if the temperature detail is in the current turn.
-     */
-    private function isInCurrentTurn(TemperatureDetail $temperatureDetail): bool
-    {
-        $turnService = new TurnService();
-        $currentTurn = $turnService->getCurrentTurn();
-        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
-
-        return $temperatureDetail->created_at->between($dateRange['start'], $dateRange['end']);
-    }
-
-    /**
-     * Check if the temperature record has a temperature in the current turn.
-     */
-    private function hasTemperatureInCurrentTurn($temperature_record_id): bool
-    {
-        $turnService = new TurnService();
-        $currentTurn = $turnService->getCurrentTurn();
-        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
-
-        $lastTemperatureDetail = TemperatureDetail::where('temperature_record_id', $temperature_record_id)
-            ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
-            ->orderBy('created_at', 'asc')
-            ->first();
-
-        return $lastTemperatureDetail !== null;
-    }
 }

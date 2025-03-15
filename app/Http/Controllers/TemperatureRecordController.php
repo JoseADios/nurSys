@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admission;
+use App\Models\EliminationRecord;
 use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
 use App\Services\FirmService;
@@ -157,13 +158,15 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         ]);
 
         if ($has_admission_id) {
-            return Redirect::route('temperatureRecords.show', [
-                'temperatureRecord' => $temperatureRecord->id,
-                'admission_id' => $admission->id
+            return Redirect::route(
+                'temperatureRecords.show',
+                [
+                    'temperatureRecord' => $temperatureRecord->id,
+                    'admission_id' => $admission->id
                 ]
-                )->with('flash.toast', 'Registro de temperatura creado correctamente');
+            )->with('flash.toast', 'Registro de temperatura creado correctamente');
 
-            } else {
+        } else {
             return Redirect::route('temperatureRecords.show', $temperatureRecord->id)->with('flash.toast', 'Registro de temperatura creado correctamente');
         }
     }
@@ -177,45 +180,44 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         $admission_id = $request->query('admission_id');
 
-        $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
+        $temperatureRecord->load([
+            'admission.bed',
+            'admission.patient',
+            'nurse',
+            'temperatureDetails.nurse',
+            'eliminationRecords'
+        ]);
 
         // verificar si puede crear detalles
-        $responseCreateDetail = Gate::inspect('create', [TemperatureDetail::class, $temperatureRecord->id]);
-        $canCreateDetail = $responseCreateDetail->allowed();
+        $responseCreateElimination = Gate::inspect('create', [EliminationRecord::class, $temperatureRecord->id]);
+        $canCreateElimination = $responseCreateElimination->allowed();
 
-        // ultimo detalle de temperatura
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->orderBy('updated_at', 'desc')
             ->first();
 
-        // verificar si puede actualizar detalles
-        if ($lastTemperature !== null) {
-            $responseUpdateDetail = Gate::inspect('update', [TemperatureDetail::class, $lastTemperature]);
+        $lastEliminations = EliminationRecord::where('temperature_record_id', $temperatureRecord->id)
+            ->orderBy('updated_at', 'desc')
+            ->first();
 
-            if (!$responseUpdateDetail->allowed()) {
-                $lastTemperature = null;
-            }
-        }
-
-        if ($lastTemperature !== null) {
-            $canCreateDetail = false;
+        // verificar si puede actualizar elimination
+        $canUpdateElimination = false;
+        if ($lastEliminations) {
+            $responseUpdateDetail = Gate::inspect('update', [EliminationRecord::class, $lastEliminations]);
+            $canUpdateElimination = $responseUpdateDetail->allowed();
         }
 
         // verificar si puede editar la firma del registro
         $responseUpdateRecord = Gate::inspect('updateSignature', $temperatureRecord);
         $canUpdateSignature = $responseUpdateRecord->allowed();
 
-        $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-            ->with(['nurse:id,name,last_name']) // Especificar solo las columnas necesarias
-            ->orderBy('updated_at', 'asc')
-            ->get(['temperature', 'evacuations', 'urinations', 'nurse_id', 'updated_at']);
-
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,
-            'details' => $details,
             'admission_id' => $admission_id,
             'lastTemperature' => $lastTemperature,
-            'canCreateDetail' => $canCreateDetail,
+            'lastEliminations' => $lastEliminations,
+            'canCreateElimination' => $canCreateElimination,
+            'canUpdateElimination' => $canUpdateElimination,
             'canUpdateSignature' => $canUpdateSignature,
             'previousUrl' => URL::previous(),
         ]);

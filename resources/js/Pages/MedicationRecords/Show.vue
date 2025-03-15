@@ -56,11 +56,12 @@ Ficha de Medicamentos
                         <!-- Paciente -->
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                            <Link  :href="route('patients.show', medicationRecord.admission.patient.id)"as="button"
+                            class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
                                 {{ medicationRecord.admission.patient.first_name }}
                                 {{ medicationRecord.admission.patient.first_surname }}
                                 {{ medicationRecord.admission.patient.second_surname }}
-                            </p>
+                            </Link>
                         </div>
 
                         <!-- Doctor -->
@@ -624,7 +625,7 @@ submitSignature() {
         restoreRecord(record){
             this.$inertia.put(
                 route('medicationRecords.update', record.id), {
-                    active: true
+                    active: true,    preserveScroll: true
                 }, {
 
                     onSuccess: (response) => {
@@ -668,6 +669,7 @@ submitSignature() {
                          add_detail.classList.remove("hidden");
                     },
                     preserveState: true,
+                    preserveScroll: true
 
 
                 } );
@@ -720,6 +722,7 @@ deleteRecord() {
                         console.log('eliminado correctamente',response);
                         this.recordBeingDeleted = null;
                     },
+                    preserveScroll: true
             });
         },
 ToggleActivate(detail){

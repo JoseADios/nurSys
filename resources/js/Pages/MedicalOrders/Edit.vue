@@ -48,9 +48,10 @@ Ordenes Medicas
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
                             <div class="">
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
-                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                <Link :href="route('admissions.show', medicalOrder.admission_id)" as="button"
+                                class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
                                     {{ medicalOrder.admission_id }}
-                                </p>
+                            </Link>
                             </div>
                             <button @click="toggleEditAdmission" class="text-blue-500 mr-3">Edit</button>
                         </div>
@@ -84,11 +85,12 @@ Ordenes Medicas
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                            <Link  :href="route('patients.show', medicalOrder.admission.patient.id)"as="button"
+                            class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
                                 {{ medicalOrder.admission.patient.first_name }} {{
                                     medicalOrder.admission.patient.first_surname
                                 }} {{ medicalOrder.admission.patient.second_surname }}
-                            </p>
+                            </Link>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Sala</h3>

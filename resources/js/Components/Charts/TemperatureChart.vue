@@ -47,7 +47,7 @@ export default defineComponent({
                 foreColor: isDarkMode.value ? '#e5e7eb' : '#1f2937',
                 toolbar: {
                     show: false
-                }
+                },
             },
             title: {
                 text: 'Temperaturas Registradas',
@@ -155,6 +155,25 @@ export default defineComponent({
                 strokeColors: isDarkMode.value ? '#fff' : '#e5e7eb',
                 strokeWidth: 2,
             },
+            responsive: [
+                {
+                    breakpoint: 600, // Para pantallas menores a 600px (móviles)
+                    options: {
+                        chart: {
+                            height: 200, // Reduce la altura
+                        },
+                        xaxis: {
+                            labels: {
+                                show: false,
+                            }
+                        },
+                        markers: {
+                            size: 2,
+                        },
+                    },
+                },
+            ],
+
         }));
 
         const chartSeries = ref([

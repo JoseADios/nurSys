@@ -314,8 +314,7 @@
                     <!-- mostrar imagen firma -->
                     <div v-show="!isVisibleEditSign">
                         <div class="flex items-center flex-col justify-center">
-
-                            <img v-if="temperatureRecord.nurse_sign" :src="`/storage/${temperatureRecord.nurse_sign}`"
+                            <img class="w-full max-w-md" v-if="temperatureRecord.nurse_sign" :src="`/storage/${temperatureRecord.nurse_sign}`"
                                 alt="Firma">
                             <div v-else>
                                 <div class="text-gray-500 dark:text-gray-400 my-16">
@@ -333,12 +332,8 @@
                     <AccessGate :permission="['temperatureRecord.update']">
                         <div v-show="isVisibleEditSign" class="my-4">
                             <form @submit.prevent="submitSignature" class="flex items-center flex-col justify-center">
-                                <!-- <label for="nurse_sign"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Firma
-                                </label> -->
 
-                                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" />
+                                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" class="w-full max-w-lg"/>
                                 <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.
                                 </div>
 

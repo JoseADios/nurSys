@@ -55,7 +55,7 @@
                     class="px-3 py-1 bg-gray-500 text-white rounded shadow hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
                     Siguiente
                 </button>
-                  <Link :href="route('medicationRecords.create')"
+                  <Link :href="route('patients.create')"
                     class="px-2 py-1 bg-gray-500 text-white rounded shadow hover:bg-gray-600">
                     <span class="font-medium">Crear Paciente</span>
                 </Link>

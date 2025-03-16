@@ -122,7 +122,7 @@ Ficha de Medicamentos
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 shadow-xl rounded-lg mt-2 gap-6  lg:mx-10 mt-6 hidden" id="formcreaterecord">
         <!-- Tarjeta para información del Medical Order -->
-        <div class="relative overflow-hidden rounded-lg  bg-white dark:bg-gray-800 mb-5">
+        <div class="relative overflow-hidden rounded-lg   bg-white dark:bg-gray-800 mb-5">
 
                         <div class="max-h-80 overflow-y-auto  shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
                             <div v-if="order.length === 0" class="text-center text-gray-500 dark:text-gray-300 p-4">
@@ -408,14 +408,15 @@ Ficha de Medicamentos
                     </div>
 
                 </div>
-
+                <section class=" p-8 space-y-4  bg-dark-50 dark:bg-dark-700">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Firma</h3>
                 <!-- mostrar imagen firma -->
                 <div v-show="!isVisibleEditSign" class="my-4 flex items-center flex-col justify-center">
                     <div>
                         <h2 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Firma
                         </h2>
-                        <img v-if="medicationRecord.doctor_sign" :src="`/storage/${medicationRecord.doctor_sign}`" alt="Firma">
+                        <img v-if="medicationRecord.doctor_sign" class="w-full max-w-md" :src="`/storage/${medicationRecord.doctor_sign}`" alt="Firma">
                         <div v-else>
                             <div class="text-gray-500 dark:text-gray-400 my-16">
                                 No hay firma disponible
@@ -429,10 +430,7 @@ Ficha de Medicamentos
                 <!-- Campo de firma -->
                 <div v-show="isVisibleEditSign" class="my-4">
                     <form @submit.prevent="submitSignature" class=" flex items-center flex-col justify-center">
-                        <label for="doctor_sign"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Firma
-                        </label>
+
 
                         <SignaturePad v-model="formSignature.doctor_sign" input-name="doctor_sign" />
                         <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
@@ -447,6 +445,7 @@ Ficha de Medicamentos
                         </div>
                     </form>
                 </div>
+                </section>
             </div>
         </div>
          <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">

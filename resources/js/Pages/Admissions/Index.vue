@@ -6,12 +6,6 @@
             </h2>
         </template>
 
-        <!-- <div v-if="can.create" class="flex flex-col items-center justify-center mt-10">
-            <Link :href="route('admissions.create')"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear nuevo ingreso
-            </Link>
-        </div> -->
 
         <div class="flex items-center justify-between ">
             <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
@@ -133,10 +127,7 @@
                                 }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('discharged_date')">
-                            Dias ingresado<span v-if="form.sortField === 'discharged_date'">{{ form.sortDirection === 'asc' ?
-                                '↑' :
-                                '↓'
-                                }}</span>
+                            Dias ingresado
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('discharged_date')">
                             Estado<span v-if="form.sortField === 'discharged_date'">{{ form.sortDirection === 'asc' ?

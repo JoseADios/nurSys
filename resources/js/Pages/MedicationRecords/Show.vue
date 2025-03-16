@@ -286,7 +286,7 @@ Ficha de Medicamentos
         Detalles del Registro
     </h3>
 
-    <AccessGate :permission="['medicationRecords.delete']">
+
         <div v-if="medicationRecord.active">
             <button @click="toggleShowDeleted"
                 class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-auto"
@@ -305,7 +305,7 @@ Ficha de Medicamentos
                 </svg>
             </button>
         </div>
-    </AccessGate>
+
 </div>
 
 

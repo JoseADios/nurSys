@@ -15,9 +15,21 @@ use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-class MedicalOrderController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+class MedicalOrderController extends Controller  implements HasMiddleware
 {
-    use AuthorizesRequests;
+
+        use AuthorizesRequests;
+        public static function middleware(): array
+        {
+            return [
+                new Middleware('permission:medicalOrder.view', only: ['index', 'edit']),
+                new Middleware('permission:medicalOrder.create', only: [ 'store']),
+                new Middleware('permission:medicalOrder.update', only: ['update']),
+                new Middleware('permission:medicalOrder.delete', only: ['destroy']),
+            ];
+        }
     /**
      * Display a listing of the resource.
      */

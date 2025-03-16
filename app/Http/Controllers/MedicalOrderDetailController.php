@@ -8,9 +8,22 @@ use App\Models\MedicationRecordDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
-class MedicalOrderDetailController extends Controller
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+class MedicalOrderDetailController extends Controller  implements HasMiddleware
 {
-    /**
+
+        use AuthorizesRequests;
+        public static function middleware(): array
+        {
+            return [
+                new Middleware('permission:medicalOrder.view', only: ['index', 'show']),
+                new Middleware('permission:medicalOrder.create', only: [ 'edit','store']),
+                new Middleware('permission:medicalOrder.update', only: ['update']),
+                new Middleware('permission:medicalOrder.delete', only: ['destroy']),
+            ];
+        }  /**
      * Display a listing of the resource.
      */
     public function index()

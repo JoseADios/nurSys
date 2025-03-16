@@ -76,7 +76,7 @@
                     <option value="365">Último año</option>
                 </select>
 
-    <AccessGate :permission="['medicationRecords.delete']">
+
         <!-- Filtro para mostrar registros eliminados -->
         <button @click="toggleShowDeleted" class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-4" :class="{
             'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
@@ -92,8 +92,8 @@
                     clip-rule="evenodd" />
             </svg>
         </button>
-    </AccessGate>
-    <AccessGate :permission="['medicationRecords.create']">
+
+
                     <Link :href="route('medicationRecords.create')"
                         class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
                     <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -101,7 +101,7 @@
                     </svg>
                     Nueva Ficha de Medicamentos
                     </Link>
-                </AccessGate>
+
 </div>
 </div>
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">

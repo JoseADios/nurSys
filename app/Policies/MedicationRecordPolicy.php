@@ -7,10 +7,14 @@ use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
 class MedicationRecordPolicy
-{
-    /**
-     * Determine whether the user can view any models.
-     */
+{  public function before(User $user, string $ability): bool|null
+    {
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        return null;
+    }
     public function viewAny(User $user): bool
     {
         return false;
@@ -21,7 +25,12 @@ class MedicationRecordPolicy
      */
     public function view(User $user, MedicationRecord $medicationRecord): bool
     {
-        return false;
+       if ($user->hasRole('nurse') || $user->hasRole('doctor')) {
+        return Response::allow();
+
+       }
+       return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
+
     }
 
     /**
@@ -29,7 +38,12 @@ class MedicationRecordPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        if ($user->hasRole('nurse') ) {
+            return Response::allow();
+
+           }
+           return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
+
     }
 
     /**
@@ -37,7 +51,12 @@ class MedicationRecordPolicy
      */
     public function update(User $user, MedicationRecord $medicationRecord): bool
     {
-        return $medicationRecord->admission->discharged_date === null;
+        if ($user->hasRole('nurse') ) {
+            return Response::allow();
+
+           }
+           return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
+
     }
 
     /**
@@ -45,7 +64,12 @@ class MedicationRecordPolicy
      */
     public function delete(User $user, MedicationRecord $medicationRecord): bool
     {
-        return $medicationRecord->admission->discharged_date === null;
+        if ($user->hasRole('nurse') ) {
+            return Response::allow();
+
+           }
+           return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
+
     }
 
     /**
@@ -53,7 +77,12 @@ class MedicationRecordPolicy
      */
     public function restore(User $user, MedicationRecord $medicationRecord): bool
     {
-        return false;
+        if ($user->hasRole('nurse') ) {
+            return Response::allow();
+
+           }
+           return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
+
     }
 
     /**

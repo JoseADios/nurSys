@@ -14,11 +14,22 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-
-class MedicationRecordDetailController extends Controller
+class MedicationRecordDetailController extends Controller implements HasMiddleware
 {
-    /**
+    use AuthorizesRequests;
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:medicationRecordDetail.view', only: ['index', 'show']),
+            new Middleware('permission:medicationRecordDetail.create', only: ['edit', 'store']),
+            new Middleware('permission:medicationRecordDetail.update', only: ['update']),
+            new Middleware('permission:medicationRecordDetail.delete', only: ['destroy']),
+        ];
+    }   /**
      * Display a listing of the resource.
      */
     public function index()

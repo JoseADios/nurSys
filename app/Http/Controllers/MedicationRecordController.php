@@ -19,17 +19,19 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Services\FirmService;
 use Illuminate\Database\Eloquent\Builder;
-
-class MedicationRecordController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+class MedicationRecordController extends Controller implements HasMiddleware
 {
-
+    use AuthorizesRequests;
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:medicationRecords.view', only: ['index', 'show']),
-            new Middleware('permission:medicationRecords.create', only: ['edit', 'store']),
-            new Middleware('permission:medicationRecords.update', only: ['update']),
-            new Middleware('permission:medicationRecords.delete', only: ['destroy']),
+            new Middleware('permission:medicationRecord.view', only: ['index', 'show']),
+            new Middleware('permission:medicationRecord.create', only: ['edit', 'store']),
+            new Middleware('permission:medicationRecord.update', only: ['update']),
+            new Middleware('permission:medicationRecord.delete', only: ['destroy']),
         ];
     }
     /**

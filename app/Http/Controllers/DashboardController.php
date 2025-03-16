@@ -6,6 +6,7 @@ use App\Models\Admission;
 use App\Models\Bed;
 use App\Models\MedicationRecord;
 use App\Models\NurseRecord;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -21,7 +22,10 @@ class DashboardController extends Controller
             'total_beds' => Bed::count(),
             'nurse_records_today' => NurseRecord::whereDate('created_at', today())->count(),
             'admissions_by_week' => $this->getWeeklyAdmissions(),
+            'admissions_without_bed' => Admission::whereNull('bed_id')->active()->with('patient')
+                ->get(),
             'admissions_discharged_by_week' => $this->getWeeklyAdmissions(false),
+            'patients_by_ars' => $this->getPatientsByArs(),
         ];
 
         return Inertia::render('Dashboard', [
@@ -54,5 +58,20 @@ class DashboardController extends Controller
                     'total' => $item->total
                 ];
             });
+    }
+
+    private function getPatientsByArs() {
+        $query = Patient::query()
+        ->selectRaw('COUNT(*) AS count, ars AS name')
+        ->groupBy('name')
+        ->orderByDesc('count');
+
+        return $query->get()
+        ->map(function ($item){
+            return [
+                'name' => $item->name? $item->name : 'Sin seguro',
+                'count' => $item->count
+            ];
+        });
     }
 }

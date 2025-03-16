@@ -27,19 +27,19 @@
             <div class="flex flex-wrap gap-x-4 gap-y-2 items-center">
                 <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Estado de camas:</h4>
                 <div class="flex items-center">
-                    <div class="w-4 h-4 rounded-full bg-emerald-400/90 dark:bg-emerald-500/90 mr-1.5"></div>
+                    <div class="w-4 h-4 rounded-full bg-[#71DD37] mr-1.5"></div>
                     <span class="text-xs text-gray-600 dark:text-gray-400">Disponible</span>
                 </div>
                 <div class="flex items-center">
-                    <div class="w-4 h-4 rounded-full bg-orange-400/90 dark:bg-orange-500/90 mr-1.5"></div>
+                    <div class="w-4 h-4 rounded-full bg-[#696CFF] mr-1.5"></div>
                     <span class="text-xs text-gray-600 dark:text-gray-400">Ocupada</span>
                 </div>
                 <div class="flex items-center">
-                    <div class="w-4 h-4 rounded-full bg-yellow-400/90 dark:bg-yellow-500/90 mr-1.5"></div>
+                    <div class="w-4 h-4 rounded-full bg-[#FFAB00] mr-1.5"></div>
                     <span class="text-xs text-gray-600 dark:text-gray-400">Limpieza</span>
                 </div>
                 <div class="flex items-center">
-                    <div class="w-4 h-4 rounded-full bg-red-500/90 dark:bg-red-600/90 mr-1.5"></div>
+                    <div class="w-4 h-4 rounded-full bg-[#FC4C51] mr-1.5"></div>
                     <span class="text-xs text-gray-600 dark:text-gray-400">Fuera de servicio</span>
                 </div>
             </div>
@@ -112,10 +112,10 @@
                                 <div :class="[
                                     'mx-auto rounded-lg transition-all duration-300 hover:scale-105 flex flex-col items-center w-[90px] h-32',
                                     {
-                                        'bg-orange-400/90 dark:bg-orange-500/90': bed.admission,
-                                        'bg-yellow-400/90 dark:bg-yellow-500/90': bed.status === 'cleaning',
-                                        'bg-red-500/90 dark:bg-red-600/90': bed.status === 'out_of_service',
-                                        'bg-emerald-400/90 dark:bg-emerald-500/90': bed.status === 'available'
+                                        'bg-[#696CFF]': bed.admission,
+                                        'bg-[#FFAB00]': bed.status === 'cleaning',
+                                        'bg-[#FC4C51]': bed.status === 'out_of_service',
+                                        'bg-[#71DD37]': bed.status === 'available'
                                     }
                                 ]" @mouseenter="handleTooltip(bed.id)" @mouseleave="handleTooltip(null)">
 
@@ -254,7 +254,7 @@
 
                                             <AccessGate :permission="['bed.update']">
                                                 <button @click="onBedClick(bed)"
-                                                    class="h-6 w-8 bg-gray-600 dark:bg-gray-600 hover:bg-orange-500 dark:hover:bg-orange-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
+                                                    class="h-6 w-8 bg-gray-600 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
                                                     <EditIcon width="14" height="14" />
                                                 </button>
                                             </AccessGate>
@@ -282,14 +282,14 @@
                                     <div class="flex items-center me-4">
                                         <input id="green-radio" type="radio" value="available"
                                             v-model="selectedBed.status" name="bed-status"
-                                            class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                            class="w-4 h-4 text-[#71DD37] bg-gray-100 border-gray-300 focus:ring-[#71DD37] dark:focus:ring-[#71DD37] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="green-radio"
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Disponible</label>
                                     </div>
                                     <div class="flex items-center me-4">
                                         <input id="yellow-radio" type="radio" value="cleaning"
                                             v-model="selectedBed.status" name="bed-status"
-                                            class="w-4 h-4 text-yellow-400 bg-gray-100 border-gray-300 focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                            class="w-4 h-4 text-[#FFAB00] bg-gray-100 border-gray-300 focus:ring-[#FFAB00] dark:focus:ring-[#FFAB00] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="yellow-radio"
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">En
                                             limpieza</label>
@@ -297,7 +297,7 @@
                                     <div class="flex items-center me-4">
                                         <input id="red-radio" type="radio" value="out_of_service"
                                             v-model="selectedBed.status" name="bed-status"
-                                            class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                            class="w-4 h-4 text-[#FC4C51] bg-gray-100 border-gray-300 focus:ring-[#FC4C51] dark:focus:ring-[#FC4C51] dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="red-radio"
                                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Fuera de
                                             servicio</label>
@@ -335,7 +335,7 @@ import 'moment/locale/es';
 
 // Importar los nuevos componentes de iconos
 import BedIcon from '@/Components/Icons/BedIcon.vue';
-import DateIcon from '@/Components/Icons/DateIcon.vue';
+import DateIcon from '@/Components/Icons/CalendarIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import EditIcon from '@/Components/Icons/EditIcon.vue';
 import StethoscopeIcon from '@/Components/Icons/StethoscopeIcon.vue';

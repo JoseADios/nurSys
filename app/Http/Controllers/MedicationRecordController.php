@@ -58,8 +58,6 @@ class MedicationRecordController extends Controller
                 $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('diagnosis LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('referrals LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('pending_studies LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%']);
             });
         }

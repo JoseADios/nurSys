@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
-
+use Illuminate\Support\Facades\Log;
 class AdmissionController extends Controller
 {
     use AuthorizesRequests;
@@ -33,6 +33,7 @@ class AdmissionController extends Controller
         $search = $request->input('search');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
+        $beds_available = $request->input('beds_available', 'true');
         $days = $request->integer('days');
 
         $query = Admission::query()->with('patient','bed','doctor')->select([
@@ -45,9 +46,11 @@ class AdmissionController extends Controller
             'admissions.active'
         ])
         ->join('patients', 'admissions.patient_id', '=', 'patients.id')
-        ->join('beds', 'admissions.bed_id', '=', 'beds.id')
+        ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
         ->join('users', 'admissions.doctor_id', '=', 'users.id')
         ->where('admissions.active', !$showDeleted);
+
+
 
 
 
@@ -59,6 +62,19 @@ class AdmissionController extends Controller
                     ->orWhereRaw('CONCAT(beds.room, " ", beds.number) LIKE ?', ['%' . $search . '%']);
             });
         }
+
+
+        if ($beds_available === '1') {
+            $query->whereNotNull('admissions.bed_id');
+            \Log::info('Camas en uso:', [$query->get()->toArray()]);
+        } elseif ($beds_available === '2') {
+            $query->whereNull('admissions.bed_id');
+            \Log::info('Camas disponibles:', [$query->get()->toArray()]);
+        } else {
+
+            \Log::info('Todas Camas:', [$query->get()->toArray()]);
+        }
+
 
 
             if ($sortField) {
@@ -92,6 +108,7 @@ class AdmissionController extends Controller
                 'show_deleted' => $showDeleted,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
+                'beds_available' => $beds_available,
             ],
         ]);
     }

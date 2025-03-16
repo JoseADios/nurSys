@@ -76,11 +76,11 @@ defineProps({
                     <div class="mt-6 bg-white dark:bg-gray-800 overflow-hidden border border-gray-200/60 dark:border-gray-700/60 sm:rounded-lg">
                         <div class="border-b border-gray-200 dark:border-gray-700 px-4 py-3">
                             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                                Ingresos de la Semana
+                                Ingresos y altas de la Semana
                             </h3>
                         </div>
                         <div class="p-4">
-                            <AdmissionsChart :admissions="stats.admissions_by_week" />
+                            <AdmissionsChart :admissions="stats.admissions_by_week" :discharges="stats.admissions_discharged_by_week"/>
                         </div>
                     </div>
                 </div>

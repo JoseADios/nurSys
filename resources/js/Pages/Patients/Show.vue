@@ -235,7 +235,6 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import moment from "moment/moment";
 import 'moment/locale/es';
-import 'moment/locale/es';
 import Id2Icon from '@/Components/Icons/Id2Icon.vue';
 import TrashIcon from '@/Components/Icons/TrashIcon.vue';
 import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
@@ -252,7 +251,6 @@ import EyeIcon from '@/Components/Icons/EyeIcon.vue';
 import AlertTriangleIcon from '@/Components/Icons/AlertTriangleIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 
-moment.locale('es');
 
 export default {
     props: {

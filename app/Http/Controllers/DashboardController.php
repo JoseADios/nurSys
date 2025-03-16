@@ -20,7 +20,8 @@ class DashboardController extends Controller
             'available_beds' => Bed::all()->filter->isAvailable()->count(),
             'total_beds' => Bed::count(),
             'nurse_records_today' => NurseRecord::whereDate('created_at', today())->count(),
-            'admissions_by_week' => $this->getWeeklyAdmissions()
+            'admissions_by_week' => $this->getWeeklyAdmissions(),
+            'admissions_discharged_by_week' => $this->getWeeklyAdmissions(false),
         ];
 
         return Inertia::render('Dashboard', [
@@ -28,17 +29,25 @@ class DashboardController extends Controller
         ]);
     }
 
-    private function getWeeklyAdmissions()
+    private function getWeeklyAdmissions($activeAdmissions = true)
     {
         $startOfWeek = now()->startOfWeek();
         $endOfWeek = now()->endOfWeek();
 
-        return Admission::query()
-            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get()
+        $query = Admission::query()
+            ->whereBetween('created_at', [$startOfWeek, $endOfWeek]);
+
+        if (!$activeAdmissions) {
+            $query->whereNotNull('discharged_date');
+            $query->selectRaw('DATE(discharged_date) as date, COUNT(*) as total');
+        } else {
+            $query->selectRaw('DATE(created_at) as date, COUNT(*) as total');
+        }
+
+        $query->groupBy('date')
+            ->orderBy('date');
+
+        return $query->get()
             ->map(function ($item) {
                 return [
                     'date' => $item->date,

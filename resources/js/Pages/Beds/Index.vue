@@ -332,7 +332,6 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import moment from "moment/moment";
 import 'moment/locale/es';
-import 'moment/locale/es';
 
 // Importar los nuevos componentes de iconos
 import BedIcon from '@/Components/Icons/BedIcon.vue';

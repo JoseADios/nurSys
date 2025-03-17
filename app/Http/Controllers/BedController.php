@@ -16,7 +16,8 @@ class BedController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:bed.view', only: ['index']),
-            new Middleware('permission:bed.update', only: ['update'])
+            new Middleware('permission:bed.update', only: ['update']),
+            new Middleware('permission:bed.delete', only: ['delete'])
         ];
     }
     /**

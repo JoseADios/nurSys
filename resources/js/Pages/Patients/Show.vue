@@ -1,16 +1,16 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-bold text-2xl text-white leading-tight text-center">
+            <h2 class="font-bold text-2xl text-gray-800 dark:text-white leading-tight text-center">
                 Detalles del paciente
             </h2>
         </template>
 
-        <div class="py-8 px-4 sm:px-6 lg:px-8 bg-gray-900">
+        <div class="py-8 px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-gray-900">
             <div class="max-w-6xl mx-auto">
                 <!-- Tarjeta del perfil principal -->
                 <div
-                    class="bg-gray-800 rounded-2xl overflow-hidden shadow-xl border border-gray-700 mb-8 transform transition-all duration-300">
+                    class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-xl border border-gray-200 dark:border-gray-700 mb-8 transform transition-all duration-300">
                     <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div class="flex items-center gap-5">
                             <div
@@ -21,21 +21,20 @@
                             </div>
                             <div>
                                 <div class="flex items-center gap-3">
-                                    <h1 class="text-3xl font-bold text-white">
-                                        {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname
-                                        }}
+                                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+                                        {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
                                     </h1>
                                     <span v-if="patient.active == 1"
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
                                         Activo
                                     </span>
                                     <span v-else
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
                                         Inactivo
                                     </span>
                                 </div>
-                                <p class="text-gray-400 mt-1 flex items-center">
-                                    <Id2Icon class="w-4 h-4 mr-1 text-gray-500" />
+                                <p class="text-gray-500 dark:text-gray-400 mt-1 flex items-center">
+                                    <Id2Icon class="w-4 h-4 mr-1 text-gray-400 dark:text-gray-500" />
                                     Cédula: {{ patient.identification_card }}
                                 </p>
                             </div>
@@ -43,12 +42,12 @@
                         <div class="flex flex-wrap gap-3">
                             <AccessGate :permission="['patient.delete']">
                                 <button v-if="patient.active == 1" @click="patientBeingDeleted = true"
-                                    class="inline-flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200 shadow-lg">
+                                    class="inline-flex items-center px-4 py-2 bg-red-500 dark:bg-red-600 text-white rounded-lg hover:bg-red-600 dark:hover:bg-red-700 transition-all duration-200 shadow-lg">
                                     <TrashIcon class="w-4 h-4 mr-2" />
                                     Eliminar
                                 </button>
                                 <button v-else @click="restorePatient"
-                                    class="inline-flex items-center px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-all duration-200 shadow-lg">
+                                    class="inline-flex items-center px-4 py-2 bg-emerald-500 dark:bg-emerald-600 text-white rounded-lg hover:bg-emerald-600 dark:hover:bg-emerald-700 transition-all duration-200 shadow-lg">
                                     <RestoreIcon class="w-4 h-4 mr-2" />
                                     Restaurar
                                 </button>
@@ -56,14 +55,14 @@
 
                             <AccessGate :permission="['patient.update']">
                                 <Link :href="route('patients.edit', patient.id)"
-                                    class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 shadow-lg">
+                                    class="inline-flex items-center px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-all duration-200 shadow-lg">
                                 <EditIcon class="w-4 h-4 mr-2" />
                                 Editar
                                 </Link>
                             </AccessGate>
 
                             <Link :href="route('patients.index')"
-                                class="inline-flex items-center px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition-all duration-200 shadow-lg">
+                                class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 shadow-lg">
                             <BackIcon class="w-4 h-4 mr-2" />
                             Volver
                             </Link>
@@ -74,102 +73,99 @@
                 <!-- Layout de tarjetas informativas -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Tarjeta de Información de contacto -->
-                    <div class="bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
                             <div class="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg">
                                 <MailIcon class="w-6 h-6 text-white" />
                             </div>
-                            <h3 class="ml-4 text-xl font-bold text-white">Información de contacto</h3>
+                            <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información de contacto</h3>
                         </div>
                         <div class="space-y-5">
-                            <div class="flex items-center p-3 bg-gray-700/30 rounded-lg">
-                                <PhoneIcon class="w-5 h-5 text-blue-400" />
-                                <span class="ml-3 text-gray-200 font-medium">{{ patient.phone }}</span>
+                            <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                                <PhoneIcon class="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                                <span class="ml-3 text-gray-700 dark:text-gray-200 font-medium">{{ patient.phone }}</span>
                             </div>
-                            <div class="flex items-center p-3 bg-gray-700/30 rounded-lg">
-                                <AtIcon class="w-5 h-5 text-blue-400" />
+                            <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                                <AtIcon class="w-5 h-5 text-blue-500 dark:text-blue-400" />
                                 <a href="mailto:{{ patient.email }}"
-                                    class="ml-3 text-gray-200 font-medium hover:text-blue-400 transition-colors">{{
-                                        patient.email }}</a>
+                                    class="ml-3 text-gray-700 dark:text-gray-200 font-medium hover:text-blue-500 dark:hover:text-blue-400 transition-colors">
+                                    {{ patient.email }}
+                                </a>
                             </div>
-                            <div class="flex items-start p-3 bg-gray-700/30 rounded-lg">
-                                <MapPinIcon class="w-5 h-5 text-blue-400 mt-1" />
-                                <span class="ml-3 text-gray-200 font-medium">{{ patient.address }}</span>
+                            <div class="flex items-start p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                                <MapPinIcon class="w-5 h-5 text-blue-500 dark:text-blue-400 mt-1" />
+                                <span class="ml-3 text-gray-700 dark:text-gray-200 font-medium">{{ patient.address }}</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tarjeta de Información personal -->
-                    <div class="bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
                             <div class="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg">
                                 <UserIcon class="w-6 h-6 text-white" />
                             </div>
-                            <h3 class="ml-4 text-xl font-bold text-white">Información personal</h3>
+                            <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información personal</h3>
                         </div>
                         <div class="grid grid-cols-2 gap-5">
-                            <div class="p-3 bg-gray-700/30 rounded-lg">
-                                <p class="text-sm text-purple-400 font-medium">Nacionalidad</p>
-                                <p class="text-gray-200 font-semibold mt-1">{{ patient.nationality }}</p>
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                                <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">Nacionalidad</p>
+                                <p class="text-gray-700 dark:text-gray-200 font-semibold mt-1">{{ patient.nationality }}</p>
                             </div>
-                            <div class="p-3 bg-gray-700/30 rounded-lg">
-                                <p class="text-sm text-purple-400 font-medium">Estado civil</p>
-                                <p class="text-gray-200 font-semibold mt-1">{{ patient.marital_status }}</p>
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                                <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">Estado civil</p>
+                                <p class="text-gray-700 dark:text-gray-200 font-semibold mt-1">{{ patient.marital_status }}</p>
                             </div>
-                            <div class="p-3 bg-gray-700/30 rounded-lg">
-                                <p class="text-sm text-purple-400 font-medium">Fecha de nacimiento</p>
-                                <p class="text-gray-200 font-semibold mt-1">{{ formatDate(patient.birthdate) }}</p>
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                                <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">Fecha de nacimiento</p>
+                                <p class="text-gray-700 dark:text-gray-200 font-semibold mt-1">{{ formatDate(patient.birthdate) }}</p>
                             </div>
-                            <div class="p-3 bg-gray-700/30 rounded-lg">
-                                <p class="text-sm text-purple-400 font-medium">Edad</p>
-                                <p class="text-gray-200 font-semibold mt-1">{{ calculateAge(patient.birthdate) }} años
-                                </p>
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                                <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">Edad</p>
+                                <p class="text-gray-700 dark:text-gray-200 font-semibold mt-1">{{ calculateAge(patient.birthdate) }} años</p>
                             </div>
-                            <div class="p-3 bg-gray-700/30 rounded-lg">
-                                <p class="text-sm text-purple-400 font-medium">Fecha de creación</p>
-                                <p class="text-gray-200 font-semibold mt-1">{{ formatDate(patient.created_at) }}</p>
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                                <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">Fecha de creación</p>
+                                <p class="text-gray-700 dark:text-gray-200 font-semibold mt-1">{{ formatDate(patient.created_at) }}</p>
                             </div>
-                            <div class="p-3 bg-gray-700/30 rounded-lg">
-                                <p class="text-sm text-purple-400 font-medium">Fecha de actualización</p>
-                                <p class="text-gray-200 font-semibold mt-1">{{ formatDate(patient.updated_at) }}</p>
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                                <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">Fecha de actualización</p>
+                                <p class="text-gray-700 dark:text-gray-200 font-semibold mt-1">{{ formatDate(patient.updated_at) }}</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tarjeta de Información laboral -->
-                    <div class="bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
                             <div class="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg">
                                 <BriefCaseIcon class="w-6 h-6 text-white" />
                             </div>
-                            <h3 class="ml-4 text-xl font-bold text-white">Información laboral</h3>
+                            <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información laboral</h3>
                         </div>
                         <div class="space-y-5">
-                            <div class="p-3 bg-gray-700/30 rounded-lg">
-                                <p class="text-sm text-green-400 font-medium">Cargo de trabajo</p>
-                                <p class="text-gray-200 font-semibold mt-1">{{ patient.position || 'No especificado' }}
-                                </p>
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                                <p class="text-sm text-green-600 dark:text-green-400 font-medium">Cargo de trabajo</p>
+                                <p class="text-gray-700 dark:text-gray-200 font-semibold mt-1">{{ patient.position || 'No especificado' }}</p>
                             </div>
-                            <div class="p-3 bg-gray-700/30 rounded-lg">
-                                <p class="text-sm text-green-400 font-medium">ARS</p>
-                                <p class="text-gray-200 font-semibold mt-1">{{ patient.ars || 'Ninguno' }}</p>
+                            <div class="p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                                <p class="text-sm text-green-600 dark:text-green-400 font-medium">ARS</p>
+                                <p class="text-gray-700 dark:text-gray-200 font-semibold mt-1">{{ patient.ars || 'Ninguno' }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Estado de ingreso -->
-                <div class="mt-8 bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700">
+                <div class="mt-8 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                     <div v-if="inProcessAdmssion" class="flex flex-col sm:flex-row items-center justify-between">
                         <div class="flex items-center mb-4 sm:mb-0">
                             <div class="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-full mr-4">
                                 <CheckCircleIcon class="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-white">Paciente ingresado</h3>
-                                <p class="text-gray-400 text-sm">El paciente actualmente se encuentra ingresado en el
-                                    sistema
-                                </p>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Paciente ingresado</h3>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">El paciente actualmente se encuentra ingresado en el sistema</p>
                             </div>
                         </div>
                         <Link
@@ -185,8 +181,8 @@
                                 <AlertTriangleIcon class="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-white">Paciente no ingresado</h3>
-                                <p class="text-gray-400 text-sm">El paciente no se encuentra ingresado actualmente</p>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Paciente no ingresado</h3>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">El paciente no se encuentra ingresado actualmente</p>
                             </div>
                         </div>
                         <AccessGate :permission="['admission.create']" v-if="patient.active == 1">
@@ -205,15 +201,14 @@
         <AccessGate :permission="['patient.delete']">
             <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
                 <template #title>
-                    <div class="flex items-center text-red-500">
+                    <div class="flex items-center text-red-500 dark:text-red-400">
                         <TrashIcon class="w-6 h-6 mr-2" />
                         Eliminar Paciente
                     </div>
                 </template>
 
                 <template #content>
-                    <p class="text-gray-500">¿Estás seguro de que deseas eliminar este paciente? Esta acción no se puede
-                        deshacer y puede afectar a todos los registros asociados.</p>
+                    <p class="text-gray-500 dark:text-gray-400">¿Estás seguro de que deseas eliminar este paciente? Esta acción no se puede deshacer y puede afectar a todos los registros asociados.</p>
                 </template>
 
                 <template #footer>

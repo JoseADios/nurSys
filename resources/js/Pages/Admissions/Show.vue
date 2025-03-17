@@ -264,6 +264,12 @@
             <template #title>
                 <div v-if="admission.discharged_date == null">Dar de alta</div>
                 <div v-if="admission.discharged_date != null">Poner en progreso</div>
+<div>
+    <SignaturePad input-name="doctor_sign" />
+<div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
+
+</div>
+
             </template>
 
 
@@ -310,6 +316,7 @@
     import {
         ref
     } from 'vue';
+    import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 
     export default {
         props: {
@@ -330,12 +337,14 @@
             DangerButton,
             SecondaryButton,
             PrimaryButton,
-            FormatId
+            FormatId,
+            SignaturePad
         },
         data() {
             return {
                 admissionBeingDeleted: ref(null),
                 admissionUpdateCharge: ref(null),
+                signatureError: false,
                 form: {
                     patient_id: this.admission.patient_id,
                     discharged_date: this.admission.discharged_date
@@ -353,6 +362,7 @@
                 this.admissionUpdateCharge = null
                 this.submit()
             },
+
             charge() {
                 this.form.discharged_date = null
                 this.admissionUpdateCharge = null

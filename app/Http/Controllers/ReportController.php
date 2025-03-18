@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Clinic;
+use App\Models\EliminationRecord;
 use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
 use App\Models\Patient;
@@ -85,13 +86,13 @@ class ReportController extends Controller
         // return $pdf->stream('hoja_de_enfermeria'. $nurseRecord->admission->patient->first_name . '.pdf');
         return $pdf->stream('hoja_de_enfermeria.pdf');
 
-        return view('reports.nurse_record', [
-            'nurseRecord' => $nurseRecord,
-            'clinic' => $clinic,
-            'details' => $details,
-            'nurseSignaturePath' => $nurseSignaturePath,
-            'graphPath' => asset('storage/temp_chart.jpg')
-        ]);
+        // return view('reports.nurse_record', [
+        //     'nurseRecord' => $nurseRecord,
+        //     'clinic' => $clinic,
+        //     'details' => $details,
+        //     'nurseSignaturePath' => $nurseSignaturePath,
+        //     'graphPath' => asset('storage/temp_chart.jpg')
+        // ]);
 
     }
 }

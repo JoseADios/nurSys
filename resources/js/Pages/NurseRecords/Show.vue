@@ -1,7 +1,7 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-white leading-tight">
+            <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
                 Registro de Enfermería
             </h2>
         </template>
@@ -35,7 +35,7 @@
         </div>
 
         <div class="container mx-auto px-4 py-8">
-            <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
+            <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <div v-if="admission_id">
@@ -79,7 +79,7 @@
 
                         <!-- admission -->
                         <div
-                            class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center">
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 flex justify-between items-center">
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <Link :href="route('admissions.show', nurseRecord.admission_id)" as="button"
@@ -95,7 +95,7 @@
                         </div>
 
                         <!-- patient name -->
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                             <Link :href="route('patients.show', nurseRecord.admission.patient.id)" as="button"
                                 class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
@@ -106,7 +106,7 @@
                         </div>
 
                         <!-- Bed info -->
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Sala</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 Sala {{ bed.room }}, Cama {{ bed.number }}
@@ -120,7 +120,7 @@
 
                         <!-- Nurse -->
                         <div
-                            class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                            class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermero</h3>
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -135,7 +135,7 @@
                         </div>
 
                         <!-- Created date -->
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Registro</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ formatDate(nurseRecord.created_at) }}
@@ -167,7 +167,7 @@
                                             Medicación
                                         </label>
                                         <input maxlength="255" type="text" id="medication"
-                                            v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                            v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
                                         focus:outline-none focus:ring-2 focus:ring-blue-500
                                         dark:bg-gray-800 dark:text-white" placeholder="Nombre del medicamento" />
                                     </div>
@@ -177,7 +177,7 @@
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             Observaciones
                                         </label>
-                                        <input type="text" id="comment" v-model="formDetail.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
+                                        <input type="text" id="comment" v-model="formDetail.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
                                         focus:outline-none focus:ring-2 focus:ring-blue-500
                                         dark:bg-gray-800 dark:text-white" placeholder="Comentarios adicionales" />
                                     </div>
@@ -220,7 +220,7 @@
                     </div>
 
                     <div v-for="detail in details" :key="detail.id"
-                        class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
+                        class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 backdrop-blur-sm flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
                         <div class="flex-grow pr-10">
                             <div class="font-semibold text-gray-900 dark:text-white">
                                 {{ detail.medication }}

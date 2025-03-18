@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import Checkbox from '@/Components/Checkbox.vue';
@@ -27,6 +28,17 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     });
 };
+
+// Inicializar el modo oscuro al cargar la página
+onMounted(() => {
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'true') {
+        document.documentElement.classList.add('dark');
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches && savedDarkMode === null) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('darkMode', 'true');
+    }
+});
 </script>
 
 <template>

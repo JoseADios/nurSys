@@ -1,16 +1,16 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-bold text-2xl text-white leading-tight text-center">
+            <h2 class="font-bold text-2xl text-gray-800 dark:text-white leading-tight text-center">
                 Editar Ingreso de Paciente
             </h2>
         </template>
 
         <div class="max-w-3xl mx-auto py-8 px-4 sm:px-6">
-            <form @submit.prevent="submit" class="rounded-lg shadow-lg bg-gray-800">
+            <form @submit.prevent="submit" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <!-- Personal Information Section -->
-                <div class="p-6 border-b border-gray-700">
-                    <h3 class="text-lg font-semibold text-white mb-6 flex items-center">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
                         <UserIcon class="h-5 w-5 mr-2 text-purple-600" />
                         Información Personal
                     </h3>
@@ -18,29 +18,27 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Nombres -->
                         <div>
-                            <label for="first_name" class="block text-sm font-medium text-white">Nombres</label>
+                            <label for="first_name" class="block text-sm font-medium text-gray-800 dark:text-white">Nombres</label>
                             <input type="text" id="first_name" v-model="form.first_name"
-                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
                             <InputError :message="form.errors.first_name" class="mt-2" />
                         </div>
 
                         <!-- Primer Apellido -->
                         <div>
-                            <label for="first_surname" class="block text-sm font-medium text-white">Primer
-                                Apellido</label>
+                            <label for="first_surname" class="block text-sm font-medium text-gray-800 dark:text-white">Primer Apellido</label>
                             <input type="text" id="first_surname" v-model="form.first_surname"
-                                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
                             <InputError :message="form.errors.first_surname" class="mt-2" />
                         </div>
 
                         <!-- Segundo Apellido -->
                         <div>
-                            <label for="second_surname" class="block text-sm font-medium text-white">Segundo
-                                Apellido</label>
+                            <label for="second_surname" class="block text-sm font-medium text-gray-800 dark:text-white">Segundo Apellido</label>
                             <input type="text" id="second_surname" v-model="form.second_surname"
-                                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
                             <InputError :message="form.errors.second_surname" class="mt-2" />
                         </div>
@@ -54,8 +52,8 @@
                 </div>
 
                 <!-- Identification Section -->
-                <div class="p-6 border-b border-gray-700">
-                    <h3 class="text-lg font-semibold text-white mb-6 flex items-center">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
                         <Id2Icon class="h-5 w-5 mr-2 text-purple-600" />
                         Identificación y Nacionalidad
                     </h3>
@@ -69,24 +67,23 @@
 
                         <!-- Nacionalidad -->
                         <div>
-                            <label for="nationality" class="block text-sm font-medium text-white">Nacionalidad</label>
+                            <label for="nationality" class="block text-sm font-medium text-gray-800 dark:text-white">Nacionalidad</label>
                             <input list="nationalityOptions" id="nationality" v-model="form.nationality"
-                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
                             <datalist id="nationalityOptions">
                                 <option v-for="nationality in nationalities" :key="nationality.id">
                                     {{ nationality.name }}
                                 </option>
                             </datalist>
-                            </input>
                             <InputError :message="form.errors.nationality" class="mt-2" />
                         </div>
                     </div>
                 </div>
 
                 <!-- Contact Information -->
-                <div class="p-6 border-b border-gray-700">
-                    <h3 class="text-lg font-semibold text-white mb-6 flex items-center">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
                         <MailIcon class="h-5 w-5 mr-2 text-purple-600" />
                         Información de Contacto
                     </h3>
@@ -94,18 +91,18 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Email -->
                         <div>
-                            <label for="email" class="block text-sm font-medium text-white">Correo Electrónico</label>
+                            <label for="email" class="block text-sm font-medium text-gray-800 dark:text-white">Correo Electrónico</label>
                             <input type="email" id="email" v-model="form.email"
-                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
                             <InputError :message="form.errors.email" class="mt-2" />
                         </div>
 
                         <!-- Dirección -->
                         <div class="md:col-span-2">
-                            <label for="address" class="block text-sm font-medium text-white">Dirección</label>
+                            <label for="address" class="block text-sm font-medium text-gray-800 dark:text-white">Dirección</label>
                             <textarea id="address" v-model="form.address" rows="3"
-                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required></textarea>
                             <InputError :message="form.errors.address" class="mt-2" />
                         </div>
@@ -113,8 +110,8 @@
                 </div>
 
                 <!-- Additional Information -->
-                <div class="p-6 ">
-                    <h3 class="text-lg font-semibold text-white mb-6 flex items-center">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
                         <FileInfoIcon class="h-5 w-5 mr-2 text-purple-600" />
                         Información Adicional
                     </h3>
@@ -122,20 +119,18 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Fecha de nacimiento -->
                         <div>
-                            <label for="birthdate" class="block text-sm font-medium text-white">Fecha de
-                                Nacimiento</label>
+                            <label for="birthdate" class="block text-sm font-medium text-gray-800 dark:text-white">Fecha de Nacimiento</label>
                             <input type="date" id="birthdate" v-model="form.birthdate"
-                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
                             <InputError :message="form.errors.birthdate" class="mt-2" />
                         </div>
 
                         <!-- Estado Civil -->
                         <div>
-                            <label for="marital_status" class="block text-sm font-medium text-white">Estado
-                                Civil</label>
+                            <label for="marital_status" class="block text-sm font-medium text-gray-800 dark:text-white">Estado Civil</label>
                             <select id="marital_status" v-model="form.marital_status"
-                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
                                 <option v-for="status in maritalSatuses" :key="status.id">
                                     {{ status.name }}
@@ -146,18 +141,18 @@
 
                         <!-- Cargo -->
                         <div>
-                            <label for="position" class="block text-sm font-medium text-white">Cargo</label>
+                            <label for="position" class="block text-sm font-medium text-gray-800 dark:text-white">Cargo</label>
                             <input type="text" id="position" v-model="form.position"
-                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required>
                             <InputError :message="form.errors.position" class="mt-2" />
                         </div>
 
                         <!-- ARS -->
                         <div>
-                            <label for="ars" class="block text-sm font-medium text-white">ARS</label>
+                            <label for="ars" class="block text-sm font-medium text-gray-800 dark:text-white">ARS</label>
                             <select id="ars" v-model="form.ars"
-                                class="block p-2.5 w-full text-sm text-white bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                 <option value="">Ninguno</option>
                                 <option v-for="ars in arss" :key="ars.id">
                                     {{ ars.name }}
@@ -169,23 +164,23 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="px-6 py-4 bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
+                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
                     <AccessGate :permission="['patient.delete']">
                         <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
-                            class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
+                            class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-all duration-200">
                             Eliminar
                         </button>
                         <button type="button" v-else @click="restorePatient"
-                            class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
+                            class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-all duration-200">
                             Restaurar
                         </button>
                     </AccessGate>
                     <Link :href="route('patients.index')" as="button"
-                        class="px-4 py-2 text-sm font-medium text-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                        class="px-4 py-2 text-sm font-medium text-gray-100 bg-slate-600 dark:text-white border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-500 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                     Volver
                     </Link>
                     <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                        class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Guardar
                     </button>
                 </div>
@@ -253,7 +248,7 @@ export default {
         UserIcon,
         Id2Icon,
         MailIcon,
-        FileInfoIcon
+        FileInfoIcon,
     },
     data() {
         return {

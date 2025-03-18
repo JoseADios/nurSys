@@ -6,11 +6,13 @@ import NurseRecordIcon from '@/Components/Icons/NurseRecordIcon.vue';
 import AdmissionsChart from '@/Components/Charts/AdmissionsChart.vue';
 import FormatId from '@/Components/FormatId.vue';
 import { Link } from '@inertiajs/vue3';
-import ClipBoardIcon from '@/Components/Icons/ClipBoardIcon.vue';
 import CalendarIcon from '@/Components/Icons/CalendarIcon.vue';
 import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
 import CheckIcon from '@/Components/Icons/CheckIcon.vue';
 import PatientsByArsChart from '@/Components/Charts/PatientsByArsChart.vue';
+import BedsByStatusChart from '@/Components/Charts/BedsByStatusChart.vue';
+import moment from 'moment/moment';
+import 'moment/locale/es';
 
 defineProps({
     stats: {
@@ -18,6 +20,7 @@ defineProps({
         required: true
     }
 });
+
 </script>
 
 <template>
@@ -36,7 +39,7 @@ defineProps({
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- Admisiones -->
                         <div
-                            class=" bg-blue-500/20 rounded-lg p-6 text-blue-500 dark:text-white">
+                            class=" bg-blue-500/20 rounded-lg p-6 text-blue-500 dark:text-white dark:border-2 dark:border-blue-500">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm opacity-80">Ingresos activos</p>
@@ -51,7 +54,7 @@ defineProps({
 
                         <!-- Camas -->
                         <div
-                            class="bg-orange-500/20 rounded-lg p-6 text-orange-500 dark:text-white">
+                            class="bg-orange-500/20 rounded-lg p-6 text-orange-500 dark:text-white dark:border-2 dark:border-orange-500">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm opacity-80">Camas Disponibles</p>
@@ -66,7 +69,7 @@ defineProps({
 
                         <!-- Registros de hoy -->
                         <div
-                            class="bg-indigo-500/20 rounded-lg p-6 text-indigo-500 dark:text-white">
+                            class="bg-indigo-500/20 rounded-lg p-6 text-indigo-500 dark:text-white dark:border-2 dark:border-indigo-500">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm opacity-80">Registros de Enfermería Hoy</p>
@@ -83,7 +86,7 @@ defineProps({
 
                     <!-- Gráfico de ingresos -->
                     <div
-                        class="mt-6 bg-white dark:bg-gray-800 overflow-hidden border border-gray-200/60 dark:border-gray-700/60 sm:rounded-lg">
+                        class="mt-6 bg-white dark:bg-gray-800 overflow-hidden border border-gray-200/60 dark:border-gray-700/60 rounded-lg">
                         <div class="border-b border-gray-200 dark:border-gray-700 px-4 py-3">
                             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
                                 Ingresos y altas de la Semana
@@ -95,16 +98,11 @@ defineProps({
                         </div>
                     </div>
 
-                    <div class="mt-6 flex justify-evenly items-center">
-                        <div class="w-full">
-                            <PatientsByArsChart :ars-data="stats.patients_by_ars" class="m-2"/>
-                        </div>
+                    <div class="mt-6 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Ingresos sin cama asignada -->
-                        <div
-                            class="w-full h-full bg-white dark:bg-gray-800 overflow-hidden rounded-xl border border-gray-200/60 dark:border-gray-700/60">
+                        <div class="w-full max-h-[414px] overflow-y-scroll  bg-white dark:bg-gray-800 overflow-hidden rounded-lg border border-gray-200/30 dark:border-gray-700/30 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/40 dark:[&::-webkit-scrollbar-track]:bg-neutral-700/30 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500/30">
                             <!-- Encabezado con diseño más moderno -->
-                            <div
-                                class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                                 <div class="flex justify-between items-center">
                                     <div class="flex items-center space-x-3">
 
@@ -144,9 +142,9 @@ defineProps({
                                                         <FormatId :id="adm.id" prefix="ING" />
                                                     </span>
                                                     <span class="flex items-center">
-                                                        <CalendarIcon class="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" />
-
-                                                        {{ new Date(adm.created_at).toLocaleDateString() }}
+                                                        <CalendarIcon
+                                                            class="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" />
+                                                        {{ formatDate(adm.created_at) }}
                                                     </span>
                                                 </div>
                                             </div>
@@ -178,6 +176,18 @@ defineProps({
                                 </p>
                             </div>
                         </div>
+
+                        <!-- grafico pie de cantidad de camas por estado -->
+                        <div class="w-full">
+                            <BedsByStatusChart :status-data="stats.beds_by_status" class="" />
+                        </div>
+
+                        <!-- grafico donut cantidad de pacientes por ars -->
+                        <div class="w-full">
+                            <PatientsByArsChart :ars-data="stats.patients_by_ars" class="" />
+                        </div>
+
+
                     </div>
 
 
@@ -186,3 +196,15 @@ defineProps({
         </div>
     </AppLayout>
 </template>
+
+<script>
+export default {
+
+    methods: {
+        formatDate(date) {
+            return moment(date).fromNow();
+
+        }
+    }
+}
+</script>

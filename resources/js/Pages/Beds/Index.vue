@@ -115,7 +115,7 @@
                                         'bg-[#696CFF]': bed.admission,
                                         'bg-[#FFAB00]': bed.status === 'cleaning',
                                         'bg-[#FC4C51]': bed.status === 'out_of_service',
-                                        'bg-[#71DD37]': bed.status === 'available'
+                                        'bg-[#71DD37]': bed.status === 'available' && !bed.admission,
                                     }
                                 ]" @mouseenter="handleTooltip(bed.id)" @mouseleave="handleTooltip(null)">
 

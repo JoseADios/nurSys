@@ -13,6 +13,8 @@ import BedsByStatusChart from '@/Components/Charts/BedsByStatusChart.vue';
 import moment from 'moment/moment';
 import 'moment/locale/es';
 import PatientIcon from '@/Components/Icons/PatientIcon.vue';
+import TrendingDownIcon from '@/Components/Icons/TrendingDownIcon.vue';
+import TrendingUpIcon from '@/Components/Icons/TrendingUpIcon.vue';
 
 defineProps({
     stats: {
@@ -79,14 +81,16 @@ defineProps({
                                     <PatientIcon class="w-8 h-8" />
                                 </div>
                             </div>
-                            <p :class="['text-sm font-bold mt-4 opacity-80',
+                            <p :class="['text-sm font-bold mt-4 opacity-80 flex',
                                 {
                                     'text-red-500 dark:text-red-400': stats.percent_diff_new_patients_month < 0,
                                     'text-green-700 dark:text-green-400': stats.percent_diff_new_patients_month > 0,
                                 }
-                            ]"> {{ Math.abs(stats.percent_diff_new_patients_month) }}%
-                                {{ stats.percent_diff_new_patients_month < 0 ? 'menos' : 'más' }} que el mes pasado
-                            </p>
+                            ]">
+                                <TrendingUpIcon class="size-5 mr-2" v-if="stats.percent_diff_new_patients_month > 0" />
+                                <TrendingDownIcon class="size-5 mr-2" v-else />
+                                {{ Math.abs(stats.percent_diff_new_patients_month) }}%
+                                {{ stats.percent_diff_new_patients_month < 0 ? 'menos' : 'más' }} que el mes pasado </p>
                         </div>
                     </div>
 
@@ -106,7 +110,8 @@ defineProps({
 
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Ingresos sin cama asignada -->
-                        <div class="w-full max-h-[414px] overflow-y-scroll  bg-white dark:bg-gray-800 overflow-hidden rounded-lg border border-gray-200/30 dark:border-gray-700/30 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/40 dark:[&::-webkit-scrollbar-track]:bg-neutral-700/30 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500/30">
+                        <div
+                            class="w-full max-h-[414px] overflow-y-scroll  bg-white dark:bg-gray-800 overflow-hidden rounded-lg border border-gray-200/30 dark:border-gray-700/30 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/40 dark:[&::-webkit-scrollbar-track]:bg-neutral-700/30 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500/30">
                             <!-- Encabezado con diseño más moderno -->
                             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                                 <div class="flex justify-between items-center">

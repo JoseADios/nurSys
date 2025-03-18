@@ -6,6 +6,7 @@ use App\Models\Admission;
 use App\Models\Bed;
 use App\Models\NurseRecord;
 use App\Models\Patient;
+use DB;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -25,6 +26,7 @@ class DashboardController extends Controller
             'admissions_discharged_by_week' => $this->getWeeklyAdmissions(false),
             'patients_by_ars' => $this->getPatientsByArs(),
             'beds_by_status' => $this->getBedsByStatus(),
+            'upcoming_medications' => $this->getUpcomingMedications(),
         ];
 
         return Inertia::render('Dashboard', [
@@ -106,6 +108,45 @@ class DashboardController extends Controller
                     'count' => $item->count
                 ];
             });
+    }
+
+    private function getUpcomingMedications()
+    {
+        $notifications = DB::table('medication_notifications as n')
+            ->join('medication_record_details as d', 'n.medication_record_detail_id', '=', 'd.id')
+            ->select(
+                'n.id as id',
+                'n.medication_record_detail_id as detail_id',
+                'n.scheduled_time as scheduled',
+                'd.medication_record_id as medication_record_id',
+                DB::raw("CONCAT_WS(' ', d.drug, d.dose, d.route) as medication"),
+                DB::raw("ROW_NUMBER() OVER (PARTITION BY n.medication_record_detail_id) as rank_notifications")
+            )
+            ->whereRaw('n.applied IS NOT TRUE')
+            ->where('d.active', true)
+            ->whereNull('d.suspended_at')
+            ->orderBy('scheduled')
+            ->orderBy('detail_id');
+
+        // Convertir la subconsulta en una consulta externa usando una subconsulta
+        $pendingMedications = DB::table(DB::raw("({$notifications->toSql()}) as subquery"))
+            ->mergeBindings($notifications)
+            ->join('medication_records as r', 'subquery.medication_record_id', '=', 'r.id')
+            ->join('admissions as a', 'r.admission_id', '=', 'a.id')
+            ->join('patients as p', 'a.patient_id', '=', 'p.id')
+            ->select(
+                DB::raw("CONCAT_WS(' ', p.first_name, p.first_surname, p.second_surname) as patient_name"),
+                'subquery.detail_id',
+                'subquery.medication',
+                'subquery.scheduled'
+            )
+            ->where('subquery.rank_notifications', 1)
+            ->whereNull('a.discharged_date')
+            ->whereRaw('(ABS(TIMESTAMPDIFF(HOUR, subquery.scheduled , NOW())) <= 1
+	OR subquery.scheduled < NOW())')
+            ->get();
+
+        return $pendingMedications;
     }
 
 }

@@ -432,8 +432,6 @@ Ficha de Medicamentos
                     <form @submit.prevent="submitSignature" class=" flex items-center flex-col justify-center">
 
 
-                        <SignaturePad v-model="formSignature.doctor_sign" input-name="doctor_sign" />
-                        <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
 
                         <div class="my-4">
                             <button type="button"

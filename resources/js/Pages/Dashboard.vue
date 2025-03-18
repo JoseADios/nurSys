@@ -2,7 +2,6 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
 import BedIcon from '@/Components/Icons/BedIcon.vue';
-import NurseRecordIcon from '@/Components/Icons/NurseRecordIcon.vue';
 import AdmissionsChart from '@/Components/Charts/AdmissionsChart.vue';
 import FormatId from '@/Components/FormatId.vue';
 import { Link } from '@inertiajs/vue3';
@@ -13,6 +12,7 @@ import PatientsByArsChart from '@/Components/Charts/PatientsByArsChart.vue';
 import BedsByStatusChart from '@/Components/Charts/BedsByStatusChart.vue';
 import moment from 'moment/moment';
 import 'moment/locale/es';
+import PatientIcon from '@/Components/Icons/PatientIcon.vue';
 
 defineProps({
     stats: {
@@ -42,7 +42,7 @@ defineProps({
                             class=" bg-blue-500/20 rounded-lg p-6 text-blue-500 dark:text-white dark:border-2 dark:border-blue-500">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm opacity-80">Ingresos activos</p>
+                                    <p class="text-sm opacity-80 font-bold">Ingresos activos</p>
                                     <p class="text-3xl font-bold mt-1">{{ stats.active_admissions }}</p>
                                 </div>
                                 <div class="opacity-80">
@@ -57,7 +57,7 @@ defineProps({
                             class="bg-orange-500/20 rounded-lg p-6 text-orange-500 dark:text-white dark:border-2 dark:border-orange-500">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm opacity-80">Camas Disponibles</p>
+                                    <p class="text-sm opacity-80 font-bold">Camas Disponibles</p>
                                     <p class="text-3xl font-bold mt-1">{{ stats.available_beds }}</p>
                                 </div>
                                 <div class="opacity-80">
@@ -72,14 +72,20 @@ defineProps({
                             class="bg-indigo-500/20 rounded-lg p-6 text-indigo-500 dark:text-white dark:border-2 dark:border-indigo-500">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm opacity-80">Registros de Enfermería Hoy</p>
-                                    <p class="text-3xl font-bold mt-1">{{ stats.nurse_records_today }}</p>
+                                    <p class="text-sm opacity-80 font-bold">Nuevos pacientes este mes</p>
+                                    <p class="text-3xl font-bold mt-1">{{ stats.new_patients_this_month }}</p>
                                 </div>
                                 <div class="opacity-80">
-                                    <NurseRecordIcon class="w-8 h-8" />
+                                    <PatientIcon class="w-8 h-8" />
                                 </div>
                             </div>
-                            <p class="text-sm mt-4 opacity-80">Medicaciones Pendientes: {{ stats.pending_medications }}
+                            <p :class="['text-sm font-bold mt-4 opacity-80',
+                                {
+                                    'text-red-500 dark:text-red-400': stats.percent_diff_new_patients_month < 0,
+                                    'text-green-700 dark:text-green-400': stats.percent_diff_new_patients_month > 0,
+                                }
+                            ]"> {{ Math.abs(stats.percent_diff_new_patients_month) }}%
+                                {{ stats.percent_diff_new_patients_month < 0 ? 'menos' : 'más' }} que el mes pasado
                             </p>
                         </div>
                     </div>

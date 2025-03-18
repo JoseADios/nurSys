@@ -18,7 +18,8 @@ class DashboardController extends Controller
             'active_admissions' => Admission::whereNull('discharged_date')->count(),
             'available_beds' => Bed::all()->filter->isAvailable()->count(),
             'total_beds' => Bed::count(),
-            'nurse_records_today' => NurseRecord::whereDate('created_at', today())->count(),
+            'new_patients_this_month' => $this->countPatientsInDateRange(now()->startOfMonth(), now()->endOfMonth()),
+            'percent_diff_new_patients_month' => $this->getPercentDiffNewPatientsThisAndLastMonth(),
             'admissions_by_week' => $this->getWeeklyAdmissions(),
             'admissions_without_bed' => Admission::whereNull('bed_id')->active()->with('patient')->get(),
             'admissions_discharged_by_week' => $this->getWeeklyAdmissions(false),
@@ -56,6 +57,22 @@ class DashboardController extends Controller
                     'total' => $item->total
                 ];
             });
+    }
+
+    private function countPatientsInDateRange($startOfMonth, $endtOfMonth)
+    {
+        return Patient::whereBetween('created_at', [$startOfMonth, $endtOfMonth])->count();
+    }
+
+    private function getPercentDiffNewPatientsThisAndLastMonth()
+    {
+        $totalThisMonth = $this->countPatientsInDateRange(now()->startOfMonth(), now()->endOfMonth());
+        $totalLastMonth = $this->countPatientsInDateRange(now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth());
+
+        if ($totalLastMonth === 0) {
+            return 100;
+        }
+        return ($totalThisMonth * 100) / $totalLastMonth;
     }
 
     private function getPatientsByArs()

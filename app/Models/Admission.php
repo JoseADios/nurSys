@@ -25,6 +25,13 @@ class Admission extends Model
         'active',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'active' => 'boolean',
+        ];
+    }
+
     /*
         SCOPES \\
     */

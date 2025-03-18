@@ -317,6 +317,7 @@
         ref
     } from 'vue';
     import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
+    import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 
     export default {
         props: {
@@ -339,11 +340,14 @@
             PrimaryButton,
             FormatId,
             SignaturePad
+            FormatId,
+            SignaturePad
         },
         data() {
             return {
                 admissionBeingDeleted: ref(null),
                 admissionUpdateCharge: ref(null),
+                signatureError: false,
                 signatureError: false,
                 form: {
                     patient_id: this.admission.patient_id,

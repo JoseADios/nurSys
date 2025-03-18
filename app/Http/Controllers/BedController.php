@@ -16,7 +16,8 @@ class BedController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:bed.view', only: ['index']),
-            new Middleware('permission:bed.update', only: ['update'])
+            new Middleware('permission:bed.update', only: ['update']),
+            new Middleware('permission:bed.delete', only: ['delete'])
         ];
     }
     /**
@@ -80,7 +81,9 @@ class BedController extends Controller implements HasMiddleware
             'status' => 'required|string|in:available,cleaning,out_of_service',
         ]);
 
-        $bed->update($validated);
+        $bed->update([
+            'status' => $validated['status']
+        ]);
 
         return back()->with('flash.toast', 'El registro fue actualizado con éxito.');
     }

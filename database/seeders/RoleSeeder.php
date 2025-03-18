@@ -75,8 +75,7 @@ class RoleSeeder extends Seeder
             'temperatureDetail.*',
             'bed.view',
             'bed.update',
-            'bed.delete',
-            'bed.create',
+
             'patient.view',
             'nurseRecord.view',
             'nurseRecord.create',

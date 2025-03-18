@@ -39,7 +39,6 @@ class RoleSeeder extends Seeder
             'medicalOrder.create',
             'temperatureRecord.view',
             'temperatureDetail.view',
-            'bed.view',
             'patient.view',
             'patient.create',
             'patient.update',
@@ -60,7 +59,6 @@ class RoleSeeder extends Seeder
         $role = Role::findByName('receptionist');
         $role->syncPermissions([
             'admission.*',
-            'bed.view',
             'patient.view',
             'patient.create',
             'patient.update',
@@ -73,9 +71,7 @@ class RoleSeeder extends Seeder
             'temperatureRecord.create',
             'temperatureRecord.update',
             'temperatureDetail.*',
-            'bed.view',
             'bed.update',
-
             'patient.view',
             'nurseRecord.view',
             'nurseRecord.create',
@@ -96,8 +92,6 @@ class RoleSeeder extends Seeder
             'medicationRecordDetail.delete',
             'medicalOrder.view',
             'medicalOrderDetail.view',
-
-
         ]);
 
         $user = User::where('name', 'Test User')->first();

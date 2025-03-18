@@ -82,16 +82,17 @@
                         :class="[
                             'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
                         {
-                            'p-3': room.beds.length === 1, // Padding más pequeño para salas con 1 cama
-                            'p-4': room.beds.length === 2, // Padding mediano para salas con 2 camas
-                            'p-5': room.beds.length === 3, // Padding grande para salas con 3 camas
-                            'p-6': room.beds.length > 3,   // Padding extra grande para salas con más de 3 camas
-                            'col-span-1': room.beds.length === 1, // Salas con 1 cama ocupan 1 columna
-                            'col-span-2': room.beds.length > 1,   // Salas con más de 1 cama ocupan toda la fila en móvil
-                            'sm:col-span-2': room.beds.length === 2, // En tablets, salas con 2 camas ocupan 2 columnas
-                            'sm:col-span-3': room.beds.length === 3 || room.beds.length > 3, // En tablets, salas con 3+ camas ocupan 3 columnas
-                            'md:col-span-3': room.beds.length === 3, // En desktop, salas con 3 camas ocupan 3 columnas
-                            'md:col-span-4': room.beds.length > 3    // En desktop, salas con más de 3 camas ocupan 4 columnas
+                            // responsive design
+                            'p-3': room.beds.length === 1,
+                            'p-4': room.beds.length === 2,
+                            'p-5': room.beds.length === 3,
+                            'p-6': room.beds.length > 3,
+                            'col-span-1': room.beds.length === 1,
+                            'col-span-2': room.beds.length > 1,
+                            'sm:col-span-2': room.beds.length === 2,
+                            'sm:col-span-3': room.beds.length === 3 || room.beds.length > 3,
+                            'md:col-span-3': room.beds.length === 3,
+                            'md:col-span-4': room.beds.length > 3
                         }
                     ]">
                         <h4

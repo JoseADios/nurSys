@@ -15,11 +15,10 @@ class BedController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:bed.view', only: ['index']),
             new Middleware('permission:bed.update', only: ['update']),
-            new Middleware('permission:bed.delete', only: ['delete'])
         ];
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -40,12 +39,13 @@ class BedController extends Controller implements HasMiddleware
             'beds' => $beds,
         ]);
     }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
+        return abort(404);
     }
 
     /**
@@ -53,7 +53,8 @@ class BedController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        //
+        return abort(404);
+
     }
 
     /**
@@ -61,7 +62,8 @@ class BedController extends Controller implements HasMiddleware
      */
     public function show(Bed $bed)
     {
-        //
+        return abort(404);
+
     }
 
     /**
@@ -69,7 +71,8 @@ class BedController extends Controller implements HasMiddleware
      */
     public function edit(Bed $bed)
     {
-        //
+        return abort(404);
+
     }
 
     /**
@@ -78,7 +81,7 @@ class BedController extends Controller implements HasMiddleware
     public function update(Request $request, Bed $bed)
     {
         $validated = $request->validate([
-            'status' => 'required|string|in:available,cleaning,out_of_service|ocuppied',
+            'status' => 'required|string|in:available,cleaning,out_of_service,ocuppied',
         ]);
 
         $bed->update([
@@ -93,6 +96,7 @@ class BedController extends Controller implements HasMiddleware
      */
     public function destroy(Bed $bed)
     {
-        //
+        return abort(404);
+
     }
 }

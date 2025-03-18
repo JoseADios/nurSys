@@ -24,7 +24,7 @@
                             d="m1 9 4-4-4-4" />
                     </svg>
                 </div>
-                <div class="ml-2 inline-flex items-center ">
+                <div class="ml-2   inline-flex items-center ">
                     Ordenes Medicas
                 </div>
             </div>
@@ -40,7 +40,7 @@
         <div
             class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-2 lg:mx-10">
 
-            <div class="relative ">
+            <div class="relative mb-2">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
                         viewBox="0 0 20 20">

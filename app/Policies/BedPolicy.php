@@ -2,12 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\MedicationRecord;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
-class MedicationRecordPolicy
-{  public function before(User $user, string $ability): bool|null
+class BedPolicy
+{
+    public function before(User $user, string $ability): bool|null
     {
         if ($user->hasRole('admin')) {
             return true;
@@ -15,14 +14,6 @@ class MedicationRecordPolicy
 
         return null;
     }
-    public function viewAny(User $user): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
     public function view(User $user, MedicationRecord $medicationRecord): bool
     {
        if ($user->hasRole('nurse') || $user->hasRole('doctor')) {
@@ -85,11 +76,5 @@ class MedicationRecordPolicy
 
     }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, MedicationRecord $medicationRecord): bool
-    {
-        return false;
-    }
+
 }

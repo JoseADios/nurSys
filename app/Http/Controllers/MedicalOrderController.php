@@ -14,8 +14,22 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
-class MedicalOrderController extends Controller
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+class MedicalOrderController extends Controller  implements HasMiddleware
 {
+
+        use AuthorizesRequests;
+        public static function middleware(): array
+        {
+            return [
+                new Middleware('permission:medicalOrder.view', only: ['index', 'edit']),
+                new Middleware('permission:medicalOrder.create', only: [ 'store']),
+                new Middleware('permission:medicalOrder.update', only: ['update']),
+                new Middleware('permission:medicalOrder.delete', only: ['destroy']),
+            ];
+        }
     /**
      * Display a listing of the resource.
      */
@@ -41,7 +55,7 @@ class MedicalOrderController extends Controller
 
             if (!empty($search)) {
                 $query->where(function ($q) use ($search) {
-                    $q->whereRaw('DATE(created_at) LIKE ?', ['%' . $search . '%'])
+                    $q->whereRaw('DATE(medical_orders.created_at) LIKE ?', ['%' . $search . '%'])
                         ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
                         ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%']);
 
@@ -155,13 +169,11 @@ class MedicalOrderController extends Controller
     {
         $firmService = new FirmService;
 
-        $validated = $request->validate([
-            'admission_id' => 'numeric',
-            'doctor_sign' => 'string',
-            'active' => 'boolean',
-        ]);
 
 
+        if ($request->has('admission_id') && $request->admission_id !== $medicalOrder->admission_id) {
+            $this->authorize('updateAdmission', [MedicalOrder::class, $request->admission_id]);
+        }
 
         if ($request->active === true) {
             $medicalOrderDetailIds = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->pluck('id');
@@ -179,7 +191,11 @@ class MedicalOrderController extends Controller
                 ->createImag($request->doctor_sign, $medicalOrder->doctor_sign);
             $validated['doctor_sign'] = $fileName;
         }
-
+        $validated = $request->validate([
+            'admission_id' => 'numeric',
+            'doctor_sign' => 'string',
+            'active' => 'boolean',
+        ]);
         $medicalOrder->update($validated);
 
         return back()->with('succes', 'Registro actualizado correctamente');

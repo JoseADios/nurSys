@@ -37,10 +37,10 @@
         </div>
 
         <div
-            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
+            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-2 lg:mx-10">
 
 
-   <div class="relative ">
+   <div class="relative mb-2">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
                         viewBox="0 0 20 20">
@@ -76,7 +76,7 @@
                     <option value="365">Último año</option>
                 </select>
 
-    <AccessGate :permission="['medicationRecords.delete']">
+
         <!-- Filtro para mostrar registros eliminados -->
         <button @click="toggleShowDeleted" class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-4" :class="{
             'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
@@ -92,8 +92,8 @@
                     clip-rule="evenodd" />
             </svg>
         </button>
-    </AccessGate>
-    <AccessGate :permission="['medicationRecords.create']">
+
+
                     <Link :href="route('medicationRecords.create')"
                         class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
                     <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -101,7 +101,7 @@
                     </svg>
                     Nueva Ficha de Medicamentos
                     </Link>
-                </AccessGate>
+
 </div>
 </div>
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
@@ -111,6 +111,13 @@
                 <tr> <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admission_id')">Ingreso<span v-if="form.sortField === 'admission_id'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
                                 }}</span></th>
+                                <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
+                            Paciente <span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
+                                'asc' ?
+                                '↑' :
+                                '↓'
+                                }}</span>
+                        </th>
 
                                 <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('diagnosis')">Diagnóstico <span v-if="form.sortField === 'diagnosis'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
@@ -120,15 +127,10 @@
                                 '↓'
                                 }}</span></th>
 
-                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('referrals')">Referencias<span v-if="form.sortField === 'referrals'">{{ form.sortDirection === 'asc' ? '↑' :
+                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('diet')">Referencias<span v-if="form.sortField === 'diet'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
                                 }}</span></th>
-                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('pending_studies')">Estudios Pendientes<span v-if="form.sortField === 'pending_studies'">{{ form.sortDirection === 'asc' ? '↑' :
-                                '↓'
-                                }}</span></th>
-                    <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('doctor_sign')">Firma del Doctor<span v-if="form.sortField === 'doctor_sign'">{{ form.sortDirection === 'asc' ? '↑' :
-                                '↓'
-                                }}</span></th>
+
                     <th scope="col" class="px-6 py-3 ">Acciones</th>
                 </tr>
             </thead>
@@ -139,6 +141,9 @@
   <td class="px-6 py-4">   ING-00{{ record.admission.id }},
                                 Cama {{ record.admission.bed.number }}, Sala {{
                                     record.admission.bed.room }}</td>
+                                    <td class="px-6 py-4"> {{ record.admission.patient.first_name }} {{
+                                record.admission.patient.first_surname }} {{
+                                record.admission.patient.second_surname }}</td>
                                      <td class="px-6 py-4">{{ record.diagnosis }} </td>
                     <td class="px-6 py-4  w-2">
                             <span v-if="record.admission.discharged_date == null"
@@ -147,9 +152,9 @@
                         </td>
 
 
-                    <td class="px-6 py-4">{{ record.referrals }}</td>
-                    <td class="px-6 py-4">{{ record.pending_studies }}</td>
-                    <td class="px-6 py-4">{{ record.doctor_sign }}</td>
+                    <td class="px-6 py-4">{{ record.diet }}</td>
+
+
                     <td class="px-6 py-4 flex items-center space-x-4">
 
                             <button class="text-blue-500 hover:text-blue-800" @click="MedicationRecordShow(record.id)">

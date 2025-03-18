@@ -1,17 +1,11 @@
 <?php
 
 namespace App\Policies;
-use Illuminate\Database\Eloquent\Builder;
-use App\Models\MedicalOrder;
-use App\Models\User;
-use Illuminate\Auth\Access\Response;
-use App\Models\Admission;
-class MedicalOrderPolicy
-{
-    /**
-     * Determine whether the user can view any models.
-     */
 
+use App\Models\User;
+
+class MedicalOrderDetailPolicy
+{
     public function before(User $user, string $ability): bool|null
     {
         if ($user->hasRole('admin')) {
@@ -20,14 +14,6 @@ class MedicalOrderPolicy
 
         return null;
     }
-    public function viewAny(User $user): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
     public function view(User $user, MedicalOrder $medicalOrder): bool
     {
 
@@ -35,8 +21,7 @@ class MedicalOrderPolicy
             return Response::allow();
         }
         return Response::deny('No tienes permiso para ver este registro');
-
-     }
+    }
 
     /**
      * Determine whether the user can create models.
@@ -83,26 +68,4 @@ class MedicalOrderPolicy
         return Response::deny('No tienes permiso para restaurar este registro');
     }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, MedicalOrder $medicalOrder): bool
-    {
-        return false;
-    }
-    public function updateAdmission(User $user, $new_admission_id): Response
-    {
-        // Validar que la nueva admisión no tenga otra hoja de temperatura activa
-        $newAdmission = Admission::where('id', $new_admission_id)
-            ->whereDoesntHave('medicalOrders', function (Builder $query) {
-                $query->where('active', true);
-            })
-            ->first();
-
-        if ($newAdmission) {
-            return Response::allow();
-        }
-
-        return Response::deny('El nuevo ingreso ya tiene una Orden Medica activa.');
-    }
 }

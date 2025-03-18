@@ -19,17 +19,19 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Services\FirmService;
 use Illuminate\Database\Eloquent\Builder;
-
-class MedicationRecordController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+class MedicationRecordController extends Controller implements HasMiddleware
 {
-
+    use AuthorizesRequests;
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:medicationRecords.view', only: ['index', 'show']),
-            new Middleware('permission:medicationRecords.create', only: ['edit', 'store']),
-            new Middleware('permission:medicationRecords.update', only: ['update']),
-            new Middleware('permission:medicationRecords.delete', only: ['destroy']),
+            new Middleware('permission:medicationRecord.view', only: ['index', 'show']),
+            new Middleware('permission:medicationRecord.create', only: ['edit', 'store']),
+            new Middleware('permission:medicationRecord.update', only: ['update']),
+            new Middleware('permission:medicationRecord.delete', only: ['destroy']),
         ];
     }
     /**
@@ -43,8 +45,10 @@ class MedicationRecordController extends Controller
         $sortDirection = $request->input('sortDirection', 'asc');
         $days = $request->integer('days');
 
-        $query = MedicationRecord::query()->select('medication_records.*')
+        $query = MedicationRecord::query()
+        ->select('medication_records.*', 'patients.first_name', 'patients.first_surname', 'patients.second_surname')
         ->join('admissions', 'medication_records.admission_id', '=', 'admissions.id')
+        ->join('patients', 'admissions.patient_id', '=', 'patients.id')
         ->where('medication_records.active', !$showDeleted);
 
 
@@ -56,9 +60,7 @@ class MedicationRecordController extends Controller
                 $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('diagnosis LIKE ?', ['%' . $search . '%'])
                   ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('referrals LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('pending_studies LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('doctor_sign LIKE ?', ['%' . $search . '%']);
+                  ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%']);
             });
         }
         if ($sortField) {
@@ -118,16 +120,16 @@ class MedicationRecordController extends Controller
             'admission_id' => 'required|exists:admissions,id', // Validamos que exista en la tabla admissions
             'diagnosis' => 'required|string',
             'diet' => 'required|string',
-            'referrals' => 'nullable|string',
-            'pending_studies' => 'nullable|string',
-            'doctor_sign' => 'required|string',
+
+
+
         ]);
 
         // Verificar si ya existe un MedicationRecord para la admisión especificada
-        $existingRecord = MedicationRecord::where('admission_id', $request->admission_id)->first();
+        $existingRecord = MedicationRecord::where('admission_id', $request->admission_id)->where('active',true)->first();
 
         if ($existingRecord) {
-            // Si ya existe, redirigir con un mensaje de error
+
             return redirect()->back()->withErrors([
                 'admission_id' => 'Ya Existe una ficha de Medicamentos con ese numero de Admision.',
             ])->withInput();
@@ -139,14 +141,13 @@ class MedicationRecordController extends Controller
             'doctor_id' => Auth::id(),
             'diagnosis' => $request->diagnosis,
             'diet' => $request->diet,
-            'referrals' => $request->referrals,
-            'pending_studies' => $request->pending_studies,
-            'doctor_sign' => $request->doctor_sign,
+
+
         ]);
 
         // Redirigir o retornar una respuesta exitosa
-        return redirect()->route('medicationRecords.index')->with('success', 'Medication Record created successfully');
-    }
+        return redirect()->route('medicationRecords.index')->with('flash.toast', 'Registro guardado correctamente');
+      }
 
 
 
@@ -222,11 +223,13 @@ class MedicationRecordController extends Controller
     {
         $firmService = new FirmService;
 
-        if ($request->signature) {
-            $fileName = $firmService
-                ->createImag($request->doctor_sign, $medicationRecord->doctor_sign);
-            $validated['doctor_sign'] = $fileName;
-        }
+       if ($request->has('signature')) {
+        $fileName = $firmService->createImag($request->doctor_sign, $medicationRecord->doctor_sign);
+        $medicationRecord->update(['doctor_sign' => $fileName]);
+
+        return back()->with('flash.toast', 'Registro actualizado correctamente');
+
+    }
 
      if ($request->has('active')) {
             $this->restore($medicationRecord->id);
@@ -241,8 +244,7 @@ class MedicationRecordController extends Controller
         }
 
 
-        return redirect()->route('medicationRecords.index')
-                         ->with('success', 'Medication record updated successfully.');
+        return back()->with('flash.toast', 'Registro actualizado correctamente');
     }
 
 

@@ -10,8 +10,21 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
-class MedicationNotificationController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+class MedicationNotificationController extends Controller implements HasMiddleware
 {
+    use AuthorizesRequests;
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:medicationNotification.view', only: ['index', 'show']),
+            new Middleware('permission:medicationNotification.create', only: ['edit', 'store']),
+            new Middleware('permission:medicationNotification.update', only: ['update']),
+            new Middleware('permission:medicationNotification.delete', only: ['destroy']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */

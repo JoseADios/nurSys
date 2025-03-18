@@ -1,11 +1,11 @@
 <template>
     <AppLayout>
 
-        <div class="container mx-auto px-4   py-8">
+        <div class="container mx-auto px-12   py-8">
            <!-- Navigation -->
-           <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+           <div class="p-4 bg-gray-100 dark:bg-gray-900  flex justify-between items-center">
 
-            <div class="ml-12 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+            <div class=" my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
 
 
 <Link :href="route('medicationRecords.index')"
@@ -19,7 +19,7 @@ Ficha de Medicamentos
 <div class="ml-2 inline-flex items-center">
     <FormatId :id="medicationRecord.id" prefix="FIC"></FormatId>
 </div>
-</div>  
+</div>
                     <button v-if="medicationRecord.active" @click="recordBeingDeleted = true"
                         class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -27,7 +27,7 @@ Ficha de Medicamentos
                                 d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <span class="font-medium">Eliminar</span>
+                        <span class="font-medium ">Eliminar</span>
                     </button>
                     <button v-else @click="restoreRecord(medicationRecord)"
                         class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
@@ -56,11 +56,12 @@ Ficha de Medicamentos
                         <!-- Paciente -->
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                            <Link  :href="route('patients.show', medicationRecord.admission.patient.id)"as="button"
+                            class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
                                 {{ medicationRecord.admission.patient.first_name }}
                                 {{ medicationRecord.admission.patient.first_surname }}
                                 {{ medicationRecord.admission.patient.second_surname }}
-                            </p>
+                            </Link>
                         </div>
 
                         <!-- Doctor -->
@@ -107,11 +108,7 @@ Ficha de Medicamentos
     </div>
                         </div>
                     </div>
-                    <!-- <div v-if="errors.length > 0" class="bg-red-50 border-l-4 border-red-500 p-4 mx-8 my-4">
-                    <div class="text-red-700" v-for="error in errors" :key="error">
-                        {{ error }}
-                    </div>
-                </div> -->
+
                 <div class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
                     <div>
@@ -123,9 +120,9 @@ Ficha de Medicamentos
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:mx-10 mt-6 hidden" id="formcreaterecord">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 shadow-xl rounded-lg mt-2 gap-6  lg:mx-10 mt-6 hidden" id="formcreaterecord">
         <!-- Tarjeta para información del Medical Order -->
-        <div class="relative overflow-hidden rounded-lg shadow-md bg-white dark:bg-gray-800 mb-5">
+        <div class="relative overflow-hidden rounded-lg   bg-white dark:bg-gray-800 mb-5">
 
                         <div class="max-h-80 overflow-y-auto  shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
                             <div v-if="order.length === 0" class="text-center text-gray-500 dark:text-gray-300 p-4">
@@ -173,7 +170,7 @@ Ficha de Medicamentos
 
         </div>
 
-                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg   lg:mx-10">
+                    <div class="relative overflow-x-auto  sm:rounded-lg   lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
 
@@ -183,24 +180,15 @@ Ficha de Medicamentos
     <input type="hidden" v-model="form.selectedOrderId" />
 
     <!-- Selector de Medicamento -->
-    <div class="w-2/3 mb-2">
-        <label for="drug-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-            Medicamento
-        </label>
-        <select id="drug-select" required v-model="form.drug"
-            class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-            <option v-for="drugs in drug" :key="drugs.id" :value="drugs.name">
-                {{ drugs.name }} - {{ drugs.description }}
-            </option>
-        </select>
+    <div class="w-full mb-2">
+         <label for="drug"
+                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Medicamento</label>
+                       <DrugSelector @update:drug="updateSelectedDrug" />
+                       <InputError :message="form.errors.drug" class="mt-2" />
+
     </div>
 
-    <!-- Botón Crear Medicamento -->
-    <button  @click="openCreateModal"
-        class="ml-2 mt-3 flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
 
-        <span class="font-medium">Crear Medicamento</span>
-    </button>
 </div>
 
 
@@ -298,7 +286,7 @@ Ficha de Medicamentos
         Detalles del Registro
     </h3>
 
-    <AccessGate :permission="['medicationRecords.delete']">
+
         <div v-if="medicationRecord.active">
             <button @click="toggleShowDeleted"
                 class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-auto"
@@ -317,7 +305,7 @@ Ficha de Medicamentos
                 </svg>
             </button>
         </div>
-    </AccessGate>
+
 </div>
 
 
@@ -420,14 +408,15 @@ Ficha de Medicamentos
                     </div>
 
                 </div>
-
+                <section class=" p-8 space-y-4  bg-dark-50 dark:bg-dark-700">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Firma</h3>
                 <!-- mostrar imagen firma -->
                 <div v-show="!isVisibleEditSign" class="my-4 flex items-center flex-col justify-center">
                     <div>
                         <h2 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Firma
                         </h2>
-                        <img v-if="medicationRecord.doctor_sign" :src="`/storage/${medicationRecord.doctor_sign}`" alt="Firma">
+                        <img v-if="medicationRecord.doctor_sign" class="w-full max-w-md" :src="`/storage/${medicationRecord.doctor_sign}`" alt="Firma">
                         <div v-else>
                             <div class="text-gray-500 dark:text-gray-400 my-16">
                                 No hay firma disponible
@@ -441,13 +430,8 @@ Ficha de Medicamentos
                 <!-- Campo de firma -->
                 <div v-show="isVisibleEditSign" class="my-4">
                     <form @submit.prevent="submitSignature" class=" flex items-center flex-col justify-center">
-                        <label for="doctor_sign"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Firma
-                        </label>
 
-                        <SignaturePad v-model="formSignature.doctor_sign" input-name="doctor_sign" />
-                        <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
+
 
                         <div class="my-4">
                             <button type="button"
@@ -459,6 +443,7 @@ Ficha de Medicamentos
                         </div>
                     </form>
                 </div>
+                </section>
             </div>
         </div>
          <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
@@ -529,7 +514,7 @@ Ficha de Medicamentos
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import { ref } from "vue";
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
@@ -538,7 +523,8 @@ import DialogModal from '@/Components/DialogModal.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 import FormatId from '@/Components/FormatId.vue';
-
+import DrugSelector from '@/Components/DrugSelector.vue';
+import InputError from '@/Components/InputError.vue';
 export default{
     props: {
         medicationRecord: Object,
@@ -548,6 +534,7 @@ export default{
         routeOptions: Array,
         dose: Array,
         filters: Object,
+        selectedDrug: Array,
     },
     components: {
         AppLayout,
@@ -558,13 +545,15 @@ export default{
         DialogModal,
         AccessGate,
         SignaturePad,
-        FormatId
+        FormatId,
+        DrugSelector,
+        InputError
     },
     data(){
         return{
-            form: {
+            form:useForm({
                 medication_record_id: this.medicationRecord.id,
-                drug: '',
+                drug: this.selectedDrug || null,
                 dose: '',
                 route: '',
                 fc: '',
@@ -573,10 +562,11 @@ export default{
                 dose_metric: '',
                 selectedOrderId: null,
                 showDeleted: this.filters.show_deleted,
-            },
+             }),
             recordBeingDeleted: ref(null),
             selectedOrderId: null,
             errorMessage: "",
+            errors: '',
             isVisible: false,
             isVisibleEditSign: ref(null),
             signatureError: false,
@@ -585,7 +575,7 @@ export default{
                 name: '',
             },
             formSignature: {
-                nurse_sign: this.medicationRecord.nurse_sign,
+                doctor_sign: this.medicationRecord.doctor_sign,
                 signature: true,
             },
         }
@@ -632,7 +622,7 @@ submitSignature() {
         restoreRecord(record){
             this.$inertia.put(
                 route('medicationRecords.update', record.id), {
-                    active: true
+                    active: true,    preserveScroll: true
                 }, {
 
                     onSuccess: (response) => {
@@ -646,6 +636,10 @@ submitSignature() {
                 }
             );
         },
+        updateSelectedDrug(drug) {
+        this.form.drug = drug.name;
+        this.selectedDrug = drug.id;
+    },
         submit() {
             if (!this.form.selectedOrderId) {
             this.errorMessage = "Debe seleccionar una orden antes de guardar.";
@@ -672,6 +666,7 @@ submitSignature() {
                          add_detail.classList.remove("hidden");
                     },
                     preserveState: true,
+                    preserveScroll: true
 
 
                 } );
@@ -724,6 +719,7 @@ deleteRecord() {
                         console.log('eliminado correctamente',response);
                         this.recordBeingDeleted = null;
                     },
+                    preserveScroll: true
             });
         },
 ToggleActivate(detail){

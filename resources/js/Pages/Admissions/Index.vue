@@ -6,12 +6,6 @@
             </h2>
         </template>
 
-        <!-- <div v-if="can.create" class="flex flex-col items-center justify-center mt-10">
-            <Link :href="route('admissions.create')"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            Crear nuevo ingreso
-            </Link>
-        </div> -->
 
         <div class="flex items-center justify-between ">
             <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
@@ -41,8 +35,8 @@
         </div>
 
         <div
-            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
-            <div class="relative ">
+            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-2 lg:mx-10">
+            <div class="relative mb-2 ">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
                         viewBox="0 0 20 20">
@@ -63,9 +57,17 @@
                     </svg>
                 </button>
                 </div>
-            <div class="flex items-center">
+            <div class="flex items-end">
+                <select @change="submitFilters()"
+                class="bg-gray-50 w-full mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                name="beds_available" id="beds_available" v-model="form.beds_available">
+                <option value="">Todos</option>
+                <option value="1">Camas en Uso</option>
+                <option value="2">Camas Disponibles</option>
+            </select>
+
             <select @change="submitFilters()"
-                    class="bg-gray-50 w-full  mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-gray-50 w-full  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     name="days" id="days" v-model="form.days">
                     <option value="">Siempre</option>
                     <option value="1">Último día</option>
@@ -125,10 +127,7 @@
                                 }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('discharged_date')">
-                            Dias ingresado<span v-if="form.sortField === 'discharged_date'">{{ form.sortDirection === 'asc' ?
-                                '↑' :
-                                '↓'
-                                }}</span>
+                            Dias ingresado
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('discharged_date')">
                             Estado<span v-if="form.sortField === 'discharged_date'">{{ form.sortDirection === 'asc' ?
@@ -225,7 +224,7 @@ export default {
                 sortField: this.filters.sortField || 'admissions.updated_at',
                 sortDirection: this.filters.sortDirection || 'asc',
                 days: this.filters.days || '',
-
+                beds_available: this.filters.beds_available || '',
             },
             timeout: 1000,
         }

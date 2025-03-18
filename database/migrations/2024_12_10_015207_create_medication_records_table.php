@@ -18,9 +18,8 @@ return new class extends Migration
             $table->foreignId('doctor_id')->constrained('users')->onDelete('restrict');
             $table->string('diagnosis');
             $table->string('diet');
-            $table->string('referrals');
-            $table->string('pending_studies');
-            $table->string('doctor_sign');
+
+            $table->string('doctor_sign')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
 

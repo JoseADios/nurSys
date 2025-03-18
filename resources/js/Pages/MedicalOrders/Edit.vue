@@ -48,11 +48,18 @@ Ordenes Medicas
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
                             <div class="">
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
-                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                <Link :href="route('admissions.show', medicalOrder.admission_id)" as="button"
+                                class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
                                     {{ medicalOrder.admission_id }}
-                                </p>
+                            </Link>
+
                             </div>
-                            <button @click="toggleEditAdmission" class="text-blue-500 mr-3">Edit</button>
+                            <AccessGate :permission="['medicalOrder.delete']">
+                                <button @click="showEditAdmission = true" class="text-blue-500 mt-6  ">
+                                    <EditIcon class="size-5" />
+                                </button>
+                            </AccessGate>
+
                         </div>
 
                         <div v-if="isVisibleAdm" class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
@@ -84,11 +91,12 @@ Ordenes Medicas
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                            <Link  :href="route('patients.show', medicalOrder.admission.patient.id)"as="button"
+                            class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
                                 {{ medicalOrder.admission.patient.first_name }} {{
                                     medicalOrder.admission.patient.first_surname
                                 }} {{ medicalOrder.admission.patient.second_surname }}
-                            </p>
+                            </Link>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Sala</h3>
@@ -246,6 +254,7 @@ Ordenes Medicas
                         class="mt-4 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
                         Editar</button>
                 </div>
+
                 <!-- Campo de firma -->
                 <div v-show="isVisibleEditSign" class="my-4">
                     <form @submit.prevent="submitSignature" class=" flex items-center flex-col justify-center">
@@ -270,6 +279,32 @@ Ordenes Medicas
             </div>
         </div>
 
+         <!-- Change admission modal -->
+         <AccessGate :permission="['medicalOrder.delete']">
+            <Modal :closeable="true" :show="showEditAdmission != null" @close="showEditAdmission == null">
+                <div
+                    class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                    <form @submit.prevent="submitUpdateRecord" class="max-w-3xl mx-auto">
+
+                        <AdmissionSelector @update:admission="formRecord.admission_id = $event"
+                            :selected-admission-id="medicalOrder.admission_id" :doesnt-have-medical-order="true" />
+
+                        <!-- Botones -->
+                        <div class="flex justify-end mt-4 space-x-3">
+                            <button type="button" @click="showEditAdmission = null"
+                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
+                                :disabled="!formRecord.admission_id">
+                                Aceptar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
+        </AccessGate>
         <DialogModal :show="isVisibleDetail" @close="isVisibleDetail = false">
             <!-- Header del modal -->
             <template #title>
@@ -378,6 +413,10 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import FormatId from '@/Components/FormatId.vue';
+import EditIcon from '@/Components/Icons/EditIcon.vue';
+import AccessGate from '@/Components/Access/AccessGate.vue';
+import AdmissionSelector from '@/Components/AdmissionSelector.vue';
+import Modal from '@/Components/Modal.vue';
 
 
 export default {
@@ -389,7 +428,12 @@ export default {
         ConfirmationModal,
         DangerButton,
         SecondaryButton,
-        FormatId
+        FormatId,
+        EditIcon,
+        AccessGate,
+        AdmissionSelector,
+        Modal
+
     },
     props: {
         medicalOrder: Object,
@@ -398,6 +442,7 @@ export default {
         details: Array,
         regimes: Array,
         filters: Object,
+
 
     },
     data() {
@@ -409,10 +454,16 @@ export default {
             originalSuspendedState: ref(null),
             isVisibleEditSign: ref(null),
             signatureError: false,
-
+            showEditAdmission: ref(null),
             isVisibleAdm: false,
             formAdmission: {
                 admission_id: this.medicalOrder.admission_id,
+                active: this.medicalOrder.active
+            },
+            formRecord: {
+                admission_id: this.medicalOrder.admission_id,
+                nurse_id: this.medicalOrder.nurse_id,
+                impression_diagnosis: this.medicalOrder.impression_diagnosis,
                 active: this.medicalOrder.active
             },
             formDetail: {
@@ -438,6 +489,11 @@ export default {
         preserveScroll: true
     });
 },
+submitUpdateRecord() {
+            this.showEditAdmission = null
+            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formRecord)
+            this.isVisibleEditDiagnosis = false
+        },
         toggleEditAdmission() {
             this.isVisibleAdm = !this.isVisibleAdm;
         },

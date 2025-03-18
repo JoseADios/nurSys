@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
-
+use Illuminate\Support\Facades\Log;
 class AdmissionController extends Controller
 {
     use AuthorizesRequests;
@@ -33,6 +33,7 @@ class AdmissionController extends Controller
         $search = $request->input('search');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
+        $beds_available = $request->input('beds_available', 'true');
         $days = $request->integer('days');
 
         $query = Admission::query()->with('patient','bed','doctor')->select([
@@ -45,20 +46,36 @@ class AdmissionController extends Controller
             'admissions.active'
         ])
         ->join('patients', 'admissions.patient_id', '=', 'patients.id')
-        ->join('beds', 'admissions.bed_id', '=', 'beds.id')
+        ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
         ->join('users', 'admissions.doctor_id', '=', 'users.id')
         ->where('admissions.active', !$showDeleted);
 
 
 
-            if ($search) {
-                $query->where(function (Builder $q) use ($search) {
-                    $q->whereRaw('DATE(created_at) LIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw('CONCAT(beds.room, " ", beds.number) LIKE ?', ['%' . $search . '%']);
-                });
-            }
+
+
+        if ($search) {
+            $query->where(function (Builder $q) use ($search) {
+                $q->whereRaw('DATE(admissions.created_at) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(beds.room, " ", beds.number) LIKE ?', ['%' . $search . '%']);
+            });
+        }
+
+
+        if ($beds_available === '1') {
+            $query->whereNotNull('admissions.bed_id');
+            \Log::info('Camas en uso:', [$query->get()->toArray()]);
+        } elseif ($beds_available === '2') {
+            $query->whereNull('admissions.bed_id');
+            \Log::info('Camas disponibles:', [$query->get()->toArray()]);
+        } else {
+
+            \Log::info('Todas Camas:', [$query->get()->toArray()]);
+        }
+
+
 
             if ($sortField) {
                 $query->orderBy($sortField, $sortDirection);
@@ -91,6 +108,7 @@ class AdmissionController extends Controller
                 'show_deleted' => $showDeleted,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
+                'beds_available' => $beds_available,
             ],
         ]);
     }
@@ -156,7 +174,7 @@ class AdmissionController extends Controller
         }
 
         Admission::create($validated);
-        return Redirect::route('admissions.index');
+        return back()->with('flash.toast','Ingreso registrado correctamente');
     }
 
     /**
@@ -248,12 +266,22 @@ class AdmissionController extends Controller
             if ($admission->discharged_date != null && $request->discharged_date == null) {
                 $patient = Patient::find($request->patient_id);
 
-                if (!$patient->isAvailable() || !$bed->isAvailable()) {
+                if (!$patient->isAvailable()) {
                     return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente o la cama seleccionada esta ocupada, dé el alta al otro para activar este.');
                 }
+                if ($bed) {
+                    if (!$bed->isAvailable()) {
+                        return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente o la cama seleccionada esta ocupada, dé el alta al otro para activar este.');
+                    }
+                }
+
             } elseif ($admission->discharged_date == null && $request->discharged_date != null) {
-                $bed->status = 'cleaning';
-                $bed->save();
+
+                    if ($bed) {
+                        $bed->status = 'cleaning';
+                        $bed->save();
+                    }
+
             }
         } else {
             $validated = $request->validate([
@@ -274,7 +302,7 @@ class AdmissionController extends Controller
         }
 
         $admission->update($validated);
-        return Redirect::route('admissions.show', $admission->id)->with('succes', 'Ingreso actualizado exitosamente.');
+        return back()->with('flash.toast', 'Ingreso actualizado exitosamente.');
     }
 
     /**
@@ -285,10 +313,13 @@ class AdmissionController extends Controller
         $this->authorize('delete', $admission);
 
         $admission->update(['active' => 0, 'discharged_date' => now()]);
-
         $bed = Bed::find($admission->bed_id);
-        $bed->status = 'cleaning';
-        $bed->save();
+if ($bed) {
+
+    $bed->status = 'cleaning';
+    $bed->save();
+}
+
 
         // desactivar todas las ordenes médicas relacionadas
         DB::table('medical_orders')
@@ -310,7 +341,7 @@ class AdmissionController extends Controller
             ->where('admission_id', $admission->id)
             ->update(['active' => 0]);
 
-        return Redirect::route('admissions.index');
+        return back()->with('flash.toast','Ingreso eliminado correctamente');
     }
 
     public function restore(Admission $admission)
@@ -339,7 +370,7 @@ class AdmissionController extends Controller
             ->where('admission_id', $admission->id)
             ->update(['active' => true]);
 
-        return Redirect::route('admissions.index');
+        return back()->with('flash.toast','Ingreso restaurado correctamente');
     }
 
 
@@ -353,6 +384,8 @@ class AdmissionController extends Controller
         $selectedAdm = null;
         $admission_id = $request->input('admission_id');
         $doesntHaveTemperatureR = $request->boolean('doesntHaveTemperatureR');
+        $doesntHaveMedicationR = $request->boolean('doesntHaveMedicationR');
+        $doesntHaveMedicalOrder = $request->boolean('doesntHaveMedicalOrder');
         $filters = $request->input('filters', []);
 
         $query = Admission::query()
@@ -369,6 +402,16 @@ class AdmissionController extends Controller
 
         if ($doesntHaveTemperatureR === true) {
             $query->whereDoesntHave('TemperatureRecord', function (Builder $query) {
+                $query->where('active', true);
+            });
+        }
+        if ($doesntHaveMedicationR === true) {
+            $query->whereDoesntHave('MedicationRecord', function (Builder $query) {
+                $query->where('active', true);
+            });
+        }
+        if ($doesntHaveMedicalOrder === true) {
+            $query->whereDoesntHave('medicalOrders', function (Builder $query) {
                 $query->where('active', true);
             });
         }

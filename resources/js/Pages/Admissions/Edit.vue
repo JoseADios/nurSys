@@ -25,17 +25,17 @@
                         Poner en progreso
                     </button>
                 </div>
+                <button type="button" v-if="admission.active" @click="admissionBeingDeleted = true" class="inline-flex items-center px-6  bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold rounded-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                </path>
+                            </svg>
+                            Eliminar
+                        </button>
+                        <button v-if="  !admission.active" @click="restoreAdmission" class="inline-flex items-center px-6  bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                            Restaurar
+                        </button>
 
-                <button @click="confirmDelete"
-                    class="self-end flex ml-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                        </path>
-                    </svg>
-                    Eliminar
-                </button>
             </div>
         </div>
 
@@ -116,7 +116,26 @@
 
             </form>
         </div>
+        <!-- modal para eliminar -->
+        <ConfirmationModal :show="admissionBeingDeleted != null" @close="admissionBeingDeleted = null">
+            <template #title>
+                Eliminar Ingreso
+            </template>
 
+            <template #content>
+                ¿Estás seguro de que deseas eliminar este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="admissionBeingDeleted = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <DangerButton class="ms-3" @click="deleteAdmission">
+                    Eliminar
+                </DangerButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
@@ -127,7 +146,10 @@ import { Link, useForm } from '@inertiajs/vue3';
 import { useGoBack } from '@/composables/useGoBack';
 import InputError from '@/Components/InputError.vue';
 import BedSelector from '@/Components/BedSelector.vue';
-
+import { ref } from "vue";
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 export default {
     props: {
         admission: Object,
@@ -141,7 +163,10 @@ export default {
         Link,
         AccessGate,
         InputError,
-        BedSelector
+        BedSelector,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton
     },
     data() {
         return {
@@ -153,6 +178,8 @@ export default {
                 final_dx: this.admission.final_dx,
                 comment: this.admission.comment,
             }),
+            admissionBeingDeleted: ref(null),
+            isVisible: false,
             goBack: useGoBack().goBack
         }
     },
@@ -164,6 +191,7 @@ export default {
                 }
             })
         },
+
         submitProcess(value) {
             this.$inertia.put(route('admissions.update', this.admission.id), {
                 patient_id: this.admission.patient_id,
@@ -180,11 +208,19 @@ export default {
         charge() {
             this.submitProcess(null)
         },
-        confirmDelete() {
-            if (confirm('¿Estás seguro de que deseas eliminar este ingreso?')) {
-                this.$inertia.delete(route('admissions.destroy', this.admission.id));
-            }
-        }
+        deleteAdmission() {
+             this.admissionbeingDeleted = null;
+                        this.$inertia.delete(route('admissions.destroy', this.admission.id), {
+                            onSuccess: (response) => {
+
+                                    this.admissionbeingDeleted = null;
+                                },
+                                preserveScroll: true
+                        });
+        },
+         restoreAdmission() {
+                        this.$inertia.put(route('admissions.restore', this.admission.id));
+                    }
     },
 }
 </script>

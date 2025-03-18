@@ -577,7 +577,7 @@ export default{
                 name: '',
             },
             formSignature: {
-                nurse_sign: this.medicationRecord.nurse_sign,
+                doctor_sign: this.medicationRecord.doctor_sign,
                 signature: true,
             },
         }

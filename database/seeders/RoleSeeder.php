@@ -54,7 +54,7 @@ class RoleSeeder extends Seeder
             'medicalOrderDetail.delete',
             'medicationRecord.view',
             'medicationRecordDetail.view',
-        'medicationNotification.view',
+            'medicationNotification.view',
         ]);
 
         $role = Role::findByName('receptionist');
@@ -75,6 +75,8 @@ class RoleSeeder extends Seeder
             'temperatureDetail.*',
             'bed.view',
             'bed.update',
+            'bed.delete',
+            'bed.create',
             'patient.view',
             'nurseRecord.view',
             'nurseRecord.create',
@@ -95,6 +97,8 @@ class RoleSeeder extends Seeder
             'medicationRecordDetail.delete',
             'medicalOrder.view',
             'medicalOrderDetail.view',
+
+
         ]);
 
         $user = User::where('name', 'Test User')->first();

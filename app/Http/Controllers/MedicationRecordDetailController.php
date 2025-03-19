@@ -181,6 +181,13 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         }         else {
             Log::info('active true');
 
+            $request->validate([
+
+                'fc' => 'required|integer',
+                'interval_in_hours' => 'required|integer',
+
+
+            ]);
         $fc = $request->fc;
         $interval_in_hours = $request->interval_in_hours;
         $start_time = $request->start_time ;

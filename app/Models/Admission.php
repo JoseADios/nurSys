@@ -23,6 +23,7 @@ class Admission extends Model
         'comment',
         'discharged_date',
         'active',
+        'doctor_sign',
     ];
 
     protected function casts(): array

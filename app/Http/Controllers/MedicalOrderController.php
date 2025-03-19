@@ -24,7 +24,7 @@ class MedicalOrderController extends Controller  implements HasMiddleware
         public static function middleware(): array
         {
             return [
-                new Middleware('permission:medicalOrder.view', only: ['index', 'edit']),
+                new Middleware('permission:medicalOrder.view', only: ['index', 'show']),
                 new Middleware('permission:medicalOrder.create', only: [ 'store']),
                 new Middleware('permission:medicalOrder.update', only: ['update']),
                 new Middleware('permission:medicalOrder.delete', only: ['destroy']),
@@ -117,15 +117,40 @@ class MedicalOrderController extends Controller  implements HasMiddleware
             'created_at' => now(),
         ]);
 
-        return Redirect::route('medicalOrders.edit', $medicalOrder->id);
+        return Redirect::route('medicalOrders.show', $medicalOrder->id);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(MedicalOrder $medicalOrder)
+    public function show(MedicalOrder $medicalOrder,Request $request)
     {
-        //
+        $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
+
+        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor','admission.medicationRecord']);
+
+        $showDeleted = $request->boolean('showDeleted');
+        $regimes = Regime::all();
+
+
+            if ($showDeleted || !$medicalOrder->active) {
+
+                $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active',false)->orderBy('created_at', 'desc')->get();
+
+            }else{
+                $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active',true)->orderBy('created_at', 'desc')->get();
+
+            }
+        return Inertia::render('MedicalOrders/Show', [
+            'medicalOrder' => $medicalOrder,
+            'details' => $details,
+            'admissions' => $admissions,
+            'regimes' => $regimes,
+            'previousUrl' => URL::previous(),
+            'filters' => [
+                'show_deleted' => $showDeleted,
+            ],
+        ]);
     }
 
     /**

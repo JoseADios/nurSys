@@ -3,7 +3,8 @@
 namespace App\Policies;
 
 use App\Models\User;
-
+use Illuminate\Auth\Access\Response;
+use App\Models\MedicationRecordDetail;
 class MedicationRecordDetailPolicy
 {
     public function before(User $user, string $ability): bool|null
@@ -27,13 +28,13 @@ class MedicationRecordDetailPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, MedicationRecord $medicationRecord): bool
+    public function view(User $user, medicationRecordDetail $medicationRecordDetail): bool
     {
         if ($user->hasRole('nurse') || ($user->hasRole('doctor'))) {
-            return Response::allow();
+            return true;
               }
 
-              return Response::deny('No tienes permiso para Ver este registro');
+              return false;
 
 
 
@@ -43,54 +44,55 @@ class MedicationRecordDetailPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, MedicationRecord $medicationRecord): bool
+    public function create(User $user, medicationRecordDetail $medicationRecordDetail): bool
     {
         if ($user->hasRole('nurse')) {
-            return Response::allow();
+            return true;
         }
-        return Response::deny('No tienes permiso para crear este registro');
+        return false;
 
     }
+
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, MedicationRecord $medicationRecord): bool
+    public function update(User $user, medicationRecordDetail $medicationRecordDetail): bool
     {
         if ($user->hasRole('nurse')) {
-            return Response::allow();
+            return true;
         }
-        return Response::deny('No tienes permiso para actualizar este registro');
+        return false;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, MedicationRecord $medicationRecord): bool
+    public function delete(User $user, medicationRecordDetail $medicationRecordDetail): bool
     {
 
         if ($user->hasRole('nurse')) {
-            return Response::allow();
+            return true;
         }
-        return Response::deny('No tienes permiso para eliminar este registro');
+        return false;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, MedicationRecord $medicationRecord): bool
+    public function restore(User $user, medicationRecordDetail $medicationRecordDetail): bool
     {
 
         if ($user->hasRole('nurse')) {
-            return Response::allow();
+            return true;
         }
-        return Response::deny('No tienes permiso para restaurar este registro');
+        return false;
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, MedicationRecord $medicationRecord): bool
+    public function forceDelete(User $user, medicationRecordDetail $medicationRecordDetail): bool
     {
         return false;
     }

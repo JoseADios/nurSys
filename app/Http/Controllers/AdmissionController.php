@@ -18,6 +18,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Log;
+use App\Services\FirmService;
 class AdmissionController extends Controller
 {
     use AuthorizesRequests;
@@ -66,13 +67,12 @@ class AdmissionController extends Controller
 
         if ($beds_available === '1') {
             $query->whereNotNull('admissions.bed_id');
-            \Log::info('Camas en uso:', [$query->get()->toArray()]);
+
         } elseif ($beds_available === '2') {
             $query->whereNull('admissions.bed_id');
-            \Log::info('Camas disponibles:', [$query->get()->toArray()]);
+
         } else {
 
-            \Log::info('Todas Camas:', [$query->get()->toArray()]);
         }
 
 
@@ -250,11 +250,15 @@ class AdmissionController extends Controller
     {
         $this->authorize('update', $admission);
 
-        if ($request->has('discharged_date')) {
+        if ($request->has('doctor_sign')) {
+            $firmService = new FirmService;
             $validated = $request->validate([
                 'discharged_date' => 'nullable|string',
+                'doctor_sign'=> 'string|required',
+                'final_dx'=> 'string|required',
             ]);
-
+            $fileName = $firmService->createImag($request->doctor_sign, $admission->doctor_sign);
+            $validated['doctor_sign'] = $fileName;
             if ($request->discharged_date) {
                 $validated['discharged_date'] = now();
             } else {
@@ -283,6 +287,12 @@ class AdmissionController extends Controller
                     }
 
             }
+            $admission->update($validated);
+
+            return back()->with('flash.toast', 'Ingreso actualizado exitosamente.');
+
+
+
         } else {
             $validated = $request->validate([
                 'bed_id' => 'numeric|nullable',

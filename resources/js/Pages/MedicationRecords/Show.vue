@@ -1,6 +1,11 @@
 <template>
-    <AppLayout>
 
+    <AppLayout>
+        <template #header>
+        <h2 class="font-semibold text-xl text-white leading-tight text-center">
+            Ficha de Medicamentos
+        </h2>
+    </template>
         <div class="container mx-auto px-12   py-8">
            <!-- Navigation -->
            <div class="p-4 bg-gray-100 dark:bg-gray-900  flex justify-between items-center">
@@ -120,7 +125,7 @@ Ficha de Medicamentos
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 shadow-xl rounded-lg mt-2 gap-6  lg:mx-10 mt-6 hidden" id="formcreaterecord">
+                    <div class="grid border grid-cols-1 lg:grid-cols-2 shadow-xl rounded-lg gap-6  lg:mx-10 mt-6 hidden" id="formcreaterecord">
         <!-- Tarjeta para información del Medical Order -->
         <div class="relative overflow-hidden rounded-lg   bg-white dark:bg-gray-800 mb-5">
 
@@ -184,7 +189,7 @@ Ficha de Medicamentos
          <label for="drug"
                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Medicamento</label>
                        <DrugSelector @update:drug="updateSelectedDrug" />
-                       <InputError :message="form.errors.drug" class="mt-2" />
+
 
     </div>
 
@@ -358,6 +363,7 @@ Ficha de Medicamentos
                             </svg>
                             <span class="font-medium">Editar</span>
                             </Link>
+                            <AccessGate :permission="['medicationRecordDetail.view']">
                               <!-- NOTIF -->
                               <Link :href="route('medicationNotification.show', detail.id )"
                                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
@@ -369,6 +375,7 @@ Ficha de Medicamentos
                             </svg>
                             <span class="font-medium">Notificaciones</span>
                             </Link>
+                            </AccessGate>
                            </div>
                            <Link  @click="ToggleActivate(detail)"
                             :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
@@ -429,7 +436,9 @@ Ficha de Medicamentos
                 </div>
                 <!-- Campo de firma -->
                 <div v-show="isVisibleEditSign" class="my-4">
-                    <form @submit.prevent="submitSignature" class=" flex items-center flex-col justify-center">
+                    <form @submit.prevent="submitSignature" class=" flex  items-center flex-col justify-center">
+                        <SignaturePad v-model="formSignature.doctor_sign" input-name="doctor_sign" />
+<div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
 
 
 
@@ -665,7 +674,7 @@ submitSignature() {
                          let add_detail = document.getElementById('add_detail');
                          add_detail.classList.remove("hidden");
                     },
-                    preserveState: true,
+
                     preserveScroll: true
 
 

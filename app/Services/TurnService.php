@@ -70,4 +70,30 @@ class TurnService
             ];
         }
     }
+
+    public function getCurrentTurnForDate($date)
+    {
+        $hour = Carbon::parse($date)->hour;
+
+        foreach ($this->turns as $key => $turn) {
+            if ($turn[0] < $turn[1]) {
+                if ($hour >= $turn[0] && $hour < $turn[1]) {
+                    return [
+                        'hours' => $turn,
+                        'crosses_midnight' => false
+                    ];
+                }
+            } else {
+                if ($hour >= $turn[0] || $hour < $turn[1]) {
+                    return [
+                        'hours' => $turn,
+                        'crosses_midnight' => true
+                    ];
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

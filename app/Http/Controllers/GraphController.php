@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Amenadiel\JpGraph\Graph\Axis;
+use App\Models\EliminationRecord;
 use Illuminate\Http\Request;
 use App\Models\TemperatureDetail;
 use Amenadiel\JpGraph\Graph\Graph;
@@ -18,6 +19,8 @@ class GraphController extends Controller
     public function generateGraph($id)
     {
         $details = $this->getTemperatureDetails($id);
+        $eliminations = $this->getTemperatureEliminations($id);
+
         if ($details->isEmpty()) {
             return $this->jsonResponse('No hay datos disponibles para generar el gráfico.', null, 400);
         }
@@ -39,7 +42,7 @@ class GraphController extends Controller
 
         $this->addVerticalLines($graph, $timestamps);
         $this->drawTopTable($graph, $timestamps);
-        $this->drawTable($graph, $details, $timestamps);
+        $this->drawTable($graph, $eliminations, $timestamps);
 
         return $this->saveGraph($graph, $graphPath);
     }
@@ -48,7 +51,14 @@ class GraphController extends Controller
     {
         return TemperatureDetail::where('temperature_record_id', $id)
             ->orderBy('updated_at', 'asc')
-            ->get(['id', 'temperature', 'evacuations', 'urinations', 'nurse_id', 'updated_at']);
+            ->get(['id', 'temperature', 'updated_at']);
+    }
+
+    private function getTemperatureEliminations($id)
+    {
+        return EliminationRecord::where('temperature_record_id', $id)
+            ->orderBy('updated_at', 'asc')
+            ->get(['id',  'urinations', 'evacuations', 'updated_at']);
     }
 
     private function jsonResponse($message, $path, $status)
@@ -72,7 +82,7 @@ class GraphController extends Controller
 
     private function createGraph($timestamps, $dataY)
     {
-        $graph = new Graph(1500, 700);
+        $graph = new Graph(1500, 750);
 
         $graph->SetScale("datlin");
         $graph->xaxis->scale->SetTimeAlign(DAYADJ_1);
@@ -111,7 +121,7 @@ class GraphController extends Controller
         return $graph;
     }
 
-    private function drawTable($graph, $details, $timestamps)
+    private function drawTable($graph, $eliminations, $timestamps)
     {
         $tableHeight = 40;
         $rowHeight = 20;
@@ -137,7 +147,7 @@ class GraphController extends Controller
         // si solo hay un registro
         if ($timestampRange == 0) {
             $centerXPos = $graph->img->left_margin + ($graph->img->plotwidth / 2);
-            $currentTurnData = $details[0];
+            $currentTurnData = $eliminations[0];
             $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
 
             $this->addTableText($graph, $currentTurnData, $centerXPos, $yTableTop, $yTableBottom, $rowHeight);
@@ -149,7 +159,7 @@ class GraphController extends Controller
                 $graph->img->Line($xPos, $yTableTop, $xPos, $yTableBottom);
 
                 if ($i < count($turnTimestamps) - 1) {
-                    $currentTurnData = $details->first(function ($detail) use ($turnTimestamps, $i) {
+                    $currentTurnData = $eliminations->first(function ($detail) use ($turnTimestamps, $i) {
                         $timestamp = strtotime($detail->updated_at);
                         return $timestamp >= $turnTimestamps[$i] && $timestamp < $turnTimestamps[$i + 1];
                     });
@@ -163,7 +173,10 @@ class GraphController extends Controller
                         if ($xPos !== null && abs($xPos - $nextXPos) < 20) {
 
                             // verificar si es el primer registro
-                            if ($currentTurnData->id == $details[0]->id) {
+                            if ($currentTurnData->id == $eliminations[0]->id) {
+                                $graph->img->SetColor('white');
+                                $graph->img->Line($graph->img->left_margin, $yTableTop, $graph->img->left_margin, $yTableBottom);
+                                $graph->img->SetColor('black');
                                 $graph->img->Line($graph->img->left_margin - 20, $yTableTop, $graph->img->left_margin - 20, $yTableBottom);
                                 $this->addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, true, false);
                             } else {
@@ -209,7 +222,7 @@ class GraphController extends Controller
     private function addTableText($graph, $currentTurnData, $cellCenter, $yTableTop, $yTableBottom, $rowHeight, $startMinSpace = false, $endMinSpace = false)
     {
         if ($startMinSpace) {
-            $cellCenter = $graph->img->left_margin - 10;
+            $cellCenter = $graph->img->left_margin - 4;
         } elseif ($endMinSpace) {
             $cellCenter += 20;
         }
@@ -309,7 +322,6 @@ class GraphController extends Controller
             $turnTimestamps[] = strtotime($day . ' 14:00:00');
             $turnTimestamps[] = strtotime($day . ' 21:00:00');
         }
-
         return $turnTimestamps;
     }
 

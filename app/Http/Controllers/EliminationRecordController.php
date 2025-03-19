@@ -2,31 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EliminationRecord;
 use App\Models\TemperatureDetail;
+use Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 
-class TemperatureDetailController extends Controller implements HasMiddleware
+class EliminationRecordController extends Controller
 {
     use AuthorizesRequests;
-
-    public static function middleware(): array
-    {
-        return [
-            new Middleware('permission:temperatureDetail.create', only: ['store']),
-            new Middleware('permission:temperatureDetail.update', only: ['update']),
-        ];
-    }
 
     /**
      * Display a listing of the resource.
      */
-
-
     public function index()
     {
         //
@@ -47,19 +35,21 @@ class TemperatureDetailController extends Controller implements HasMiddleware
     {
         $this->authorize('create', [TemperatureDetail::class, $request->temperature_record_id]);
 
-        TemperatureDetail::create([
+        EliminationRecord::create([
             'temperature_record_id' => $request->temperature_record_id,
-            'temperature' => $request->temperature,
             'nurse_id' => Auth::id(),
+            'evacuations' => $request->evacuations,
+            'urinations' => $request->urinations,
+            'created_at' => now(),
         ]);
 
-        return back()->with('flash.toast', 'Temperatura agregada exitosamente');
+        return back()->with('flash.toast', 'Registros agregados exitosamente');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(TemperatureDetail $temperatureDetail)
+    public function show(string $id)
     {
         //
     }
@@ -67,7 +57,7 @@ class TemperatureDetailController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(TemperatureDetail $temperatureDetail)
+    public function edit(string $id)
     {
         //
     }
@@ -75,14 +65,14 @@ class TemperatureDetailController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, TemperatureDetail $temperatureDetail)
+    public function update(Request $request, EliminationRecord $eliminationRecord)
     {
-        $this->authorize('update', $temperatureDetail);
-
         $request->validate([
-            'temperature' => 'required|numeric',
+            'evacuations' => 'required|integer',
+            'urinations' => 'required|string',
         ]);
-        $temperatureDetail->update($request->all());
+
+        $eliminationRecord->update($request->all());
 
         return back()->with('flash.toast', 'Registro actualizado correctamente');
     }
@@ -90,7 +80,7 @@ class TemperatureDetailController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TemperatureDetail $temperatureDetail)
+    public function destroy(string $id)
     {
         //
     }

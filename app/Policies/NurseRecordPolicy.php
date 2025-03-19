@@ -33,9 +33,16 @@ class NurseRecordPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, NurseRecord $nurseRecord): bool
+    public function view(User $user, NurseRecord $nurseRecord): Response
     {
-        return false;
+        if ($user->hasRole('doctor')) {
+            return Response::allow();
+        }
+        if (!$nurseRecord->active && $nurseRecord->nurse_id !== $user->id) {
+            return Response::deny('No tienes permiso para ver este registro');
+        }
+
+        return Response::allow();
     }
 
     /**

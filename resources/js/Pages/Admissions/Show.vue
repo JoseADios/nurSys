@@ -1,30 +1,35 @@
 <template>
-<AppLayout>
-    <template #header>
+
+    <AppLayout>
+        <template #header>
         <h2 class="font-semibold text-xl text-white leading-tight text-center">
             Ingresos
         </h2>
     </template>
-    <div class="container mx-auto px-4 py-8">
-        <div class="inline-flex items-center ml-12 mb-2">
-            <Link :href="route('admissions.index')" class="inline-flex ml-12  items-center hover:text-blue-600  text-gray-400 dark:hover:text-white">
-            Ingresos
-            </Link>
-            <svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
-            </svg>
-            <div class="ml-2 inline-flex items-center text-gray-400">
-                <FormatId :id="admission.id" prefix="ORD"></FormatId>
-            </div>
-        </div>
-        <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-xl overflow-hidden">
+        <div class="container mx-auto px-4 py-8">
+          <div class="inline-flex items-center ml-12 mb-2">
+            <Link :href="route('admissions.index')"
+        class="inline-flex ml-12  items-center hover:text-blue-600  text-gray-400 dark:hover:text-white">
+    Ingresos
+    </Link>
+    <svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true"                 fill="none" viewBox="0 0 6 10">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="m1 9 4-4-4-4" />
+    </svg>
+    <div class="ml-2 inline-flex items-center text-gray-400">
+        <FormatId :id="admission.id" prefix="ORD"></FormatId>
+    </div>
+          </div>
+            <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-xl overflow-hidden">
 
-            <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold text-white">Detalles del Ingreso</h2>
-                    <Link :href="route('admissions.index')" class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out">
-                    Volver
-                    </Link>
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold text-white">Detalles del Ingreso {{ typeof admission.id }}</h2>
+                        <Link :href="route('admissions.index')" class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+                        Volver
+                        </Link>
+                    </div>
+
                 </div>
             </div>
 

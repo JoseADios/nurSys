@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AdmissionController;
 use App\Http\Controllers\BedController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EliminationRecordController;
 use App\Http\Controllers\MedicalOrderController;
 use App\Http\Controllers\MedicalOrderDetailController;
 use App\Http\Controllers\MedicationNotificationController;
@@ -38,9 +40,7 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/admissions/filter', [AdmissionController::class, 'getFilteredAdmissions'])->name('admissions.filter');
     Route::resource('admissions', AdmissionController::class);
@@ -60,6 +60,7 @@ Route::middleware([
 
     Route::resource('temperatureRecords', TemperatureRecordController::class);
     Route::resource('temperatureDetails', TemperatureDetailController::class);
+    Route::resource('eliminationRecords', EliminationRecordController::class);
 
     Route::get('/patients/filter', [PatientController::class, 'filterPatients'])->name('patients.filter');
     Route::resource('patients', PatientController::class);

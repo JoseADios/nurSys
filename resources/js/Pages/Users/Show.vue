@@ -14,7 +14,7 @@
 
             <!-- Tarjeta Principal -->
             <div
-                class="bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-900 dark:to-blue-900 rounded-lg shadow-xl mb-6">
+                class="bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-900 dark:to-blue-900 rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
                 <div class="p-6">
                     <div class="flex flex-col md:flex-row items-center justify-between">
                         <div class="flex items-center space-x-4 mb-4 md:mb-0">
@@ -40,7 +40,7 @@
                         </div>
                         <div class="flex space-x-3">
                             <Link :href="route('users.index')"
-                                class="inline-flex items-center px-4 py-2 bg-gray-500/90 text-gray-200 text-sm rounded-lg hover:bg-gray-400/50 transition-all duration-200">
+                                class="inline-flex items-center px-4 py-2 bg-gray-800/50 text-gray-200 text-sm rounded-lg hover:bg-gray-400/50 transition-all duration-200">
                             <BackIcon class="w-4 h-4 mr-2" />
                             Volver
                             </Link>
@@ -67,7 +67,7 @@
             <!-- Secciones de Información -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Información Personal -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+                <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                             Información Personal
@@ -82,7 +82,7 @@
                 </div>
 
                 <!-- Información de Contacto -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+                <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                             Información de Contacto
@@ -95,7 +95,7 @@
                 </div>
 
                 <!-- Información Profesional -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl lg:col-span-2">
+                <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 lg:col-span-2">
                     <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                             Información Profesional

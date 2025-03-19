@@ -333,7 +333,7 @@
                         <div v-show="isVisibleEditSign" class="my-4">
                             <form @submit.prevent="submitSignature" class="flex items-center flex-col justify-center">
 
-                                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" class="w-full max-w-lg"/>
+                                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" class="w-full max-w-lg lg:max-w-md"/>
                                 <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.
                                 </div>
 

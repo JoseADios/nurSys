@@ -6,6 +6,7 @@ use App\Models\Admission;
 use App\Models\Bed;
 use App\Models\NurseRecord;
 use App\Models\Patient;
+use App\Models\TemperatureDetail;
 use DB;
 use Inertia\Inertia;
 
@@ -27,6 +28,7 @@ class DashboardController extends Controller
             'patients_by_ars' => $this->getPatientsByArs(),
             'beds_by_status' => $this->getBedsByStatus(),
             'upcoming_medications' => $this->getUpcomingMedications(),
+            'patients_high_temperature' => $this->getPatientsHighTemperature(),
         ];
 
         return Inertia::render('Dashboard', [
@@ -148,6 +150,42 @@ class DashboardController extends Controller
             ->get();
 
         return $pendingMedications;
+    }
+
+    // obtener la ultima temperatura por paciente si es mas alta de 38 grados
+    // si el ingreso esta activo
+    // si el ingreso esta en progreso
+    // si el record esta activo
+
+    private function getPatientsHighTemperature()
+    {
+        $details = DB::table('temperature_details as d')
+            ->select()
+            ->selectRaw('ROW_NUMBER() OVER (PARTITION BY d.temperature_record_id ORDER BY d.updated_at DESC, d.id DESC) AS rn');
+
+        $highTempPatients = DB::table(DB::raw("({$details->toSql()}) as sb"))
+            ->mergeBindings($details)
+            ->leftJoin('temperature_records AS r', 'sb.temperature_record_id', '=', 'r.id')
+            ->leftJoin('admissions AS a', 'r.admission_id', '=', 'a.id')
+            ->leftJoin('patients AS p', 'a.patient_id', '=', 'p.id')
+            ->leftJoin('beds AS b', 'a.bed_id', '=', 'b.id')
+            ->select(
+                'sb.id',
+                'sb.temperature_record_id',
+                'sb.temperature',
+                'sb.updated_at',
+                DB::raw("CONCAT_WS(' ', p.first_name, p.first_surname, p.second_surname) AS patient_name"),
+                DB::raw("COALESCE(NULL, CONCAT( b.room, '-', b.number)) AS bed")
+            )
+            ->where('rn', '=', 1)
+            ->where('sb.temperature', '>=', 38)
+            ->where('a.active', true)
+            ->where('r.active', true)
+            ->whereNull('a.discharged_date')
+            ->get()
+        ;
+
+        return $highTempPatients;
     }
 
 }

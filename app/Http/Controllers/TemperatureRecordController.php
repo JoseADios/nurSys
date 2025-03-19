@@ -191,7 +191,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         ]);
 
         $eliminationsRecords = $temperatureRecord->eliminationRecords;
-        $temperatureDetails = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->with('nurse')->get();
+        $temperatureDetails = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->with('nurse')
+        ->orderBy('updated_at', 'asc')->orderBy('id', 'asc')->get();
 
         $turnService = new TurnService();
         $currentTurn = $turnService->getCurrentTurn();

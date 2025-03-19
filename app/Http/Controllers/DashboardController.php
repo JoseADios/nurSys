@@ -134,16 +134,17 @@ class DashboardController extends Controller
             ->join('medication_records as r', 'subquery.medication_record_id', '=', 'r.id')
             ->join('admissions as a', 'r.admission_id', '=', 'a.id')
             ->join('patients as p', 'a.patient_id', '=', 'p.id')
+            ->join('beds as b', 'a.bed_id', '=', 'b.id')
             ->select(
                 DB::raw("CONCAT_WS(' ', p.first_name, p.first_surname, p.second_surname) as patient_name"),
                 'subquery.detail_id',
                 'subquery.medication',
-                'subquery.scheduled'
+                'subquery.scheduled',
+                DB::raw("CONCAT(b.room, '-', b.number) as bed")
             )
             ->where('subquery.rank_notifications', 1)
             ->whereNull('a.discharged_date')
-            ->whereRaw('(ABS(TIMESTAMPDIFF(HOUR, subquery.scheduled , NOW())) <= 1
-	OR subquery.scheduled < NOW())')
+            ->whereRaw('(ABS(TIMESTAMPDIFF(HOUR, subquery.scheduled , NOW())) <= 1 OR subquery.scheduled < NOW())')
             ->get();
 
         return $pendingMedications;

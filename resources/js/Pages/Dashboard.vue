@@ -252,6 +252,7 @@ defineProps({
                                                         <CalendarIcon class="h-4 w-4 mr-1" />
                                                         {{ formatDate(medication.scheduled) }}
                                                     </span>
+                                                    <span class="flex ml-2 text-gray-500 dark:text-gray-400"> | <BedIcon class="size-5 mx-2" /> {{ medication.bed }}</span>
                                                 </div>
                                             </div>
                                         </div>

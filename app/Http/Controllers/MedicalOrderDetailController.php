@@ -114,6 +114,6 @@ class MedicalOrderDetailController extends Controller  implements HasMiddleware
             $medicalOrderDetail->update(['active' => 0]);
                  }
 
-        return Redirect::route('medicalOrders.edit', $medicalOrderDetail->medical_order_id);
+        return Redirect::route('medicalOrders.show', $medicalOrderDetail->medical_order_id);
     }
 }

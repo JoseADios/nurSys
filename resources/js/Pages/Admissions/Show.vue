@@ -317,6 +317,7 @@
         ref
     } from 'vue';
     import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
+    import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 
     export default {
         props: {
@@ -338,7 +339,7 @@
             SecondaryButton,
             PrimaryButton,
             FormatId,
-            SignaturePad,
+            SignaturePad
             FormatId,
             SignaturePad
         },

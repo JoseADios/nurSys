@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('receptionist_id')->constrained('users')->onDelete('restrict');
             $table->foreignId('doctor_id')->constrained('users')->onDelete('restrict');
             $table->string('admission_dx');
+            $table->string('doctor_sign')->nullable();
             $table->string('final_dx')->nullable();
             $table->text('comment')->nullable();
             $table->datetime('discharged_date')->nullable();

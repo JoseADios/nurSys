@@ -214,6 +214,6 @@ watch([() => props.admissions, () => props.discharges], ([newAdmissions, newDisc
 
 <template>
     <div class="w-full">
-        <VueApexCharts :options="chartOptions" :series="series" height="350" />
+        <VueApexCharts :options="chartOptions" :series="series" height="300" />
     </div>
 </template>

@@ -279,7 +279,7 @@
                     <div v-show="!isVisibleEditSign">
                         <div class="flex items-center flex-col justify-center">
 
-                            <img v-if="nurseRecord.nurse_sign" :src="`/storage/${nurseRecord.nurse_sign}`" alt="Firma">
+                            <img v-if="nurseRecord.nurse_sign" :src="`/storage/${nurseRecord.nurse_sign}`" alt="Firma" class="w-full max-w-md">
                             <div v-else>
                                 <div class="text-gray-500 dark:text-gray-400 my-16">
                                     No hay firma disponible
@@ -299,7 +299,7 @@
                         <div v-show="isVisibleEditSign" class="my-4">
                             <form @submit.prevent="submitSignature" class="flex items-center flex-col justify-center">
 
-                                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" />
+                                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" class="w-full max-w-lg lg:max-w-md"/>
                                 <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.
                                 </div>
 

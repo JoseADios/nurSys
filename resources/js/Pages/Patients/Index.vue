@@ -192,10 +192,6 @@
                             Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
                             }}</span>
                         </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('ars')">
-                            ARS <span v-if="form.sortField === 'ars'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                            }}</span>
-                        </th>
                         <th scope="col" class="px-6 py-3"> Acciones </th>
                     </tr>
                 </thead>
@@ -224,9 +220,6 @@
                         </td>
                         <td class="px-6 py-4">
                             {{ patient.email }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ patient.ars }}
                         </td>
                         <td class="px-6 py-4">
                             <Link class="ml-2 text-blue-500 hover:text-blue-800"

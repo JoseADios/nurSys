@@ -166,24 +166,28 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
     {
 
         if ($request->has('active')) {
+            Log::info('active');
             $medicationRecordDetail->update($request->all());
             return back()->with('flash.toast', 'Detalle Ficha de Medicamento actualizado correctamente');
-        }
-        if ($request->suspended_at == true) {
-
-            $this->restore($medicationRecordDetail->id);
-
-        }elseif($request->suspended_at == false){
-            $this->suspend($medicationRecordDetail->id);
-
-        }
-
-        else if($request->active == true){
-
+        }else if ($request->has('suspended_at')) {
+            Log::info('suspended_at');
+            if ($request->suspended_at) {
+                $this->restore($medicationRecordDetail->id);
+                Log::info('restore');
+            } else {
+                $this->suspend($medicationRecordDetail->id);
+                Log::info('suspend');
+            }
+        }         else {
+            Log::info('active true');
 
         $fc = $request->fc;
         $interval_in_hours = $request->interval_in_hours;
-        $start_time = $request->start_time;
+        $start_time = $request->start_time ;
+        if ($start_time) {
+            $start_time = Carbon::createFromFormat('H:i', $start_time)->toDateTimeString();
+            $request->merge(['start_time' => $start_time]); // Update the request with the formatted datetime
+        }
         $notifications = $medicationRecordDetail->medicationNotification()->count();
         $lastNotification = $medicationRecordDetail
         ->medicationNotification()
@@ -285,7 +289,7 @@ $lastNotificationform = $lastNotification ? Carbon::parse($lastNotification->sch
 
 
         $medicationRecordDetail->update($request->all());
-        return Redirect::route('medicationNotification.show', $medicationRecordDetail->id)->with('flash.toast', 'Detalle Ficha de Medicamento actualizada correctamente');
+        return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->with('flash.toast', 'Detalle Ficha de Medicamento actualizada correctamente');
     }
 
 

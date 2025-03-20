@@ -6,181 +6,220 @@
             </h2>
         </template>
 
-        <div class="flex items-center justify-between">
-            <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-                <div class="ml-2 inline-flex items-center ">
-                    Usuarios
+        <!-- Filtros con vista móvil mejorada -->
+        <div class="px-4 lg:px-10 mt-4">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
+                <!-- Barra de búsqueda principal y botones de acción siempre visibles -->
+                <div class="flex flex-col sm:flex-row gap-3 mb-3">
+                    <!-- Búsqueda general - siempre visible -->
+                    <div class="relative flex-grow">
+                        <input v-model="form.search" type="text" placeholder="Buscar por nombre"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            @input="applyFilters" />
+                        <button v-if="form.search" @click="form.search = ''; applyFilters()" type="button"
+                            class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
+                            <XIcon class="h-5 w-5" />
+                        </button>
+                    </div>
+
+                    <!-- Botones de acción - siempre visibles -->
+                    <div class="flex justify-center md:flex-wrap gap-2">
+                        <!-- Botón para ver registros eliminados -->
+                        <button @click="toggleShowDeleted"
+                            class="flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap text-sm"
+                            :class="{
+                                'bg-red-500 hover:bg-red-600 text-white': form.show_deleted,
+                                'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.show_deleted
+                            }">
+                            {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                            <span v-if="form.show_deleted">
+                                <CircleXIcon class="h-4 w-4" />
+                            </span>
+                            <span v-else>
+                                <CirclePlusIcon class="h-4 w-4" />
+                            </span>
+                        </button>
+
+                        <AccessGate :permission="['user.create']">
+                            <Link :href="route('users.create')"
+                                class="flex items-center text-sm bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-3 rounded-lg whitespace-nowrap">
+                            <PlusIcon class="h-4 w-4 mr-1" />
+                            Nuevo usuario
+                            </Link>
+                        </AccessGate>
+                    </div>
+                </div>
+
+                <!-- Botón para mostrar/ocultar filtros en móvil -->
+                <button @click="showFilters = !showFilters"
+                    class="md:hidden w-full flex items-center justify-center space-x-2 bg-gray-100 dark:bg-gray-700 p-2 rounded-lg mb-2">
+                    <span class="text-white">{{ showFilters ? 'Ocultar filtros' : 'Mostrar filtros' }}</span>
+                    <span v-if="showFilters">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    <span v-else>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                </button>
+
+                <!-- Filtros adicionales - colapsables en móvil -->
+                <div :class="{ 'hidden': !showFilters }" class="md:block">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                        <!-- Filtro por rol -->
+                        <div class="relative">
+                            <select v-model="form.role" name="role" id="role" @change="applyFilters"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                <option value="">Todos los roles</option>
+                                <option value="admin">Administrador</option>
+                                <option value="nurse">Enfermero</option>
+                                <option value="doctor">Doctor</option>
+                                <option value="receptionist">Recepcionista</option>
+                            </select>
+
+                            <button v-if="form.role" @click="form.role = ''; applyFilters()" type="button"
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
+                                <XIcon class="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <!-- Filtro por especialidad -->
+                        <div class="relative">
+                            <input v-model="form.specialty" type="text" placeholder="Filtrar por especialidad"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                @input="applyFilters" />
+
+                            <button v-if="form.specialty" @click="form.specialty = ''; applyFilters()" type="button"
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
+                                <XIcon class="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <!-- Filtro por posición -->
+                        <div class="relative">
+                            <input v-model="form.position" type="text" placeholder="Filtrar por posición"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                @input="applyFilters" />
+
+                            <button v-if="form.position" @click="form.position = ''; applyFilters()" type="button"
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
+                                <XIcon class="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <!-- Filtro por email -->
+                        <div class="relative">
+                            <input v-model="form.email" type="text" placeholder="Filtrar por email"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                @input="applyFilters" />
+
+                            <button v-if="form.email" @click="form.email = ''; applyFilters()" type="button"
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
+                                <XIcon class="h-5 w-5" />
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Filtros -->
-        <div class="flex flex-col lg:flex-row items-center justify-center gap-2 mt-4 lg:mx-10">
-            <!-- Búsqueda general -->
-            <div class="relative w-full">
-                <input v-model="form.search" type="text" placeholder="Buscar por nombre"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    @input="applyFilters" />
-                <button v-if="form.search" @click="form.search = ''; applyFilters()" type="button"
-                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                    <XIcon class="h-5 w-5" />
-                </button>
+        <!-- Tabla con scroll horizontal en móvil -->
+        <div class="px-4 lg:px-10">
+            <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('id')">
+                                ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
+                                    }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('name')">
+                                Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑' :
+                                    '↓'
+                                    }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('role')">
+                                Rol <span v-if="form.sortField === 'role'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
+                                    }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                @click="sort('specialty')">
+                                Especialidad <span v-if="form.sortField === 'specialty'">{{ form.sortDirection === 'asc'
+                                    ? '↑' :
+                                    '↓' }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                @click="sort('position')">
+                                Posición <span v-if="form.sortField === 'position'">{{ form.sortDirection === 'asc' ?
+                                    '↑' : '↓'
+                                    }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('email')">
+                                Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' :
+                                    '↓'
+                                    }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 whitespace-nowrap">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody v-if="users.data.length">
+                        <tr v-for="(user, index) in users.data" :key="user.id"
+                            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <td class="px-6 py-4">
+                                {{ user.id }}
+                            </td>
+                            <td
+                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
+                                <img :src="user.profile_photo_url" alt="Profile Photo"
+                                    class="w-8 h-8 rounded-full mr-2 md:w-10 md:h-10 md:mr-4">
+                                <div>
+                                    {{ user.name }} {{ user.last_name }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div v-if="user.roles[0]">
+                                    <FormatRole :role="user.roles[0].name" />
+                                </div>
+                                <div v-else>N/A</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ user.specialty }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ user.position }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ user.email }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex space-x-2">
+                                    <Link class="text-green-500 hover:text-green-800"
+                                        :href="route('users.show', user.id)" as="button">
+                                    Abrir
+                                    </Link>
+                                    <Link class="text-blue-500 hover:text-blue-800"
+                                        :href="route('users.edit', user.id)">
+                                    Editar
+                                    </Link>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div v-if="!users.data.length" class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
+                    No hay registros disponibles.
+                </div>
+                <Pagination :pagination="users" :filters="form" />
             </div>
-
-            <!-- Filtro por rol -->
-            <div class="relative w-full">
-                <select v-model="form.role" name="role" id="role" @change="applyFilters"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="">Todos</option>
-                    <option value="admin">Administrador</option>
-                    <option value="nurse">Enfermero</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="receptionist">Recepcionista</option>
-                </select>
-
-                <button v-if="form.role" @click="form.role = ''; applyFilters()" type="button"
-                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                    <XIcon class="h-5 w-5" />
-                </button>
-            </div>
-
-            <!-- Filtro por especialidad -->
-            <div class="relative w-full">
-                <input v-model="form.specialty" type="text" placeholder="Filtrar por especialidad"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    @input="applyFilters" />
-
-                <button v-if="form.specialty" @click="form.specialty = ''; applyFilters()" type="button"
-                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                    <XIcon class="h-5 w-5" />
-                </button>
-            </div>
-
-            <!-- Filtro por posición -->
-            <div class="relative w-full">
-                <input v-model="form.position" type="text" placeholder="Filtrar por posición"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    @input="applyFilters" />
-
-                <button v-if="form.position" @click="form.position = ''; applyFilters()" type="button"
-                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                    <XIcon class="h-5 w-5" />
-                </button>
-            </div>
-
-            <!-- Filtro por área -->
-            <div class="relative w-full">
-                <input v-model="form.email" type="text" placeholder="Filtrar por email"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    @input="applyFilters" />
-
-                <button v-if="form.email" @click="form.email = ''; applyFilters()" type="button"
-                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                    <XIcon class="h-5 w-5" />
-                </button>
-            </div>
-
-            <!-- Botón para ver registros eliminados -->
-            <button @click="toggleShowDeleted"
-                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap" :class="{
-                    'bg-red-500 hover:bg-red-600 text-white': form.show_deleted,
-                    'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.show_deleted
-                }">
-                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                <span v-if="form.show_deleted">
-                    <CircleXIcon class="ml-1 h-5 w-5" />
-                </span>
-                <span v-else>
-                    <CirclePlusIcon class="ml-1 h-5 w-5" />
-                </span>
-            </button>
-
-            <AccessGate :permission="['user.create']">
-                    <Link :href="route('users.create')"
-                        class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
-                    <PlusIcon class="h-5 w-5 mr-2" />
-                    Nuevo usuario
-                    </Link>
-                </AccessGate>
-
-
-        </div>
-
-        <!-- Tabla -->
-        <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700 sm:rounded-lg mt-10 lg:mx-10">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
-                            ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('name')">
-                            Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                            }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('role')">
-                            Rol <span v-if="form.sortField === 'role'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                            }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('specialty')">
-                            Especialidad <span v-if="form.sortField === 'specialty'">{{ form.sortDirection === 'asc' ?
-                                '↑' : '↓'
-                            }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('position')">
-                            Posición <span v-if="form.sortField === 'position'">{{ form.sortDirection === 'asc' ? '↑' :
-                                '↓'
-                            }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('email')">
-                            Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                            }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody v-if="users.data.length">
-                    <tr v-for="(user, index) in users.data" :key="user.id"
-                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <td class="px-6 py-4">
-                            {{ user.id }}
-                        </td>
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
-                            <img :src="user.profile_photo_url" alt="Profile Photo" class="w-10 h-10 rounded-full mr-4">
-                            {{ user.name }} {{ user.last_name }}
-                        </td>
-                        <td class="px-6 py-4">
-                            <div v-if="user.roles[0]">
-                                <FormatRole :role="user.roles[0].name"/>
-                            </div>
-                            <div v-else>N/A</div>
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ user.specialty }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ user.position }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ user.email }}
-                        </td>
-                        <td class="px-6 py-4">
-                            <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('users.show', user.id)"
-                                as="button">
-                            Abrir
-                            </Link>
-                            <Link class="text-blue-500 hover:text-blue-800" :href="route('users.edit', user.id)">
-                            Editar
-                            </Link>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div v-if="!users.data.length" class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
-                No hay registros disponibles.
-            </div>
-            <Pagination :pagination="users" :filters="form" />
         </div>
         <div class="pb-4"></div>
     </AppLayout>
@@ -215,6 +254,7 @@ export default {
     },
     data() {
         return {
+            showFilters: false, // Controlar visibilidad de filtros en móvil
             form: {
                 search: this.filters.search || '',
                 specialty: this.filters.specialty || '',
@@ -222,8 +262,8 @@ export default {
                 position: this.filters.position || '',
                 email: this.filters.email || '',
                 show_deleted: this.filters.show_deleted,
-                sortField: this.filters.sortField || '', // Nuevo campo
-                sortDirection: this.filters.sortDirection || 'asc', // Nuevo campo
+                sortField: this.filters.sortField || '',
+                sortDirection: this.filters.sortDirection || 'asc',
             },
         };
     },
@@ -240,9 +280,20 @@ export default {
         },
         sort(field) {
             this.form.sortField = field;
-            this.form.sortDirection = this.form.sortDirection === 'asc' ? 'desc' : 'asc';
+            this.form.sortDirection = this.form.sortField === field && this.form.sortDirection === 'asc' ? 'desc' : 'asc';
             this.applyFilters();
         },
+    },
+    mounted() {
+        // Mostrar automáticamente los filtros en pantallas grandes
+        this.showFilters = window.innerWidth >= 768;
+
+        // Actualizar la visibilidad de los filtros cuando cambia el tamaño de la ventana
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                this.showFilters = true;
+            }
+        });
     },
 };
 </script>

@@ -293,7 +293,7 @@ defineProps({
                             class="w-full h-full bg-white dark:bg-gray-800 overflow-hidden rounded-lg border border-gray-200/60 dark:border-gray-700/60">
                             <!-- Encabezado fijo -->
                             <div
-                                class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-purple-500/10 dark:bg-purple-500/10 z-10">
+                                class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-rose-500/10 dark:bg-rose-500/10 z-10">
                                 <div class="flex justify-between items-center">
                                     <div class="flex items-center space-x-3">
                                         <h3 class="text-xl font-medium text-gray-800 dark:text-gray-100">

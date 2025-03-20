@@ -9,10 +9,11 @@ use App\Models\Patient;
 use App\Models\TemperatureDetail;
 use DB;
 use Inertia\Inertia;
+use Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Obtener estadísticas generales
         $stats = [

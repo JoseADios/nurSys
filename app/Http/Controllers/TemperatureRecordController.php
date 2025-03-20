@@ -32,7 +32,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:temperatureRecord.view', only: ['index', 'show']),
-            new Middleware('permission:temperatureRecord.create', only: ['show', 'store']),
+            new Middleware('permission:temperatureRecord.create', only: ['store']),
             new Middleware('permission:temperatureRecord.update', only: ['update']),
             new Middleware('permission:temperatureRecord.delete', only: ['destroy']),
         ];
@@ -128,17 +128,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function create(Request $request)
     {
-
         $admission_id = $request->has('admission_id') ? $request->integer('admission_id') : null;
 
-        if ($admission_id) {
-            $admission = Admission::find($admission_id);
-            $response = Gate::inspect('create', [TemperatureRecord::class, $admission]);
-
-            if (!$response->allowed()) {
-                return back()->with('flash.toast', $response->message())->with('flash.toastStyle', 'danger');
-            }
-        }
         return Inertia::render('TemperatureRecords/Create', [
             'admission_id' => $admission_id,
         ]);
@@ -149,22 +140,23 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $admission = Admission::find($request->admission_id);
-        $has_admission_id = $request->input('has_admission_id');
+        $admission_id = $request->input('admission_id');
 
-        $this->authorize('create', [TemperatureRecord::class, $admission]);
+        if ($admission_id) {
+            $this->authorize('create', [TemperatureRecord::class, $admission_id]);
+        }
 
         $temperatureRecord = TemperatureRecord::create([
-            'admission_id' => $request->admission_id,
+            'admission_id' => $admission_id,
             'nurse_id' => Auth::id(),
         ]);
 
-        if ($has_admission_id) {
+        if ($admission_id) {
             return Redirect::route(
                 'temperatureRecords.show',
                 [
                     'temperatureRecord' => $temperatureRecord->id,
-                    'admission_id' => $admission->id
+                    'admission_id' => $admission_id
                 ]
             )->with('flash.toast', 'Registro de temperatura creado correctamente');
 

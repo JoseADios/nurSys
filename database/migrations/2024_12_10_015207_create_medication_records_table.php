@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('medication_records', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admission_id')->constrained()->onDelete('restrict');
+            $table->foreignId('admission_id')->constrained()->onDelete('restrict')->unique();
             $table->foreignId('doctor_id')->constrained('users')->onDelete('restrict');
             $table->string('diagnosis');
             $table->string('diet');

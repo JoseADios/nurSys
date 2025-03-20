@@ -2,40 +2,31 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
-                Registro de Enfermería
+                <BreadCrumb :items="[
+                    // Condicionar el primer elemento (solo se muestra si hay admission_id)
+                    ...(admission_id ? [{
+                        formattedId: { id: admission_id, prefix: 'ING' },
+                        route: route('admissions.show', admission_id)
+                    }] : []),
+
+                    // Segundo elemento (depende si hay admission_id o no)
+                    {
+                        text: 'Registros de enfermería',
+                        route: admission_id
+                            ? route('nurseRecords.index', { admission_id: admission_id })
+                            : route('nurseRecords.index')
+                    },
+
+                    {
+                        formattedId: { id: nurseRecord.id, prefix: 'ENF' }
+                    }
+                ]" />
             </h2>
         </template>
 
-        <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-            <div v-if="admission_id" class="inline-flex items-center">
-                <Link :href="route('admissions.show', admission_id)"
-                    class="inline-flex items-center hover:text-blue-600  dark:hover:text-white">
-                <FormatId :id="admission_id" prefix="ING"></FormatId>
-                </Link>
-                <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
-            </div>
-
-            <div v-if="admission_id">
-                <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
-                    class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
-                Registros de enfermería
-                </Link>
-            </div>
-
-            <div v-if="!admission_id">
-                <Link :href="route('nurseRecords.index')"
-                    class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
-                Registros de enfermería
-                </Link>
-            </div>
-            <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
-            <div class="ml-2 inline-flex items-center">
-                <FormatId :id="nurseRecord.id" prefix="ENF"></FormatId>
-            </div>
-        </div>
-
         <div class="container mx-auto px-4 py-8">
-            <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 rounded-2xl overflow-hidden">
+            <div
+                class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <div v-if="admission_id">
@@ -95,7 +86,8 @@
                         </div>
 
                         <!-- patient name -->
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                             <Link :href="route('patients.show', nurseRecord.admission.patient.id)" as="button"
                                 class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
@@ -106,7 +98,8 @@
                         </div>
 
                         <!-- Bed info -->
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Sala</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 Sala {{ bed.room }}, Cama {{ bed.number }}
@@ -135,7 +128,8 @@
                         </div>
 
                         <!-- Created date -->
-                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Registro</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ formatDate(nurseRecord.created_at) }}
@@ -279,7 +273,8 @@
                     <div v-show="!isVisibleEditSign">
                         <div class="flex items-center flex-col justify-center">
 
-                            <img v-if="nurseRecord.nurse_sign" :src="`/storage/${nurseRecord.nurse_sign}`" alt="Firma">
+                            <img v-if="nurseRecord.nurse_sign" :src="`/storage/${nurseRecord.nurse_sign}`" alt="Firma"
+                                class="w-full max-w-md">
                             <div v-else>
                                 <div class="text-gray-500 dark:text-gray-400 my-16">
                                     No hay firma disponible
@@ -299,7 +294,8 @@
                         <div v-show="isVisibleEditSign" class="my-4">
                             <form @submit.prevent="submitSignature" class="flex items-center flex-col justify-center">
 
-                                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" />
+                                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign"
+                                    class="w-full max-w-lg lg:max-w-md" />
                                 <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.
                                 </div>
 
@@ -422,6 +418,7 @@ import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
 import BackIcon from '@/Components/Icons/BackIcon.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 
 
 export default {
@@ -459,7 +456,8 @@ export default {
         ChevronRightIcon,
         BackIcon,
         CirclePlusIcon,
-        CircleXIcon
+        CircleXIcon,
+        BreadCrumb
     },
     data() {
         return {
@@ -533,9 +531,10 @@ export default {
         toggleShowDeleted() {
             this.showDeletedLocal = !this.showDeletedLocal;
             this.$inertia.get(route('nurseRecords.show', this.nurseRecord.id),
-                { showDeleted: this.showDeletedLocal,
+                {
+                    showDeleted: this.showDeletedLocal,
                     admission_id: this.admission_id !== 0 ? this.admission_id : null
-                 }, {
+                }, {
                 preserveScroll: true
             });
         },

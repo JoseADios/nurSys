@@ -14,7 +14,6 @@ import DashboardIcon from '@/Components/Icons/DashboardIcon.vue';
 import AdmissionIcon from '@/Components/Icons/ClipBoardIcon.vue';
 import MedicalOrderIcon from '@/Components/Icons/MedicalOrderIcon.vue';
 import NurseRecordIcon from '@/Components/Icons/NurseRecordIcon.vue';
-import TemperatureIcon from '@/Components/Icons/TemperatureIcon.vue';
 import MedicationIcon from '@/Components/Icons/MedicationIcon.vue';
 import PatientIcon from '@/Components/Icons/PatientIcon.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
@@ -23,6 +22,7 @@ import SidebarFilledIcon from '@/Components/Icons/SidebarFilledIcon.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import SunIcon from '@/Components/Icons/SunIcon.vue';
 import MoonIcon from '@/Components/Icons/MoonIcon.vue';
+import FileAnalyticsIcon from '@/Components/Icons/FileAnalyticsIcon.vue';
 
 defineProps({
     title: String,
@@ -180,7 +180,7 @@ const logout = () => {
                                 'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
                                 { 'justify-center': !sidebarExpanded }
                             ]">
-                            <TemperatureIcon
+                            <FileAnalyticsIcon
                                 class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
                             <span v-if="sidebarExpanded" class="truncate ml-3">Hojas de Temperatura</span>
                             </Link>

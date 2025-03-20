@@ -100,9 +100,9 @@ class Admission extends Model
         return $this->hasMany(NurseRecord::class);
     }
 
-    public function TemperatureRecord(): HasMany
+    public function TemperatureRecord(): HasOne
     {
-        return $this->hasMany(TemperatureRecord::class);
+        return $this->hasOne(TemperatureRecord::class);
     }
 
     public function bed(): BelongsTo

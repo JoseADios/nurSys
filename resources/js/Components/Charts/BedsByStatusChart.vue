@@ -1,10 +1,10 @@
 <template>
-    <div class="bed-status-chart-container">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200/60 dark:border-gray-700/60">
-            <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
-                Distribución de Camas por Estado
+    <div class="bed-status-chart-container h-full">
+        <div class="h-full bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200/60 dark:border-gray-700/60">
+            <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">
+                Distribución de camas por estado
             </h3>
-            <div id="bedStatusPieChart" class="w-full h-80"></div>
+            <div id="bedStatusPieChart" class="w-full"></div>
         </div>
     </div>
 </template>

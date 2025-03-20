@@ -130,8 +130,8 @@ export default {
             },
             selectedAdmission: this.selectedAdmissionId || null,
             doesntHaveTempR: this.doesntHaveTemperatureR || false,
-            doesntHaveMedicationR: this.doesntHaveMedicationR || false,
-            doesntHaveMedicalOrder: this.doesntHaveMedicalOrder || false,
+            doesntHaveMedR: this.doesntHaveMedicationR || false,
+            doesntHaveOrder: this.doesntHaveMedicalOrder || false,
             filters: {
                 name: '',
                 room: '',
@@ -161,8 +161,8 @@ export default {
                         filters: this.filters,
                         admission_id: this.selectedAdmissionId,
                         doesntHaveTemperatureR: this.doesntHaveTempR,
-                        doesntHaveMedicationR: this.doesntHaveMedicationR,
-                        doesntHaveMedicalOrder: this.doesntHaveMedicalOrder,
+                        doesntHaveMedicationR: this.doesntHaveMedR,
+                        doesntHaveMedicalOrder: this.doesntHaveOrder,
                     }
                 });
                 this.admissions = response.data;

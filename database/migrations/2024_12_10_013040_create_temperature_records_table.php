@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('temperature_records', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admission_id')->constrained()->onDelete('restrict');
+            $table->foreignId('admission_id')->constrained()->onDelete('restrict')->unique();
             $table->foreignId('nurse_id')->constrained('users')->onDelete('restrict');
             $table->string('nurse_sign')->nullable();
             $table->boolean('active')->default(true);

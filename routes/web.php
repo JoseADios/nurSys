@@ -40,6 +40,7 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
+    Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])->middleware(['auth']);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/admissions/filter', [AdmissionController::class, 'getFilteredAdmissions'])->name('admissions.filter');

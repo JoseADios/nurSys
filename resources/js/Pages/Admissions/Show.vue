@@ -30,7 +30,7 @@
                         </Link>
                     </div>
 
-                </div>
+
             </div>
 
             <!-- Estado de Ingreso -->

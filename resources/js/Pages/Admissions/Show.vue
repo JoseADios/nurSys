@@ -228,7 +228,6 @@
                     Restaurar
                 </button>
             </div>
-        </div>
     </div>
 
     <!-- modal para eliminar -->

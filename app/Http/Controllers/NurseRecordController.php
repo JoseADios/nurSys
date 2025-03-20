@@ -93,7 +93,6 @@ class NurseRecordController extends Controller implements HasMiddleware
 
         return Inertia::render('NurseRecords/Index', [
             'nurseRecords' => $nurseRecords,
-            'admission_id' => $admissionId,
             'filters' => [
                 'search' => $search,
                 'show_deleted' => $showDeleted,

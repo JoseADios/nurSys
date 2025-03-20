@@ -2,24 +2,22 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Hojas de Temperatura
+                <BreadCrumb :items="[
+                    // Primer elemento (solo si hay form.admission_id)
+                    ...(form.admission_id ? [{
+                        formattedId: { id: form.admission_id, prefix: 'ING' },
+                        route: route('admissions.show', form.admission_id)
+                    }] : []),
+
+                    // Segundo elemento (siempre presente)
+                    {
+                        text: 'Hojas de temperatura'
+                    }
+                ]" />
             </h2>
         </template>
 
-        <div class="flex items-center justify-between">
-            <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-                <div class="inline-flex items-center" v-if="form.admission_id">
-                    <Link :href="route('admissions.show', form.admission_id)"
-                        class="inline-flex items-center  hover:text-blue-600 dark:hover:text-white">
-                    <FormatId :id="form.admission_id" prefix="ING"></FormatId>
-                    </Link>
-                    <ChevronRightIcon class="size-5 text-gray-400 mx-1" />
-                </div>
-                <div class="ml-2 inline-flex items-center ">
-                    Hojas de temperatura
-                </div>
-            </div>
-
+        <div class="flex items-center justify-end">
             <button v-if="form.admission_id" @click="form.admission_id = null; submitFilters()"
                 class="mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
                 Remover filtro de <FormatId :id="form.admission_id" prefix="ING" class="ml-1"></FormatId>
@@ -40,7 +38,7 @@
 
                 <button v-if="form.search" @click="form.search = ''; submitFilters()"
                     class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
-                    <XIcon class="size-4"/>
+                    <XIcon class="size-4" />
                 </button>
             </div>
 
@@ -98,7 +96,8 @@
             </div>
         </div>
 
-        <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 sm:rounded-lg mt-4 lg:mx-10">
+        <div
+            class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 sm:rounded-lg mt-4 lg:mx-10">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -106,19 +105,19 @@
                             ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('in_process')">
                             En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.id')">
                             Ingreso <span v-if="form.sortField === 'admissions.id'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
                             Paciente <span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
@@ -128,7 +127,7 @@
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')">
                             Enfermera <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ? '↑'
                                 : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer"
                             @click="sort('temperature_records.updated_at')">
@@ -207,6 +206,7 @@ import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 
 export default {
     props: {
@@ -227,7 +227,8 @@ export default {
         CircleXIcon,
         FormatId,
         ChevronRightIcon,
-        PlusIcon
+        PlusIcon,
+        BreadCrumb
     },
     data() {
         return {

@@ -4,17 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Admission;
 use App\Models\Bed;
-use App\Models\NurseRecord;
 use App\Models\Patient;
-use App\Models\TemperatureDetail;
+use Carbon\Carbon;
 use DB;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Request;
+
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        $timeFilter = $request->input('time_filter', 'week');
+
         // Obtener estadísticas generales
         $stats = [
             'total_admissions' => Admission::count(),
@@ -23,9 +25,9 @@ class DashboardController extends Controller
             'total_beds' => Bed::count(),
             'new_patients_this_month' => $this->countPatientsInDateRange(now()->startOfMonth(), now()->endOfMonth()),
             'percent_diff_new_patients_month' => $this->getPercentDiffNewPatientsThisAndLastMonth(),
-            'admissions_by_week' => $this->getWeeklyAdmissions(),
+            'admissions_by_time' => $this->getAdmissionsByTimeFilter($timeFilter),
+            'admissions_discharged_by_time' => $this->getAdmissionsByTimeFilter($timeFilter, false),
             'admissions_without_bed' => Admission::whereNull('bed_id')->active()->with('patient')->get(),
-            'admissions_discharged_by_week' => $this->getWeeklyAdmissions(false),
             'patients_by_ars' => $this->getPatientsByArs(),
             'beds_by_status' => $this->getBedsByStatus(),
             'upcoming_medications' => $this->getUpcomingMedications(),
@@ -37,31 +39,87 @@ class DashboardController extends Controller
         ]);
     }
 
-    private function getWeeklyAdmissions($activeAdmissions = true)
+    public function getChartData(Request $request)
     {
-        $startOfWeek = now()->startOfWeek();
-        $endOfWeek = now()->endOfWeek();
+        $timeFilter = $request->input('time_filter', 'week');
 
-        $query = Admission::query()
-            ->whereBetween('created_at', [$startOfWeek, $endOfWeek]);
+        return response()->json([
+            'admissions_by_time' => $this->getAdmissionsByTimeFilter($timeFilter),
+            'admissions_discharged_by_time' => $this->getAdmissionsByTimeFilter($timeFilter, false),
+        ]);
+    }
 
-        if (!$activeAdmissions) {
-            $query->whereNotNull('discharged_date');
-            $query->selectRaw('DATE(discharged_date) as date, COUNT(*) as total');
-        } else {
-            $query->selectRaw('DATE(created_at) as date, COUNT(*) as total');
+    private function getAdmissionsByTimeFilter($timeFilter = 'week', $activeAdmissions = true)
+    {
+        // Determinar fechas de inicio y fin según el filtro
+        switch ($timeFilter) {
+            case 'month':
+                $startDate = now()->startOfMonth();
+                $endDate = now()->endOfMonth();
+                $groupBy = 'date'; // Agrupar por día dentro del mes
+                break;
+            case 'year':
+                $startDate = now()->startOfYear();
+                $endDate = now()->endOfYear();
+                $groupBy = 'month'; // Agrupar por mes dentro del año
+                break;
+            case 'week':
+            default:
+                $startDate = now()->startOfWeek();
+                $endDate = now()->endOfWeek();
+                $groupBy = 'date'; // Agrupar por día dentro de la semana
+                break;
         }
 
-        $query->groupBy('date')
-            ->orderBy('date');
+        $query = Admission::query();
 
-        return $query->get()
-            ->map(function ($item) {
-                return [
-                    'date' => $item->date,
-                    'total' => $item->total
-                ];
-            });
+        // Aplicar el filtro de fecha a la columna relevante
+        if (!$activeAdmissions) {
+            $query->whereNotNull('discharged_date')
+                ->whereBetween('discharged_date', [$startDate, $endDate]);
+        } else {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        // Seleccionar y agrupar según el filtro de tiempo
+        if ($timeFilter === 'year') {
+            if (!$activeAdmissions) {
+                $query->selectRaw('MONTH(discharged_date) as month, COUNT(*) as total');
+                $query->groupBy('month');
+                $query->orderBy('month');
+            } else {
+                $query->selectRaw('MONTH(created_at) as month, COUNT(*) as total');
+                $query->groupBy('month');
+                $query->orderBy('month');
+            }
+
+            return $query->get()
+                ->map(function ($item) {
+                    // Convertir el número de mes a fecha para mantener la coherencia en el frontend
+                    $date = Carbon::create(now()->year, $item->month, 1)->toDateString();
+                    return [
+                        'date' => $date,
+                        'total' => $item->total
+                    ];
+                });
+        } else {
+            if (!$activeAdmissions) {
+                $query->selectRaw('DATE(discharged_date) as date, COUNT(*) as total');
+            } else {
+                $query->selectRaw('DATE(created_at) as date, COUNT(*) as total');
+            }
+
+            $query->groupBy('date');
+            $query->orderBy('date');
+
+            return $query->get()
+                ->map(function ($item) {
+                    return [
+                        'date' => $item->date,
+                        'total' => $item->total
+                    ];
+                });
+        }
     }
 
     private function countPatientsInDateRange($startOfMonth, $endtOfMonth)

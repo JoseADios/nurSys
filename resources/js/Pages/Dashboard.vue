@@ -17,14 +17,44 @@ import TrendingDownIcon from '@/Components/Icons/TrendingDownIcon.vue';
 import TrendingUpIcon from '@/Components/Icons/TrendingUpIcon.vue';
 import ThermometerIcon from '@/Components/Icons/ThermometerIcon.vue';
 import MedicationIcon from '@/Components/Icons/MedicationIcon.vue';
+import axios from 'axios';
+import { ref } from 'vue';
 
-defineProps({
+const props = defineProps({
     stats: {
         type: Object,
         required: true
     }
 });
 
+// Inicializar datos con valores iniciales de props
+const admissionsData = ref(props.stats.admissions_by_time || []);
+const dischargesData = ref(props.stats.admissions_discharged_by_time || []);
+const timeFilter = ref('week');
+
+
+// Manejar el cambio de filtro de tiempo
+function handleTimeFilterChange(filter) {
+    timeFilter.value = filter;
+    fetchData();
+}
+
+// Función para obtener datos del backend con el filtro seleccionado
+async function fetchData() {
+    try {
+        const response = await axios.get('/dashboard/chart-data', {
+            params: {
+                time_filter: timeFilter.value
+            }
+        });
+
+        // Actualizar los datos con la respuesta del servidor
+        admissionsData.value = response.data.admissions_by_time || [];
+        dischargesData.value = response.data.admissions_discharged_by_time || [];
+    } catch (error) {
+        console.error('Error al cargar datos del dashboard:', error);
+    }
+}
 </script>
 
 <template>
@@ -99,14 +129,9 @@ defineProps({
                     <!-- Gráfico de ingresos -->
                     <div
                         class="mt-6 bg-white dark:bg-gray-800 overflow-hidden border border-gray-200/60 dark:border-gray-700/60 rounded-lg">
-                        <div class="border-b border-gray-200 dark:border-gray-700 px-4 py-3">
-                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                                Ingresos y altas de la Semana
-                            </h3>
-                        </div>
-                        <div class="p-4">
-                            <AdmissionsChart :admissions="stats.admissions_by_week"
-                                :discharges="stats.admissions_discharged_by_week" />
+                        <div class="">
+                            <AdmissionsChart :admissions="admissionsData" :discharges="dischargesData"
+                                @time-filter-change="handleTimeFilterChange" />
                         </div>
                     </div>
 
@@ -239,7 +264,8 @@ defineProps({
                                                 </div>
                                             </div>
                                             <div>
-                                                <div class="font-medium text-gray-900 dark:text-white flex items-center">
+                                                <div
+                                                    class="font-medium text-gray-900 dark:text-white flex items-center">
                                                     <MedicationIcon class="size-4 mr-1" /> {{ medication.medication }}
                                                 </div>
                                                 <div class="text-gray-500 dark:text-gray-400">
@@ -328,7 +354,8 @@ defineProps({
                                                 <div
                                                     class="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-1">
                                                     <div class="flex">
-                                                        <ThermometerIcon class="size-5 mx-2" /> {{ patient.temperature }}°
+                                                        <ThermometerIcon class="size-5 mx-2" /> {{ patient.temperature
+                                                        }}°
                                                     </div>
                                                     <span class="flex ml-2"> |
                                                         <BedIcon class="size-5 mx-2" /> {{ patient.bed }}

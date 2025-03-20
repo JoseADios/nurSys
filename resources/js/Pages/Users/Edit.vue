@@ -22,7 +22,8 @@
                         <!-- Left Column -->
                         <div class="space-y-4">
                             <div class="space-y-2">
-                                <label for="name" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Nombres</label>
+                                <label for="name"
+                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Nombres</label>
                                 <input type="text" id="name" v-model="form.name"
                                     class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
                                     required>
@@ -30,7 +31,8 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="last_name" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Apellidos</label>
+                                <label for="last_name"
+                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Apellidos</label>
                                 <input type="text" id="last_name" v-model="form.last_name"
                                     class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
                                     required>
@@ -38,7 +40,8 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="email" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Correo</label>
+                                <label for="email"
+                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Correo</label>
                                 <input type="email" id="email" v-model="form.email"
                                     class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
                                     required>
@@ -56,7 +59,8 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="role" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Rol</label>
+                                <label for="role"
+                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Rol</label>
                                 <select required id="role" v-model="form.role" name="role"
                                     class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500">
                                     <option v-for="role in roles" :key="role.id" :value="role.name">
@@ -67,7 +71,8 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="address" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Dirección</label>
+                                <label for="address"
+                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Dirección</label>
                                 <textarea id="address" v-model="form.address" rows="4"
                                     class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
                                     required></textarea>
@@ -78,7 +83,8 @@
                         <!-- Right Column -->
                         <div class="space-y-4">
                             <div class="space-y-2">
-                                <label for="specialty" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Especialidad</label>
+                                <label for="specialty"
+                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Especialidad</label>
                                 <input type="text" id="specialty" v-model="form.specialty"
                                     class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
                                     required>
@@ -86,7 +92,8 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="area" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Áreas</label>
+                                <label for="area"
+                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Áreas</label>
                                 <select required id="area" v-model="form.area"
                                     class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500">
                                     <option v-for="area in areas" :key="area" :value="area.name">{{ area.name }}
@@ -106,7 +113,8 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="position" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Posición</label>
+                                <label for="position"
+                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Posición</label>
                                 <input type="text" id="position" v-model="form.position"
                                     class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
                                     required>
@@ -114,7 +122,8 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label for="comment" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Observación</label>
+                                <label for="comment"
+                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Observación</label>
                                 <textarea id="comment" v-model="form.comment" rows="4"
                                     class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"></textarea>
                                 <InputError :message="form.errors.comment" class="mt-2" />
@@ -128,44 +137,46 @@
                             Cambiar Contraseña
                         </button>
 
-                        <div v-show="userChangingPass != null">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 mr-0">
+                        <div v-show="userChangingPass != null"
+                            class="py-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                             <!-- Formulario para cambiar la contraseña  -->
                             <form @submit.prevent="changePassword" class="space-y-6">
-                                <!-- Grid container -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <!-- Left Column -->
-                                    <div class="space-y-4">
+                                <!-- Left Column -->
+                                <div class="space-y-4">
 
-                                        <div class="space-y-2">
-                                            <label for="password" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Nueva
-                                                contraseña</label>
-                                            <input type="password" id="password" v-model="formPassword.password"
-                                                class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                                required>
-                                        </div>
-
-                                        <div class="space-y-2">
-                                            <label for="password_confirmation"
-                                                class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Confirmar
-                                                Contraseña</label>
-                                            <input type="password" id="password_confirmation"
-                                                v-model="formPassword.password_confirmation"
-                                                class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                                required>
-                                        </div>
-
-                                        <div class="flex justify-end space-x-4 pt-4">
-                                            <button @click="userChangingPass = null"
-                                                class="px-4 py-2 text-sm font-medium text-gray-300 bg-slate-600 dark:bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
-                                                Cancelar
-                                            </button>
-                                            <button type="submit"
-                                                class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
-                                                Actualizar
-                                            </button>
-                                        </div>
-
+                                    <div class="space-y-2">
+                                        <label for="password"
+                                            class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Nueva
+                                            contraseña</label>
+                                        <input type="password" id="password" v-model="formPassword.password"
+                                            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
+                                            required>
                                     </div>
+
+                                    <div class="space-y-2">
+                                        <label for="password_confirmation"
+                                            class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Confirmar
+                                            Contraseña</label>
+                                        <input type="password" id="password_confirmation"
+                                            v-model="formPassword.password_confirmation"
+                                            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
+                                            required>
+                                    </div>
+
+                                    <div class="flex justify-end space-x-4 pt-4">
+                                        <button @click="userChangingPass = null"
+                                            class="px-4 py-2 text-sm font-medium text-gray-300 bg-slate-600 dark:bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
+                                            Cancelar
+                                        </button>
+                                        <button type="submit"
+                                            class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
+                                            Actualizar
+                                        </button>
+                                    </div>
+
                                 </div>
                             </form>
                         </div>

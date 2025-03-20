@@ -6,17 +6,8 @@
             </h2>
         </template>
 
-        <!-- Título y navegación -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 lg:px-10 mt-4">
-            <div class="inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-                <div class="inline-flex items-center">
-                    Pacientes
-                </div>
-            </div>
-        </div>
-
         <!-- Filtros avanzados -->
-        <div class="bg-gray-100 dark:bg-gray-900 overflow-hidden sm:rounded-lg mt-2 px-4 lg:px-10">
+        <div class="bg-gray-100 dark:bg-gray-900 overflow-hidden sm:rounded-lg mt-4 px-4 lg:px-10">
             <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 w-full">
                 <div class="p-4">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
@@ -91,7 +82,7 @@
 
         <!-- Barra de búsqueda y acciones -->
         <div class="bg-gray-100 dark:bg-gray-900 px-4 lg:px-10 mt-4">
-            <div class="flex flex-col md:flex-row gap-4 py-4">
+            <div class="flex flex-col md:flex-row gap-4 py-2">
                 <!-- Búsqueda -->
                 <div class="relative w-full md:w-1/3">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -135,7 +126,7 @@
                     <div class="flex flex-row gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-center sm:justify-end">
                         <AccessGate :permission="['patient.delete']">
                             <button @click="toggleShowDeleted"
-                                class="flex items-center justify-center space-x-1 px-3 py-2 rounded-lg transition-colors text-sm whitespace-nowrap"
+                                class="flex items-center justify-center space-x-1 px-3 py-3 rounded-lg transition-colors text-sm whitespace-nowrap"
                                 :class="{
                                     'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
                                     'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
@@ -148,7 +139,7 @@
 
                         <AccessGate :permission="['patient.create']">
                             <Link :href="route('patients.create')"
-                                class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-lg whitespace-nowrap text-sm">
+                                class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
                             <PlusIcon class="h-4 w-4 mr-1" />
                             Nuevo paciente
                             </Link>

@@ -6,13 +6,7 @@
             </h2>
         </template>
 
-        <div class="flex items-center justify-between mb-4">
-            <div class="ml-4 mt-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-                <div class="ml-2 inline-flex items-center">
-                    Camas
-                </div>
-            </div>
-
+        <div class="flex items-center justify-end mb-4">
             <!-- Botón para mostrar/ocultar leyenda en móviles -->
             <button @click="showLegend = !showLegend"
                 class="md:hidden mr-4 p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"

@@ -96,14 +96,12 @@
             </button>
 
             <AccessGate :permission="['user.create']">
-                    <Link :href="route('users.create')"
-                        class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
-                    <PlusIcon class="h-5 w-5 mr-2" />
-                    Nuevo usuario
-                    </Link>
-                </AccessGate>
-
-
+                <Link :href="route('users.create')"
+                    class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
+                <PlusIcon class="h-5 w-5 mr-2" />
+                Nuevo usuario
+                </Link>
+            </AccessGate>
         </div>
 
         <!-- Tabla -->
@@ -113,29 +111,29 @@
                     <tr>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('id')">
                             ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('name')">
                             Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('role')">
                             Rol <span v-if="form.sortField === 'role'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('specialty')">
                             Especialidad <span v-if="form.sortField === 'specialty'">{{ form.sortDirection === 'asc' ?
                                 '↑' : '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('position')">
                             Posición <span v-if="form.sortField === 'position'">{{ form.sortDirection === 'asc' ? '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('email')">
                             Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3">Acciones</th>
                     </tr>
@@ -146,13 +144,14 @@
                         <td class="px-6 py-4">
                             {{ user.id }}
                         </td>
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
+                        <td
+                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
                             <img :src="user.profile_photo_url" alt="Profile Photo" class="w-10 h-10 rounded-full mr-4">
                             {{ user.name }} {{ user.last_name }}
                         </td>
                         <td class="px-6 py-4">
                             <div v-if="user.roles[0]">
-                                <FormatRole :role="user.roles[0].name"/>
+                                <FormatRole :role="user.roles[0].name" />
                             </div>
                             <div v-else>N/A</div>
                         </td>

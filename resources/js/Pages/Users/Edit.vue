@@ -244,6 +244,7 @@ import CedulaInput from '@/Components/CedulaInput.vue';
 import ExequaturInput from '@/Components/ExequaturInput.vue';
 import BirthDateInput from '@/Components/BirthDateInput.vue';
 import FormatRole from '@/Components/FormatRole.vue';
+import InputError from '@/Components/InputError.vue';
 
 export default {
     props: {
@@ -264,7 +265,8 @@ export default {
         CedulaInput,
         ExequaturInput,
         BirthDateInput,
-        FormatRole
+        FormatRole,
+        InputError
     },
     data() {
         return {

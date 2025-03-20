@@ -84,27 +84,38 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
     public function update($id, Request $request)
     {
         $medication_notification = MedicationNotification::find($id);
+        $detail = MedicationRecordDetail::find($medication_notification->medication_record_detail_id);
+
         if ($request->has('markAsAdministered')) {
-            $medication_notification->update([
-                'nurse_id'=> Auth::id(),
-                'administered_time'=> now(),
-                'applied'=> true
-                ]
-            );
+
+            if ($detail->active == 1 && $detail->suspended_at == null) {
+                $medication_notification->update([
+                    'nurse_id' => Auth::id(),
+                    'administered_time' => now(),
+                    'applied' => true
+                ]);
+
+                return redirect()->back()->with('toast.flash.success', 'Medicamento administrado correctamente.');
+            }
+
 
             //dd('entro al if',$medication_notification);
 
         } elseif($request->has('revert')){
-
+            if ($detail->active == 1 && $detail->suspended_at == null) {
                 $medication_notification->update([
                     'nurse_id' => Auth::id(),
                     'administered_time' =>now(),
                     'applied'=>false
                 ]);
+                return redirect()->back()->with('toast.flash.success', 'Medicamento administrado correctamente.');
 
                 }
+            }
         else {
             $medication_notification->update($request->all());
+            return redirect()->back()->with('toast.flash.success', 'Medicamento administrado correctamente.');
+
         }
 
 

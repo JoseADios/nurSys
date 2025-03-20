@@ -128,17 +128,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function create(Request $request)
     {
-
         $admission_id = $request->has('admission_id') ? $request->integer('admission_id') : null;
 
-        if ($admission_id) {
-            $admission = Admission::find($admission_id);
-            $response = Gate::inspect('create', [TemperatureRecord::class, $admission]);
-
-            if (!$response->allowed()) {
-                return back()->with('flash.toast', $response->message())->with('flash.toastStyle', 'danger');
-            }
-        }
         return Inertia::render('TemperatureRecords/Create', [
             'admission_id' => $admission_id,
         ]);
@@ -154,8 +145,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         if ($admission_id) {
             $this->authorize('create', [TemperatureRecord::class, $admission_id]);
         }
-
-        dd('no hice nada');
 
         $temperatureRecord = TemperatureRecord::create([
             'admission_id' => $admission_id,

@@ -17,7 +17,7 @@
             </h2>
         </template>
 
-        <div class="flex items-center justify-end">
+        <div class="flex my-2 items-center justify-end">
             <button v-if="form.admission_id" @click="form.admission_id = null; submitFilters()"
                 class="mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
                 Remover filtro de <FormatId :id="form.admission_id" prefix="ING" class="ml-1"></FormatId>
@@ -77,15 +77,15 @@
                 </AccessGate>
 
                 <AccessGate :permission="['nurseRecord.create']">
-                    <div v-if="!admission_id">
+                    <div v-if="!form.admission_id">
                         <Link :href="route('temperatureRecords.create')"
                             class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
                         <PlusIcon class="size-5 mr-2" />
                         Nueva hoja de temperatura
                         </Link>
                     </div>
-                    <div v-if="admission_id">
-                        <Link :href="route('temperatureRecords.create', { admission_id: admission_id })"
+                    <div v-if="form.admission_id">
+                        <Link :href="route('temperatureRecords.create', { admission_id: form.admission_id })"
                             class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
                         <PlusIcon class="size-5 mr-2" />
 
@@ -211,7 +211,6 @@ import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     props: {
         temperatureRecords: Object,
-        admission_id: Number,
         filters: Object,
     },
     components: {

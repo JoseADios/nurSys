@@ -47,7 +47,9 @@ class TemperatureRecordPolicy
      */
     public function create(User $user, $admission_id): Response
     {
-        $admission = Admission::find($admission_id);
+        $admission = Admission::where('id',$admission_id)->first();
+
+        Log::info($admission);
 
         if ($admission->discharged_date !== null) {
             return Response::deny('No se pueden crear registros en un ingreso que ha sido dado de alta');

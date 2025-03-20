@@ -2,33 +2,24 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Hoja de Temperatura
+                <BreadCrumb :items="[
+                    ...(admission_id ? [{
+                        formattedId: { id: admission_id, prefix: 'ING' },
+                        route: route('admissions.show', admission_id)
+                    }] : []),
+                    {
+                        text: 'Hojas de temperatura',
+                        route: admission_id
+                            ? route('temperatureRecords.index', { admission_id: admission_id })
+                            : route('temperatureRecords.index')
+                    },
+
+                    {
+                        formattedId: { id: temperatureRecord.id, prefix: 'TEMP' }
+                    }
+                ]" />
             </h2>
         </template>
-
-        <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-
-            <div v-if="admission_id" class="inline-flex items-center">
-                <Link :href="route('admissions.show', admission_id)"
-                    class="inline-flex items-center hover:text-blue-600  dark:hover:text-white">
-                <FormatId :id="admission_id" prefix="ING"></FormatId>
-                </Link>
-                <ChevronRightIcon class="w-3 h-3 text-gray-400 mx-1" />
-            </div>
-            <Link v-if="!admission_id" :href="route('temperatureRecords.index')"
-                class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
-            Hojas de temperatura
-            </Link>
-            <Link v-if="admission_id"
-                :href="route('temperatureRecords.index', { admission_id: admission_id, in_process: '' })"
-                class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
-            Hojas de temperatura
-            </Link>
-            <ChevronRightIcon class="w-3 h-3 text-gray-400 mx-1" />
-            <div class="ml-2 inline-flex items-center">
-                <FormatId :id="temperatureRecord.id" prefix="TEMP"></FormatId>
-            </div>
-        </div>
 
         <div class="container mx-auto px-4 py-8">
             <div
@@ -457,6 +448,7 @@ import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
 import TrashIcon from '@/Components/Icons/TrashIcon.vue';
 import ReportIcon from '@/Components/Icons/ReportIcon.vue';
 import EditIcon from '@/Components/Icons/EditIcon.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 
 export default {
     props: {
@@ -487,7 +479,8 @@ export default {
         ChevronRightIcon,
         TrashIcon,
         ReportIcon,
-        EditIcon
+        EditIcon,
+        BreadCrumb
     },
     data() {
         return {

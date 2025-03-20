@@ -17,7 +17,7 @@
             d="m1 9 4-4-4-4" />
     </svg>
     <div class="ml-2 inline-flex items-center text-gray-400">
-        <FormatId :id="admission.id" prefix="ORD"></FormatId>
+        <FormatId :id="admission.id" prefix="ING"></FormatId>
     </div>
           </div>
             <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-xl overflow-hidden">

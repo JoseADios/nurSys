@@ -44,8 +44,11 @@ class NurseRecordDetailPolicy
      */
     public function create(User $user, NurseRecord $nurseRecord): Response
     {
-        if ($nurseRecord->id !== $user->id) {
+        if ($nurseRecord->nurse_id !== $user->id) {
             return Response::deny('No tienes permiso para actualizar este registro');
+        }
+        if (!$nurseRecord->active) {
+            return Response::deny('No se puede actualizar un registro eliminado');
         }
         if ($nurseRecord->admission->discharged_date !== null) {
             return Response::deny('No se pueden crear registros para un ingreso que ya ha sido dado de alta');

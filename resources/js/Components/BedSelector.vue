@@ -63,6 +63,14 @@ export default {
         },
         initialBedId: Number
     },
+    watch: {
+        beds: {
+            immediate: true,
+            handler(beds) {
+                beds.sort((a, b) => a.id - b.id);
+            }
+        }
+    },
     emits: ['update:bedId'],
     setup(props, { emit }) {
         // Datos reactivos
@@ -82,7 +90,7 @@ export default {
                 return [...new Set(props.beds
                     .filter(bed => bed.floor === filtersForm.value.bed_floor)
                     .map(bed => bed.room)
-                )];
+                )].sort((a, b) => a - b);
             }
             return [];
         });

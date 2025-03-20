@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+        <div class="relative overflow-hidden border-gray-200 dark:border-gray-700/60 sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
             <form @submit.prevent="submit" class="max-w-3xl mx-auto">
 
                 <AdmissionSelector @update:admission="form.admission_id = $event"
@@ -82,7 +82,8 @@ export default {
     data() {
         return {
             form: {
-                admission_id: null
+                admission_id: this.admission_id || null,
+                has_admission_id: this.admission_id ? true : false
             },
             error: null
         };

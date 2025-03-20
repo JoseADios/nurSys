@@ -28,7 +28,7 @@ return new class extends Migration
             $table->date('birthdate')->nullable();
             $table->string('position')->nullable();
             $table->string('address')->nullable();
-            $table->string('comment')->nullable();
+            $table->text('comment')->nullable();
             $table->string('active')->default(true);
 
             $table->rememberToken();

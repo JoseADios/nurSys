@@ -33,9 +33,13 @@ class TemperatureRecordPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, TemperatureRecord $temperatureRecord): bool
+    public function view(User $user, TemperatureRecord $temperatureRecord): Response
     {
-        return false;
+        if (!$temperatureRecord->active) {
+            return Response::deny('No tienes permiso para ver este registro');
+        }
+
+        return Response::allow();
     }
 
     /**
@@ -63,11 +67,11 @@ class TemperatureRecordPolicy
      */
     public function update(User $user, TemperatureRecord $temperatureRecord): Response
     {
-        if ($temperatureRecord->admission->discharged_date === null) {
-            return Response::allow();
+        if ($temperatureRecord->admission->discharged_date !== null) {
+            return Response::deny('No se pueden modificar registros en un ingreso que ha sido dado de alta');
         }
 
-        return Response::deny('No se pueden modificar registros en un ingreso que ha sido dado de alta');
+        return Response::allow();
     }
 
     /**
@@ -82,11 +86,11 @@ class TemperatureRecordPolicy
             })
             ->first();
 
-        if ($newAdmission) {
-            return Response::allow();
+        if (!$newAdmission) {
+            return Response::deny('El nuevo ingreso ya tiene una hoja de temperatura activa.');
         }
 
-        return Response::deny('El nuevo ingreso ya tiene una hoja de temperatura activa.');
+        return Response::allow();
     }
 
     /**
@@ -96,6 +100,9 @@ class TemperatureRecordPolicy
     {
         if ($temperatureRecord->admission->discharged_date !== null) {
             return Response::deny('No se pueden modificar registros en un ingreso que ha sido dado de alta');
+        }
+        if (!$temperatureRecord->active) {
+            return Response::deny('No se pueden modificar registros eliminados');
         }
         if ($temperatureRecord->nurse_id !== $user->id) {
             return Response::deny('No tienes permiso para firmar este registro');

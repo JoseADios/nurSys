@@ -10,12 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('temperature_details', function (Blueprint $table) {
+        Schema::create('elimination_records', function (Blueprint $table) {
             $table->id();
             $table->foreignId('temperature_record_id')->constrained()->onDelete('restrict');
-            $table->foreignId('nurse_id')->constrained(table: 'users')->onDelete('restrict');
-            $table->float('temperature');
-            $table->boolean('active')->default(true);
+            $table->foreignId('nurse_id')->constrained('users')->onDelete('restrict');
+            $table->integer('evacuations');
+            $table->string('urinations', 2);
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('temperature_details');
+        Schema::dropIfExists('elimination_records');
     }
 };

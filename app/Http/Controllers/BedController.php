@@ -78,7 +78,7 @@ class BedController extends Controller implements HasMiddleware
     public function update(Request $request, Bed $bed)
     {
         $validated = $request->validate([
-            'status' => 'required|string|in:available,cleaning,out_of_service',
+            'status' => 'required|string|in:available,cleaning,out_of_service|ocuppied',
         ]);
 
         $bed->update([

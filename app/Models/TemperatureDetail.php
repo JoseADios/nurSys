@@ -11,8 +11,6 @@ class TemperatureDetail extends Model
         'temperature_record_id',
         'nurse_id',
         'temperature',
-        'evacuations',
-        'urinations',
         'active'
     ];
 

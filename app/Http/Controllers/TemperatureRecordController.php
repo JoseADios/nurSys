@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admission;
+use App\Models\EliminationRecord;
 use App\Models\TemperatureDetail;
 use App\Models\TemperatureRecord;
 use App\Services\FirmService;
+use App\Services\TurnService;
+use Carbon\Carbon;
 use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -126,7 +129,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     public function create(Request $request)
     {
 
-        $admission_id = $request->has('admission_id') ? $request->admission_id : null;
+        $admission_id = $request->has('admission_id') ? $request->integer('admission_id') : null;
 
         if ($admission_id) {
             $admission = Admission::find($admission_id);
@@ -147,16 +150,27 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         $admission = Admission::find($request->admission_id);
+        $has_admission_id = $request->input('has_admission_id');
 
         $this->authorize('create', [TemperatureRecord::class, $admission]);
 
         $temperatureRecord = TemperatureRecord::create([
             'admission_id' => $request->admission_id,
             'nurse_id' => Auth::id(),
-            'impression_diagnosis' => $request->impression_diagnosis,
         ]);
 
-        return Redirect::route('temperatureRecords.show', $temperatureRecord->id)->with('flash.toast', 'Registro de temperatura creado correctamente');
+        if ($has_admission_id) {
+            return Redirect::route(
+                'temperatureRecords.show',
+                [
+                    'temperatureRecord' => $temperatureRecord->id,
+                    'admission_id' => $admission->id
+                ]
+            )->with('flash.toast', 'Registro de temperatura creado correctamente');
+
+        } else {
+            return Redirect::route('temperatureRecords.show', $temperatureRecord->id)->with('flash.toast', 'Registro de temperatura creado correctamente');
+        }
     }
 
     /**
@@ -164,47 +178,93 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function show(TemperatureRecord $temperatureRecord, Request $request)
     {
+        $this->authorize('view', $temperatureRecord);
+
         $admission_id = $request->query('admission_id');
 
-        $temperatureRecord->load(['admission.bed', 'admission.patient', 'nurse']);
+        $temperatureRecord->load([
+            'admission.bed',
+            'admission.patient',
+            'nurse',
+            'temperatureDetails.nurse',
+            'eliminationRecords'
+        ]);
+
+        $eliminationsRecords = $temperatureRecord->eliminationRecords;
+        $temperatureDetails = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->with('nurse')->get();
+
+        $turnService = new TurnService();
+        $currentTurn = $turnService->getCurrentTurn();
+        $currentDateRange = $turnService->getDateRangeForTurn($currentTurn);
+        $details = [];
+
+        foreach ($temperatureDetails as $temperature) {
+            // Obtener el turno de la fecha de la temperatura
+            $temperatureTurn = $turnService->getCurrentTurnForDate($temperature->updated_at);
+            $dateRange = $turnService->getDateRangeForTurn($temperatureTurn);
+
+            // Buscar el registro de eliminación dentro del mismo turno
+            $elimination = $eliminationsRecords->first(function ($el) use ($dateRange) {
+                return Carbon::parse($el->updated_at)->between($dateRange['start'], $dateRange['end']);
+            });
+
+            // Agregar los datos combinados
+            $details[] = [
+                'temperature' => $temperature->temperature,
+                'urinations' => $elimination ? $elimination->urinations : 0,
+                'evacuations' => $elimination ? $elimination->evacuations : 0,
+                'nurse' => [
+                    'name' => $temperature->nurse->name,
+                    'last_name' => $temperature->nurse->last_name,
+                ],
+                'updated_at' => $temperature->created_at
+            ];
+        }
+
+        // verificar si puede crear elimination
+        $responseCreateElimination = Gate::inspect('create', [EliminationRecord::class, $temperatureRecord->id]);
+        $canCreateElimination = $responseCreateElimination->allowed();
 
         // verificar si puede crear detalles
         $responseCreateDetail = Gate::inspect('create', [TemperatureDetail::class, $temperatureRecord->id]);
         $canCreateDetail = $responseCreateDetail->allowed();
 
-        // ultimo detalle de temperatura
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
+            ->orderBy('updated_at', 'desc')
+            ->whereBetween('updated_at',[$currentDateRange['start'], $currentDateRange['end']])
+            ->first();
+
+        $lastEliminations = EliminationRecord::where('temperature_record_id', $temperatureRecord->id)
             ->orderBy('updated_at', 'desc')
             ->first();
 
-        // verificar si puede actualizar detalles
-        if ($lastTemperature !== null) {
+        // verificar si puede actualizar temperatura
+        $canUpdateDetail = false;
+        if ($lastTemperature) {
             $responseUpdateDetail = Gate::inspect('update', [TemperatureDetail::class, $lastTemperature]);
-
-            if (!$responseUpdateDetail->allowed()) {
-                $lastTemperature = null;
-            }
+            $canUpdateDetail = $responseUpdateDetail->allowed();
+            $lastTemperature = $canUpdateDetail ? $lastTemperature : null;
         }
 
-        if ($lastTemperature !== null) {
-            $canCreateDetail = false;
+        // verificar si puede actualizar elimination
+        $canUpdateElimination = false;
+        if ($lastEliminations) {
+            $responseUpdateDetail = Gate::inspect('update', [EliminationRecord::class, $lastEliminations]);
+            $canUpdateElimination = $responseUpdateDetail->allowed();
         }
 
         // verificar si puede editar la firma del registro
         $responseUpdateRecord = Gate::inspect('updateSignature', $temperatureRecord);
         $canUpdateSignature = $responseUpdateRecord->allowed();
 
-        $details = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
-            ->with(['nurse:id,name,last_name']) // Especificar solo las columnas necesarias
-            ->orderBy('updated_at', 'asc')
-            ->get(['temperature', 'evacuations', 'urinations', 'nurse_id', 'updated_at']);
-
         return Inertia::render('TemperatureRecords/Show', [
             'temperatureRecord' => $temperatureRecord,
-            'details' => $details,
             'admission_id' => $admission_id,
+            'details' => $details,
             'lastTemperature' => $lastTemperature,
-            'canCreateDetail' => $canCreateDetail,
+            'lastEliminations' => $lastEliminations,
+            'canCreateElimination' => $canCreateElimination,
+            'canUpdateElimination' => $canUpdateElimination,
             'canUpdateSignature' => $canUpdateSignature,
             'previousUrl' => URL::previous(),
         ]);
@@ -231,7 +291,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $validated = $request->validate([
             'admission_id' => 'numeric|nullable',
             'nurse_id' => 'numeric|nullable',
-            'impression_diagnosis' => 'string|nullable',
             'nurse_sign' => 'string|nullable',
             'active' => 'boolean|nullable'
         ]);

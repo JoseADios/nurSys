@@ -351,7 +351,7 @@ Ficha de Medicamentos
                             </div>
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            <div v-if="detail.active ">
+                            <div v-if="detail.active && detail.suspended_at == null ">
                                  <!-- Editar -->
                             <Link  v-if="!hasApplied(detail)":href="route('medicationRecordDetails.edit', detail.id )"
                                 class="flex items-center space-x-2 text-yellow-600 hover:text-yellow-800 transition-colors">

@@ -166,20 +166,26 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
     {
 
         if ($request->has('active')) {
-            Log::info('active');
             $medicationRecordDetail->update($request->all());
+
+            $notifications = $medicationRecordDetail->medicationNotification;
+
+            foreach ($notifications as $notification) {
+                $notification->update(['active' => $request->active]);
+            }
+
             return back()->with('flash.toast', 'Detalle Ficha de Medicamento actualizado correctamente');
         }else if ($request->has('suspended_at')) {
-            Log::info('suspended_at');
+
             if ($request->suspended_at) {
                 $this->restore($medicationRecordDetail->id);
-                Log::info('restore');
+
             } else {
                 $this->suspend($medicationRecordDetail->id);
-                Log::info('suspend');
+
             }
         }         else {
-            Log::info('active true');
+
 
             $request->validate([
 

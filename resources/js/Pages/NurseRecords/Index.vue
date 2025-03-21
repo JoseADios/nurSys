@@ -63,7 +63,7 @@
                     <option value="365">Último año</option>
                 </select>
 
-                <AccessGate :permission="['nurseRecords.delete']">
+                <AccessGate :permission="['nurseRecord.delete']">
                     <!-- Filtro para mostrar registros eliminados -->
                     <button @click="toggleShowDeleted"
                         class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
@@ -77,7 +77,7 @@
                     </button>
                 </AccessGate>
 
-                <AccessGate :permission="['nurseRecords.create']">
+                <AccessGate :permission="['nurseRecord.create']">
                     <div class="w-full sm:w-auto">
                         <Link v-if="!form.admission_id" :href="route('nurseRecords.create')"
                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">

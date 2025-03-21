@@ -33,8 +33,7 @@ class EliminationRecordController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', [TemperatureDetail::class, $request->temperature_record_id]);
-
+        $this->authorize('create', [EliminationRecord::class, $request->temperature_record_id]);
         EliminationRecord::create([
             'temperature_record_id' => $request->temperature_record_id,
             'nurse_id' => Auth::id(),
@@ -67,6 +66,7 @@ class EliminationRecordController extends Controller
      */
     public function update(Request $request, EliminationRecord $eliminationRecord)
     {
+        $this->authorize('update', $eliminationRecord);
         $request->validate([
             'evacuations' => 'required|integer',
             'urinations' => 'required|string',

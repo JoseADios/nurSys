@@ -271,11 +271,11 @@ class AdmissionController extends Controller
                 $patient = Patient::find($request->patient_id);
 
                 if (!$patient->isAvailable()) {
-                    return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente o la cama seleccionada esta ocupada, dé el alta al otro para activar este.');
+                    return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente');
                 }
                 if ($bed) {
                     if (!$bed->isAvailable()) {
-                        return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente o la cama seleccionada esta ocupada, dé el alta al otro para activar este.');
+                        return back()->with('error', 'La cama seleccionada no está disponible');
                     }
                 }
 

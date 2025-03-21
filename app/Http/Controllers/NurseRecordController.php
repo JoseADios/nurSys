@@ -217,7 +217,15 @@ class NurseRecordController extends Controller implements HasMiddleware
     public function update(Request $request, NurseRecord $nurseRecord)
     {
         $this->authorize('update', $nurseRecord);
-        $this->authorize('canCreateInTurn', [NurseRecord::class, $request->admission_id]);
+
+        if ($request->has('admission_id') && $request->input('admission_id')) {
+            $this->authorize('updateAdmission', [NurseRecord::class]);
+            $this->authorize('canCreateInTurn', [NurseRecord::class, $request->admission_id]);
+        }
+
+        if ($request->has('nurse_id') && $request->input('nurse_id')) {
+            $this->authorize('updateNurse', [NurseRecord::class]);
+        }
 
         $firmService = new FirmService;
 

@@ -81,7 +81,7 @@
                                 ING-00{{ nurseRecord.admission_id }}
                                 </Link>
                             </div>
-                            <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
+                            <AccessGate :role="['admin']" v-if="canUpdateRecord">
                                 <button @click="showEditAdmission = true" class="text-blue-500 flex">
                                     <EditIcon class="size-5" />
                                 </button>
@@ -123,7 +123,7 @@
                                     {{ nurse.name }} {{ nurse.last_name }}
                                 </p>
                             </div>
-                            <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
+                            <AccessGate :role="['admin']" v-if="canUpdateRecord">
                                 <button @click="showEditNurse = true" class="text-blue-500 flex">
                                     <EditIcon class="size-5" />
                                 </button>

@@ -192,7 +192,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         foreach ($temperatureDetails as $temperature) {
             // Obtener el turno de la fecha de la temperatura
             $temperatureTurn = $turnService->getCurrentTurnForDate($temperature->updated_at);
-            $dateRange = $turnService->getDateRangeForTurn($temperatureTurn);
+            $dateRange = $turnService->getDateRangeForTurn($temperatureTurn, $temperature->updated_at);
 
             // Buscar el registro de eliminación dentro del mismo turno
             $elimination = $eliminationsRecords->first(function ($el) use ($dateRange) {
@@ -211,6 +211,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
                 'updated_at' => $temperature->created_at
             ];
         }
+
 
         // verificar si puede crear elimination
         $responseCreateElimination = Gate::inspect('create', [EliminationRecord::class, $temperatureRecord->id]);

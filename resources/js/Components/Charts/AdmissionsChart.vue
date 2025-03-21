@@ -43,6 +43,8 @@ const chartOptions = computed(() => {
         xaxisTitle = 'Día del mes';
     } else if (selectedTimeFilter.value === 'year') {
         xaxisTitle = 'Mes';
+    } else if (selectedTimeFilter.value === 'all') {
+        xaxisTitle = 'Año';
     }
 
     return {
@@ -153,6 +155,8 @@ function formatDate(dateString) {
         return moment(dateString).format('DD');
     } else if (selectedTimeFilter.value === 'year') {
         return moment(dateString).format('MMM');
+    } else if (selectedTimeFilter.value === 'all') {
+        return moment(dateString).format('YYYY');
     }
     return moment(dateString).format('DD/MM');
 }
@@ -272,6 +276,14 @@ watch([() => props.admissions, () => props.discharges], ([newAdmissions, newDisc
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
                 ]">
                     Año
+                </button>
+                <button @click="handleTimeFilterChange('all')" :class="[
+                    'px-3 py-1 text-sm rounded-md transition',
+                    selectedTimeFilter === 'all'
+                        ? 'bg-indigo-400 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                ]">
+                    Histórico
                 </button>
             </div>
         </div>

@@ -3,13 +3,10 @@
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 <BreadCrumb :items="[
-                    // Primer elemento (solo si hay form.admission_id)
                     ...(form.admission_id ? [{
                         formattedId: { id: form.admission_id, prefix: 'ING' },
                         route: route('admissions.show', form.admission_id)
                     }] : []),
-
-                    // Segundo elemento (siempre presente)
                     {
                         text: 'Hojas de temperatura'
                     }
@@ -17,17 +14,19 @@
             </h2>
         </template>
 
-        <div class="flex my-2 items-center justify-end">
+        <!-- Filtro de admisión - Responsive -->
+        <div class="flex my-2 px-4 sm:px-0 items-center justify-end">
             <button v-if="form.admission_id" @click="form.admission_id = null; submitFilters()"
-                class="mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
+                class="mr-2 sm:mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
                 Remover filtro de <FormatId :id="form.admission_id" prefix="ING" class="ml-1"></FormatId>
             </button>
         </div>
 
+        <!-- Filtros y barra de búsqueda - Responsive -->
         <div
-            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-4 lg:mx-10">
-
-            <div class="relative mb-2">
+            class="bg-gray-100 dark:bg-gray-900 p-4 flex flex-col gap-4 md:flex-row md:justify-between md:items-end overflow-x-auto rounded-lg mx-4 lg:mx-10">
+            <!-- Búsqueda - Ancho completo en móvil -->
+            <div class="relative w-full md:w-1/3 mb-4 sm:mb-0">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                 </div>
@@ -42,9 +41,10 @@
                 </button>
             </div>
 
-            <div class="flex items-center">
+            <!-- Filtros y botones - Se apilan en móvil -->
+            <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-2 md:content-end">
                 <select @change="submitFilters()"
-                    class="bg-gray-50 mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-auto p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     name="days" id="days" v-model="form.days">
                     <option value="">Siempre</option>
                     <option value="1">Último día</option>
@@ -58,7 +58,7 @@
                 <AccessGate :permission="['nurseRecord.delete']">
                     <!-- Filtro para mostrar registros eliminados -->
                     <button @click="toggleShowDeleted"
-                        class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
+                        class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
                         :class="{
                             'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
                             'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
@@ -70,132 +70,127 @@
                 </AccessGate>
 
                 <AccessGate :permission="['nurseRecord.create']">
-                    <div v-if="!form.admission_id">
-                        <Link :href="route('nurseRecords.create')"
-                            class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
-                        <PlusIcon class="size-5 mr-2" />
-                        Nuevo registro de enfermería
+                    <div class="w-full sm:w-auto">
+                        <Link v-if="!form.admission_id" :href="route('nurseRecords.create')"
+                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
+                        <PlusIcon class="size-5" />
+                        <span class="hidden sm:inline">Nuevo registro</span>
+                        <span class="sm:hidden">Nuevo registro</span>
                         </Link>
-                    </div>
-                    <div v-if="form.admission_id">
-                        <Link :href="route('nurseRecords.create', { admission_id: form.admission_id })"
-                            class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
-                        <PlusIcon class="size-5 mr-2" />
-
-                        Nuevo registro de enfermería
+                        <Link v-else :href="route('nurseRecords.create', { admission_id: form.admission_id })"
+                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
+                        <PlusIcon class="size-5" />
+                        <span class="hidden sm:inline">Nuevo registro</span>
+                        <span class="sm:hidden">Nuevo registro</span>
                         </Link>
                     </div>
                 </AccessGate>
             </div>
         </div>
 
+        <!-- Tabla con scroll horizontal para móviles -->
         <div
-            class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 sm:rounded-lg mt-4 lg:mx-10">
-
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('nurse_records.id')">
-                            ID <span v-if="form.sortField === 'nurse_records.id'">{{ form.sortDirection === 'asc' ?
-                                '↑' :
-                                '↓'
-                                }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('in_process')">
-                            En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc' ?
-                                '↑' :
-                                '↓'
-                                }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.id')">
-                            Ingreso <span v-if="form.sortField === 'admissions.id'">{{ form.sortDirection === 'asc' ?
-                                '↑' :
-                                '↓'
-                                }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
-                            Paciente <span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
-                                'asc' ?
-                                '↑' :
-                                '↓'
-                                }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')">
-                            Enfermera <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc'
-                                ?
-                                '↑' :
-                                '↓'
-                                }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('nurse_records.created_at')">
-                            Fecha de Creación<span v-if="form.sortField === 'nurse_records.created_at'">{{
-                                form.sortDirection
-                                    ===
-                                    'asc' ?
+            class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 rounded-lg mt-4 mx-4 lg:mx-10">
+            <div class="min-w-full overflow-x-auto">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                @click="sort('nurse_records.id')">
+                                ID <span v-if="form.sortField === 'nurse_records.id'">{{ form.sortDirection === 'asc' ?
                                     '↑' :
-                                    '↓'
-                            }}</span>
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Acciones
-                        </th>
-                    </tr>
-                </thead>
-                <tbody v-if="nurseRecords.data.length">
-                    <tr v-for="nurseRecord in nurseRecords.data.filter(nurseRecord => nurseRecord.id)"
-                        :key="nurseRecord.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <td class="px-6 py-4">
-                            {{ nurseRecord.id }}
-                        </td>
-                        <td class="px-6 py-4">
-                            <span v-if="nurseRecord.in_process"
-                                class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
-                            <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <div v-if="nurseRecord.admission.bed">
-                                <FormatId :id="nurseRecord.admission.id" prefix="ING"></FormatId>,
-                                Cama {{ nurseRecord.admission.bed.number }}, Sala {{
-                                    nurseRecord.admission.bed.room }}
-                            </div>
-                            <div v-else>
-                                <FormatId :id="nurseRecord.admission.id" prefix="ING"></FormatId>,
-                                {{ nurseRecord.admission.created_at }} N/A
-                            </div>
-                        </td>
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ nurseRecord.admission.patient.first_name }} {{
-                                nurseRecord.admission.patient.first_surname }} {{
-                                nurseRecord.admission.patient.second_surname }}
-                        </th>
-                        <td class="px-6 py-4">
-                            {{ nurseRecord.nurse.name }} {{ nurseRecord.nurse.last_name }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ formatDate(nurseRecord.created_at) }}
-                        </td>
-                        <td class="px-6 py-4">
-                            <Link v-if="form.admission_id" class="ml-2 text-green-500 hover:text-green-800"
-                                :href="`${route('nurseRecords.show', nurseRecord.id)}?admission_id=${form.admission_id}`"
-                                as="button">
-                            Abrir
-                            </Link>
-                            <Link v-else class="ml-2 text-green-500 hover:text-green-800"
-                                :href="route('nurseRecords.show', nurseRecord.id)" as="button">
-                            Abrir
-                            </Link>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                                    '↓' }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                @click="sort('in_process')">
+                                En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc'
+                                    ? '↑' :
+                                    '↓' }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                @click="sort('admissions.id')">
+                                Ingreso <span v-if="form.sortField === 'admissions.id'">{{ form.sortDirection === 'asc'
+                                    ? '↑' :
+                                    '↓' }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                @click="sort('patients.first_name')">
+                                Paciente <span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
+                                    'asc' ?
+                                    '↑' : '↓' }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                @click="sort('users.name')">
+                                Enfermera <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ?
+                                    '↑' :
+                                    '↓' }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                @click="sort('nurse_records.created_at')">
+                                Fecha <span v-if="form.sortField === 'nurse_records.created_at'">{{ form.sortDirection
+                                    === 'asc'
+                                    ? '↑' : '↓' }}</span>
+                            </th>
+                            <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody v-if="nurseRecords.data.length">
+                        <tr v-for="nurseRecord in nurseRecords.data.filter(nurseRecord => nurseRecord.id)"
+                            :key="nurseRecord.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ nurseRecord.id }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span v-if="nurseRecord.in_process"
+                                    class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
+                                <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div v-if="nurseRecord.admission.bed">
+                                    <FormatId :id="nurseRecord.admission.id" prefix="ING"></FormatId>,
+                                    Cama {{ nurseRecord.admission.bed.number }}, Sala {{ nurseRecord.admission.bed.room
+                                    }}
+                                </div>
+                                <div v-else>
+                                    <FormatId :id="nurseRecord.admission.id" prefix="ING"></FormatId>,
+                                    {{ nurseRecord.admission.created_at }} N/A
+                                </div>
+                            </td>
+                            <th scope="row"
+                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ nurseRecord.admission.patient.first_name }} {{
+                                    nurseRecord.admission.patient.first_surname }}
+                                {{ nurseRecord.admission.patient.second_surname }}
+                            </th>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ nurseRecord.nurse.name }} {{ nurseRecord.nurse.last_name }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ formatDate(nurseRecord.created_at) }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <Link v-if="form.admission_id" class="ml-2 text-green-500 hover:text-green-800"
+                                    :href="`${route('nurseRecords.show', nurseRecord.id)}?admission_id=${form.admission_id}`"
+                                    as="button">
+                                Abrir
+                                </Link>
+                                <Link v-else class="ml-2 text-green-500 hover:text-green-800"
+                                    :href="route('nurseRecords.show', nurseRecord.id)" as="button">
+                                Abrir
+                                </Link>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <div v-if="!nurseRecords.data.length" class="text-center text-gray-500 dark:text-gray-400 py-4">
                 No hay registros disponibles.
             </div>
             <Pagination :pagination="nurseRecords" :filters="form" />
-
         </div>
-
     </AppLayout>
 </template>
 
@@ -271,6 +266,5 @@ export default {
             return moment(date).format('DD MMM YYYY HH:mm');
         }
     },
-
 }
 </script>

@@ -247,6 +247,6 @@ class NurseRecordController extends Controller implements HasMiddleware
         $this->authorize('delete', $nurseRecord);
 
         $nurseRecord->update(['active' => 0]);
-        return Redirect::route('nurseRecords.index')->with('flash.toast', 'Registro de enfermería eliminado');
+        return back()->with('flash.toast', 'Registro de enfermería eliminado');
     }
 }

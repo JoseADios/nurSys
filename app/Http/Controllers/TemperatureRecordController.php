@@ -313,6 +313,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     {
         $this->authorize('delete', $temperatureRecord);
         $temperatureRecord->update(['active' => 0]);
-        return Redirect::route('temperatureRecords.index')->with('flash.toast', 'Registro de temperatura eliminado correctamente');
+        return back()->with('flash.toast', 'Registro de temperatura eliminado correctamente');
     }
 }

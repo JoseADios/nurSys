@@ -233,7 +233,6 @@ class UserController extends Controller
         $user->update(['active' => false]);
         DB::table('sessions')->where('user_id', $user->id)->delete();
         return back()->with('flash.toast', 'Usuario desactivado y sesión cerrada.');
-        ;
     }
 
     public function filterUsers(Request $request)

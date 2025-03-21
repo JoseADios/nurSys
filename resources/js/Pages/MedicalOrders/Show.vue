@@ -12,19 +12,19 @@
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-2xl overflow-hidden">
                 <!-- Navigation -->
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <div
-                        class="flex items-center space-x-2  text-gray-700 dark:text-gray-400 ">
+                    <div class="flex items-center space-x-2  text-gray-700 dark:text-gray-400 ">
                         <Link :href="route('medicalOrders.index')"
-    class="inline-flex  items-center hover:text-blue-600 dark:hover:text-white">
-Ordenes Medicas
-</Link>
-<svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true"                 fill="none" viewBox="0 0 6 10">
-    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="m1 9 4-4-4-4" />
-</svg>
-<div class="ml-2 inline-flex items-center">
-    <FormatId :id="medicalOrder.id" prefix="ORD"></FormatId>
-</div>
+                            class="inline-flex  items-center hover:text-blue-600 dark:hover:text-white">
+                        Ordenes Medicas
+                        </Link>
+                        <svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none"
+                            viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 9 4-4-4-4" />
+                        </svg>
+                        <div class="ml-2 inline-flex items-center">
+                            <FormatId :id="medicalOrder.id" prefix="ORD"></FormatId>
+                        </div>
                     </div>
                     <button v-if="medicalOrder.active" @click="recordBeingDeleted = true"
                         class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
@@ -49,9 +49,9 @@ Ordenes Medicas
                             <div class="">
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <Link :href="route('admissions.show', medicalOrder.admission_id)" as="button"
-                                class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
-                                    {{ medicalOrder.admission_id }}
-                            </Link>
+                                    class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
+                                {{ medicalOrder.admission_id }}
+                                </Link>
 
                             </div>
                             <AccessGate :permission="['medicalOrder.delete']">
@@ -91,11 +91,11 @@ Ordenes Medicas
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <Link  :href="route('patients.show', medicalOrder.admission.patient.id)"as="button"
-                            class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
-                                {{ medicalOrder.admission.patient.first_name }} {{
-                                    medicalOrder.admission.patient.first_surname
-                                }} {{ medicalOrder.admission.patient.second_surname }}
+                            <Link :href="route('patients.show', medicalOrder.admission.patient.id)" as="button"
+                                class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
+                            {{ medicalOrder.admission.patient.first_name }} {{
+                                medicalOrder.admission.patient.first_surname
+                            }} {{ medicalOrder.admission.patient.second_surname }}
                             </Link>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
@@ -121,8 +121,8 @@ Ordenes Medicas
                         </div>
 
                         <div v-if="$page.props.errors.message" class="alert alert-danger">
-      {{ $page.props.errors.message }}
-    </div>
+                            {{ $page.props.errors.message }}
+                        </div>
                     </div>
                 </div>
 
@@ -171,26 +171,26 @@ Ordenes Medicas
                 <!-- Nurse Record Details -->
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
                     <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro</h3>
-                    <div v-if="medicalOrder.active">
-            <button @click="toggleShowDeleted"
-                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-auto"
-                :class="{
-                    'bg-red-500 hover:bg-red-600 text-white': showDeleted,
-                    'bg-gray-100 hover:bg-gray-100 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-600 dark:text-gray-200': !showDeleted
-                }">
-                {{ showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path v-if="showDeleted" fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                        clip-rule="evenodd" />
-                    <path v-else fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                        clip-rule="evenodd" />
-                </svg>
-            </button>
-        </div>
-        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro</h3>
+                        <div v-if="medicalOrder.active">
+                            <button @click="toggleShowDeleted"
+                                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-auto"
+                                :class="{
+                                    'bg-red-500 hover:bg-red-600 text-white': showDeleted,
+                                    'bg-gray-100 hover:bg-gray-100 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-600 dark:text-gray-200': !showDeleted
+                                }">
+                                {{ showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path v-if="showDeleted" fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
+                                        clip-rule="evenodd" />
+                                    <path v-else fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                     <div v-for="detail in details" :key="detail.id" :class="[
                         'rounded-lg p-4 shadow-md flex justify-between items-center transition-colors',
                         detail.suspended_at
@@ -279,8 +279,8 @@ Ordenes Medicas
             </div>
         </div>
 
-         <!-- Change admission modal -->
-         <AccessGate :permission="['medicalOrder.delete']">
+        <!-- Change admission modal -->
+        <AccessGate :permission="['medicalOrder.delete']">
             <Modal :closeable="true" :show="showEditAdmission != null" @close="showEditAdmission == null">
                 <div
                     class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
@@ -305,6 +305,7 @@ Ordenes Medicas
                 </div>
             </Modal>
         </AccessGate>
+
         <DialogModal :show="isVisibleDetail" @close="isVisibleDetail = false">
             <!-- Header del modal -->
             <template #title>
@@ -373,14 +374,15 @@ Ordenes Medicas
                 </button>
             </template>
         </DialogModal>
+
         <ConfirmationModal :show="recordBeingDeleted != null || detailBeingDeleted != null"
             @close="recordBeingDeleted = null; detailBeingDeleted = null">
             <template #title>
-                Eliminar Ingreso
+                Eliminar registro
             </template>
 
             <template v-if="recordBeingDeleted" #content>
-                ¿Estás seguro de que deseas eliminar este ingreso?
+                ¿Estás seguro de que deseas eliminar este registro?
             </template>
             <template v-else #content>
                 ¿Estás seguro de que deseas eliminar este detalle?
@@ -481,15 +483,15 @@ export default {
     },
     methods: {
         toggleShowDeleted() {
-    this.showDeleted = !this.showDeleted;
-    this.$inertia.get(route('medicalOrders.show', { medicalOrder: this.medicalOrder }), {
-        showDeleted: this.showDeleted
-    }, {
-        preserveState: true,
-        preserveScroll: true
-    });
-},
-submitUpdateRecord() {
+            this.showDeleted = !this.showDeleted;
+            this.$inertia.get(route('medicalOrders.show', { medicalOrder: this.medicalOrder }), {
+                showDeleted: this.showDeleted
+            }, {
+                preserveState: true,
+                preserveScroll: true
+            });
+        },
+        submitUpdateRecord() {
             this.showEditAdmission = null
             this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formRecord)
             this.isVisibleEditDiagnosis = false
@@ -522,7 +524,7 @@ submitUpdateRecord() {
             if (this.medicalOrder.admission.medication_record) {
 
                 this.$inertia.get(route('medicationRecordDetails.create', { medicationRecordId: this.medicalOrder.admission.medication_record.id }))
-            }else{
+            } else {
 
                 this.$inertia.get(route('medicationRecords.create', { admission: this.medicalOrder.admission.id }))
             }
@@ -532,10 +534,10 @@ submitUpdateRecord() {
 
 
         submitUpdateDetail() {
-       this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
-                preserveScroll: true,   preserveState: true
-            } ),
-            this.isVisibleAdm = false
+            this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
+                preserveScroll: true, preserveState: true
+            }),
+                this.isVisibleAdm = false
             this.isVisibleDetail = false
         },
         submitSignature() {
@@ -545,7 +547,7 @@ submitUpdateRecord() {
             }
             this.signatureError = false;
             this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formSignature, {
-                preserveScroll: true,   preserveState: true
+                preserveScroll: true, preserveState: true
             });
             this.isVisibleEditSign = false
         },
@@ -562,9 +564,9 @@ submitUpdateRecord() {
             this.detailBeingDeleted = false
             this.isVisibleAdm = false
             this.isVisibleDetail = false
-            this.$inertia.delete(route('medicalOrderDetails.destroy', this.selectedDetail.id),{
-                preserveScroll: true,   preserveState: true
-            } );
+            this.$inertia.delete(route('medicalOrderDetails.destroy', this.selectedDetail.id), {
+                preserveScroll: true, preserveState: true
+            });
         },
         restoreDetail() {
             this.selectedDetail.active = true
@@ -579,10 +581,10 @@ submitUpdateRecord() {
 </script>
 <style scoped>
 .alert {
-  color: white;
-  background: red;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 10;
+    color: white;
+    background: red;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10;
 }
 </style>

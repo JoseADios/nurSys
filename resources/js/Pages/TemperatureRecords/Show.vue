@@ -40,7 +40,8 @@
                     <div class="flex items-center">
                         <button v-if="temperatureRecord.active" @click="downloadRecordReport"
                             class="inline-flex mr-8 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
-                            <ReportIcon class="size-5 mr-1" /> Crear Reporte
+                            <ReportIcon class="size-5 mr-1" />
+                            <span class="hidden sm:inline-flex">Crear Reporte</span>
                         </button>
                         <AccessGate :permission="['temperatureRecord.delete']">
                             <button v-if="temperatureRecord.active" @click="recordBeingDeleted = true"
@@ -143,11 +144,10 @@
                     <TemperatureChart ref="chart" :temperatureData="details" :key="chartKey" :height="100" />
                 </div>
 
-                <!-- ultima temperatura -->
-
-                <!-- Formulario para actualizar ultimo detalle -->
-                <div class="flex justify-center">
-                    <AccessGate :permission="['temperatureDetail.update']">
+                <!-- forms temperatura -->
+                <div class="flex flex-col md:flex-row justify-center">
+                    <!-- Formulario para actualizar ultimo detalle -->
+                    <AccessGate :permission="['temperatureDetail.update']" class="w-full lg:w-[40%]">
                         <div v-if="lastTemperature" class="p-8 ">
                             <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Ultima temperatura</h3>
                             <form @submit.prevent="updateDetail" class="space-y-4">
@@ -176,7 +176,7 @@
                     </AccessGate>
 
                     <!-- Formulario para agregar nuevo detalle -->
-                    <AccessGate :permission="['temperatureDetail.create']">
+                    <AccessGate :permission="['temperatureDetail.create']" class="w-full lg:w-[40%]">
                         <div class="p-8 ">
                             <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura</h3>
 
@@ -206,6 +206,7 @@
                     </AccessGate>
                 </div>
 
+                <!-- forms eliminaciones -->
                 <div class="flex justify-center">
                     <!-- formulario para actualizar ultimas eliminaciones -->
                     <div v-if="lastEliminations && canUpdateElimination" class="p-8 ">

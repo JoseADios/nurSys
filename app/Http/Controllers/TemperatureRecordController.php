@@ -89,9 +89,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $query->where('temperature_records.created_at', '>=', now()->subDays($days));
         }
 
-        if ($sortField == 'in_process') {
-            $query->orderByRaw('CASE WHEN admissions.discharged_date IS NULL THEN 0 ELSE 1 END ' . $sortDirection);
-        } elseif ($sortField) {
+        if ($sortField) {
             $query->orderBy($sortField, $sortDirection);
         } else {
             $query->latest('temperature_records.updated_at')
@@ -184,7 +182,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         $eliminationsRecords = $temperatureRecord->eliminationRecords;
         $temperatureDetails = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->with('nurse')
-        ->orderBy('updated_at', 'asc')->orderBy('id', 'asc')->get();
+            ->orderBy('updated_at', 'asc')->orderBy('id', 'asc')->get();
 
         $turnService = new TurnService();
         $currentTurn = $turnService->getCurrentTurn();
@@ -224,7 +222,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->orderBy('updated_at', 'desc')
-            ->whereBetween('updated_at',[$currentDateRange['start'], $currentDateRange['end']])
+            ->whereBetween('updated_at', [$currentDateRange['start'], $currentDateRange['end']])
             ->first();
 
         $lastEliminations = EliminationRecord::where('temperature_record_id', $temperatureRecord->id)

@@ -180,7 +180,7 @@
                             <td
                                 class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
                                 <img :src="user.profile_photo_url" alt="Profile Photo"
-                                    class="size-4 rounded-full mr-2 md:w-10 md:h-10 md:mr-4 object-cover">
+                                    class="size-4 rounded-full mr-2 sm:size-8 md:size-10 md:mr-4 object-cover">
                                 <div>
                                     {{ user.name }} {{ user.last_name }}
                                 </div>

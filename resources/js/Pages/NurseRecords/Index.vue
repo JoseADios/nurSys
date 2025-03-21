@@ -8,7 +8,7 @@
                         route: route('admissions.show', form.admission_id)
                     }] : []),
                     {
-                        text: 'Hojas de temperatura'
+                        text: 'Registros de enfermeria'
                     }
                 ]" />
             </h2>
@@ -24,9 +24,9 @@
 
         <!-- Filtros y barra de búsqueda - Responsive -->
         <div
-            class="bg-gray-100 dark:bg-gray-900 p-4 flex flex-col gap-4 md:flex-row md:justify-between md:items-end overflow-x-auto rounded-lg mx-4 lg:mx-10">
+            class="bg-gray-100 dark:bg-gray-900 p-4 flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-end  overflow-x-auto rounded-lg mx-4 lg:mx-10">
             <!-- Búsqueda - Ancho completo en móvil -->
-            <div class="relative w-full md:w-1/3 mb-4 sm:mb-0">
+            <div class="relative w-full lg:w-1/3 mb-4 sm:mb-0">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                 </div>
@@ -42,7 +42,15 @@
             </div>
 
             <!-- Filtros y botones - Se apilan en móvil -->
-            <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-2 md:content-end">
+            <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-2 md:content-end md:justify-end">
+                <select @change="submitFilters()"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-auto p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    name="in_process" id="in_process" v-model="form.in_process">
+                    <option value="true">En proceso</option>
+                    <option value="false">Dados de alta</option>
+                    <option value="">Todos</option>
+                </select>
+
                 <select @change="submitFilters()"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-auto p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     name="days" id="days" v-model="form.days">
@@ -55,7 +63,7 @@
                     <option value="365">Último año</option>
                 </select>
 
-                <AccessGate :permission="['nurseRecord.delete']">
+                <AccessGate :permission="['nurseRecords.delete']">
                     <!-- Filtro para mostrar registros eliminados -->
                     <button @click="toggleShowDeleted"
                         class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
@@ -69,19 +77,17 @@
                     </button>
                 </AccessGate>
 
-                <AccessGate :permission="['nurseRecord.create']">
+                <AccessGate :permission="['nurseRecords.create']">
                     <div class="w-full sm:w-auto">
                         <Link v-if="!form.admission_id" :href="route('nurseRecords.create')"
                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
                         <PlusIcon class="size-5" />
-                        <span class="hidden sm:inline">Nuevo registro</span>
-                        <span class="sm:hidden">Nuevo registro</span>
+                        <span class="">Nuevo Registro</span>
                         </Link>
                         <Link v-else :href="route('nurseRecords.create', { admission_id: form.admission_id })"
                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
                         <PlusIcon class="size-5" />
-                        <span class="hidden sm:inline">Nuevo registro</span>
-                        <span class="sm:hidden">Nuevo registro</span>
+                        <span class="">Nuevo Registro</span>
                         </Link>
                     </div>
                 </AccessGate>
@@ -95,16 +101,10 @@
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap hidden sm:table-cell"
                                 @click="sort('nurse_records.id')">
                                 ID <span v-if="form.sortField === 'nurse_records.id'">{{ form.sortDirection === 'asc' ?
                                     '↑' :
-                                    '↓' }}</span>
-                            </th>
-                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
-                                @click="sort('in_process')">
-                                En proceso <span v-if="form.sortField === 'in_process'">{{ form.sortDirection === 'asc'
-                                    ? '↑' :
                                     '↓' }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
@@ -139,23 +139,24 @@
                     <tbody v-if="nurseRecords.data.length">
                         <tr v-for="nurseRecord in nurseRecords.data.filter(nurseRecord => nurseRecord.id)"
                             :key="nurseRecord.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
                                 {{ nurseRecord.id }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span v-if="nurseRecord.in_process"
-                                    class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
-                                <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div v-if="nurseRecord.admission.bed">
-                                    <FormatId :id="nurseRecord.admission.id" prefix="ING"></FormatId>,
-                                    Cama {{ nurseRecord.admission.bed.number }}, Sala {{ nurseRecord.admission.bed.room
-                                    }}
-                                </div>
-                                <div v-else>
-                                    <FormatId :id="nurseRecord.admission.id" prefix="ING"></FormatId>,
-                                    {{ nurseRecord.admission.created_at }} N/A
+                                <div :class="[{
+                                    'max-w-fit border border-green-600 text-green-600 px-2.5 py-0.5 rounded-md dark:border-green-900 dark:text-green-300': nurseRecord.in_process,
+                                    'max-w-fit border border-gray-500 text-gray-800 px-2.5 py-0.5 rounded-md dark:border-gray-600 dark:text-gray-300': !nurseRecord.in_process
+                                }]">
+                                    <div v-if="nurseRecord.admission.bed">
+                                        <FormatId :id="nurseRecord.admission.id" prefix="ING"></FormatId>,
+                                        Cama {{ nurseRecord.admission.bed.number }}, Sala {{
+                                            nurseRecord.admission.bed.room
+                                        }}
+                                    </div>
+                                    <div v-else>
+                                        <FormatId :id="nurseRecord.admission.id" prefix="ING"></FormatId>,
+                                        {{ nurseRecord.admission.created_at }} N/A
+                                    </div>
                                 </div>
                             </td>
                             <th scope="row"

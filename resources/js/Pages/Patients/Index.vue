@@ -203,31 +203,31 @@
                         <tbody v-if="patients.data.length">
                             <tr v-for="(patient, index) in patients.data" :key="patient.id"
                                 class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td class="px-4 py-3 hidden sm:table-cell">
+                                <td class="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
                                     {{ patient.id }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 whitespace-nowrap">
                                     <span v-if="patient.is_hospitalized"
                                         class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
                                     <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
                                 </td>
                                 <th scope="row"
-                                    class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                     {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
                                 </th>
-                                <td class="px-4 py-3 hidden sm:table-cell">
+                                <td class="px-4 py-3 whitespace-nowrap hidden sm:table-cell">
                                     {{ patient.phone }}
                                 </td>
-                                <td class="px-4 py-3 hidden md:table-cell">
+                                <td class="px-4 py-3 whitespace-nowrap hidden md:table-cell">
                                     {{ patient.identification_card }}
                                 </td>
-                                <td class="px-4 py-3 hidden lg:table-cell">
+                                <td class="px-4 py-3 whitespace-nowrap hidden lg:table-cell">
                                     {{ patient.nationality }}
                                 </td>
-                                <td class="px-4 py-3 hidden lg:table-cell">
+                                <td class="px-4 py-3 whitespace-nowrap hidden lg:table-cell">
                                     {{ patient.email }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 whitespace-nowrap">
                                     <div class="flex space-x-2">
                                         <Link class="text-blue-500 hover:text-blue-800"
                                             :href="route('patients.show', patient.id)">

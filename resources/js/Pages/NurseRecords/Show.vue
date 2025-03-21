@@ -27,18 +27,18 @@
         <div class="container mx-auto px-4 py-8">
             <div
                 class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 rounded-2xl overflow-hidden">
-                <!-- Navigation -->
-                <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+                <!-- Navigation: Mejorar responsividad -->
+                <div class="p-4 bg-gray-100 dark:bg-gray-900 flex flex-row justify-between items-center sm:space-y-0">
                     <div v-if="admission_id">
                         <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
                             class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                         <BackIcon class="size-5" />
-                        <span class="font-medium">Volver</span>
+                        <span class="font-medium ">Volver</span>
                         </Link>
                     </div>
                     <div v-else>
                         <Link :href="route('nurseRecords.index')"
-                            class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                            class="flex px-4 sm:px-0 items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                         <BackIcon class="size-5" />
                         <span class="font-medium">Volver</span>
                         </Link>
@@ -46,26 +46,28 @@
                     <div class="flex items-center">
 
                         <button v-if="nurseRecord.active" @click="downloadRecordReport"
-                            class="inline-flex mr-8 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
-                            <ReportIcon class="size-5 mr-2" /> Crear Reporte
+                            class="inline-flex mx-4 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200 sm:w-auto justify-center sm:justify-start">
+                            <ReportIcon class="size-5" />
+                            <span class="hidden md:inline-flex ml-2">Crear Reporte</span>
                         </button>
 
                         <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
                             <button v-if="nurseRecord.active" @click="recordBeingDeleted = true"
-                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors w-full sm:w-auto justify-center sm:justify-start sm:mt-0">
                                 <TrashIcon class="size-5" />
                                 <span class="font-medium">Eliminar</span>
                             </button>
                             <button v-else @click="restoreRecord"
-                                class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                                class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors w-full sm:w-auto justify-center sm:justify-start sm:mt-0">
                                 <span class="font-medium">Restaurar</span>
                             </button>
                         </AccessGate>
                     </div>
+
                 </div>
 
                 <!-- Patient and Record Information -->
-                <div class="grid md:grid-cols-2 gap-6 p-8 bg-gray-50 dark:bg-gray-700">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 p-4 sm:p-8 bg-gray-50 dark:bg-gray-700">
                     <div class="space-y-4">
 
                         <!-- admission -->
@@ -154,7 +156,7 @@
                             </h3>
 
                             <form @submit.prevent="submit" class="space-y-4">
-                                <div class="grid md:grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label for="medication"
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -162,8 +164,8 @@
                                         </label>
                                         <input maxlength="255" type="text" id="medication"
                                             v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500
-                                        dark:bg-gray-800 dark:text-white" placeholder="Nombre del medicamento" />
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+            dark:bg-gray-800 dark:text-white" placeholder="Nombre del medicamento" />
                                     </div>
 
                                     <div>
@@ -172,15 +174,15 @@
                                             Observaciones
                                         </label>
                                         <input type="text" id="comment" v-model="formDetail.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500
-                                        dark:bg-gray-800 dark:text-white" placeholder="Comentarios adicionales" />
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+            dark:bg-gray-800 dark:text-white" placeholder="Comentarios adicionales" />
                                     </div>
                                 </div>
 
                                 <div class="pt-4">
                                     <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
-                                    hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                                    transition-colors duration-300">
+        hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+        transition-colors duration-300">
                                         Agregar Evento
                                     </button>
                                 </div>
@@ -196,13 +198,15 @@
                     <hr class="my-2 border-transparent dark:border-transparent">
                 </AccessGate>
 
-                <!-- Nurse Record Details -->
-                <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Eventos del Registro</h3>
+                <!-- Nurse Record Details: Mejorar controles -->
+                <div class="p-4 sm:p-8 space-y-4 bg-gray-50 dark:bg-gray-700">
+                    <div
+                        class="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2 sm:mb-0">Eventos del
+                            Registro</h3>
 
                         <button @click="toggleShowDeleted"
-                            class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
+                            class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
                             :class="{
                                 'bg-red-500 hover:bg-red-600 text-white': showDeletedLocal,
                                 'bg-gray-400 hover:bg-gray-500 text-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200': !showDeletedLocal
@@ -214,8 +218,8 @@
                     </div>
 
                     <div v-for="detail in details" :key="detail.id"
-                        class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 backdrop-blur-sm flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
-                        <div class="flex-grow pr-10">
+                        class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 backdrop-blur-sm flex flex-col sm:flex-row justify-between items-start sm:items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
+                        <div class="flex-grow pr-4 w-full sm:w-auto">
                             <div class="font-semibold text-gray-900 dark:text-white">
                                 {{ detail.medication }}
                             </div>
@@ -226,25 +230,25 @@
                                 {{ formatDate(detail.created_at) }}
                             </div>
                         </div>
-                        <div>
+                        <div class="flex mt-3 sm:mt-0 space-x-4 w-full sm:w-auto">
                             <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
-                                <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                <div class="sm:text-right">
                                     <!-- Editar -->
                                     <Link :href="route('nurseRecordDetails.edit', detail.id)"
                                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                                     <EditIcon class="size-5" />
-                                    <span class="font-medium">Editar</span>
+                                    <span class="font-medium sm:hidden md:inline-flex">Editar</span>
                                     </Link>
                                 </div>
                             </AccessGate>
                             <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
-                                <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                <div class="sm:text-right">
                                     <!-- eliminar -->
                                     <div v-if="detail.active === 1">
                                         <button @click="deleteDetail(detail.id)"
                                             class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
                                             <TrashIcon class="size-5" />
-                                            <span class="font-medium">Eliminar</span>
+                                            <span class="font-medium sm:hidden md:inline-flex">Eliminar</span>
                                         </button>
                                     </div>
 
@@ -252,11 +256,10 @@
                                     <button @click="restoreDetail(detail)" v-else
                                         class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
                                         <RestoreIcon class="size-5" />
-                                        <span class="font-medium">Restaurar</span>
+                                        <span class="font-medium sm:hidden md:inline-flex">Restaurar</span>
                                     </button>
                                 </div>
                             </AccessGate>
-
                         </div>
                     </div>
 

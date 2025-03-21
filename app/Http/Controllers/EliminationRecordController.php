@@ -7,10 +7,20 @@ use App\Models\TemperatureDetail;
 use Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class EliminationRecordController extends Controller
+class EliminationRecordController extends Controller implements HasMiddleware
 {
     use AuthorizesRequests;
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:temperatureDetail.create', only: ['store']),
+            new Middleware('permission:temperatureDetail.update', only: ['update']),
+        ];
+    }
 
     /**
      * Display a listing of the resource.

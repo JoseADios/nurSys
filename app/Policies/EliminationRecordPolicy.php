@@ -68,6 +68,10 @@ class EliminationRecordPolicy
      */
     public function update(User $user, EliminationRecord $eliminationRecord): Response
     {
+        if (!$user->hasRole(['admin', 'nurse'])) {
+            return Response::deny('No tienes el rol para actualizar este registro');
+        }
+
         if ($user->id !== $eliminationRecord->nurse_id) {
             return Response::deny('No tienes permiso para actualizar este registro');
         }

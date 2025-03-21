@@ -227,8 +227,8 @@
                                 <td class="px-4 py-3 whitespace-nowrap hidden lg:table-cell">
                                     {{ patient.email }}
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap">
-                                    <div class="flex space-x-2">
+                                <td class="px-4 py-3">
+                                    <div class="flex space-x-2 justify-center">
                                         <Link class="text-blue-500 hover:text-blue-800"
                                             :href="route('patients.show', patient.id)">
                                         Ver

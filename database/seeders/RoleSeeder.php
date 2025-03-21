@@ -58,10 +58,13 @@ class RoleSeeder extends Seeder
 
         $role = Role::findByName('receptionist');
         $role->syncPermissions([
-            'admission.*',
+            'admission.view',
+            'admission.create',
+            'admission.update',
             'patient.view',
             'patient.create',
             'patient.update',
+            'user.view',
         ]);
 
         $role = Role::findByName('nurse');

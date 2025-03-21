@@ -72,9 +72,7 @@ Route::middleware([
     Route::resource('beds', BedController::class);
 
     Route::get('/users/filter', [UserController::class, 'filterUsers'])->name('users.filter');
-    Route::group(['middleware' => ['role:admin']], function () {
-        Route::resource('users', UserController::class);
-    });
+    Route::resource('users', UserController::class);
 
     // REPORTES
     Route::get( '/reports/temperatureRecord/{id}', [ReportController::class, 'temperatureRecordReport'])

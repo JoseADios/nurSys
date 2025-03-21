@@ -446,9 +446,9 @@ const logout = () => {
                         <button @click="toggleDarkMode"
                             class="p-1.5 mr-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full focus:outline-none">
                             <SunIcon v-if="isDarkMode"
-                                class="h-5 w-5 text-yellow-400 dark:text-yellow-300 hover:text-yellow-500 dark:hover:text-yellow-400" />
+                                class="h-5 w-5 text-gray-700 dark:text-white hover:text-gray-500 dark:hover:text-gray-300" />
                             <MoonIcon v-else
-                                class="h-5 w-5 text-indigo-600 dark:text-indigo-300 hover:text-indigo-500 dark:hover:text-indigo-400" />
+                                class="h-5 w-5 text-gray-700 dark:text-white hover:text-gray-500 dark:hover:text-gray-300" />
                         </button>
 
                         <!-- Teams Dropdown -->

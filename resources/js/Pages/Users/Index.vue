@@ -33,10 +33,10 @@
                             }">
                             {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
                             <span v-if="form.show_deleted">
-                                <CircleXIcon class="h-4 w-4" />
+                                <CircleXIcon class="h-4 w-4 ml-1" />
                             </span>
                             <span v-else>
-                                <CirclePlusIcon class="h-4 w-4" />
+                                <CirclePlusIcon class="h-4 w-4 ml-1" />
                             </span>
                         </button>
 
@@ -138,7 +138,7 @@
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('id')">
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap hidden sm:table-cell" @click="sort('id')">
                                 ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
                                     }}</span>
                             </th>
@@ -174,13 +174,13 @@
                     <tbody v-if="users.data.length">
                         <tr v-for="(user, index) in users.data" :key="user.id"
                             class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 hidden sm:table-cell">
                                 {{ user.id }}
                             </td>
                             <td
-                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
+                                class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
                                 <img :src="user.profile_photo_url" alt="Profile Photo"
-                                    class="w-8 h-8 rounded-full mr-2 md:w-10 md:h-10 md:mr-4">
+                                    class="size-4 rounded-full mr-2 md:w-10 md:h-10 md:mr-4 object-cover">
                                 <div>
                                     {{ user.name }} {{ user.last_name }}
                                 </div>

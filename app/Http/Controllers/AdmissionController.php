@@ -173,8 +173,8 @@ class AdmissionController extends Controller
             }
         }
 
-        Admission::create($validated);
-        return back()->with('flash.toast','Ingreso registrado correctamente');
+        $admission = Admission::create($validated);
+        return Redirect::route('admissions.show', $admission->id)->with('flash.toast','Ingreso registrado correctamente');
     }
 
     /**

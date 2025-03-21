@@ -18,7 +18,7 @@
                 <div class="p-6">
                     <div class="flex flex-col md:flex-row items-center justify-between">
                         <div class="flex items-center space-x-4 mb-4 md:mb-0">
-                            <img :src="user.profile_photo_url" alt="Foto de Perfil" class="w-20 h-20 rounded-full">
+                            <img :src="user.profile_photo_url" alt="Foto de Perfil" class="w-20 h-20 rounded-full object-cover">
                             <div>
                                 <h2 class="text-2xl font-bold text-white">{{ user.name }} {{ user.last_name }}</h2>
                                 <div class="flex items-center space-x-2">

@@ -214,7 +214,7 @@ async function fetchData() {
                                     </div>
                                     <h3 class="text-lg font-medium text-gray-900 dark:text-white">Todos asignados</h3>
                                     <p class="mt-2 text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-                                        En este momento todos los ingresos tienen una cama asignada correctamente.
+                                        En este momento todos los ingresos tienen una cama asignada correctamente
                                     </p>
                                 </div>
                             </div>
@@ -309,7 +309,7 @@ async function fetchData() {
                                 </div>
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-white"></h3>
                                 <p class="mt-2 text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-                                    No hay medicamentos pendientes por aplicar en la última hora o con horario vencido.
+                                    No hay medicamentos pendientes por aplicar en la última hora o con horario vencido
                                 </p>
                             </div>
                         </div>
@@ -385,7 +385,7 @@ async function fetchData() {
                                 </div>
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-white"></h3>
                                 <p class="mt-2 text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-                                    No hay medicamentos pendientes por aplicar en la última hora o con horario vencido.
+                                    No hay pacientes con temperatura alta (mayor a 38°)
                                 </p>
                             </div>
                         </div>

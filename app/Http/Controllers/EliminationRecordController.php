@@ -7,10 +7,20 @@ use App\Models\TemperatureDetail;
 use Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class EliminationRecordController extends Controller
+class EliminationRecordController extends Controller implements HasMiddleware
 {
     use AuthorizesRequests;
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:temperatureDetail.create', only: ['store']),
+            new Middleware('permission:temperatureDetail.update', only: ['update']),
+        ];
+    }
 
     /**
      * Display a listing of the resource.
@@ -33,8 +43,7 @@ class EliminationRecordController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', [TemperatureDetail::class, $request->temperature_record_id]);
-
+        $this->authorize('create', [EliminationRecord::class, $request->temperature_record_id]);
         EliminationRecord::create([
             'temperature_record_id' => $request->temperature_record_id,
             'nurse_id' => Auth::id(),
@@ -67,6 +76,7 @@ class EliminationRecordController extends Controller
      */
     public function update(Request $request, EliminationRecord $eliminationRecord)
     {
+        $this->authorize('update', $eliminationRecord);
         $request->validate([
             'evacuations' => 'required|integer',
             'urinations' => 'required|string',

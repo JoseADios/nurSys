@@ -261,7 +261,7 @@ class PatientController extends Controller implements HasMiddleware
             }
         }
 
-        return Redirect::route('patients.index')->with('flash.toast', 'Registro eliminado exitosamente');
+        return back()->with('flash.toast', 'Registro eliminado exitosamente');
     }
 
       public function filterPatients(Request $request)

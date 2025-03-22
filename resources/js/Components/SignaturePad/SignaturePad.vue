@@ -92,9 +92,9 @@ const resizeCanvas = () => {
     })
 
     // Restaurar la firma si existía
-    if (data) {
-        signaturePad.fromDataURL(data)
-    }
+    // if (data) {
+    //     signaturePad.fromDataURL(data)
+    // }
 
     signaturePad.addEventListener('endStroke', () => {
         const newData = signaturePad.toDataURL('image/png')
@@ -119,10 +119,10 @@ onMounted(() => {
     resizeCanvas()
 
     // Si hay un valor inicial, cargarlo
-    if (props.modelValue) {
-        signaturePad.fromDataURL(props.modelValue)
-        signatureData.value = props.modelValue
-    }
+    // if (props.modelValue) {
+    //     signaturePad.fromDataURL(props.modelValue)
+    //     signatureData.value = props.modelValue
+    // }
 
     // También escuchar eventos de redimensionamiento de ventana
     window.addEventListener('resize', resizeCanvas)

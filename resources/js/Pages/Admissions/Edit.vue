@@ -7,34 +7,38 @@
         </template>
 
         <div class="ml-10 mt-4 lg:mx-10 flex justify-between">
-            <button @click="goBack(previousUrl)"
+            <Link :href="route('admissions.index')"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full">
-                Volver
-            </button>
+            Volver
+            </Link>
 
             <div class="flex">
                 <div v-if="admission.discharged_date == null">
                     <button type="button" @click="discharge"
-                        class="self-end focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+                        class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-3 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
                         Dar de Alta
                     </button>
                 </div>
                 <div v-if="admission.discharged_date != null">
                     <button type="button" @click="charge"
-                        class="self-end focus:outline-none text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-900">
+                        class="focus:outline-none text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-900">
                         Poner en progreso
                     </button>
                 </div>
-                <button type="button" v-if="admission.active" @click="admissionBeingDeleted = true" class="inline-flex items-center px-6  bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold rounded-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                </path>
-                            </svg>
-                            Eliminar
-                        </button>
-                        <button v-if="  !admission.active" @click="restoreAdmission" class="inline-flex items-center px-6  bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                            Restaurar
-                        </button>
+                <button type="button" v-if="admission.active" @click="admissionBeingDeleted = true"
+                    class="inline-flex ml-2 items-center px-5 py-2.5 font-medium bg-gradient-to-r from-red-500 to-red-700 text-white text-sm rounded-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
+                    </svg>
+                    Eliminar
+                </button>
+                <button v-if="!admission.active" @click="restoreAdmission"
+                    class="inline-flex items-center px-6 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                    Restaurar
+                </button>
 
             </div>
         </div>
@@ -46,12 +50,8 @@
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
-                <BedSelector
-                    :beds="beds"
-                    :errors="form.errors"
-                    :initialBedId="form.bed_id"
-                    @update:bedId="form.bed_id = $event"
-                />
+                <BedSelector :beds="beds" :errors="form.errors" :initialBedId="form.bed_id"
+                    @update:bedId="form.bed_id = $event" />
 
                 <AccessGate :except-role="['nurse']">
                     <label for="patient"
@@ -105,15 +105,14 @@
 
                 <div class="flex justify-end mt-6 mb-2">
 
-                    <button @click="goBack(previousUrl)"
+                    <Link :href="route('admissions.index')"
                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                        Cancelar
-                    </button>
+                    Cancelar
+                    </Link>
 
                     <button type="submit"
                         class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Guardar</button>
                 </div>
-
             </form>
         </div>
         <!-- modal para eliminar -->
@@ -150,6 +149,7 @@ import { ref } from "vue";
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+
 export default {
     props: {
         admission: Object,
@@ -209,18 +209,18 @@ export default {
             this.submitProcess(null)
         },
         deleteAdmission() {
-             this.admissionbeingDeleted = null;
-                        this.$inertia.delete(route('admissions.destroy', this.admission.id), {
-                            onSuccess: (response) => {
+            this.admissionbeingDeleted = null;
+            this.$inertia.delete(route('admissions.destroy', this.admission.id), {
+                onSuccess: (response) => {
 
-                                    this.admissionbeingDeleted = null;
-                                },
-                                preserveScroll: true
-                        });
+                    this.admissionbeingDeleted = null;
+                },
+                preserveScroll: true
+            });
         },
-         restoreAdmission() {
-                        this.$inertia.put(route('admissions.restore', this.admission.id));
-                    }
+        restoreAdmission() {
+            this.$inertia.put(route('admissions.restore', this.admission.id));
+        }
     },
 }
 </script>

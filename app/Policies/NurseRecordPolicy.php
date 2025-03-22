@@ -76,7 +76,7 @@ class NurseRecordPolicy
             ->first();
 
         if ($nurseRecordInTurn !== null) {
-            return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
+            return Response::deny('Este ingreso ya tiene un registro de enfermería creado en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
         }
 
         return Response::allow();
@@ -125,6 +125,24 @@ class NurseRecordPolicy
 
         if ($nurseRecord->admission->discharged_date !== null) {
             return Response::deny('No se pueden eliminar registros en un ingreso que ya ha sido dado de alta.');
+        }
+
+        return Response::allow();
+    }
+
+    public function updateAdmission(User $user): Response
+    {
+        if (!$user->hasRole('admin')) {
+            return Response::deny('No tienes permiso para actualizar esta información');
+        }
+
+        return Response::allow();
+    }
+
+    public function updateNurse(User $user): Response
+    {
+        if (!$user->hasRole('admin')) {
+            return Response::deny('No tienes permiso para actualizar esta información');
         }
 
         return Response::allow();

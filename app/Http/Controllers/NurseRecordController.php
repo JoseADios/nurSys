@@ -40,6 +40,7 @@ class NurseRecordController extends Controller implements HasMiddleware
         $admissionId = $request->integer('admission_id');
         $days = $request->integer('days');
         $sortField = $request->input('sortField');
+        $in_process = $request->input('in_process', 'true');
         $sortDirection = $request->input('sortDirection', 'asc');
 
 
@@ -52,6 +53,11 @@ class NurseRecordController extends Controller implements HasMiddleware
             ->join('users', 'nurse_records.nurse_id', '=', 'users.id')
             ->where('nurse_records.active', !$showDeleted);
 
+        if ($in_process === 'true') {
+            $query->whereNull('admissions.discharged_date');
+        } elseif ($in_process === 'false') {
+            $query->whereNotNull('admissions.discharged_date');
+        }
 
         if ($search) {
             $query->where(function (Builder $q) use ($search) {
@@ -72,9 +78,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             $query->where('nurse_records.created_at', '>=', now()->subDays($days));
         }
 
-        if ($sortField == 'in_process') {
-            $query->orderByRaw('CASE WHEN admissions.discharged_date IS NULL THEN 0 ELSE 1 END ' . $sortDirection);
-        } elseif ($sortField) {
+        if ($sortField) {
             $query->orderBy($sortField, $sortDirection);
         } else {
             $query->latest('nurse_records.created_at');
@@ -98,6 +102,7 @@ class NurseRecordController extends Controller implements HasMiddleware
                 'show_deleted' => $showDeleted,
                 'admission_id' => $admissionId,
                 'days' => $days,
+                'in_process' => $in_process,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
             ]
@@ -145,10 +150,12 @@ class NurseRecordController extends Controller implements HasMiddleware
         ]);
 
         if ($has_admission_id) {
-            return Redirect::route('nurseRecords.show', [
-                'nurseRecord' => $nurseRecord->id,
-                'admission_id' => $admission->id,
-            ]
+            return Redirect::route(
+                'nurseRecords.show',
+                [
+                    'nurseRecord' => $nurseRecord->id,
+                    'admission_id' => $admission->id,
+                ]
             )->with('flash.toast', 'Registro de enfermería creado');
         } else {
             return Redirect::route('nurseRecords.show', $nurseRecord->id)->with('flash.toast', 'Registro de enfermería creado');
@@ -210,7 +217,15 @@ class NurseRecordController extends Controller implements HasMiddleware
     public function update(Request $request, NurseRecord $nurseRecord)
     {
         $this->authorize('update', $nurseRecord);
-        $this->authorize('canCreateInTurn', [NurseRecord::class, $request->admission_id]);
+
+        if ($request->has('admission_id') && $request->input('admission_id')) {
+            $this->authorize('updateAdmission', [NurseRecord::class]);
+            $this->authorize('canCreateInTurn', [NurseRecord::class, $request->admission_id]);
+        }
+
+        if ($request->has('nurse_id') && $request->input('nurse_id')) {
+            $this->authorize('updateNurse', [NurseRecord::class]);
+        }
 
         $firmService = new FirmService;
 
@@ -240,6 +255,6 @@ class NurseRecordController extends Controller implements HasMiddleware
         $this->authorize('delete', $nurseRecord);
 
         $nurseRecord->update(['active' => 0]);
-        return Redirect::route('nurseRecords.index')->with('flash.toast', 'Registro de enfermería eliminado');
+        return back()->with('flash.toast', 'Registro de enfermería eliminado');
     }
 }

@@ -278,7 +278,7 @@ export default {
             })
         },
         deletePatient() {
-            this.patientBeingDeleted = false
+            this.patientBeingDeleted = null
             this.$inertia.delete(route('patients.destroy', this.patient.id));
         },
         restorePatient() {

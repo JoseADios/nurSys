@@ -25,20 +25,22 @@
                     <!-- Botones de acción - siempre visibles -->
                     <div class="flex justify-center md:flex-wrap gap-2">
                         <!-- Botón para ver registros eliminados -->
-                        <button @click="toggleShowDeleted"
-                            class="flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap text-sm"
-                            :class="{
-                                'bg-red-500 hover:bg-red-600 text-white': form.show_deleted,
-                                'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.show_deleted
-                            }">
-                            {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                            <span v-if="form.show_deleted">
-                                <CircleXIcon class="h-4 w-4" />
-                            </span>
-                            <span v-else>
-                                <CirclePlusIcon class="h-4 w-4" />
-                            </span>
-                        </button>
+                        <AccessGate :permission="['user.update']">
+                            <button @click="toggleShowDeleted"
+                                class="flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap text-sm"
+                                :class="{
+                                    'bg-red-500 hover:bg-red-600 text-white': form.show_deleted,
+                                    'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.show_deleted
+                                }">
+                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                <span v-if="form.show_deleted">
+                                    <CircleXIcon class="h-4 w-4 ml-1" />
+                                </span>
+                                <span v-else>
+                                    <CirclePlusIcon class="h-4 w-4 ml-1" />
+                                </span>
+                            </button>
+                        </AccessGate>
 
                         <AccessGate :permission="['user.create']">
                             <Link :href="route('users.create')"
@@ -138,18 +140,19 @@
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('id')">
+                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap hidden sm:table-cell"
+                                @click="sort('id')">
                                 ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                    }}</span>
+                                }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('name')">
                                 Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑' :
                                     '↓'
-                                    }}</span>
+                                }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('role')">
                                 Rol <span v-if="form.sortField === 'role'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                    }}</span>
+                                }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
                                 @click="sort('specialty')">
@@ -161,12 +164,12 @@
                                 @click="sort('position')">
                                 Posición <span v-if="form.sortField === 'position'">{{ form.sortDirection === 'asc' ?
                                     '↑' : '↓'
-                                    }}</span>
+                                }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('email')">
                                 Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' :
                                     '↓'
-                                    }}</span>
+                                }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 whitespace-nowrap">Acciones</th>
                         </tr>
@@ -174,13 +177,13 @@
                     <tbody v-if="users.data.length">
                         <tr v-for="(user, index) in users.data" :key="user.id"
                             class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 hidden sm:table-cell">
                                 {{ user.id }}
                             </td>
                             <td
-                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
+                                class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
                                 <img :src="user.profile_photo_url" alt="Profile Photo"
-                                    class="w-8 h-8 rounded-full mr-2 md:w-10 md:h-10 md:mr-4">
+                                    class="size-4 rounded-full mr-2 sm:size-8 md:size-10 md:mr-4 object-cover">
                                 <div>
                                     {{ user.name }} {{ user.last_name }}
                                 </div>
@@ -201,15 +204,17 @@
                                 {{ user.email }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex space-x-2">
+                                <div class="flex space-x-2 justify-center">
                                     <Link class="text-green-500 hover:text-green-800"
                                         :href="route('users.show', user.id)" as="button">
                                     Abrir
                                     </Link>
-                                    <Link class="text-blue-500 hover:text-blue-800"
-                                        :href="route('users.edit', user.id)">
-                                    Editar
-                                    </Link>
+                                    <AccessGate :permission="['user.update']">
+                                        <Link class="text-blue-500 hover:text-blue-800"
+                                            :href="route('users.edit', user.id)">
+                                        Editar
+                                        </Link>
+                                    </AccessGate>
                                 </div>
                             </td>
                         </tr>

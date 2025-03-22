@@ -53,6 +53,12 @@ class DashboardController extends Controller
     {
         // Determinar fechas de inicio y fin según el filtro
         switch ($timeFilter) {
+            case 'all':
+                // No ponemos límites de fecha para obtener todos los registros
+                $startDate = null;
+                $endDate = null;
+                $groupBy = 'year'; // Agrupar por año
+                break;
             case 'month':
                 $startDate = now()->startOfMonth();
                 $endDate = now()->endOfMonth();
@@ -73,16 +79,46 @@ class DashboardController extends Controller
 
         $query = Admission::query();
 
-        // Aplicar el filtro de fecha a la columna relevante
-        if (!$activeAdmissions) {
-            $query->whereNotNull('discharged_date')
-                ->whereBetween('discharged_date', [$startDate, $endDate]);
+        // Aplicar el filtro de fecha solo si las fechas no son nulas
+        if ($startDate && $endDate) {
+            if (!$activeAdmissions) {
+                $query->whereNotNull('discharged_date')
+                    ->whereBetween('discharged_date', [$startDate, $endDate]);
+            } else {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
         } else {
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+            // Si estamos obteniendo todos los registros
+            if (!$activeAdmissions) {
+                $query->whereNotNull('discharged_date');
+            }
         }
 
         // Seleccionar y agrupar según el filtro de tiempo
-        if ($timeFilter === 'year') {
+        if ($timeFilter === 'all') {
+            // Agrupar por año para todos los registros
+            if (!$activeAdmissions) {
+                $query->selectRaw('YEAR(discharged_date) as year, COUNT(*) as total');
+                $query->groupBy('year');
+                $query->orderBy('year');
+            } else {
+                $query->selectRaw('YEAR(created_at) as year, COUNT(*) as total');
+                $query->groupBy('year');
+                $query->orderBy('year');
+            }
+
+            return $query->get()
+                ->map(function ($item) {
+                    // Crear una fecha con el primer día del año para mantener coherencia
+                    $date = Carbon::createFromDate($item->year, 1, 1)->toDateString();
+                    return [
+                        'date' => $date,
+                        'total' => $item->total,
+                        'year' => $item->year // Añadir el año explícitamente para facilitar el formateo
+                    ];
+                });
+        } elseif ($timeFilter === 'year') {
+            // Código existente para el filtro anual
             if (!$activeAdmissions) {
                 $query->selectRaw('MONTH(discharged_date) as month, COUNT(*) as total');
                 $query->groupBy('month');
@@ -95,7 +131,6 @@ class DashboardController extends Controller
 
             return $query->get()
                 ->map(function ($item) {
-                    // Convertir el número de mes a fecha para mantener la coherencia en el frontend
                     $date = Carbon::create(now()->year, $item->month, 1)->toDateString();
                     return [
                         'date' => $date,
@@ -103,6 +138,7 @@ class DashboardController extends Controller
                     ];
                 });
         } else {
+            // Código existente para filtros de semana y mes
             if (!$activeAdmissions) {
                 $query->selectRaw('DATE(discharged_date) as date, COUNT(*) as total');
             } else {

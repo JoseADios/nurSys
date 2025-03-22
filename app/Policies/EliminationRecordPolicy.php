@@ -6,6 +6,7 @@ use App\Models\EliminationRecord;
 use App\Models\User;
 use App\Services\TurnService;
 use Illuminate\Auth\Access\Response;
+use Log;
 
 class EliminationRecordPolicy
 {
@@ -48,6 +49,8 @@ class EliminationRecordPolicy
             ->orderBy('created_at', 'asc')
             ->first();
 
+        Log::info($lastEliminationRecord);
+
         return $lastEliminationRecord !== null;
     }
 
@@ -65,6 +68,13 @@ class EliminationRecordPolicy
      */
     public function update(User $user, EliminationRecord $eliminationRecord): Response
     {
+        if (!$user->hasRole(['admin', 'nurse'])) {
+            return Response::deny('No tienes el rol para actualizar este registro');
+        }
+
+        if ($user->id !== $eliminationRecord->nurse_id) {
+            return Response::deny('No tienes permiso para actualizar este registro');
+        }
         // eliminations policy todo:
         if (!$this->isInCurrentTurn($eliminationRecord)) {
             return Response::deny('No se puede actualizar una temperatura de un turno pasado');
@@ -78,7 +88,7 @@ class EliminationRecordPolicy
      */
     public function delete(User $user, EliminationRecord $eliminationRecord): Response
     {
-        return Response::deny('No tienes permiso para eliminar registros de temperatura');
+        return Response::deny('No tienes permiso para eliminar este registro');
     }
 
     /**

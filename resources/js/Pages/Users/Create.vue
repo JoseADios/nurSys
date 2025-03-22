@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import BirthDateInput from '@/Components/BirthDateInput.vue';
+import BirthDateInput from '@/Components/DateInput.vue';
 import CedulaInput from '@/Components/CedulaInput.vue';
 import ExequaturInput from '@/Components/ExequaturInput.vue';
 import FormatRole from '@/Components/FormatRole.vue';

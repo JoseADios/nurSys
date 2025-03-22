@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdmissionController;
 use App\Http\Controllers\BedController;
+use App\Http\Controllers\ClinicAreaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EliminationRecordController;
 use App\Http\Controllers\MedicalOrderController;
@@ -73,6 +74,9 @@ Route::middleware([
 
     Route::get('/users/filter', [UserController::class, 'filterUsers'])->name('users.filter');
     Route::resource('users', UserController::class);
+
+    // parametros
+    Route::get('clinicAreas', [ClinicAreaController::class, 'index'])->name('clinicAreas.index');
 
     // REPORTES
     Route::get( '/reports/temperatureRecord/{id}', [ReportController::class, 'temperatureRecordReport'])

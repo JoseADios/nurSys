@@ -123,7 +123,7 @@
 
                             <div class="space-y-2">
                                 <label for="comment"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Observación</label>
+                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Comentarios</label>
                                 <textarea id="comment" v-model="form.comment" rows="4"
                                     class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"></textarea>
                                 <InputError :message="form.errors.comment" class="mt-2" />
@@ -242,7 +242,7 @@ import { useGoBack } from '@/composables/useGoBack';
 import PhoneInput from '@/Components/PhoneInput.vue';
 import CedulaInput from '@/Components/CedulaInput.vue';
 import ExequaturInput from '@/Components/ExequaturInput.vue';
-import BirthDateInput from '@/Components/BirthDateInput.vue';
+import BirthDateInput from '@/Components/DateInput.vue';
 import FormatRole from '@/Components/FormatRole.vue';
 import InputError from '@/Components/InputError.vue';
 

@@ -36,7 +36,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         $search = $request->input('search', '');
-        $admissionId = $request->input('admission_id');
+        $admissionId = $request->integer('admission_id');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
         $showDeleted = $request->boolean('showDeleted');
@@ -81,7 +81,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
 
         return Inertia::render('MedicalOrders/Index', [
             'medicalOrders' => $medicalOrders,
-            'admission_id' => $request->admission_id,
+            'admission_id' => $admissionId,
             'filters' => [
                 'search' => $search,
                 'show_deleted' => $showDeleted,

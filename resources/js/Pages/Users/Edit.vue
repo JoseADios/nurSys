@@ -22,47 +22,44 @@
                         <!-- Left Column -->
                         <div class="space-y-4">
                             <div class="space-y-2">
-                                <label for="name"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Nombres</label>
-                                <input type="text" id="name" v-model="form.name"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+                                <InputLabel for="name" value="Nombre" />
+                                <TextInput type="text" id="name" v-model="form.name" class="mt-1 block w-full"
+                                    required />
                                 <InputError :message="form.errors.name" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="last_name"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Apellidos</label>
-                                <input type="text" id="last_name" v-model="form.last_name"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+                                <InputLabel for="last_name" value="Apellidos" />
+                                <TextInput type="text" id="last_name" v-model="form.last_name" class="mt-1 block w-full"
+                                    required />
                                 <InputError :message="form.errors.last_name" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="email"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Correo</label>
-                                <input type="email" id="email" v-model="form.email"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+                                <InputLabel for="email" value="Correo" />
+                                <TextInput type="email" id="email" v-model="form.email" class="mt-1 block w-full"
+                                    required />
                                 <InputError :message="form.errors.email" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <CedulaInput v-model="form.identification_card" />
+                                <InputLabel for="identification_card" value="Cédula" />
+                                <CedulaInput id="identification_card" v-model="form.identification_card"
+                                    class="mt-1 block w-full" required />
                                 <InputError :message="form.errors.identification_card" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <ExequaturInput v-model="form.exequatur" />
+                                <InputLabel for="exequatur" value="Exequatur" />
+                                <TextInput type="number" id="exequatur" required class="mt-1 block w-full"
+                                    v-model="form.exequatur" />
                                 <InputError :message="form.errors.exequatur" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="role"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Rol</label>
+                                <InputLabel for="role" value="Rol" />
                                 <select required id="role" v-model="form.role" name="role"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500">
+                                    class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                                     <option v-for="role in roles" :key="role.id" :value="role.name">
                                         <FormatRole :role="role.name" />
                                     </option>
@@ -73,9 +70,9 @@
                             <div class="space-y-2">
                                 <label for="address"
                                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Dirección</label>
-                                <textarea id="address" v-model="form.address" rows="4"
+                                <TextAreaInput id="address" v-model="form.address" rows="4"
                                     class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required></textarea>
+                                    required />
                                 <InputError :message="form.errors.address" class="mt-2" />
                             </div>
                         </div>
@@ -83,49 +80,40 @@
                         <!-- Right Column -->
                         <div class="space-y-4">
                             <div class="space-y-2">
-                                <label for="specialty"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Especialidad</label>
-                                <input type="text" id="specialty" v-model="form.specialty"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+                                <InputLabel for="specialty" value="Especialidad" />
+                                <TextInput type="text" id="specialty" v-model="form.specialty" class="mt-1 block w-full"
+                                    required />
                                 <InputError :message="form.errors.specialty" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="area"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Áreas</label>
-                                <select required id="area" v-model="form.area"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500">
-                                    <option v-for="area in areas" :key="area" :value="area.name">{{ area.name }}
-                                    </option>
-                                </select>
+                                <InputLabel for="email" value="Área" />
+                                <SelectInput id="area" v-model="form.area" :options="areas"
+                                    return-value="name" class="mt-1 block w-full" required />
                                 <InputError :message="form.errors.area" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <PhoneInput v-model="form.phone" />
+                                <InputLabel for="email" value="Teléfono" />
+                                <PhoneInput id="phone" v-model="form.phone" class="mt-1 block w-full" required/>
                                 <InputError :message="form.errors.phone" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <BirthDateInput v-model="form.birthdate" />
+                                <InputLabel for="email" value="Fecha de nacimiento" />
+                                <BirthDateInput v-model="form.birthdate" required/>
                                 <InputError :message="form.errors.birthdate" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="position"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Posición</label>
-                                <input type="text" id="position" v-model="form.position"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+                                <InputLabel for="email" value="Posición" />
+                                <TextInput type="text" id="position" v-model="form.position" class="mt-1 block w-full" required />
                                 <InputError :message="form.errors.position" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <label for="comment"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Comentarios</label>
-                                <textarea id="comment" v-model="form.comment" rows="4"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"></textarea>
+                                <InputLabel for="email" value="Comentarios" />
+                                <TextAreaInput id="comment" v-model="form.comment" rows="4" class="mt-1 block w-full"/>
                                 <InputError :message="form.errors.comment" class="mt-2" />
                             </div>
                         </div>
@@ -136,51 +124,6 @@
                             class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200">
                             Cambiar Contraseña
                         </button>
-
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 mr-0">
-                        <div v-show="userChangingPass != null"
-                            class="py-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                            <!-- Formulario para cambiar la contraseña  -->
-                            <form @submit.prevent="changePassword" class="space-y-6">
-                                <!-- Left Column -->
-                                <div class="space-y-4">
-
-                                    <div class="space-y-2">
-                                        <label for="password"
-                                            class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Nueva
-                                            contraseña</label>
-                                        <input type="password" id="password" v-model="formPassword.password"
-                                            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                            required>
-                                    </div>
-
-                                    <div class="space-y-2">
-                                        <label for="password_confirmation"
-                                            class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Confirmar
-                                            Contraseña</label>
-                                        <input type="password" id="password_confirmation"
-                                            v-model="formPassword.password_confirmation"
-                                            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                            required>
-                                    </div>
-
-                                    <div class="flex justify-end space-x-4 pt-4">
-                                        <button @click="userChangingPass = null"
-                                            class="px-4 py-2 text-sm font-medium text-gray-300 bg-slate-600 dark:bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
-                                            Cancelar
-                                        </button>
-                                        <button type="submit"
-                                            class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
-                                            Actualizar
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </form>
-                        </div>
-
                     </div>
 
                     <!-- Buttons -->
@@ -205,6 +148,48 @@
                 </form>
             </div>
         </div>
+
+        <!-- modal para cambiar contraseña -->
+        <DialogModal :show="userChangingPass" @close="userChangingPass = null">
+            <template #title>
+                Cambiar Contraseña
+            </template>
+
+            <template #content>
+                <div v-show="userChangingPass != null" class="py-2 px-4">
+
+                    <!-- Formulario para cambiar la contraseña  -->
+                    <form>
+                        <div class="space-y-2">
+                            <InputLabel for="email" value="Nueva contraseña" />
+                            <TextInput type="password" id="password" v-model="formPassword.password" name="password"
+                                class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500" />
+                        </div>
+                        <div class="space-y-2">
+                            <label for="password_confirmation"
+                                class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Confirmar
+                                Contraseña</label>
+                            <TextInput type="password" id="password_confirmation" name="password_confirmation"
+                                v-model="formPassword.password_confirmation"
+                                class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500" />
+                        </div>
+                    </form>
+                </div>
+            </template>
+
+            <template #footer>
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button @click="userChangingPass = null"
+                        class="px-4 py-2 text-sm font-medium text-gray-300 bg-slate-600 dark:bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
+                        Cancelar
+                    </button>
+                    <button @click="changePassword"
+                        class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
+                        Actualizar
+                    </button>
+                </div>
+            </template>
+        </DialogModal>
 
         <!-- Modal para confirmar eliminacion -->
         <ConfirmationModal :show="userBeingDeleted != null" @close="userBeingDeleted = null">
@@ -238,13 +223,17 @@ import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import { useGoBack } from '@/composables/useGoBack';
 import PhoneInput from '@/Components/PhoneInput.vue';
 import CedulaInput from '@/Components/CedulaInput.vue';
 import ExequaturInput from '@/Components/ExequaturInput.vue';
 import BirthDateInput from '@/Components/DateInput.vue';
 import FormatRole from '@/Components/FormatRole.vue';
 import InputError from '@/Components/InputError.vue';
+import TextInput from '@/Components/TextInput.vue';
+import SelectInput from '@/Components/SelectInput.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextAreaInput from '@/Components/TextAreaInput.vue';
+import DialogModal from '@/Components/DialogModal.vue';
 
 export default {
     props: {
@@ -266,7 +255,12 @@ export default {
         ExequaturInput,
         BirthDateInput,
         FormatRole,
-        InputError
+        InputError,
+        TextInput,
+        SelectInput,
+        InputLabel,
+        TextAreaInput,
+        DialogModal
     },
     data() {
         return {
@@ -313,13 +307,10 @@ export default {
                 onSuccess: () => {
                     this.formPassword.password = null;
                     this.formPassword.password_confirmation = null;
+                    this.userChangingPass = null;
                 },
             });
         }
-    },
-    setup() {
-        const { goBack } = useGoBack()
-        return { goBack }
     }
 }
 </script>

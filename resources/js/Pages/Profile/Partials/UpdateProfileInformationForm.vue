@@ -50,7 +50,7 @@ const activeTab = ref('personal'); // 'personal', 'professional', 'contact'
 onMounted(async () => {
     try {
         const response = await axios.get(route('clinicAreas.index'));
-        clinicAreas.value = response.data.map(area => ({ value: area.id, label: area.name }));
+        clinicAreas.value = response.data.map(area => ({ id: area.id, name: area.name }));
     } catch (error) {
         console.error('Error fetching clinic areas:', error);
     }
@@ -289,7 +289,7 @@ const setActiveTab = (tab) => {
                             </div>
 
                             <!-- Área -->
-                            <div>
+                            <div class="mb-6">
                                 <InputLabel for="area" value="Área" />
                                 <SelectInput v-model:model-value="form.area" :options="clinicAreas" />
                                 <InputError :message="form.errors.specialty" class="mt-2" />

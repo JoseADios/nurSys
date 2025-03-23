@@ -7,7 +7,8 @@
         </template>
 
         <div class="max-w-3xl mx-auto py-8 px-4 sm:px-6">
-            <form @submit.prevent="submit" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+            <form @submit.prevent="submit"
+                class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <!-- Personal Information Section -->
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
@@ -18,34 +19,32 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Nombres -->
                         <div>
-                            <label for="first_name" class="block text-sm font-medium text-gray-800 dark:text-white">Nombres</label>
-                            <input type="text" id="first_name" v-model="form.first_name"
-                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required>
+                            <InputLabel for="first_name" value="Nombres" />
+                            <TextInput id="first_name" v-model="form.first_name" class="mt-1 block w-full" required
+                                autocomplete="first_name" />
                             <InputError :message="form.errors.first_name" class="mt-2" />
                         </div>
 
                         <!-- Primer Apellido -->
                         <div>
-                            <label for="first_surname" class="block text-sm font-medium text-gray-800 dark:text-white">Primer Apellido</label>
-                            <input type="text" id="first_surname" v-model="form.first_surname"
-                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required>
+                            <InputLabel for="first_surname" value="Primer Apellido" />
+                            <TextInput id="first_surname" v-model="form.first_surname" class="mt-1 block w-full"
+                                required autocomplete="first_surname" />
                             <InputError :message="form.errors.first_surname" class="mt-2" />
                         </div>
 
                         <!-- Segundo Apellido -->
                         <div>
-                            <label for="second_surname" class="block text-sm font-medium text-gray-800 dark:text-white">Segundo Apellido</label>
-                            <input type="text" id="second_surname" v-model="form.second_surname"
-                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required>
+                            <InputLabel for="second_surname" value="Segundo Apellido" />
+                            <TextInput id="second_surname" v-model="form.second_surname" class="mt-1 block w-full"
+                                required autocomplete="second_surname" />
                             <InputError :message="form.errors.second_surname" class="mt-2" />
                         </div>
 
                         <!-- Teléfono -->
                         <div>
-                            <PhoneInput v-model="form.phone" />
+                            <InputLabel for="phone" value="Teléfono" />
+                            <PhoneInput id="phone" v-model="form.phone" />
                             <InputError :message="form.errors.phone" class="mt-2" />
                         </div>
                     </div>
@@ -61,21 +60,23 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Cédula -->
                         <div>
-                            <CedulaInput v-model="form.identification_card" />
+                            <InputLabel for="identification_card" value="Cédula" />
+                            <CedulaInput id="identification_card" v-model="form.identification_card" />
                             <InputError :message="form.errors.identification_card" class="mt-2" />
                         </div>
 
                         <!-- Nacionalidad -->
                         <div>
-                            <label for="nationality" class="block text-sm font-medium text-gray-800 dark:text-white">Nacionalidad</label>
-                            <input list="nationalityOptions" id="nationality" v-model="form.nationality"
-                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            <InputLabel for="nationality" value="Nacionalidad" />
+                            <input list="options" id="nationality" v-model="form.nationality"
+                                class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                 required>
-                            <datalist id="nationalityOptions">
+                            <datalist id="options">
                                 <option v-for="nationality in nationalities" :key="nationality.id">
                                     {{ nationality.name }}
                                 </option>
                             </datalist>
+                            </input>
                             <InputError :message="form.errors.nationality" class="mt-2" />
                         </div>
                     </div>
@@ -91,19 +92,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Email -->
                         <div>
-                            <label for="email" class="block text-sm font-medium text-gray-800 dark:text-white">Correo Electrónico</label>
-                            <input type="email" id="email" v-model="form.email"
-                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required>
+                            <InputLabel for="email" value="Correo Electrónico" />
+                            <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full" required
+                                autocomplete="email" />
                             <InputError :message="form.errors.email" class="mt-2" />
                         </div>
 
                         <!-- Dirección -->
                         <div class="md:col-span-2">
-                            <label for="address" class="block text-sm font-medium text-gray-800 dark:text-white">Dirección</label>
-                            <textarea id="address" v-model="form.address" rows="3"
-                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required></textarea>
+                            <InputLabel for="address" value="Dirección" />
+                            <TextAreaInput id="address" v-model="form.address" rows="3" maxlength="255"
+                                class="mt-1 block w-full" required />
                             <InputError :message="form.errors.address" class="mt-2" />
                         </div>
                     </div>
@@ -119,45 +118,32 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Fecha de nacimiento -->
                         <div>
-                            <label for="birthdate" class="block text-sm font-medium text-gray-800 dark:text-white">Fecha de Nacimiento</label>
-                            <input type="date" id="birthdate" v-model="form.birthdate"
-                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required>
+                            <InputLabel for="birthdate" value="Fecha de Nacimiento" />
+                            <DateInput v-model="form.birthdate" />
                             <InputError :message="form.errors.birthdate" class="mt-2" />
                         </div>
 
                         <!-- Estado Civil -->
                         <div>
-                            <label for="marital_status" class="block text-sm font-medium text-gray-800 dark:text-white">Estado Civil</label>
-                            <select id="marital_status" v-model="form.marital_status"
-                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required>
-                                <option v-for="status in maritalSatuses" :key="status.id">
-                                    {{ status.name }}
-                                </option>
-                            </select>
+                            <InputLabel for="marital_status" value="Estado Civil" />
+                            <SelectInput id="marital_status" v-model="form.marital_status" :options="maritalSatuses"
+                                class="mt-1 block w-full" required />
                             <InputError :message="form.errors.marital_status" class="mt-2" />
                         </div>
 
                         <!-- Cargo -->
                         <div>
-                            <label for="position" class="block text-sm font-medium text-gray-800 dark:text-white">Cargo</label>
-                            <input type="text" id="position" v-model="form.position"
-                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                required>
+                            <InputLabel for="position" value="Cargo" />
+                            <TextInput id="position" v-model="form.position" type="text" class="mt-1 block w-full"
+                                required />
                             <InputError :message="form.errors.position" class="mt-2" />
                         </div>
 
                         <!-- ARS -->
                         <div>
-                            <label for="ars" class="block text-sm font-medium text-gray-800 dark:text-white">ARS</label>
-                            <select id="ars" v-model="form.ars"
-                                class="block p-2.5 w-full text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                <option value="">Ninguno</option>
-                                <option v-for="ars in arss" :key="ars.id">
-                                    {{ ars.name }}
-                                </option>
-                            </select>
+                            <InputLabel for="ars" value="ARS" />
+                            <SelectInput id="ars" v-model="form.ars" :options="arss" class="mt-1 block
+                                w-full" />
                             <InputError :message="form.errors.ars" class="mt-2" />
                         </div>
                     </div>
@@ -226,6 +212,11 @@ import UserIcon from '@/Components/Icons/UserIcon.vue';
 import Id2Icon from '@/Components/Icons/Id2Icon.vue';
 import MailIcon from '@/Components/Icons/MailIcon.vue';
 import FileInfoIcon from '@/Components/Icons/FileInfoIcon.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import SelectInput from '@/Components/SelectInput.vue';
+import DateInput from '@/Components/DateInput.vue';
+import TextAreaInput from '@/Components/TextAreaInput.vue';
+import TextInput from '@/Components/TextInput.vue';
 
 export default {
     props: {
@@ -249,6 +240,11 @@ export default {
         Id2Icon,
         MailIcon,
         FileInfoIcon,
+        InputLabel,
+        SelectInput,
+        DateInput,
+        TextAreaInput,
+        TextInput
     },
     data() {
         return {
@@ -284,10 +280,6 @@ export default {
         restorePatient() {
             this.$inertia.put(route('patients.update', this.patient.id), { active: true });
         }
-    },
-    setup() {
-        const { goBack } = useGoBack()
-        return { goBack }
     }
 }
 </script>

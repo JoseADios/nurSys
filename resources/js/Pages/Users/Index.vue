@@ -129,7 +129,7 @@
 
         <!-- Tabla con scroll horizontal en móvil -->
         <div class="px-4 lg:px-10">
-            <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-t-lg">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -216,8 +216,8 @@
                 <div v-if="!users.data.length" class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
                     No hay registros disponibles.
                 </div>
-                <Pagination :pagination="users" :filters="form" />
             </div>
+            <Pagination :pagination="users" :filters="form" class="rounded-b-lg border border-t-0 border-gray-200 dark:border-gray-700" />
         </div>
         <div class="pb-4"></div>
     </AppLayout>

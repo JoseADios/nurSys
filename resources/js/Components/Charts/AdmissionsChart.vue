@@ -252,7 +252,7 @@ watch([() => props.admissions, () => props.discharges], ([newAdmissions, newDisc
     <div class="w-full">
         <div class="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ingresos y Altas</h3>
-            <div class="flex space-x-2">
+            <div class="grid grid-cols-2 gap-2 sm:flex sm:space-x-2">
                 <button @click="handleTimeFilterChange('week')" :class="[
                     'px-3 py-1 text-sm rounded-md transition',
                     selectedTimeFilter === 'week'

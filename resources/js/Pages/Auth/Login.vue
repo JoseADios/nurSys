@@ -40,9 +40,8 @@ onMounted(() => {
     }
 });
 </script>
-
 <template>
-    <Head title="Log in" />
+    <Head title="Iniciar sesión" />
 
     <AuthenticationCard>
         <template #logo>
@@ -55,7 +54,7 @@ onMounted(() => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="email" value="Correo electrónico" />
                 <TextInput
                     id="email"
                     v-model="form.email"
@@ -69,7 +68,7 @@ onMounted(() => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+                <InputLabel for="password" value="Contraseña" />
                 <TextInput
                     id="password"
                     v-model="form.password"
@@ -90,7 +89,7 @@ onMounted(() => {
 
             <div class="flex items-center justify-end mt-4">
                 <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                    Olvidaste tu contraseña?
+                    ¿Olvidaste tu contraseña?
                 </Link>
 
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">

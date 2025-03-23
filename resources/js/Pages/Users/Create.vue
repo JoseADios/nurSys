@@ -18,60 +18,50 @@
                     </ul>
                 </div> -->
 
-                <!-- <div class="text-white dark:text-white">{{  }}</div> -->
-
                 <!-- Form -->
                 <form @submit.prevent="submit" class="space-y-6">
                     <!-- Grid container -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Left Column -->
+                        <!-- Name -->
                         <div class="space-y-4">
-                            <div class="space-y-2">
-                                <label for="name" class="block text-sm font-medium text-gray-900 dark:text-white">Nombres</label>
-                                <input type="text" id="name" v-model="form.name"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+
+                            <div class="mb-6">
+                                <InputLabel for="name" value="Nombre" />
+                                <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required
+                                    autocomplete="name" />
                                 <InputError :message="form.errors.name" class="mt-2" />
                             </div>
-
-                            <div class="space-y-2">
-                                <label for="last_name" class="block text-sm font-medium text-gray-900 dark:text-white">Apellidos</label>
-                                <input type="text" id="last_name" v-model="form.last_name"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+                            <div class="mb-6">
+                                <InputLabel for="last_name" value="Apellidos" />
+                                <TextInput id="last_name" v-model="form.last_name" type="text" class="mt-1 block w-full"
+                                    required autocomplete="last_name" />
                                 <InputError :message="form.errors.last_name" class="mt-2" />
                             </div>
-
-                            <div class="space-y-2">
-                                <label for="email" class="block text-sm font-medium text-gray-900 dark:text-white">Correo</label>
-                                <input type="email" id="email" v-model="form.email"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+                            <div class="mb-6">
+                                <InputLabel for="email" value="Correo" />
+                                <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full"
+                                    required autocomplete="email" />
                                 <InputError :message="form.errors.email" class="mt-2" />
                             </div>
-
-                            <div class="space-y-2">
-                                <label for="password" class="block text-sm font-medium text-gray-900 dark:text-white">Contraseña</label>
-                                <input type="password" id="password" v-model="form.password"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+                            <div class="mb-6">
+                                <InputLabel for="password" value="Contraseña" />
+                                <TextInput id="password" v-model="form.password" type="password"
+                                    class="mt-1 block w-full" required autocomplete="password" />
                                 <InputError :message="form.errors.password" class="mt-2" />
                             </div>
-
-                            <div class="space-y-2">
-                                <label for="password_confirmation"
-                                    class="block text-sm font-medium text-gray-900 dark:text-white">Confirmar
-                                    Contraseña</label>
-                                <input type="password" id="password_confirmation" v-model="form.password_confirmation"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+                            <div class="mb-6">
+                                <InputLabel for="password_confirmation" value="Confirmar Contraseña" />
+                                <TextInput id="password_confirmation" v-model="form.password_confirmation"
+                                    type="password" class="mt-1 block w-full" required
+                                    autocomplete="password_confirmation" />
                                 <InputError :message="form.errors.password_confirmation" class="mt-2" />
                             </div>
 
-                            <div class="space-y-2">
-                                <label for="role" class="block text-sm font-medium text-gray-900 dark:text-white">Rol</label>
+                            <div class="mb-6">
+                                <InputLabel for="role" value="Rol" />
                                 <select required id="role" v-model="form.role"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500">
+                                    class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                                     <option v-for="role in roles" :key="role" :value="role.id">
                                         <FormatRole :role="role.name" />
                                     </option>
@@ -79,13 +69,16 @@
                                 <InputError :message="form.errors.role" class="mt-2" />
                             </div>
 
-                            <div class="space-y-2">
+                            <div class="mb-6">
+                                <InputLabel for="identification_card" value="Cédula" />
                                 <CedulaInput v-model="form.identification_card" />
                                 <InputError :message="form.errors.identification_card" class="mt-2" />
                             </div>
 
-                            <div class="space-y-2">
-                                <ExequaturInput v-model="form.exequatur" />
+                            <div class="mb-6">
+                                <InputLabel for="exequatur" value="Exequatur" />
+                                <TextInput id="exequatur" v-model="form.exequatur" type="number" class="mt-1 block w-full"
+                                    required autocomplete="exequatur" />
                                 <InputError :message="form.errors.exequatur" class="mt-2" />
                             </div>
 
@@ -93,56 +86,48 @@
 
                         <!-- Right Column -->
                         <div class="space-y-4">
-                            <div class="space-y-2">
-                                <label for="specialty" class="block text-sm font-medium text-gray-900 dark:text-white">Especialidad</label>
-                                <input type="text" id="specialty" v-model="form.specialty"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+                            <div class="mb-6">
+                                <InputLabel for="specialty" value="Especialidad" />
+                                <TextInput id="specialty" v-model="form.specialty" type="text" class="mt-1 block w-full"
+                                    required autocomplete="specialty" />
                                 <InputError :message="form.errors.specialty" class="mt-2" />
                             </div>
 
-                            <div class="space-y-2">
-                                <label for="area" class="block text-sm font-medium text-gray-900 dark:text-white">Áreas</label>
-                                <select required id="area" v-model="form.area"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500">
-                                    <option v-for="area in areas" :key="area" :value="area.name">{{ area.name }}</option>
-                                </select>
-                                <InputError :message="form.errors.area" class="mt-2" />
+                            <div class="mb-6">
+                                <InputLabel for="area" value="Área" />
+                                <SelectInput v-model:model-value="form.area" :options="areas"   />
+                                <InputError :message="form.errors.specialty" class="mt-2" />
                             </div>
 
-                            <div class="space-y-2">
-                                <PhoneInput v-model="form.phone" />
+                            <div class="mb-6">
+                                <InputLabel for="phone" value="Teléfono" />
+                                <PhoneInput id="specialty" v-model="form.phone" required autocomplete="phone" />
                                 <InputError :message="form.errors.phone" class="mt-2" />
                             </div>
 
-                            <div class="space-y-2">
-                                <BirthDateInput v-model="form.birthdate" />
+                            <div class="mb-6">
+                                <InputLabel for="birthdate" value="Fecha de nacimiento" />
+                                <BirthDateInput id="specialty" v-model="form.birthdate" required />
                                 <InputError :message="form.errors.birthdate" class="mt-2" />
                             </div>
-
-                            <div class="space-y-2">
-                                <label for="position" class="block text-sm font-medium text-gray-900 dark:text-white">Posición</label>
-                                <input type="text" id="position" v-model="form.position"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required>
+                            <div class="mb-6">
+                                <InputLabel for="position" value="Posicón" />
+                                <TextInput id="position" v-model="form.position" type="text" class="mt-1 block w-full"
+                                    required autocomplete="position" />
                                 <InputError :message="form.errors.position" class="mt-2" />
                             </div>
-
-                            <div class="space-y-2">
-                                <label for="comment" class="block text-sm font-medium text-gray-900 dark:text-white">Observación</label>
-                                <textarea id="comment" v-model="form.comment" rows="4"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"></textarea>
-                                <InputError :message="form.errors.comment" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
-                                <label for="address" class="block text-sm font-medium text-gray-900 dark:text-white">Dirección</label>
-                                <textarea id="address" v-model="form.address" rows="4"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required></textarea>
+                            <div class="mb-6">
+                                <InputLabel for="address" value="Dirección" />
+                                <TextAreaInput id="address" v-model="form.address" type="text" class="mt-1 block w-full"
+                                    required autocomplete="address" />
                                 <InputError :message="form.errors.address" class="mt-2" />
                             </div>
-
+                            <div class="mb-6">
+                                <InputLabel for="comment" value="Observación" />
+                                <TextAreaInput id="comment" v-model="form.comment" type="text" class="mt-1 block w-full"
+                                     autocomplete="comment" />
+                                <InputError :message="form.errors.comment" class="mt-2" />
+                            </div>
                         </div>
 
                     </div>
@@ -169,7 +154,7 @@
 </template>
 
 <script>
-import BirthDateInput from '@/Components/BirthDateInput.vue';
+import BirthDateInput from '@/Components/DateInput.vue';
 import CedulaInput from '@/Components/CedulaInput.vue';
 import ExequaturInput from '@/Components/ExequaturInput.vue';
 import FormatRole from '@/Components/FormatRole.vue';
@@ -177,6 +162,10 @@ import InputError from '@/Components/InputError.vue';
 import PhoneInput from '@/Components/PhoneInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import SelectInput from '@/Components/SelectInput.vue';
+import TextAreaInput from '@/Components/TextAreaInput.vue';
 
 export default {
     components: {
@@ -187,7 +176,11 @@ export default {
         ExequaturInput,
         CedulaInput,
         BirthDateInput,
-        FormatRole
+        FormatRole,
+        InputLabel,
+        TextInput,
+        SelectInput,
+        TextAreaInput
     },
     props: {
         roles: Array,

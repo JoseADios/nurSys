@@ -10,14 +10,14 @@
                     class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Piso</label>
                 <div class="flex gap-2">
                     <select name="bed_floor" id="bed_floor" v-model="filtersForm.bed_floor" @change="updateRoomsAndBeds"
-                        class="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 dark:bg-gray-700 dark:text-white">
+                        class="w-full p-2.5 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                         <option value="">Seleccione un piso</option>
                         <option v-for="floor in uniqueFloors" :key="floor" :value="floor">
                             Piso {{ floor }}
                         </option>
                     </select>
                     <button v-if="filtersForm.bed_floor" @click="clearFloorSelection" type="button"
-                        class="p-2.5 text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 flex-shrink-0">
+                        class="p-2.5 text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-800 flex-shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -33,14 +33,14 @@
                     class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Sala</label>
                 <div class="flex gap-2">
                     <select name="bed_room" id="bed_room" v-model="filtersForm.bed_room" @change="updateBeds"
-                        class="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 dark:bg-gray-700 dark:text-white">
+                        class="w-full p-2.5 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                         <option value="">Seleccione una sala</option>
                         <option v-for="room in filteredRooms" :key="room" :value="room">
                             Sala {{ room }}
                         </option>
                     </select>
                     <button v-if="filtersForm.bed_room" @click="clearRoomSelection" type="button"
-                        class="p-2.5 text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 flex-shrink-0">
+                        class="p-2.5 text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-800 flex-shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -55,14 +55,14 @@
                 <label for="bed" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Cama</label>
                 <div class="flex gap-2">
                     <select id="bed" v-model="selectedBedId" @change="updateSelectedBed(selectedBedId)"
-                        class="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 dark:bg-gray-700 dark:text-white">
+                        class="w-full p-2.5 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                         <option value="">Seleccione una cama</option>
                         <option v-for="bed in filteredBeds" :key="bed.id" :value="bed.id">
                             Cama {{ bed.number }}
                         </option>
                     </select>
                     <button v-if="selectedBedId" @click="clearBedSelection" type="button"
-                        class="p-2.5 text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 flex-shrink-0">
+                        class="p-2.5 text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-800 flex-shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

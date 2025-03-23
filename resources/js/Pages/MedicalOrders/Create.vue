@@ -6,7 +6,6 @@
             </h2>
         </template>
 
-
         <div class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
             <form @submit.prevent="submit" class="max-w-3xl mx-auto">
 
@@ -40,6 +39,10 @@ export default {
     props: {
         admissions: Array,
         admission_id: Number,
+        error: {
+            type: Object,
+            default: null
+        }
     },
     components: {
         AppLayout,

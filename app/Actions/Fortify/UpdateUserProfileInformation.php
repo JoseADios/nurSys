@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -20,7 +21,16 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'identification_card' => ['required', 'max:12', 'min:12', Rule::unique('users')->ignore($user->id)],
+            'exequatur' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'specialty' => ['required', 'string', 'max:255'],
+            'area' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'max:14', 'min:14'],
+            'address' => ['required', 'string', 'max:255'],
+            'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
+            'position' => ['required', 'string', 'max:255'],
+            'comment' => ['string'],
             'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
         ])->validateWithBag('updateProfileInformation');
 
@@ -28,14 +38,25 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             $user->updateProfilePhoto($input['photo']);
         }
 
-        if ($input['email'] !== $user->email &&
-            $user instanceof MustVerifyEmail) {
+        if (
+            $input['email'] !== $user->email &&
+            $user instanceof MustVerifyEmail
+        ) {
             $this->updateVerifiedUser($user, $input);
         } else {
             $user->forceFill([
                 'name' => $input['name'],
                 'last_name' => $input['last_name'],
                 'email' => $input['email'],
+                'identification_card' => $input['identification_card'],
+                'exequatur' => $input['exequatur'],
+                'specialty' => $input['specialty'],
+                'area' => $input['area'],
+                'phone' => $input['phone'],
+                'address' => $input['address'],
+                'birthdate' => $input['birthdate'],
+                'position' => $input['position'],
+                'comment' => $input['comment'],
             ])->save();
         }
     }

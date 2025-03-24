@@ -59,10 +59,10 @@ export default {
     methods: {
         submit() {
             if (!this.form.admission_id) {
-                this.error = 'Por favor, seleccione un ingreso.';
+                // this.error = 'Por favor, seleccione un ingreso.';
                 return;
             }
-            this.error = null;
+            // this.error = null;
             this.$inertia.post(route('medicalOrders.store'), this.form);
         }
     }

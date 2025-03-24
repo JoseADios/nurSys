@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Admission;
 use App\Models\Bed;
+use App\Models\MedicalOrder;
+use App\Models\NurseRecord;
 use App\Models\Patient;
+use App\Services\TurnService;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 
@@ -33,6 +37,8 @@ class DashboardController extends Controller
             'upcoming_medications' => $this->getUpcomingMedications(),
             'patients_high_temperature' => $this->getPatientsHighTemperature(),
             'top_doctors_most_admissions' => $this->getTop3DoctorsWithMostAdmissions(),
+            'pending_docs' => $this->getPendingDocumentsForCurrentUser(),
+            'user_role' => Auth::user()->roles[0]->name,
         ];
 
         return Inertia::render('Dashboard', [
@@ -291,4 +297,45 @@ class DashboardController extends Controller
 
         return $query->get();
     }
+
+    private function getPendingDocumentsForCurrentUser()
+    {
+        $userRole = Auth::user()->roles[0]->name;
+        $pendingOrders = null;
+        $pendingNurseR = null;
+
+        if ($userRole === 'doctor' || $userRole === 'admin') {
+            $pendingOrders = MedicalOrder::query()
+                ->with('admission', 'admission.bed', 'admission.patient')
+                ->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()])
+                ->where('doctor_id', Auth::id())
+                ->whereNull('doctor_sign')
+                ->get()
+            ;
+        }
+
+        if ($userRole === 'nurse' || $userRole === 'admin') {
+            $turnService = new TurnService();
+            $currentTurn = $turnService->getCurrentTurn();
+            $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+
+            $pendingNurseR = NurseRecord::query()
+                ->with('admission', 'admission.bed', 'admission.patient')
+                ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+                ->where('nurse_id', Auth::id())
+                ->whereNull('nurse_sign')
+                ->get()
+            ;
+        }
+
+        if ($userRole === 'admin') {
+            return $pendingOrders->merge($pendingNurseR);
+        } elseif ($userRole === 'doctor') {
+            return $pendingOrders;
+        } elseif ($userRole === 'nurse') {
+            return $pendingNurseR;
+        }
+
+    }
+
 }

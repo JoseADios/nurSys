@@ -21,6 +21,7 @@ import AccessGate from '@/Components/Access/AccessGate.vue';
 import TopDoctorsAdmissions from '@/Components/TopDoctorsAdmissions.vue';
 import axios from 'axios';
 import { ref } from 'vue';
+import PendingDocumentsToSign from '@/Components/PendingDocumentsToSign.vue';
 
 const props = defineProps({
     stats: {
@@ -399,6 +400,11 @@ async function fetchData() {
                                 </div>
                             </div>
                         </AccessGate>
+
+                        <AccessGate :except-role="['receptionist']">
+                            <PendingDocumentsToSign :pending-documents="stats.pending_docs" :user-role="stats.user_role" />
+                        </AccessGate>
+
 
                         <AccessGate role="admin">
                             <TopDoctorsAdmissions :doctors="stats.top_doctors_most_admissions" />

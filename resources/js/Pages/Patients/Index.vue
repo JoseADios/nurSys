@@ -71,7 +71,11 @@
             <div class="flex flex-col md:flex-row gap-4 py-2">
                 <!-- Búsqueda -->
                 <div class="relative w-full md:w-1/3">
-                    <TextInput type="text" v-model="form.search" @input="submitFilter()" class="w-full" placeholder="Buscar ..." />
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
+                    </div>
+                    <TextInput type="text" v-model="form.search" @input="submitFilter()" class="pl-10 w-full"
+                        placeholder="Buscar..." />
                     <button v-if="form.search" @click="form.search = ''; submitFilter()"
                         class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
                         <XIcon class="h-5 w-5" />
@@ -138,7 +142,7 @@
                                 <th scope="col" class="px-4 py-3 cursor-pointer hidden sm:table-cell"
                                     @click="sort('id')">
                                     ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                        }}</span>
+                                    }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3 cursor-pointer" @click="sort('is_hospitalized')">
                                     <span class="hidden md:inline">Ingresado</span>
@@ -156,7 +160,7 @@
                                     @click="sort('phone')">
                                     Teléfono <span v-if="form.sortField === 'phone'">{{ form.sortDirection === 'asc' ?
                                         '↑' : '↓'
-                                        }}</span>
+                                    }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3 cursor-pointer hidden md:table-cell"
                                     @click="sort('identification_card')">
@@ -174,7 +178,7 @@
                                     @click="sort('email')">
                                     Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑'
                                         : '↓'
-                                        }}</span>
+                                    }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3"> Acciones </th>
                             </tr>
@@ -228,7 +232,8 @@
                     </div>
                 </div>
             </div>
-            <Pagination :pagination="patients" :filters="form" class="border border-b-0 border-gray-200 dark:border-gray-700/60 rounded-b-lg" />
+            <Pagination :pagination="patients" :filters="form"
+                class="border border-b-0 border-gray-200 dark:border-gray-700/60 rounded-b-lg" />
         </div>
 
     </AppLayout>

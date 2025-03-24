@@ -44,6 +44,9 @@ class NurseRecordDetailPolicy
      */
     public function create(User $user, NurseRecord $nurseRecord): Response
     {
+        if (!$user->hasRole('nurse')) {
+            return Response::deny('No tienes permiso para crear registros');
+        }
         if ($nurseRecord->nurse_id !== $user->id) {
             return Response::deny('No tienes permiso para actualizar este registro');
         }
@@ -53,9 +56,27 @@ class NurseRecordDetailPolicy
         if ($nurseRecord->admission->discharged_date !== null) {
             return Response::deny('No se pueden crear registros para un ingreso que ya ha sido dado de alta');
         }
+        if ($this->canCreateInTurn($user, $nurseRecord)->denied()) {
+            return Response::deny('No puedes crear registros en turnos pasados');
+        }
 
         return Response::allow();
     }
+
+    // verificar si el record fue creado en un turno pasado
+    public function canCreateInTurn(User $user, NurseRecord $nurseRecord): Response
+    {
+        $turnService = new TurnService();
+        $currentTurn = $turnService->getCurrentTurn();
+        $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+
+        if ($nurseRecord->created_at < $dateRange['start']) {
+            return Response::deny('No puedes crear registros en turnos pasados');
+        }
+
+        return Response::allow();
+    }
+
 
     /**
      * Determine whether the user can update the model.

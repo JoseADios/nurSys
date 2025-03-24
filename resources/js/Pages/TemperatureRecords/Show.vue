@@ -151,58 +151,46 @@
                     <AccessGate :permission="['temperatureDetail.update']" v-if="lastTemperature" class="w-full p-8">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Ultima temperatura</h3>
                         <form @submit.prevent="updateDetail" class="space-y-4">
-                            <div class="grid md:grid-cols-1 gap-4">
-                                <div>
-                                    <label for="temperature"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Temperatura
-                                    </label>
-                                    <input type="number" step="0.1" id="temperature"
-                                        v-model="formDetailUpdate.temperature" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500
-                                        dark:bg-gray-800 dark:text-white"
-                                        placeholder="Temperatura del paciente (°C)" />
-                                </div>
-                            </div>
+                            <div>
+                                <InputLabel for="temperature" value="Temperatura" />
+                                <input type="number" step="0.1" id="temperature" v-model="formDetailUpdate.temperature"
+                                    required
+                                    class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                    placeholder="Temperatura del paciente (°C)" />
 
-                            <div class="pt-4">
-                                <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
-                                    hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-                                    transition-colors duration-300">
-                                    Actualizar
-                                </button>
+                                <div class="pt-8">
+                                    <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
+                                                                        hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
+                                                                        transition-colors duration-300">
+                                        Actualizar
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </AccessGate>
 
                     <!-- Formulario para agregar nuevo detalle -->
-                    <AccessGate :permission="['temperatureDetail.create']" :class="['w-full p-8', {
-                        'w-[50%]': !lastTemperature
-                    }]">
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura
-                        </h3>
+                    <AccessGate :permission="['temperatureDetail.create']"
+                        :class="['w-full p-8', { 'w-[50%]': !lastTemperature }]">
 
-                        <form @submit.prevent="submitCreateDetail" class="space-y-4">
-                            <div class="grid md:grid-cols-1 gap-4">
-                                <div>
-                                    <label for="temperature"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Temperatura
-                                    </label>
-                                    <input type="number" step="0.1" id="temperature" v-model="formDetail.temperature"
-                                        required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500
-                                        dark:bg-gray-800 dark:text-white"
-                                        placeholder="Temperatura del paciente (°C)" />
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura</h3>
+                        <form @submit.prevent="submitCreateDetail" :class="['space-y-4', {
+                            'md:grid-cols-1 place-items-center': !lastTemperature
+                        }]">
+                            <div>
+                                <InputLabel for="temperature" value="Temperatura" />
+                                <input type="number" step="0.1" id="temperature" v-model="formDetail.temperature"
+                                    required
+                                    class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                    placeholder="Temperatura del paciente (°C)" />
+
+                                <div class="pt-8">
+                                    <button type="submit" class="w-full max-w-sm bg-blue-600 text-white py-2 px-4 rounded-md
+                                            hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                                            transition-colors duration-300">
+                                        Agregar
+                                    </button>
                                 </div>
-                            </div>
-
-                            <div class="pt-4">
-                                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
-                                    hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                                    transition-colors duration-300">
-                                    Agregar
-                                </button>
                             </div>
                         </form>
                     </AccessGate>
@@ -222,9 +210,7 @@
                                         Evacuaciones
                                     </label>
                                     <input type="number" id="evacuations" v-model="formEliminationsUpdate.evacuations"
-                                        required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500
-                                        dark:bg-gray-800 dark:text-white"
+                                        required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         placeholder="Num. de evacuaciones del paciente" />
                                 </div>
                                 <div>
@@ -233,9 +219,7 @@
                                         Micciones
                                     </label>
                                     <input type="text" id="urinations" v-model="formEliminationsUpdate.urinations"
-                                        required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500
-                                        dark:bg-gray-800 dark:text-white"
+                                        required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         placeholder="Num. de micciones del paciente" />
                                 </div>
                             </div>
@@ -265,9 +249,7 @@
                                             Evacuaciones
                                         </label>
                                         <input type="number" id="evacuations" v-model="formEliminations.evacuations"
-                                            required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500
-                                        dark:bg-gray-800 dark:text-white"
+                                            required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                             placeholder="Num. de evacuaciones del paciente" />
                                     </div>
                                     <div>
@@ -276,9 +258,7 @@
                                             Micciones
                                         </label>
                                         <input type="text" id="urinations" v-model="formEliminations.urinations"
-                                            required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500
-                                        dark:bg-gray-800 dark:text-white"
+                                            required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                             placeholder="Num. de micciones del paciente" />
                                     </div>
                                 </div>
@@ -457,6 +437,8 @@ import ReportIcon from '@/Components/Icons/ReportIcon.vue';
 import EditIcon from '@/Components/Icons/EditIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputLabel from '@/Components/InputLabel.vue';
 
 export default {
     props: {
@@ -489,7 +471,9 @@ export default {
         ReportIcon,
         EditIcon,
         BreadCrumb,
-        RestoreIcon
+        RestoreIcon,
+        TextInput,
+        InputLabel
     },
     data() {
         return {

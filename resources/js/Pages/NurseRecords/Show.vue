@@ -164,9 +164,9 @@
                                             Medicación
                                         </label>
                                         <input maxlength="255" type="text" id="medication"
-                                            v-model="formDetail.medication" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
-            focus:outline-none focus:ring-2 focus:ring-blue-500
-            dark:bg-gray-800 dark:text-white" placeholder="Nombre del medicamento" />
+                                            v-model="formDetail.medication" required
+                                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                            placeholder="Nombre del medicamento" />
                                     </div>
 
                                     <div>
@@ -174,9 +174,9 @@
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             Observaciones
                                         </label>
-                                        <input type="text" id="comment" v-model="formDetail.comment" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md
-            focus:outline-none focus:ring-2 focus:ring-blue-500
-            dark:bg-gray-800 dark:text-white" placeholder="Comentarios adicionales" />
+                                        <input type="text" id="comment" v-model="formDetail.comment"
+                                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                            placeholder="Comentarios adicionales" />
                                     </div>
                                 </div>
 
@@ -380,27 +380,18 @@
 
             <!-- Contenido del modal -->
             <template #content>
-                <div class="">
+                <div class="p-4">
                     <form>
                         <div class="flex flex-col gap-6">
                             <div>
-                                <label for="orden"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Medicación
-                                </label>
-                                <input type="text" id="medication" v-model="selectedDetail.medication" required
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-                                    placeholder="Orden médica" />
+                                <InputLabel for="medication" value="Medicación" />
+                                <TextInput id="medication" v-model="selectedDetail.medication" type="text"
+                                    class="mt-1 block w-full" required autocomplete="medication" />
                             </div>
 
                             <div>
-                                <label for="regime"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Observaciones
-                                </label>
-                                <input type="text" id="comment" v-model="selectedDetail.comment" required
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-                                    placeholder="Orden médica" />
+                                <InputLabel for="comment" value="Observaciones" />
+                                <TextAreaInput class="w-full" v-model="selectedDetail.comment" id="comment" />
                             </div>
 
                         </div>
@@ -503,6 +494,10 @@ import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import DialogModal from '@/Components/DialogModal.vue';
+import TextAreaInput from '@/Components/TextAreaInput.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
 
 export default {
     props: {
@@ -542,7 +537,11 @@ export default {
         CircleXIcon,
         BreadCrumb,
         RestoreIcon,
-        DialogModal
+        DialogModal,
+        TextAreaInput,
+        InputLabel,
+        TextInput,
+        InputError
     },
     data() {
         return {

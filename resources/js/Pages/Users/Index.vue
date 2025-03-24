@@ -13,8 +13,7 @@
                 <div class="flex flex-col sm:flex-row gap-3 mb-3">
                     <!-- Búsqueda general - siempre visible -->
                     <div class="relative flex-grow">
-                        <input v-model="form.search" type="text" placeholder="Buscar por nombre"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        <TextInput v-model="form.search" placeholder="Buscar por nombre" class="w-full"
                             @input="applyFilters" />
                         <button v-if="form.search" @click="form.search = ''; applyFilters()" type="button"
                             class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
@@ -23,7 +22,7 @@
                     </div>
 
                     <!-- Botones de acción - siempre visibles -->
-                    <div class="flex justify-center md:flex-wrap gap-2">
+                    <div class="flex justify-center items-center md:flex-wrap gap-2">
                         <!-- Botón para ver registros eliminados -->
                         <AccessGate :permission="['user.update']">
                             <button @click="toggleShowDeleted"
@@ -80,7 +79,7 @@
                         <!-- Filtro por rol -->
                         <div class="relative">
                             <select v-model="form.role" name="role" id="role" @change="applyFilters"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                                 <option value="">Todos los roles</option>
                                 <option value="admin">Administrador</option>
                                 <option value="nurse">Enfermero</option>
@@ -96,10 +95,8 @@
 
                         <!-- Filtro por especialidad -->
                         <div class="relative">
-                            <input v-model="form.specialty" type="text" placeholder="Filtrar por especialidad"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            <TextInput v-model="form.specialty" placeholder="Filtrar por especialidad" class="w-full"
                                 @input="applyFilters" />
-
                             <button v-if="form.specialty" @click="form.specialty = ''; applyFilters()" type="button"
                                 class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
                                 <XIcon class="h-5 w-5" />
@@ -108,10 +105,8 @@
 
                         <!-- Filtro por posición -->
                         <div class="relative">
-                            <input v-model="form.position" type="text" placeholder="Filtrar por posición"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            <TextInput v-model="form.position" placeholder="Filtrar por posición" class="w-full"
                                 @input="applyFilters" />
-
                             <button v-if="form.position" @click="form.position = ''; applyFilters()" type="button"
                                 class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
                                 <XIcon class="h-5 w-5" />
@@ -120,10 +115,8 @@
 
                         <!-- Filtro por email -->
                         <div class="relative">
-                            <input v-model="form.email" type="text" placeholder="Filtrar por email"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            <TextInput v-model="form.email" placeholder="Filtrar por email" class="w-full"
                                 @input="applyFilters" />
-
                             <button v-if="form.email" @click="form.email = ''; applyFilters()" type="button"
                                 class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
                                 <XIcon class="h-5 w-5" />
@@ -238,6 +231,7 @@ import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
 import Pagination from '@/Components/Pagination.vue';
+import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router } from '@inertiajs/vue3';
 
@@ -255,7 +249,8 @@ export default {
         XIcon,
         PlusIcon,
         CirclePlusIcon,
-        CircleXIcon
+        CircleXIcon,
+        TextInput
     },
     data() {
         return {

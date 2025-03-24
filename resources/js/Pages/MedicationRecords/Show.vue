@@ -96,7 +96,7 @@
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 Cama {{ medicationRecord.admission.bed.number }} Habitacion {{
-                                medicationRecord.admission.bed.room }}
+                                    medicationRecord.admission.bed.room }}
                             </p>
                         </div>
 
@@ -133,8 +133,7 @@
                     </div>
 
                     <div v-if="showCreateDetailForm"
-                    class="grid border grid-cols-1 lg:grid-cols-2 shadow-xl rounded-lg gap-6  lg:mx-10 mt-6 "
-
+                        class="grid border grid-cols-1 lg:grid-cols-2 shadow-xl rounded-lg gap-6  lg:mx-10 mt-6 "
                         id="formcreaterecord">
                         <!-- Tarjeta para información del Medical Order -->
                         <div class="relative overflow-hidden rounded-lg   bg-white dark:bg-gray-800 mb-5">
@@ -155,7 +154,8 @@
 
 
 
-                                        }" class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200">
+                                        }"
+                                        class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200">
 
 
                                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
@@ -192,14 +192,9 @@
                                     <div class="w-full mb-2">
                                         <label for="drug"
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Medicamento</label>
-                                        <DrugSelector @update:drug="updateSelectedDrug" />
-
-
+                                        <DrugSelector v-model:drug="form.drug" />
                                     </div>
-
-
                                 </div>
-
 
                                 <!-- Contenedor para la Via y el selector -->
 
@@ -211,14 +206,11 @@
                                     </label>
                                     <select id="route-select" required v-model="form.route"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                        <option v-for="routes in routeOptions" :key="routes.id"
-                                            :value="routes.description">
+                                        <option v-for="routes in routeOptions" :key="routes.id" :value="routes.name">
                                             {{ routes.name }} - {{ routes.description }}
                                         </option>
                                     </select>
-
                                 </div>
-
 
                                 <!-- Contenedor para la Dosis y el selector -->
                                 <div class="flex items-center space-x-4 mt-6">
@@ -262,7 +254,7 @@
                                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
                                     Intervalo en Horas
                                 </label>
-                                <input required  id="interval_in_hours" type="number" v-model="form.interval_in_hours"
+                                <input required id="interval_in_hours" type="number" v-model="form.interval_in_hours"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="Intervalo en Horas..." />
 
@@ -271,7 +263,7 @@
                                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
                                     Hora de Inicio
                                 </label>
-                                <input required id="start_time" type="time" v-model="form.start_time"
+                                <input required id="start_time" type="time" v-model="form.start_time" :min="currentTime"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="Hora de Inicio..." />
 
@@ -391,31 +383,31 @@
                                     </Link>
                                 </AccessGate>
                             </div>
-                            <Link @click="ToggleActivate(detail)"
+                            <button @click="ToggleActivate(detail)"
                                 :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
                                 class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
-                            <svg xmlns="http:1//www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <span>{{ detail.active ? 'Eliminar' : 'Restaurar' }}</span>
-                            </Link>
-
-
-                            <div v-if="medicationRecord.active"> <!-- Disable -->
-                                <Link @click="ToggleSuspend(detail)"
-                                    :class="[!detail.suspended_at ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
-                                    class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
                                 <svg xmlns="http:1//www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                <span>{{ !detail.suspended_at ? 'Suspender' : 'Habilitar' }}</span>
-                                </Link>
+                                <span>{{ detail.active ? 'Eliminar' : 'Restaurar' }}</span>
+                            </button>
+
+
+                            <div v-if="medicationRecord.active"> <!-- Disable -->
+                                <button @click="ToggleSuspend(detail)"
+                                    :class="[!detail.suspended_at ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
+                                    class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
+                                    <svg xmlns="http:1//www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>{{ !detail.suspended_at ? 'Suspender' : 'Habilitar' }}</span>
+                                </button>
                             </div>
 
 
@@ -511,8 +503,14 @@ import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 import FormatId from '@/Components/FormatId.vue';
 import DrugSelector from '@/Components/DrugSelector.vue';
 import InputError from '@/Components/InputError.vue';
+
 import ReportIcon from '@/Components/Icons/ReportIcon.vue';
-export default{
+
+import moment from 'moment/moment';
+import 'moment/locale/es';
+
+export default {
+
     props: {
         medicationRecord: Object,
         details: Array,
@@ -566,6 +564,17 @@ export default{
 
         }
     },
+    mounted() {
+        this.form.start_time = moment().format('HH:mm');
+    },
+    computed: {
+        concatenatedDose() {
+            return `${this.form.dose} ${this.form.dose_metric}`;
+        },
+        currentTime() {
+            return moment().format('HH:mm');
+        }
+    },
     methods: {
         toggleShowDeleted() {
     this.form.showDeleted = !this.form.showDeleted;
@@ -612,41 +621,32 @@ export default{
             }
             );
         },
-        updateSelectedDrug(drug) {
-            this.form.drug = drug.name;
-            this.selectedDrug = drug.id;
-        },
         submit() {
             if (!this.form.selectedOrderId) {
                 this.errorMessage = "Debe seleccionar una orden antes de guardar.";
                 return;
             }
             this.errorMessage = "";
-            this.$inertia.post(route('medicationRecordDetails.store'),
-                this.form,
-                {
-                    onSuccess: () => {
-                        this.form = {
-                            medication_record_id: this.medicationRecord.id,
-                            drug: '',
-                            dose: '',
-                            route: '',
-                            fc: '',
-                            interval_in_hours: '',
-                            selectedOrderId: null,
-                        };
-                        this.selectedOrderId = null;
-                        let form_div = document.getElementById('formcreaterecord');
-                        form_div.classList.add("hidden");
-                        let add_detail = document.getElementById('add_detail');
-                        add_detail.classList.remove("hidden");
-                    },
-
-                    preserveScroll: true
-
-
-                });
-
+            const formData = {
+                ...this.form,
+                dose: this.concatenatedDose // Usa la propiedad computada aquí
+            };
+            this.$inertia.post(route('medicationRecordDetails.store'), formData, {
+                onSuccess: () => {
+                    this.form = {
+                        medication_record_id: this.medicationRecord.id,
+                        drug: '',
+                        dose: '',
+                        route: '',
+                        fc: '',
+                        interval_in_hours: '',
+                        selectedOrderId: null,
+                    };
+                    this.selectedOrderId = null;
+                    this.showCreateDetailForm = false;
+                },
+                preserveScroll: true
+            });
         },
         selectOrder(id) {
             this.selectedOrderId = id;
@@ -674,6 +674,7 @@ export default{
             return false;
         },
         OpenFormCreateRecord() {
+            this.form.start_time = moment().format('HH:mm');
             this.showCreateDetailForm = true
 
         },

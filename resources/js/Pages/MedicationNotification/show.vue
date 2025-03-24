@@ -214,7 +214,7 @@ export default {
             }, null);
             return lastApplied && lastApplied.id === notification.id;
         },
-        markAsAdministered(id) {
+        markAsAdministered() {
 
             if (!this.formSignature.nurse_sign) {
                 this.signatureError = true;
@@ -224,6 +224,7 @@ export default {
             this.$inertia.put(route('medicationNotification.update', this.notificationBeingUpdated.id), this.formSignature, {
                 preserveScroll: true
             });
+            this.formSignature.nurse_sign = null;
             this.notificationSignatureUpdate = null;
             const notification = this.notifications;
             if (notification) {

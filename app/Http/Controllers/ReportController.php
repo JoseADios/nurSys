@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Clinic;
 use App\Models\EliminationRecord;
 use App\Models\NurseRecord;
+use App\Models\MedicationRecord;
+use App\Models\MedicationRecordDetail;
 use App\Models\NurseRecordDetail;
 use App\Models\Patient;
 use App\Models\TemperatureDetail;
+use App\Models\MedicationNotification;
 use App\Models\TemperatureRecord;
 use App\Services\PDF\TemperatureRecordReport;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -93,6 +96,37 @@ class ReportController extends Controller
         //     'nurseSignaturePath' => $nurseSignaturePath,
         //     'graphPath' => asset('storage/temp_chart.jpg')
         // ]);
+
+    }
+    public function medicationRecordReport($id)
+    {
+        $medicationRecord = medicationRecord::findOrFail($id);
+
+
+        $clinic = Clinic::get()->first();
+        $details = medicationRecordDetail::where('medication_record_id', $id)->with('medicationNotification')->get();
+
+        foreach ($details as $detail) {
+            $notifications = MedicationNotification::where('medication_record_detail_id', $detail->id)->with('medicationRecordDetail')->get();
+        }
+
+
+        if ($medicationRecord->active != true) {
+            return Redirect::route('medicationRecords.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
+        }
+
+        $pdf = Pdf::loadView('reports.medication_record', [
+            'medicationRecord' => $medicationRecord,
+            'clinic' => $clinic,
+            'details' => $details,
+            'notification'=>$notifications
+
+        ])->setPaper('a4');
+
+
+        return $pdf->stream('ficha_de_medicamentos.pdf');
+
+
 
     }
 }

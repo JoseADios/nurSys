@@ -257,17 +257,16 @@
                             <td>{{ $event->route }}</td>
                             <td>{{ $event->fc }} </td>
                             <td class="text-center">{{ $event->created_at->format('h:i A') }}</td>
-                            <td >  @foreach ($event->medicationNotification as $notification)
+                            <td>
+                                @if ($event->medicationNotification->isNotEmpty())
+                                    @php
+                                        $lastNotification = $event->medicationNotification->last();
+                                    @endphp
 
-                                @if (!empty($notification->nurse_sign))
-
-                                <img src="{{ public_path('storage/signatures/' . basename($notification->nurse_sign)) }}" width="100">
-                                @else
-
-                        @endif
-
-                            @endforeach
-
+                                    @if (!empty($lastNotification->nurse_sign))
+                                        <img src="{{ public_path('storage/signatures/' . basename($lastNotification->nurse_sign)) }}" width="100">
+                                    @endif
+                                @endif
                             </td>
                         </tr>
 

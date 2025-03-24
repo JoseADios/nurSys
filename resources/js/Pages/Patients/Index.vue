@@ -36,43 +36,29 @@
                         <div v-if="showAdditionalFilters"
                             class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                             <div>
-                                <label
-                                    class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Nombre</label>
-                                <input v-model="form.name" @input="submitFilter()" type="text"
-                                    placeholder="Buscar por nombre"
-                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
+                                <InputLabel for="name" value="Nombre" />
+                                <TextInput id="name" v-model="form.name" @input="submitFilter()" class="w-full"
+                                    placeholder="Buscar por nombre" />
                             </div>
-
                             <div>
-                                <label
-                                    class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Cédula</label>
-                                <input v-model="form.identificationCard" @input="submitFilter()" type="text"
-                                    placeholder="Número de identificación"
-                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
+                                <InputLabel for="identification_card" value="Cédula" />
+                                <TextInput id="identification_card" v-model="form.identificationCard"
+                                    @input="submitFilter()" class="w-full" placeholder="Número de identificación" />
                             </div>
-
                             <div>
-                                <label
-                                    class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Nacionalidad</label>
-                                <input v-model="form.nationality" @input="submitFilter()" type="text"
-                                    placeholder="País de origen"
-                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
+                                <InputLabel for="nationality" value="Nacionalidad" />
+                                <TextInput id="nationality" v-model="form.nationality" @input="submitFilter()"
+                                    class="w-full" placeholder="País de origen" />
                             </div>
-
                             <div>
-                                <label
-                                    class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Teléfono</label>
-                                <input v-model="form.phone" @input="submitFilter()" type="text"
-                                    placeholder="Número de contacto"
-                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
+                                <InputLabel for="phone" value="Teléfono" />
+                                <TextInput id="phone" v-model="form.phone" @input="submitFilter()" class="w-full"
+                                    placeholder="Número de contacto" />
                             </div>
-
                             <div>
-                                <label
-                                    class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Correo</label>
-                                <input v-model="form.email" @input="submitFilter()" type="text"
-                                    placeholder="Correo electrónico"
-                                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-white" />
+                                <InputLabel for="email" value="Correo" />
+                                <TextInput id="email" v-model="form.email" @input="submitFilter()" class="w-full"
+                                    placeholder="Correo electrónico" />
                             </div>
                         </div>
                     </transition>
@@ -85,14 +71,7 @@
             <div class="flex flex-col md:flex-row gap-4 py-2">
                 <!-- Búsqueda -->
                 <div class="relative w-full md:w-1/3">
-                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <SearchIcon class="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                    </div>
-
-                    <input @input="submitFilter()"
-                        class="block w-full p-2.5 ps-10 pr-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
-
+                    <TextInput type="text" v-model="form.search" @input="submitFilter()" class="w-full" placeholder="Buscar ..." />
                     <button v-if="form.search" @click="form.search = ''; submitFilter()"
                         class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
                         <XIcon class="h-5 w-5" />
@@ -103,7 +82,7 @@
                 <div class="flex flex-col sm:flex-row items-center gap-4 w-full">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
                         <select @change="submitFilter()"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                             name="hospitalized" id="hospitalized" v-model="form.hospitalized">
                             <option value="true">Hospitalizados</option>
                             <option value="false">No hospitalizados</option>
@@ -111,7 +90,7 @@
                         </select>
 
                         <select @change="submitFilter()"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                             name="days" id="days" v-model="form.days">
                             <option value="">Siempre</option>
                             <option value="1">Último día</option>
@@ -159,7 +138,7 @@
                                 <th scope="col" class="px-4 py-3 cursor-pointer hidden sm:table-cell"
                                     @click="sort('id')">
                                     ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                    }}</span>
+                                        }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3 cursor-pointer" @click="sort('is_hospitalized')">
                                     <span class="hidden md:inline">Ingresado</span>
@@ -177,7 +156,7 @@
                                     @click="sort('phone')">
                                     Teléfono <span v-if="form.sortField === 'phone'">{{ form.sortDirection === 'asc' ?
                                         '↑' : '↓'
-                                    }}</span>
+                                        }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3 cursor-pointer hidden md:table-cell"
                                     @click="sort('identification_card')">
@@ -195,7 +174,7 @@
                                     @click="sort('email')">
                                     Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑'
                                         : '↓'
-                                    }}</span>
+                                        }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3"> Acciones </th>
                             </tr>
@@ -262,7 +241,9 @@ import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import SearchIcon from '@/Components/Icons/SearchIcon.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
+import InputLabel from '@/Components/InputLabel.vue';
 import Pagination from '@/Components/Pagination.vue';
+import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -282,6 +263,8 @@ export default {
         PlusIcon,
         SearchIcon,
         XIcon,
+        TextInput,
+        InputLabel
     },
     data() {
         return {

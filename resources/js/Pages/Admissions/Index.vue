@@ -1,38 +1,10 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-white leading-tight text-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Ingresos
             </h2>
         </template>
-
-        <div class="flex items-center justify-between ">
-            <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-                <div class=" inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-                    <div class="inline-flex items-center" v-if="admission_id">
-                        <Link :href="route('admissions.show', admission_id)"
-                            class="inline-flex items-center  hover:text-blue-600 dark:hover:text-white">
-                        <FormatId :id="admission_id" prefix="ING"></FormatId>
-                        </Link>
-                        <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m1 9 4-4-4-4" />
-                        </svg>
-                    </div>
-                    <div class="ml-2 inline-flex items-center ">
-                        Ingresos
-                    </div>
-                </div>
-
-                <Link :href="route('nurseRecords.index')" v-if="admission_id"
-                    class="mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
-                Remover filtro de
-                <FormatId :id="admission_id" prefix="ING"></FormatId>,
-                </Link>
-            </div>
-        </div>
-
         <div
             class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-2 lg:mx-10">
             <div class="relative mb-2 ">
@@ -205,10 +177,10 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import {
-    Link
-} from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
+import FormatId from '@/Components/FormatId.vue';
+import AccessGate from '@/Components/Access/AccessGate.vue';
 export default {
     props: {
         admissions: Object,
@@ -218,7 +190,9 @@ export default {
     components: {
         AppLayout,
         Link,
-        Pagination
+        Pagination,
+        FormatId,
+        AccessGate
     },
     data() {
         return {

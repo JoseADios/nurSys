@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Log;
 use Spatie\Permission\Models\Role;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -150,6 +151,7 @@ class UserController extends Controller implements HasMiddleware
             $user->syncRoles($request->role);
             DB::commit();
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             DB::rollBack();
         }
 

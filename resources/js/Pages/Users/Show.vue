@@ -112,7 +112,7 @@
                         </div>
 
                         <div v-if="user.comment" class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">Observaciones</h4>
+                            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">Comentarios</h4>
                             <p class="text-gray-800 dark:text-gray-200">{{ user.comment }}</p>
                         </div>
                     </div>

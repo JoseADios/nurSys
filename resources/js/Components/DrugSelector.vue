@@ -1,6 +1,8 @@
 <template>
     <div>
-        <!-- Filtros de búsqueda -->
+      <!-- Aquí todo tu contenido actual (incluyendo el segundo elemento raíz DialogModal) -->
+      <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4">
+        <!-- Contenido del filtro de búsqueda --><!-- Filtros de búsqueda -->
         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4">
             <h3 class="text-base font-medium text-gray-900 dark:text-white mb-3">
                 Buscar Medicamento
@@ -15,13 +17,14 @@
                         </svg>
                     </div>
                     <input type="text" v-model="filters.name" @input="debounceSearch"
-                        class="pl-10 w-full rounded-lg border-gray-200 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:bg-gray-800 dark:text-white"
+                        class="pl-10 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                         placeholder="Nombre del Medicamento...">
                 </div>
             </div>
         </div>
-
-        <!-- Lista de Medicamentos -->
+      </div>
+      <div class="space-y-2">
+        <!-- Contenido de la lista de medicamentos -->  <!-- Lista de Medicamentos -->
         <div class="space-y-2">
             <h3 class="text-base font-medium text-gray-900 dark:text-white">
                 Seleccionar Medicamento ({{ drugs.total }} resultados)
@@ -29,14 +32,13 @@
             <div
                 class="max-h-[250px] overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800">
                 <div v-for="drug in drugs.data" :key="drug.id" @click="selectDrug(drug)"
-                    :class="['p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20', selectedDrug === drug.id ? 'bg-purple-100 dark:bg-purple-900/30' : '']">
+                    :class="['p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20', selectedDrugLocal === drug.id ? 'bg-purple-100 dark:bg-purple-900/30' : '']">
                     <div class="flex justify-between items-center">
                         <div>
                             <span class="font-medium text-gray-900 dark:text-white text-sm">
                                 {{ drug.name }}
                             </span>
-                            <div v-if="selectedDrugId === drug.id"
-                                class="text-xs text-green-500 dark:text-green-400">
+                            <div v-if="selectedDrugId === drug.id" class="text-xs text-green-500 dark:text-green-400">
                                 Medicamento actual
                             </div>
                         </div>
@@ -61,59 +63,18 @@
                 </button>
             </div>
         </div>
+      </div>
     </div>
-
-    <DialogModal :show="isVisible" @close="isVisible = false">
-        <template #title>
-            Crear Medicamentos
-        </template>
-        <template #content>
-            <form>
-                <div class="grid gap-4">
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Nombre
-                        </label>
-                        <input type="text" id="name" v-model="modalform.name" required
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-                            placeholder="Nombre del Medicamento" />
-                    </div>
-                    <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Descripción
-                        </label>
-                        <textarea id="description" v-model="modalform.description" required
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-                            placeholder="Descripción del Medicamento"></textarea>
-                    </div>
-                </div>
-            </form>
-        </template>
-        <template #footer>
-            <button @click="submitModal"
-                class="mr-6 text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2">
-                Guardar
-            </button>
-            <button @click="isVisible = false"
-                class="py-2.5 px-5 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700">
-                Cerrar
-            </button>
-        </template>
-    </DialogModal>
-</template>
+  </template>
 
 <script>
 import debounce from 'lodash/debounce';
 import axios from 'axios';
 import moment from "moment/moment";
-import DialogModal from '@/Components/DialogModal.vue';
 
 export default {
     props: {
         selectedDrugId: Number
-    },
-    components: {
-        DialogModal,
     },
     data() {
         return {
@@ -123,7 +84,7 @@ export default {
                 prev_page_url: null,
                 next_page_url: null,
             },
-            selectedDrug: this.selectedDrugId || null,
+            selectedDrugLocal: this.selectedDrugId || null,
             filters: {
                 name: '',
             },
@@ -141,6 +102,10 @@ export default {
                 this.applyFilters();
             }, 300),
             immediate: false, // No se ejecuta inmediatamente al montar el componente
+        },
+        // Observa cambios en la prop selectedDrugId
+        selectedDrugId(newVal) {
+            this.selectedDrugLocal = newVal;
         }
     },
     mounted() {
@@ -156,8 +121,13 @@ export default {
             this.modalform = { name: '', description: '' };
         },
         selectDrug(drug) {
-            this.selectedDrug = drug.id;
-            this.$emit('update:drug', { id: drug.id, name: drug.name });
+            this.selectedDrugLocal = drug.id;
+            // Emitir solo el nombre del medicamento al componente padre
+            this.$emit('update:drug', drug.name);
+        },
+        debounceSearch() {
+            // Método para el debounce del input de búsqueda
+            // Este método ya está manejado por el watcher
         },
         async applyFilters(pageUrl = null) {
             try {

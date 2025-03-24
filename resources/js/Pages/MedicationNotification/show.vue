@@ -29,31 +29,18 @@
                 <FormatId :id="details.id" prefix="NOT"></FormatId>
             </div>
         </div>
-        <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-2xl rounded-xl overflow-hidden">
 
-            <div class="p-8 space-y-4 bg-gray-50 dark:bg-gray-700">
+        <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
 
-                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro</h3>
+            <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+                <Link :href="route('medicationRecords.show',details.medication_record_id)" class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                <BackIcon class="size-5" />Volver
+                </Link>
+                <div class="flex items-center">
+                    <button v-if="details.active" @click="downloadRecordReport" class=" mr-4 inline-flex   px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
+                        <ReportIcon class="size-5 mr-1" /> Crear Reporte
+                    </button>
 
-                <div class="flex-grow">
-                    <div class="font-semibold text-gray-900 dark:text-white">
-                        Medicamento: {{ details.drug }}
-                    </div>
-                    <!-- <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                        Dosis: {{ details.dose }}
-                    </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Vía: {{ details.route }}
-                    </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Frecuencia: {{ details.fc }}
-                    </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Intervalo en Horas: {{ details.interval_in_hours }}
-                    </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Fecha: {{ details.created_at }}
-                    </div> -->
                 </div>
             </div>
 
@@ -72,8 +59,8 @@
                     <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         Hora Aplicado: {{ notification.administered_time }}
                     </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Firma de la enfermera: {{ notification.nurse_sign }}
+                    <div v-if="notification.applied" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        Firma de la enfermera: <img :src="`/storage/${notification.nurse_sign}`" width="200" alt="Firma">
                     </div>
 
                     <div v-if="notification.applied == 1">
@@ -93,7 +80,7 @@
 
                         </div>
                         <div v-if="Firstnoapplied(notification)">
-                            <button class="text-white" @click="markAsAdministered(notification.id)">
+                            <button class="text-white" @click="openModal(notification)">
                                 administrar
                             </button>
                         </div>
@@ -104,7 +91,38 @@
             </div>
         </div>
     </div>
+    <!-- modal para dar de alta -->
+    <ConfirmationModal :show="notificationSignatureUpdate != null" @close="notificationSignatureUpdate = null">
+        <template #title>
+            <div v-if="notifications.applied != true">Administrar</div>
+            <div v-if="notifications.applied == true">Revertir</div>
+            <div>
 
+                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" />
+                <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
+
+            </div>
+
+        </template>
+
+        <template #content>
+            <div v-if="notificationBeingUpdated.applied != true">¿Estás seguro de que deseas aplicar este medicamento?
+            </div>
+        </template>
+
+        <template #footer>
+            <SecondaryButton @click="notificationSignatureUpdate = null">
+                Cancelar
+            </SecondaryButton>
+
+            <div v-if="notificationBeingUpdated.applied != true">
+                <PrimaryButton class="ms-3" @click="markAsAdministered(notificationBeingUpdated)">
+                    Administrar
+                </PrimaryButton>
+            </div>
+
+        </template>
+    </ConfirmationModal>
 </AppLayout>
 </template>
 
@@ -114,7 +132,16 @@ import {
     Link
 } from '@inertiajs/vue3';
 import FormatId from '@/Components/FormatId.vue';
-
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
+import BackIcon from '@/Components/Icons/BackIcon.vue';
+import ReportIcon from '@/Components/Icons/ReportIcon.vue';
+import {
+    ref
+} from 'vue';
 export default {
     props: {
         details: Object,
@@ -123,32 +150,76 @@ export default {
     components: {
         AppLayout,
         Link,
-        FormatId
+        FormatId,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
+        PrimaryButton,
+        SignaturePad,
+        BackIcon,
+        ReportIcon
     },
+    data() {
+        return {
 
+            notificationSignatureUpdate: ref(null),
+            notificationBeingUpdated: ref(null),
+            signatureError: false,
+
+            formSignature: {
+                nurse_sign: this.notifications.nurse_sign,
+
+            },
+        }
+    },
     methods: {
+        markAsAdministered() {
+
+            if (!this.formSignature.nurse_sign) {
+                this.signatureError = true;
+                return false
+            }
+            this.signatureError = false;
+            console.log('update', this.formSignature.nurse_sign);
+            this.$inertia.put(route('medicationNotification.update', this.notificationBeingUpdated.id), this.formSignature, {
+                preserveScroll: true,
+                onSuccess: (response) => {
+
+                    this.formSignature.nurse_sign = null;
+                    this.notificationSignatureUpdate = null;
+                    const notification = this.notifications;
+                    if (notification) {
+                        const newAppliedValue = notification.applied === 1 ? 0 : 1;
+                        notification.applied = newAppliedValue;
+                        this.$inertia.put(route('medicationNotification.update', this.notificationBeingUpdated.id), {
+                            markAsAdministered: true
+                        })
+                    }
+                },
+                onError: (errors) => {
+                    console.error('Error al habilitar:', errors);
+                },
+            });
+        },
         Firstnoapplied(notification) {
             const firstNotApplied = this.notifications.find((n) => n.applied === 0);
             return firstNotApplied && firstNotApplied.id === notification.id;
 
         },
+        openModal(notification) {
+
+            this.notificationSignatureUpdate = true;
+            this.notificationBeingUpdated = notification;
+        },
+
         lastApplied(notification) {
             const lastApplied = this.notifications.reduceRight((acc, n) => {
                 return acc || (n.applied === 1 ? n : null);
             }, null);
             return lastApplied && lastApplied.id === notification.id;
         },
-        markAsAdministered(id) {
 
-            const notification = this.notifications;
-            if (notification) {
-                const newAppliedValue = notification.applied === 1 ? 0 : 1;
-                notification.applied = newAppliedValue;
-                this.$inertia.put(route('medicationNotification.update', id), {
-                    markAsAdministered: true
-                })
-            }
-        },
+
         revert(id) {
 
             const notification = this.notifications;
@@ -163,7 +234,12 @@ export default {
                     revert: true
                 })
             }
-        }
+        },
+        async downloadRecordReport() {
+            window.open(route('reports.medicationNotification', {
+                id: this.notification.id
+            }), '_blank');
+        },
 
     }
 

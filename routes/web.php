@@ -85,4 +85,10 @@ Route::middleware([
     ->name('reports.temperatureRecord');
     Route::get( '/reports/nurseRecord/{id}', [ReportController::class, 'nurseRecordReport'])
     ->name('reports.nurseRecord');
+    Route::get( '/reports/medicationRecord/{id}', [ReportController::class, 'medicationRecordReport'])
+    ->name('reports.medicationRecord');
+    Route::get( '/reports/medicalOrder/{id}', [ReportController::class, 'medicalOrderReport'])
+    ->name('reports.medicalOrder');
+    Route::get( '/reports/admission/{id}', [ReportController::class, 'admissionReport'])
+    ->name('reports.admission');
 });

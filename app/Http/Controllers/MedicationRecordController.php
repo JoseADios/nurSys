@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use App\Services\FirmService;
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -46,10 +46,10 @@ class MedicationRecordController extends Controller implements HasMiddleware
         $days = $request->integer('days');
 
         $query = MedicationRecord::query()
-        ->select('medication_records.*', 'patients.first_name', 'patients.first_surname', 'patients.second_surname')
-        ->join('admissions', 'medication_records.admission_id', '=', 'admissions.id')
-        ->join('patients', 'admissions.patient_id', '=', 'patients.id')
-        ->where('medication_records.active', !$showDeleted);
+            ->select('medication_records.*', 'patients.first_name', 'patients.first_surname', 'patients.second_surname')
+            ->join('admissions', 'medication_records.admission_id', '=', 'admissions.id')
+            ->join('patients', 'admissions.patient_id', '=', 'patients.id')
+            ->where('medication_records.active', !$showDeleted);
 
 
 
@@ -58,9 +58,9 @@ class MedicationRecordController extends Controller implements HasMiddleware
         if ($search) {
             $query->where(function (Builder $q) use ($search) {
                 $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('diagnosis LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
-                  ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%']);
+                    ->orWhereRaw('diagnosis LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%']);
             });
         }
         if ($sortField) {
@@ -74,7 +74,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         }
 
 
-        $medicationRecords = $query->with('admission.bed','admission.patient','admission')->orderByDesc('created_at')->paginate(10);
+        $medicationRecords = $query->with('admission.bed', 'admission.patient', 'admission')->orderByDesc('created_at')->paginate(10);
 
         return Inertia::render('MedicationRecords/Index', [
             'medicationRecords' => $medicationRecords,
@@ -86,7 +86,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             ],
         ]);
     }
-//
+    //
     /**
      * Show the form for creating a new resource.
      */
@@ -96,8 +96,8 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
         $diet = Diet::all();
         $admission = Admission::with('patient', 'bed', 'doctor')
-        ->whereDoesntHave('medicationRecord')
-        ->get();
+            ->whereDoesntHave('medicationRecord')
+            ->get();
 
 
 
@@ -126,7 +126,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         ]);
 
         // Verificar si ya existe un MedicationRecord para la admisión especificada
-        $existingRecord = MedicationRecord::where('admission_id', $request->admission_id)->where('active',true)->first();
+        $existingRecord = MedicationRecord::where('admission_id', $request->admission_id)->where('active', true)->first();
 
         if ($existingRecord) {
 
@@ -138,7 +138,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         // Crear el MedicationRecord usando los datos validados
         $medicationRecord = MedicationRecord::create([
             'admission_id' => $request->admission_id,
-            'doctor_id' => Auth::id(),
+
             'diagnosis' => $request->diagnosis,
             'diet' => $request->diet,
 
@@ -147,63 +147,65 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
         // Redirigir o retornar una respuesta exitosa
         return redirect()->route('medicationRecords.index')->with('flash.toast', 'Registro guardado correctamente');
-      }
+    }
 
 
 
     /**
      * Display the specified resource.
      */
-    public function show(MedicationRecord $medicationRecord,Request $request)
+    public function show(MedicationRecord $medicationRecord, Request $request)
     {
-        try{
-        $medicationRecord->load(['admission.patient','admission.bed','doctor','medicationRecordDetail','admission.medicalOrders']);
-        $allMedicalOrders = MedicalOrder::where('active', true)
-        ->where('admission_id', $medicationRecord->admission->id)
-        ->with(['medicalOrderDetail' => function ($query) {
-            $query->whereNull('suspended_at');
-        }])
-        ->get();
+        try {
+            $medicationRecord->load(['admission.patient', 'admission.bed', 'doctor', 'medicationRecordDetail', 'admission.medicalOrders']);
+            $allMedicalOrders = MedicalOrder::where('active', true)
+                ->where('admission_id', $medicationRecord->admission->id)
+                ->with([
+                    'medicalOrderDetail' => function ($query) {
+                        $query->whereNull('suspended_at');
+                    }
+                ])
+                ->get();
 
 
-        $drug = Drug::all();
-        $route = DrugRoute::all();
-        $dose = DrugDose::all();
-        $showDeleted = $request->boolean('showDeleted');
+            $drug = Drug::all();
+            $route = DrugRoute::all();
+            $dose = DrugDose::all();
+            $showDeleted = $request->boolean('showDeleted');
 
             if ($showDeleted || !$medicationRecord->active) {
 
-                    $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active',false)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+                $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active', false)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
 
 
 
 
-                }else{
-                    $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active',true)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
+            } else {
+                $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active', true)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
 
-                }
-
-
+            }
 
 
 
 
-                return Inertia::render('MedicationRecords/Show', [
-                    'medicationRecord' => $medicationRecord,
-                    'details' => $details,
-                    'order' => $allMedicalOrders,
-                    'drug' =>$drug,
-                    'dose' => $dose,
-                    'routeOptions' => $route,
-                    'filters' => [
-                        'show_deleted' => $showDeleted,
-                    ],
-                ]);
 
 
-    }catch(\Exception $e){
-    return redirect()->route('MedicationRecords/Show')->with('error',$e);
-    }
+            return Inertia::render('MedicationRecords/Show', [
+                'medicationRecord' => $medicationRecord,
+                'details' => $details,
+                'order' => $allMedicalOrders,
+                'drug' => $drug,
+                'dose' => $dose,
+                'routeOptions' => $route,
+                'filters' => [
+                    'show_deleted' => $showDeleted,
+                ],
+            ]);
+
+
+        } catch (\Exception $e) {
+            return redirect()->route('MedicationRecords/Show')->with('error', $e);
+        }
     }
 
     /**
@@ -221,17 +223,9 @@ class MedicationRecordController extends Controller implements HasMiddleware
      */
     public function update(Request $request, MedicationRecord $medicationRecord)
     {
-        $firmService = new FirmService;
 
-       if ($request->has('signature')) {
-        $fileName = $firmService->createImag($request->doctor_sign, $medicationRecord->doctor_sign);
-        $medicationRecord->update(['doctor_sign' => $fileName]);
 
-        return back()->with('flash.toast', 'Registro actualizado correctamente');
-
-    }
-
-     if ($request->has('active')) {
+        if ($request->has('active')) {
             $this->restore($medicationRecord->id);
         } else {
             $validated = $request->validate([
@@ -252,67 +246,67 @@ class MedicationRecordController extends Controller implements HasMiddleware
      * Remove the specified resource from storage.
      */
     public function destroy(MedicationRecord $medicationRecord)
-{
-    $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
+    {
+        $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
 
-    $hasNotifications = MedicationNotification::whereIn('medication_record_detail_id', function ($query) use ($medicationRecord) {
-        $query->select('id')
-            ->from('medication_record_details')
-            ->where('medication_record_id', $medicationRecord->id);
-    })
-    ->where('applied', 1)
-    ->get();
-
-
-    if ($hasNotifications->isNotEmpty()) {
-        return Redirect::back()->withErrors(['message' => 'No se puede eliminar esta Ficha de Medicamentos porque tiene notificaciones aplicadas.']);
-    }
+        $hasNotifications = MedicationNotification::whereIn('medication_record_detail_id', function ($query) use ($medicationRecord) {
+            $query->select('id')
+                ->from('medication_record_details')
+                ->where('medication_record_id', $medicationRecord->id);
+        })
+            ->where('applied', 1)
+            ->get();
 
 
-    $medicationRecord->update(['active' => 0]);
-
-
-    foreach ($details as $detail) {
-        $detail->update(['active' => 0]);
-    }
-
-
-    MedicationNotification::whereIn('medication_record_detail_id', $details->pluck('id'))
-        ->update(['active' => 0]);
-
-   return redirect()->to(route('medicationRecords.show', $medicationRecord));
-
-}
-
-
-
-     private function restore($id)
-     {
-
-         $record = MedicationRecord::findOrFail($id);
-
-         $medicationRecordDetails = MedicationRecordDetail::where('medication_record_id', $id)->get();
-
-         foreach ($medicationRecordDetails as $detail) {
-             $detail->update(['active' => 1]);
-         }
-
-
-         $medicationNotificationIds = $medicationRecordDetails->pluck('id');
-
-
-         $medicationNotifications = MedicationNotification::whereIn('medication_record_detail_id', $medicationNotificationIds)->get();
-
-
-         foreach ($medicationNotifications as $notification) {
-             $notification->update(['active' => 1]);
-         }
-
-         $record->active = true;
-         $record->save();
-
-         return redirect()->back()->with('success', 'Registro habilitado con éxito.');
+        if ($hasNotifications->isNotEmpty()) {
+            return Redirect::back()->withErrors(['message' => 'No se puede eliminar esta Ficha de Medicamentos porque tiene notificaciones aplicadas.']);
         }
+
+
+        $medicationRecord->update(['active' => 0]);
+
+
+        foreach ($details as $detail) {
+            $detail->update(['active' => 0]);
+        }
+
+
+        MedicationNotification::whereIn('medication_record_detail_id', $details->pluck('id'))
+            ->update(['active' => 0]);
+
+        return redirect()->to(route('medicationRecords.show', $medicationRecord));
+
+    }
+
+
+
+    private function restore($id)
+    {
+
+        $record = MedicationRecord::findOrFail($id);
+
+        $medicationRecordDetails = MedicationRecordDetail::where('medication_record_id', $id)->get();
+
+        foreach ($medicationRecordDetails as $detail) {
+            $detail->update(['active' => 1]);
+        }
+
+
+        $medicationNotificationIds = $medicationRecordDetails->pluck('id');
+
+
+        $medicationNotifications = MedicationNotification::whereIn('medication_record_detail_id', $medicationNotificationIds)->get();
+
+
+        foreach ($medicationNotifications as $notification) {
+            $notification->update(['active' => 1]);
+        }
+
+        $record->active = true;
+        $record->save();
+
+        return redirect()->back()->with('success', 'Registro habilitado con éxito.');
+    }
 
 
 

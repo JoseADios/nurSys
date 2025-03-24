@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Clinic;
 use App\Models\EliminationRecord;
 use App\Models\NurseRecord;
+use App\Models\MedicationRecord;
+use App\Models\MedicationRecordDetail;
+use App\Models\MedicalOrder;
+use App\Models\MedicalOrderDetail;
+use App\Models\Admission;
 use App\Models\NurseRecordDetail;
 use App\Models\Patient;
 use App\Models\TemperatureDetail;
+use App\Models\MedicationNotification;
 use App\Models\TemperatureRecord;
 use App\Services\PDF\TemperatureRecordReport;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -94,6 +100,92 @@ class ReportController extends Controller
         //     'nurseSignaturePath' => $nurseSignaturePath,
         //     'graphPath' => asset('storage/temp_chart.jpg')
         // ]);
+
+    }
+    public function admissionReport($id)
+    {
+        $admission = Admission::findOrFail($id);
+
+
+        $clinic = Clinic::get()->first();
+
+
+
+        if ($admission->active != true) {
+            return Redirect::route('admissions.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
+        }
+
+        $pdf = Pdf::loadView('reports.admission', [
+            'admission' => $admission,
+            'clinic' => $clinic,
+
+
+        ])->setPaper('a4');
+
+
+        return $pdf->stream('ficha_de_medicamentos.pdf');
+
+
+
+    }
+    public function medicationRecordReport($id)
+    {
+        $medicationRecord = medicationRecord::findOrFail($id);
+
+
+        $clinic = Clinic::get()->first();
+        $details = medicationRecordDetail::where('medication_record_id', $id)->with('medicationNotification')->get();
+
+        foreach ($details as $detail) {
+            $notifications = MedicationNotification::where('medication_record_detail_id', $detail->id)->with('medicationRecordDetail')->get();
+        }
+
+
+        if ($medicationRecord->active != true) {
+            return Redirect::route('medicationRecords.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
+        }
+
+        $pdf = Pdf::loadView('reports.medication_record', [
+            'medicationRecord' => $medicationRecord,
+            'clinic' => $clinic,
+            'details' => $details,
+            'notification'=>$notifications
+
+        ])->setPaper('a4');
+
+
+        return $pdf->stream('ficha_de_medicamentos.pdf');
+
+
+
+    }
+    public function medicalOrderReport($id)
+    {
+        $MedicalOrder = MedicalOrder::findOrFail($id);
+
+
+        $clinic = Clinic::get()->first();
+        $details = MedicalOrderDetail::where('medical_order_id', $id)->get();
+
+
+
+
+        if ($MedicalOrder->active != true) {
+            return Redirect::route('MedicalOrders.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
+        }
+
+        $pdf = Pdf::loadView('reports.medical_order', [
+            'MedicalOrder' => $MedicalOrder,
+            'clinic' => $clinic,
+            'details' => $details,
+
+
+        ])->setPaper('a4');
+
+
+        return $pdf->stream('ficha_de_medicamentos.pdf');
+
+
 
     }
 }

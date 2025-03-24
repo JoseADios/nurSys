@@ -7,7 +7,7 @@
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-2">
                     <h3 class="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-100">
-                        Top Doctores por Admisiones
+                        Top 3 doctores por ingresos
                     </h3>
                 </div>
                 <span
@@ -28,10 +28,15 @@
                         <!-- Información del doctor -->
                         <div class="flex items-center space-x-3 flex-grow">
                             <div class="flex-shrink-0 relative">
-                                <div
+                                <!-- Avatar: maneja tanto photo_path como generación automática -->
+                                <div v-if="doctor.profile_photo_path"
+                                    class="size-8 sm:h-10 sm:w-10 rounded-full overflow-hidden">
+                                    <img :src="getPhotoUrl(doctor.profile_photo_path)" alt="Doctor avatar"
+                                        class="h-full w-full object-cover">
+                                </div>
+                                <div v-else
                                     class="size-8 sm:h-10 sm:w-10 text-sm rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-300 font-medium">
-                                    <img :src="doctor.profile_photo_path" alt="Profile Photo"
-                                    class="size-4 rounded-full mr-2 sm:size-8 md:size-10 md:mr-4 object-cover">
+                                    {{ getInitials(doctor.doctor) }}
                                 </div>
                                 <div class="absolute -top-1 -right-1 size-4 rounded-full flex items-center justify-center text-xs text-white font-bold shadow-sm"
                                     :class="{
@@ -125,6 +130,18 @@ export default {
                 .join('')
                 .toUpperCase()
                 .substring(0, 2);
+        },
+        getPhotoUrl(photoPath) {
+            // Verifica si ya es una URL completa
+            if (photoPath && (photoPath.startsWith('http://') || photoPath.startsWith('https://'))) {
+                return photoPath;
+            }
+
+            // Si es una ruta relativa (almacenada en storage)
+            if (photoPath) {
+                return `/storage/${photoPath}`;
+            }
+            return null;
         }
     }
 }

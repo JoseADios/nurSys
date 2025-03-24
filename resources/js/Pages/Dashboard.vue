@@ -18,6 +18,7 @@ import TrendingUpIcon from '@/Components/Icons/TrendingUpIcon.vue';
 import ThermometerIcon from '@/Components/Icons/ThermometerIcon.vue';
 import MedicationIcon from '@/Components/Icons/MedicationIcon.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import TopDoctorsAdmissions from '@/Components/TopDoctorsAdmissions.vue';
 import axios from 'axios';
 import { ref } from 'vue';
 
@@ -397,6 +398,10 @@ async function fetchData() {
                                     </p>
                                 </div>
                             </div>
+                        </AccessGate>
+
+                        <AccessGate role="admin">
+                            <TopDoctorsAdmissions :doctors="stats.top_doctors_most_admissions" />
                         </AccessGate>
                     </div>
                 </div>

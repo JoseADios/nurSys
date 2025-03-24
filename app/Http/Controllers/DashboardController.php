@@ -32,6 +32,7 @@ class DashboardController extends Controller
             'beds_by_status' => $this->getBedsByStatus(),
             'upcoming_medications' => $this->getUpcomingMedications(),
             'patients_high_temperature' => $this->getPatientsHighTemperature(),
+            'top_doctors_most_admissions' => $this->getTop3DoctorsWithMostAdmissions(),
         ];
 
         return Inertia::render('Dashboard', [
@@ -247,11 +248,6 @@ class DashboardController extends Controller
         return $pendingMedications;
     }
 
-    // obtener la ultima temperatura por paciente si es mas alta de 38 grados
-    // si el ingreso esta activo
-    // si el ingreso esta en progreso
-    // si el record esta activo
-
     private function getPatientsHighTemperature()
     {
         $details = DB::table('temperature_details as d')
@@ -283,4 +279,16 @@ class DashboardController extends Controller
         return $highTempPatients;
     }
 
+    private function getTop3DoctorsWithMostAdmissions()
+    {
+        $query = DB::table('admissions as a')
+            ->join('users as u', 'a.doctor_id', '=', 'u.id')
+            ->selectRaw('CONCAT_WS(" ", u.name, u.last_name) AS doctor, u.specialty, u.profile_photo_path, COUNT(a.id) AS cant')
+            ->whereBetween('a.created_at', [now()->startOfMonth(), now()->endOfMonth()])
+            ->groupBy('doctor', 'u.specialty', 'u.profile_photo_path')
+            ->orderByDesc('cant')
+            ->limit(3);
+
+        return $query->get();
+    }
 }

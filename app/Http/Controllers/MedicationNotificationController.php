@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Services\FirmService;
 class MedicationNotificationController extends Controller implements HasMiddleware
 {
     use AuthorizesRequests;
@@ -86,6 +87,15 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
         $medication_notification = MedicationNotification::find($id);
         $detail = MedicationRecordDetail::find($medication_notification->medication_record_detail_id);
 
+        $firmService = new FirmService;
+
+        if ($request->has('nurse_sign')) {
+         $fileName = $firmService->createImag($request->nurse_sign, $medication_notification->nurse_sign);
+         $medication_notification->update(['nurse_sign' => $fileName]);
+
+         return back()->with('flash.toast', 'Registro actualizado correctamente');
+
+     }
         if ($request->has('markAsAdministered')) {
 
             if ($detail->active == 1 && $detail->suspended_at == null) {

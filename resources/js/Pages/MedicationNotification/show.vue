@@ -81,7 +81,7 @@
                             APLICADO
                         </div>
                         <div v-if="lastApplied(notification)">
-                            <button class="text-white" @click="revert(notification.id)">
+                            <button class="text-white"  @click="revert(notification.id)" >
                                 Revertir
                             </button>
                         </div>
@@ -93,7 +93,7 @@
 
                         </div>
                         <div v-if="Firstnoapplied(notification)">
-                            <button class="text-white" @click="markAsAdministered(notification.id)">
+                            <button class="text-white"@click="openModal(notification)" >
                                 administrar
                             </button>
                         </div>
@@ -104,7 +104,42 @@
             </div>
         </div>
     </div>
+  <!-- modal para dar de alta -->
+  <ConfirmationModal :show="notificationSignatureUpdate != null" @close="notificationSignatureUpdate = null">
+        <template #title>
+            <div v-if="notifications.applied != true">Administrar</div>
+            <div v-if="notifications.applied == true">Revertir</div>
+            <div>
 
+                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" />
+                <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
+
+
+
+
+            </div>
+
+        </template>
+
+        <template #content>
+            <div v-if="notificationBeingUpdated.applied != true">¿Estás seguro de que deseas aplicar este medicamento?
+            </div>
+        </template>
+
+        <template #footer>
+            <SecondaryButton @click="notificationSignatureUpdate = null">
+                Cancelar
+            </SecondaryButton>
+
+            <div v-if="notificationBeingUpdated.applied != true">
+                <PrimaryButton class="ms-3" @click="markAsAdministered(notificationBeingUpdated)">
+                    Administrar
+                </PrimaryButton>
+            </div>
+
+
+        </template>
+    </ConfirmationModal>
 </AppLayout>
 </template>
 
@@ -114,7 +149,14 @@ import {
     Link
 } from '@inertiajs/vue3';
 import FormatId from '@/Components/FormatId.vue';
-
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
+import {
+    ref
+} from 'vue';
 export default {
     props: {
         details: Object,
@@ -123,15 +165,49 @@ export default {
     components: {
         AppLayout,
         Link,
-        FormatId
+        FormatId,
+        ConfirmationModal,
+        DangerButton,
+        SecondaryButton,
+        PrimaryButton,
+        SignaturePad,
     },
+    data() {
+        return {
 
+            notificationSignatureUpdate: ref(null),
+            notificationBeingUpdated: ref(null),
+            signatureError: false,
+
+            formSignature: {
+                nurse_sign: this.notifications.nurse_sign,
+
+            },
+        }
+    },
     methods: {
+        submitSignature(notification_id) {
+            if (!this.formSignature.nurse_sign) {
+                this.signatureError = true;
+                return false
+            }
+            this.signatureError = false;
+            this.$inertia.put(route('medicationNotification.update', notification_id), this.formSignature, {
+                preserveScroll: true
+            });
+            this.notificationSignatureUpdate = null
+        },
         Firstnoapplied(notification) {
             const firstNotApplied = this.notifications.find((n) => n.applied === 0);
             return firstNotApplied && firstNotApplied.id === notification.id;
 
         },
+        openModal(notification){
+
+           this.notificationSignatureUpdate = true;
+            this.notificationBeingUpdated = notification;
+        },
+
         lastApplied(notification) {
             const lastApplied = this.notifications.reduceRight((acc, n) => {
                 return acc || (n.applied === 1 ? n : null);
@@ -140,15 +216,26 @@ export default {
         },
         markAsAdministered(id) {
 
+            if (!this.formSignature.nurse_sign) {
+                this.signatureError = true;
+                return false
+            }
+            this.signatureError = false;
+            this.$inertia.put(route('medicationNotification.update', this.notificationBeingUpdated.id), this.formSignature, {
+                preserveScroll: true
+            });
+            this.notificationSignatureUpdate = null;
             const notification = this.notifications;
             if (notification) {
                 const newAppliedValue = notification.applied === 1 ? 0 : 1;
                 notification.applied = newAppliedValue;
-                this.$inertia.put(route('medicationNotification.update', id), {
+                this.$inertia.put(route('medicationNotification.update', this.notificationBeingUpdated.id), {
                     markAsAdministered: true
                 })
             }
+
         },
+
         revert(id) {
 
             const notification = this.notifications;

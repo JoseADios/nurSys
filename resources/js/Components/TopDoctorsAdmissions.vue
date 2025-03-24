@@ -26,7 +26,7 @@
                     class="group relative px-4 sm:px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-all duration-200">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
                         <!-- Información del doctor -->
-                        <div class="flex items-center space-x-3 flex-grow">
+                        <Link :href="route('users.show', doctor.id)" class="flex items-center space-x-3 flex-grow">
                             <div class="flex-shrink-0 relative">
                                 <!-- Avatar: maneja tanto photo_path como generación automática -->
                                 <div v-if="doctor.profile_photo_path"
@@ -61,7 +61,7 @@
                                     {{ doctor.specialty }}
                                 </div>
                             </div>
-                        </div>
+                        </Link>
 
                         <!-- Contador de admisiones -->
                         <div
@@ -109,8 +109,13 @@
 </template>
 
 <script>
+import { Link } from '@inertiajs/vue3';
+
 export default {
     name: 'TopDoctorsAdmissions',
+    components: {
+        Link
+    },
     props: {
         doctors: {
             type: Array,

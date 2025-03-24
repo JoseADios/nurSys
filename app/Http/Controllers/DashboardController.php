@@ -283,9 +283,9 @@ class DashboardController extends Controller
     {
         $query = DB::table('admissions as a')
             ->join('users as u', 'a.doctor_id', '=', 'u.id')
-            ->selectRaw('CONCAT_WS(" ", u.name, u.last_name) AS doctor, u.specialty, u.profile_photo_path, COUNT(a.id) AS cant')
+            ->selectRaw('u.id, CONCAT_WS(" ", u.name, u.last_name) AS doctor, u.specialty, u.profile_photo_path, COUNT(a.id) AS cant')
             ->whereBetween('a.created_at', [now()->startOfMonth(), now()->endOfMonth()])
-            ->groupBy('doctor', 'u.specialty', 'u.profile_photo_path')
+            ->groupBy('u.id', 'doctor', 'u.specialty', 'u.profile_photo_path')
             ->orderByDesc('cant')
             ->limit(3);
 

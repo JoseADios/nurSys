@@ -7,6 +7,7 @@ use App\Models\TemperatureRecord;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Builder;
+use Log;
 
 class TemperatureRecordPolicy
 {
@@ -15,10 +16,6 @@ class TemperatureRecordPolicy
      */
     public function before(User $user, string $ability): bool|null
     {
-        if ($user->hasRole('admin')) {
-            return true;
-        }
-
         return null;
     }
 
@@ -35,6 +32,9 @@ class TemperatureRecordPolicy
      */
     public function view(User $user, TemperatureRecord $temperatureRecord): Response
     {
+        if ($user->hasRole('admin')) {
+            return Response::allow();
+        }
         if (!$temperatureRecord->active) {
             return Response::deny('No tienes permiso para ver este registro');
         }
@@ -45,13 +45,17 @@ class TemperatureRecordPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, Admission $admission): Response
+    public function create(User $user, $admission_id): Response
     {
+        $admission = Admission::where('id',$admission_id)->first();
+
+        Log::info($admission);
+
         if ($admission->discharged_date !== null) {
             return Response::deny('No se pueden crear registros en un ingreso que ha sido dado de alta');
         }
 
-        $existingRecord = TemperatureRecord::where('admission_id', $admission->id)
+        $existingRecord = TemperatureRecord::where('admission_id', $admission_id)
             ->where('active', 1)
             ->first();
 
@@ -67,6 +71,10 @@ class TemperatureRecordPolicy
      */
     public function update(User $user, TemperatureRecord $temperatureRecord): Response
     {
+        if ($user->hasRole('admin')) {
+            return Response::allow();
+        }
+
         if ($temperatureRecord->admission->discharged_date !== null) {
             return Response::deny('No se pueden modificar registros en un ingreso que ha sido dado de alta');
         }
@@ -79,6 +87,10 @@ class TemperatureRecordPolicy
      */
     public function updateAdmission(User $user, $new_admission_id): Response
     {
+        if (!$user->hasRole('admin')) {
+            return Response::deny();
+        }
+
         // Validar que la nueva admisión no tenga otra hoja de temperatura activa
         $newAdmission = Admission::where('id', $new_admission_id)
             ->whereDoesntHave('TemperatureRecord', function (Builder $query) {
@@ -98,6 +110,10 @@ class TemperatureRecordPolicy
      */
     public function updateSignature(User $user, TemperatureRecord $temperatureRecord): Response
     {
+        if ($user->hasRole('admin')) {
+            return Response::allow();
+        }
+
         if ($temperatureRecord->admission->discharged_date !== null) {
             return Response::deny('No se pueden modificar registros en un ingreso que ha sido dado de alta');
         }
@@ -116,6 +132,10 @@ class TemperatureRecordPolicy
      */
     public function delete(User $user, TemperatureRecord $temperatureRecord): Response
     {
+        if ($user->hasRole('admin')) {
+            return Response::allow();
+        }
+
         if ($temperatureRecord->admission->discharged_date === null) {
             return Response::allow();
         }

@@ -73,6 +73,7 @@ class ReportController extends Controller
 
         $clinic = Clinic::get()->first();
         $details = NurseRecordDetail::where('nurse_record_id', $id)
+            ->where('active', true)
             ->get();
 
         if ($nurseRecord->active != true) {

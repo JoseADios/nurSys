@@ -17,19 +17,19 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-class MedicalOrderController extends Controller  implements HasMiddleware
+class MedicalOrderController extends Controller implements HasMiddleware
 {
 
-        use AuthorizesRequests;
-        public static function middleware(): array
-        {
-            return [
-                new Middleware('permission:medicalOrder.view', only: ['index', 'show']),
-                new Middleware('permission:medicalOrder.create', only: [ 'store']),
-                new Middleware('permission:medicalOrder.update', only: ['update']),
-                new Middleware('permission:medicalOrder.delete', only: ['destroy']),
-            ];
-        }
+    use AuthorizesRequests;
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:medicalOrder.view', only: ['index', 'show']),
+            new Middleware('permission:medicalOrder.create', only: ['store']),
+            new Middleware('permission:medicalOrder.update', only: ['update']),
+            new Middleware('permission:medicalOrder.delete', only: ['destroy']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
@@ -39,42 +39,43 @@ class MedicalOrderController extends Controller  implements HasMiddleware
         $admissionId = $request->input('admission_id');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
-  $showDeleted = $request->boolean('showDeleted');
-  $days = $request->integer('days');
+        $showDeleted = $request->boolean('showDeleted');
+        $days = $request->integer('days');
 
         $query = MedicalOrder::with('admission.patient', 'admission.bed', 'doctor')
-        ->select([
-            'medical_orders.created_at', 'medical_orders.*'
-        ])
+            ->select([
+                'medical_orders.created_at',
+                'medical_orders.*'
+            ])
             ->join('admissions', 'medical_orders.admission_id', '=', 'admissions.id')
             ->join('patients', 'admissions.patient_id', '=', 'patients.id')
             ->join('beds', 'admissions.bed_id', '=', 'beds.id')
             ->join('users', 'admissions.doctor_id', '=', 'users.id')
-        ->where('medical_orders.active', !$showDeleted);
+            ->where('medical_orders.active', !$showDeleted);
 
 
-            if (!empty($search)) {
-                $query->where(function ($q) use ($search) {
-                    $q->whereRaw('DATE(medical_orders.created_at) LIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%']);
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('DATE(medical_orders.created_at) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('CONCAT(users.name, " ", COALESCE(users.last_name, "")) LIKE ?', ['%' . $search . '%']);
 
-                });
-            }
+            });
+        }
 
-            if ($days) {
-                $query->where('medical_orders.created_at', '>=', now()->subDays($days));
-            }
+        if ($days) {
+            $query->where('medical_orders.created_at', '>=', now()->subDays($days));
+        }
 
-            if ($sortField) {
-                $query->orderBy($sortField, $sortDirection);
-            } else {
-                $query->latest('medical_orders.updated_at')
-                    ->latest('medical_orders.created_at');
-            }
-            if (!empty($admissionId)) {
-                $query->where('admission_id', intval($admissionId));
-            }
+        if ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->latest('medical_orders.updated_at')
+                ->latest('medical_orders.created_at');
+        }
+        if (!empty($admissionId)) {
+            $query->where('admission_id', intval($admissionId));
+        }
 
         $medicalOrders = $query->paginate(10);
 
@@ -123,24 +124,24 @@ class MedicalOrderController extends Controller  implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(MedicalOrder $medicalOrder,Request $request)
+    public function show(MedicalOrder $medicalOrder, Request $request)
     {
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
 
-        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor','admission.medicationRecord']);
+        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord']);
 
         $showDeleted = $request->boolean('showDeleted');
         $regimes = Regime::all();
 
 
-            if ($showDeleted || !$medicalOrder->active) {
+        if ($showDeleted || !$medicalOrder->active) {
 
-                $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active',false)->orderBy('created_at', 'desc')->get();
+            $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active', false)->orderBy('created_at', 'desc')->get();
 
-            }else{
-                $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active',true)->orderBy('created_at', 'desc')->get();
+        } else {
+            $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active', true)->orderBy('created_at', 'desc')->get();
 
-            }
+        }
         return Inertia::render('MedicalOrders/Show', [
             'medicalOrder' => $medicalOrder,
             'details' => $details,
@@ -156,24 +157,24 @@ class MedicalOrderController extends Controller  implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MedicalOrder $medicalOrder,Request $request)
+    public function edit(MedicalOrder $medicalOrder, Request $request)
     {
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
 
-        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor','admission.medicationRecord']);
+        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord']);
 
         $showDeleted = $request->boolean('showDeleted');
         $regimes = Regime::all();
 
 
-            if ($showDeleted || !$medicalOrder->active) {
+        if ($showDeleted || !$medicalOrder->active) {
 
-                $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active',false)->orderBy('created_at', 'desc')->get();
+            $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active', false)->orderBy('created_at', 'desc')->get();
 
-            }else{
-                $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active',true)->orderBy('created_at', 'desc')->get();
+        } else {
+            $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active', true)->orderBy('created_at', 'desc')->get();
 
-            }
+        }
         return Inertia::render('MedicalOrders/Edit', [
             'medicalOrder' => $medicalOrder,
             'details' => $details,
@@ -240,7 +241,7 @@ class MedicalOrderController extends Controller  implements HasMiddleware
         }
 
 
-        $medicalOrder->update(['active'=> 0]);
+        $medicalOrder->update(['active' => 0]);
 
         foreach ($medicationRecordDetails as $medicationRecordDetail) {
             $medicationRecordDetail->update(['suspended_at' => now()]);

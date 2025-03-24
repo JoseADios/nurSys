@@ -16,10 +16,22 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
-use Symfony\Component\Console\Input\Input;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:user.view', only: ['index', 'show']),
+            new Middleware('permission:user.create', only: ['create', 'store']),
+            new Middleware('permission:user.update', only: ['edit', 'update']),
+            new Middleware('permission:user.delete', only: ['destroy']),
+        ];
+    }
+
     use PasswordValidationRules;
 
     /**
@@ -233,7 +245,6 @@ class UserController extends Controller
         $user->update(['active' => false]);
         DB::table('sessions')->where('user_id', $user->id)->delete();
         return back()->with('flash.toast', 'Usuario desactivado y sesión cerrada.');
-        ;
     }
 
     public function filterUsers(Request $request)

@@ -37,16 +37,17 @@ class TurnService
         return null;
     }
 
-    public function getDateRangeForTurn($turn)
+    public function getDateRangeForTurn($turn, $day_r = null)
     {
+        $day = $day_r ?? now();
+
         $startHour = $turn['hours'][0];
         $endHour = $turn['hours'][1];
-        $now = Carbon::now();
 
         if (!$turn['crosses_midnight']) {
             // Turno normal (ej: 7-14, 14-21)
-            $start = $now->copy()->startOfDay()->addHours($startHour);
-            $end = $now->copy()->startOfDay()->addHours($endHour);
+            $start = $day->copy()->startOfDay()->addHours($startHour);
+            $end = $day->copy()->startOfDay()->addHours($endHour);
 
             return [
                 'start' => $start,
@@ -54,12 +55,12 @@ class TurnService
             ];
         } else {
             // Turno nocturno (21-7)
-            $start = $now->copy()->startOfDay()->addHours($startHour);
-            $end = $now->copy()->startOfDay()->addHours($endHour)->addDay();
+            $start = $day->copy()->startOfDay()->addHours($startHour);
+            $end = $day->copy()->startOfDay()->addHours($endHour)->addDay();
 
             // Si la hora actual es menor que el fin del turno (ej: 2am),
             // ajustamos el rango al día anterior
-            if ($now->hour < $endHour) {
+            if ($day->hour < $endHour) {
                 $start->subDay();
                 $end->subDay();
             }

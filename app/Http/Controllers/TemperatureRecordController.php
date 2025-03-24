@@ -32,7 +32,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:temperatureRecord.view', only: ['index', 'show']),
-            new Middleware('permission:temperatureRecord.create', only: ['show', 'store']),
+            new Middleware('permission:temperatureRecord.create', only: ['store']),
             new Middleware('permission:temperatureRecord.update', only: ['update']),
             new Middleware('permission:temperatureRecord.delete', only: ['destroy']),
         ];
@@ -89,9 +89,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $query->where('temperature_records.created_at', '>=', now()->subDays($days));
         }
 
-        if ($sortField == 'in_process') {
-            $query->orderByRaw('CASE WHEN admissions.discharged_date IS NULL THEN 0 ELSE 1 END ' . $sortDirection);
-        } elseif ($sortField) {
+        if ($sortField) {
             $query->orderBy($sortField, $sortDirection);
         } else {
             $query->latest('temperature_records.updated_at')
@@ -128,17 +126,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function create(Request $request)
     {
-
         $admission_id = $request->has('admission_id') ? $request->integer('admission_id') : null;
 
-        if ($admission_id) {
-            $admission = Admission::find($admission_id);
-            $response = Gate::inspect('create', [TemperatureRecord::class, $admission]);
-
-            if (!$response->allowed()) {
-                return back()->with('flash.toast', $response->message())->with('flash.toastStyle', 'danger');
-            }
-        }
         return Inertia::render('TemperatureRecords/Create', [
             'admission_id' => $admission_id,
         ]);
@@ -149,22 +138,23 @@ class TemperatureRecordController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $admission = Admission::find($request->admission_id);
-        $has_admission_id = $request->input('has_admission_id');
+        $admission_id = $request->input('admission_id');
 
-        $this->authorize('create', [TemperatureRecord::class, $admission]);
+        if ($admission_id) {
+            $this->authorize('create', [TemperatureRecord::class, $admission_id]);
+        }
 
         $temperatureRecord = TemperatureRecord::create([
-            'admission_id' => $request->admission_id,
+            'admission_id' => $admission_id,
             'nurse_id' => Auth::id(),
         ]);
 
-        if ($has_admission_id) {
+        if ($admission_id) {
             return Redirect::route(
                 'temperatureRecords.show',
                 [
                     'temperatureRecord' => $temperatureRecord->id,
-                    'admission_id' => $admission->id
+                    'admission_id' => $admission_id
                 ]
             )->with('flash.toast', 'Registro de temperatura creado correctamente');
 
@@ -191,7 +181,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         ]);
 
         $eliminationsRecords = $temperatureRecord->eliminationRecords;
-        $temperatureDetails = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->with('nurse')->get();
+        $temperatureDetails = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)->with('nurse')
+            ->orderBy('updated_at', 'asc')->orderBy('id', 'asc')->get();
 
         $turnService = new TurnService();
         $currentTurn = $turnService->getCurrentTurn();
@@ -201,7 +192,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         foreach ($temperatureDetails as $temperature) {
             // Obtener el turno de la fecha de la temperatura
             $temperatureTurn = $turnService->getCurrentTurnForDate($temperature->updated_at);
-            $dateRange = $turnService->getDateRangeForTurn($temperatureTurn);
+            $dateRange = $turnService->getDateRangeForTurn($temperatureTurn, $temperature->updated_at);
 
             // Buscar el registro de eliminación dentro del mismo turno
             $elimination = $eliminationsRecords->first(function ($el) use ($dateRange) {
@@ -221,6 +212,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             ];
         }
 
+
         // verificar si puede crear elimination
         $responseCreateElimination = Gate::inspect('create', [EliminationRecord::class, $temperatureRecord->id]);
         $canCreateElimination = $responseCreateElimination->allowed();
@@ -231,7 +223,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->orderBy('updated_at', 'desc')
-            ->whereBetween('updated_at',[$currentDateRange['start'], $currentDateRange['end']])
+            ->whereBetween('updated_at', [$currentDateRange['start'], $currentDateRange['end']])
             ->first();
 
         $lastEliminations = EliminationRecord::where('temperature_record_id', $temperatureRecord->id)
@@ -321,6 +313,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     {
         $this->authorize('delete', $temperatureRecord);
         $temperatureRecord->update(['active' => 0]);
-        return Redirect::route('temperatureRecords.index')->with('flash.toast', 'Registro de temperatura eliminado correctamente');
+        return back()->with('flash.toast', 'Registro de temperatura eliminado correctamente');
     }
 }

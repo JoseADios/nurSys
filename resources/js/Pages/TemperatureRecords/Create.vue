@@ -2,45 +2,40 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Nueva Hoja de Temperatura
+                <BreadCrumb :items="[
+                    // Condicionar el primer elemento (solo se muestra si hay admission_id)
+                    ...(admission_id ? [{
+                        formattedId: { id: admission_id, prefix: 'ING' },
+                        route: route('admissions.show', admission_id)
+                    }] : []),
+
+                    // Segundo elemento (depende si hay admission_id o no)
+                    {
+                        text: 'Hojas de temperatura',
+                        route: admission_id
+                            ? route('temperatureRecords.index', { admission_id: admission_id })
+                            : route('temperatureRecords.index')
+                    },
+
+                    {
+                        text: 'Crear'
+                    },
+                ]" />
             </h2>
         </template>
 
-        <div class="ml-4 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-            <div v-if="admission_id" class="inline-flex items-center">
-                <Link :href="route('admissions.show', admission_id)"
-                    class="inline-flex items-center hover:text-blue-600  dark:hover:text-white">
-                <FormatId :id="admission_id" prefix="ING"></FormatId>
-                </Link>
-                <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
-            </div>
-
-            <div v-if="admission_id">
-                <Link :href="route('temperatureRecords.index', { admission_id: admission_id })"
-                    class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
-                Hojas de temperatura
-                </Link>
-            </div>
-            <div v-if="!admission_id">
-                <Link :href="route('temperatureRecords.index')"
-                    class="inline-flex items-center hover:text-blue-600 dark:hover:text-white">
-                Hojas de temperatura
-                </Link>
-            </div>
-            <ChevronRightIcon class="size-3 text-gray-400 mx-1" />
-            <div class="ml-2 inline-flex items-center">
-                Crear
-            </div>
-        </div>
-
         <div
-            class="relative mb-4 overflow-x-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 sm:rounded-lg mt-4 p-4 lg:mx-10">
+            class="relative mb-4 overflow-x-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 sm:rounded-lg mt-8 p-4 lg:mx-10">
             <form @submit.prevent="submit" class="max-w-2xl mx-auto">
-                <AdmissionSelector @update:admission="form.admission_id = $event"
-                    :selected-admission-id="admission_id" />
+                <AdmissionSelector @update:admission="form.admission_id = $event" :selected-admission-id="admission_id"
+                    :doesnt-have-temperature-r="true" />
 
                 <div class="flex justify-end mt-6 mb-2">
-                    <Link v-if="admission_id" :href="route('admissions.show', admission_id)"
+                    <Link v-if="admission_id" :href="route('temperatureRecords.index', {admission_id: admission_id})"
+                        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    Cancelar
+                    </Link>
+                    <Link v-else :href="route('temperatureRecords.index')"
                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                     Cancelar
                     </Link>
@@ -56,6 +51,7 @@
 
 <script>
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 import FormatId from '@/Components/FormatId.vue';
 import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -70,7 +66,8 @@ export default {
         Link,
         ChevronRightIcon,
         FormatId,
-        AdmissionSelector
+        AdmissionSelector,
+        BreadCrumb
     },
     data() {
         return {

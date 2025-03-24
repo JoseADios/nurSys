@@ -8,17 +8,21 @@
 
         <div class="max-w-7xl mx-auto p-6">
             <!-- Botón de Volver -->
-            <div class="mb-6 flex ">
-
+            <div class="mb-6 flex justify-end md:hidden">
+                <Link :href="route('users.index')"
+                    class="inline-flex items-center px-4 py-2 bg-white/20 text-white text-sm rounded-lg hover:bg-white/40 transition-all duration-200">
+                <BackIcon class="w-4 h-4 mr-2" />
+                Volver
+                </Link>
             </div>
 
             <!-- Tarjeta Principal -->
-            <div
-                class="bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-900 dark:to-blue-900 rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
                 <div class="p-6">
-                    <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                         <div class="flex items-center space-x-4 mb-4 md:mb-0">
-                            <img :src="user.profile_photo_url" alt="Foto de Perfil" class="w-20 h-20 rounded-full">
+                            <img :src="user.profile_photo_url" alt="Foto de Perfil"
+                                class="w-20 h-20 rounded-full object-cover">
                             <div>
                                 <h2 class="text-2xl font-bold text-white">{{ user.name }} {{ user.last_name }}</h2>
                                 <div class="flex items-center space-x-2">
@@ -27,7 +31,6 @@
                                             <FormatRole :role="user.roles[0].name" />
                                         </div>
                                         <div v-else>N/A</div>
-
                                     </span>
                                     <span :class="[
                                         'px-2 py-1 text-white text-sm rounded-full',
@@ -38,14 +41,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex space-x-3">
+                        <div class="flex space-x-3 md:flex md:space-x-3 lg:space-x-4">
                             <Link :href="route('users.index')"
-                                class="inline-flex items-center px-4 py-2 bg-gray-800/50 text-gray-200 text-sm rounded-lg hover:bg-gray-400/50 transition-all duration-200">
+                                class="hidden md:inline-flex items-center px-4 py-2 bg-white/20 text-white text-sm rounded-lg hover:bg-white/40 transition-all duration-200">
                             <BackIcon class="w-4 h-4 mr-2" />
                             Volver
                             </Link>
                             <Link :href="route('users.edit', user.id)"
-                                class="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all duration-200 flex items-center space-x-2">
+                                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-400 transition-all duration-200 flex items-center space-x-2">
                             <EditIcon class="h-4 w-4" />
                             <span>Editar</span>
                             </Link>
@@ -65,7 +68,7 @@
             </div>
 
             <!-- Secciones de Información -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                 <!-- Información Personal -->
                 <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div class="p-6">
@@ -95,7 +98,8 @@
                 </div>
 
                 <!-- Información Profesional -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 lg:col-span-2">
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 md:col-span-2 lg:col-span-2">
                     <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                             Información Profesional

@@ -15,6 +15,11 @@ const props = defineProps({
     }
 });
 
+// Estado para el filtro de tiempo seleccionado
+const selectedTimeFilter = ref('week');
+// Emitir eventos para el filtro de tiempo
+const emit = defineEmits(['time-filter-change']);
+
 // Detectar el modo oscuro
 const isDarkMode = ref(false);
 
@@ -32,6 +37,16 @@ const updateDarkModeState = () => {
 
 // Opciones del gráfico computadas basadas en el modo oscuro
 const chartOptions = computed(() => {
+    // Personalizar el título del eje X según el filtro seleccionado
+    let xaxisTitle = 'Día';
+    if (selectedTimeFilter.value === 'month') {
+        xaxisTitle = 'Día del mes';
+    } else if (selectedTimeFilter.value === 'year') {
+        xaxisTitle = 'Mes';
+    } else if (selectedTimeFilter.value === 'all') {
+        xaxisTitle = 'Año';
+    }
+
     return {
         chart: {
             type: 'bar',
@@ -39,7 +54,7 @@ const chartOptions = computed(() => {
             toolbar: {
                 show: false
             },
-            background:'transparent',
+            background: 'transparent',
             foreColor: isDarkMode.value ? '#a0aec0' : '#64748b',
             stacked: false
         },
@@ -56,6 +71,12 @@ const chartOptions = computed(() => {
         },
         xaxis: {
             type: 'category',
+            title: {
+                text: xaxisTitle,
+                style: {
+                    color: isDarkMode.value ? '#a0aec0' : '#64748b'
+                }
+            },
             axisBorder: {
                 color: isDarkMode.value ? '#2d3748' : '#e2e8f0'
             },
@@ -66,7 +87,7 @@ const chartOptions = computed(() => {
                 style: {
                     colors: isDarkMode.value ? '#a0aec0' : '#64748b'
                 },
-                rotate: 0
+                rotate: selectedTimeFilter.value === 'year' ? 0 : 0
             }
         },
         yaxis: {
@@ -126,9 +147,24 @@ const series = ref([
     }
 ]);
 
-// Función para formatear la fecha con Moment.js
+// Función para formatear la fecha con Moment.js según el filtro de tiempo
 function formatDate(dateString) {
+    if (selectedTimeFilter.value === 'week') {
+        return moment(dateString).format('DD/MM');
+    } else if (selectedTimeFilter.value === 'month') {
+        return moment(dateString).format('DD');
+    } else if (selectedTimeFilter.value === 'year') {
+        return moment(dateString).format('MMM');
+    } else if (selectedTimeFilter.value === 'all') {
+        return moment(dateString).format('YYYY');
+    }
     return moment(dateString).format('DD/MM');
+}
+
+// Manejar el cambio de filtro de tiempo
+function handleTimeFilterChange(filter) {
+    selectedTimeFilter.value = filter;
+    emit('time-filter-change', filter);
 }
 
 // Inicializar el estado del modo oscuro al montar el componente
@@ -214,6 +250,43 @@ watch([() => props.admissions, () => props.discharges], ([newAdmissions, newDisc
 
 <template>
     <div class="w-full">
-        <VueApexCharts :options="chartOptions" :series="series" height="350" />
+        <div class="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ingresos y Altas</h3>
+            <div class="flex space-x-2">
+                <button @click="handleTimeFilterChange('week')" :class="[
+                    'px-3 py-1 text-sm rounded-md transition',
+                    selectedTimeFilter === 'week'
+                        ? 'bg-indigo-400 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                ]">
+                    Semana
+                </button>
+                <button @click="handleTimeFilterChange('month')" :class="[
+                    'px-3 py-1 text-sm rounded-md transition',
+                    selectedTimeFilter === 'month'
+                        ? 'bg-indigo-400 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                ]">
+                    Mes
+                </button>
+                <button @click="handleTimeFilterChange('year')" :class="[
+                    'px-3 py-1 text-sm rounded-md transition',
+                    selectedTimeFilter === 'year'
+                        ? 'bg-indigo-400 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                ]">
+                    Año
+                </button>
+                <button @click="handleTimeFilterChange('all')" :class="[
+                    'px-3 py-1 text-sm rounded-md transition',
+                    selectedTimeFilter === 'all'
+                        ? 'bg-indigo-400 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                ]">
+                    Histórico
+                </button>
+            </div>
+        </div>
+        <VueApexCharts :options="chartOptions" :series="series" height="300" />
     </div>
 </template>

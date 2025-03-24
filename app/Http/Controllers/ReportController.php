@@ -7,6 +7,9 @@ use App\Models\EliminationRecord;
 use App\Models\NurseRecord;
 use App\Models\MedicationRecord;
 use App\Models\MedicationRecordDetail;
+use App\Models\MedicalOrder;
+use App\Models\MedicalOrderDetail;
+use App\Models\Admission;
 use App\Models\NurseRecordDetail;
 use App\Models\Patient;
 use App\Models\TemperatureDetail;
@@ -99,6 +102,32 @@ class ReportController extends Controller
         // ]);
 
     }
+    public function admissionReport($id)
+    {
+        $admission = Admission::findOrFail($id);
+
+
+        $clinic = Clinic::get()->first();
+
+
+
+        if ($admission->active != true) {
+            return Redirect::route('admissions.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
+        }
+
+        $pdf = Pdf::loadView('reports.admission', [
+            'admission' => $admission,
+            'clinic' => $clinic,
+
+
+        ])->setPaper('a4');
+
+
+        return $pdf->stream('ficha_de_medicamentos.pdf');
+
+
+
+    }
     public function medicationRecordReport($id)
     {
         $medicationRecord = medicationRecord::findOrFail($id);
@@ -121,6 +150,35 @@ class ReportController extends Controller
             'clinic' => $clinic,
             'details' => $details,
             'notification'=>$notifications
+
+        ])->setPaper('a4');
+
+
+        return $pdf->stream('ficha_de_medicamentos.pdf');
+
+
+
+    }
+    public function medicalOrderReport($id)
+    {
+        $MedicalOrder = MedicalOrder::findOrFail($id);
+
+
+        $clinic = Clinic::get()->first();
+        $details = MedicalOrderDetail::where('medical_order_id', $id)->get();
+
+
+
+
+        if ($MedicalOrder->active != true) {
+            return Redirect::route('MedicalOrders.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
+        }
+
+        $pdf = Pdf::loadView('reports.medical_order', [
+            'MedicalOrder' => $MedicalOrder,
+            'clinic' => $clinic,
+            'details' => $details,
+
 
         ])->setPaper('a4');
 

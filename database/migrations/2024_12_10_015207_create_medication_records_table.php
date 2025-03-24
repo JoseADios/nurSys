@@ -15,11 +15,10 @@ return new class extends Migration
         Schema::create('medication_records', function (Blueprint $table) {
             $table->id();
             $table->foreignId('admission_id')->constrained()->onDelete('restrict');
-            $table->foreignId('doctor_id')->constrained('users')->onDelete('restrict');
+
             $table->string('diagnosis');
             $table->string('diet');
 
-            $table->string('doctor_sign')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
 

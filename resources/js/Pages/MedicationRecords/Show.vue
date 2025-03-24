@@ -43,6 +43,10 @@ Ficha de Medicamentos
                 <div class="bg-gradient-to-r from-blue-600 to-blue-600 p-6">
                     <div class="flex justify-between items-center">
                         <h2 class="text-2xl font-bold text-white">Ficha Medicamentos</h2>
+                        <button v-if="medicationRecord.active" @click="downloadRecordReport"
+                            class="inline-flex mr-8  px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
+                            <ReportIcon class="size-5 mr-1" /> Crear Reporte
+                        </button>
                         <Link :href="route('medicationRecords.index')"
                             class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out">
                             Volver
@@ -415,44 +419,7 @@ Ficha de Medicamentos
                     </div>
 
                 </div>
-                <section class=" p-8 space-y-4  bg-dark-50 dark:bg-dark-700">
-                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Firma</h3>
-                <!-- mostrar imagen firma -->
-                <div v-show="!isVisibleEditSign" class="my-4 flex items-center flex-col justify-center">
-                    <div>
-                        <h2 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Firma
-                        </h2>
-                        <img v-if="medicationRecord.doctor_sign" class="w-full max-w-md" :src="`/storage/${medicationRecord.doctor_sign}`" alt="Firma">
-                        <div v-else>
-                            <div class="text-gray-500 dark:text-gray-400 my-16">
-                                No hay firma disponible
-                            </div>
-                        </div>
-                    </div>
-                    <button @click="isVisibleEditSign = true"
-                        class="mt-4 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                        Editar</button>
-                </div>
-                <!-- Campo de firma -->
-                <div v-show="isVisibleEditSign" class="my-4">
-                    <form @submit.prevent="submitSignature" class=" flex  items-center flex-col justify-center">
-                        <SignaturePad v-model="formSignature.doctor_sign" input-name="doctor_sign" />
-<div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
 
-
-
-                        <div class="my-4">
-                            <button type="button"
-                                class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                                @click="isVisibleEditSign = false">Cancelar</button>
-                            <button
-                                class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
-                                type="submit">Guardar firma</button>
-                        </div>
-                    </form>
-                </div>
-                </section>
             </div>
         </div>
          <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
@@ -534,6 +501,7 @@ import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 import FormatId from '@/Components/FormatId.vue';
 import DrugSelector from '@/Components/DrugSelector.vue';
 import InputError from '@/Components/InputError.vue';
+import ReportIcon from '@/Components/Icons/ReportIcon.vue';
 export default{
     props: {
         medicationRecord: Object,
@@ -556,7 +524,8 @@ export default{
         SignaturePad,
         FormatId,
         DrugSelector,
-        InputError
+        InputError,
+        ReportIcon
     },
     data(){
         return{
@@ -578,15 +547,12 @@ export default{
             errors: '',
             isVisible: false,
             isVisibleEditSign: ref(null),
-            signatureError: false,
+
             modalform:{
                 description: '',
                 name: '',
             },
-            formSignature: {
-                doctor_sign: this.medicationRecord.doctor_sign,
-                signature: true,
-            },
+
         }
     },
     methods: {
@@ -599,17 +565,7 @@ export default{
         preserveScroll: true
     });
 },
-submitSignature() {
-            if (!this.formSignature.doctor_sign) {
-                this.signatureError = true;
-                return;
-            }
-            this.signatureError = false;
-            this.$inertia.put(route('medicationRecords.update', this.medicationRecord.id), this.formSignature, {
-                preserveScroll: true
-            });
-            this.isVisibleEditSign = false
-        },
+
 
 
         openCreateModal() {
@@ -756,6 +712,9 @@ ToggleActivate(detail){
             );
     }
 },
+async downloadRecordReport() {
+            window.open(route('reports.medicationRecord', { id: this.medicationRecord.id }), '_blank');
+        },
 
 ToggleSuspend(detail) {
         if (detail.suspended_at) {

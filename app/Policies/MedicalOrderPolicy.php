@@ -43,7 +43,7 @@ class MedicalOrderPolicy
             return Response::deny('No tienes el rol necesario para crear ordenes medicas');
         }
 
-        $admission = Admission::find($admission_id);
+        $admission = Admission::find($admission_id)->first();
 
         if ($admission->discharged_date !== null) {
             return Response::deny('No se pueden actualizar registros en un ingreso que ya ha sido dado de alta');
@@ -61,8 +61,8 @@ class MedicalOrderPolicy
      */
     public function update(User $user, MedicalOrder $medicalOrder): Response
     {
-        if (!$user->hasRole('doctor')) {
-            return Response::deny('No tienes el rol necesario para crear ordenes medicas');
+        if (!$user->hasPermissionTo('medicalOrder.update')) {
+            return Response::deny('No tienes los permisos necesarios para crear ordenes medicas');
         }
 
         $admission = $medicalOrder->admission;

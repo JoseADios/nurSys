@@ -45,9 +45,9 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $medicalOrder = MedicalOrder::find($request->medical_order_id);
+        $medicalOrder = MedicalOrder::find($request->medical_order_id)->first();
 
-        $this->authorize('update', [MedicalOrder::class, $medicalOrder]);
+        $this->authorize('create', $medicalOrder);
 
         MedicalOrderDetail::create([
             'medical_order_id' => $request->medical_order_id,

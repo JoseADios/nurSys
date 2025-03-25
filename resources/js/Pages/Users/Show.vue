@@ -1,8 +1,16 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-bold text-2xl text-white leading-tight text-center">
-                Detalles del Usuario
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                <BreadCrumb :items="[
+                    {
+                        text: 'Usuarios',
+                        route: route('users.index')
+                    },
+                    {
+                        text: 'Ver'
+                    },
+                ]" />
             </h2>
         </template>
 
@@ -159,6 +167,7 @@ import BackIcon from '@/Components/Icons/BackIcon.vue';
 import EditIcon from '@/Components/Icons/EditIcon.vue';
 import TrashIcon from '@/Components/Icons/TrashIcon.vue';
 import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 
 export default {
     components: {
@@ -172,7 +181,8 @@ export default {
         BackIcon,
         EditIcon,
         TrashIcon,
-        RestoreIcon
+        RestoreIcon,
+        BreadCrumb
     },
     props: {
         user: {

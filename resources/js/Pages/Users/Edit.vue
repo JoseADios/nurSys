@@ -1,8 +1,16 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-bold text-2xl text-gray-900 dark:text-white leading-tight text-center">
-                Editar Usuario
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                <BreadCrumb :items="[
+                    {
+                        text: 'Usuarios',
+                        route: route('users.index')
+                    },
+                    {
+                        text: 'Editar'
+                    },
+                ]" />
             </h2>
         </template>
 
@@ -234,6 +242,7 @@ import SelectInput from '@/Components/SelectInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextAreaInput from '@/Components/TextAreaInput.vue';
 import DialogModal from '@/Components/DialogModal.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 
 export default {
     props: {
@@ -260,7 +269,8 @@ export default {
         SelectInput,
         InputLabel,
         TextAreaInput,
-        DialogModal
+        DialogModal,
+        BreadCrumb
     },
     data() {
         return {

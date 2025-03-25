@@ -2,7 +2,15 @@
     <AppLayout>
         <template #header>
             <h2 class="font-bold text-2xl text-gray-800 dark:text-white leading-tight text-center">
-                Nuevo Paciente
+                <BreadCrumb :items="[
+                    {
+                        text: 'Pacientes',
+                        route: route('patients.index')
+                    },
+                    {
+                        text: 'Crear'
+                    },
+                ]" />
             </h2>
         </template>
 
@@ -192,6 +200,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextAreaInput from '@/Components/TextAreaInput.vue';
 import DateInput from '@/Components/DateInput.vue';
 import SelectInput from '@/Components/SelectInput.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 
 export default {
     props: {
@@ -209,7 +218,8 @@ export default {
         InputLabel,
         TextAreaInput,
         DateInput,
-        SelectInput
+        SelectInput,
+        BreadCrumb
     },
     data() {
         return {

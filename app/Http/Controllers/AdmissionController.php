@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Admission;
 use App\Models\Bed;
+use App\Models\MedicalOrder;
+use App\Models\NurseRecord;
 use App\Models\Patient;
 use App\Models\TemperatureRecord;
 use App\Models\User;
@@ -184,11 +186,8 @@ class AdmissionController extends Controller
             ->where('active', true)->first('id');
         $medicationRecord = MedicationRecord::where('admission_id', $admission->id)->first();
 
-        $medidcalOrderPolicy = new MedicalOrderPolicy();
-        $createOrder = $user instanceof User ? $medidcalOrderPolicy->create($user, $admission->id) : false;
-
-        $nurseRecordPolicy = new NurseRecordPolicy();
-        $createNurseRecord = $user instanceof User ? $nurseRecordPolicy->create($user, $admission) : false;
+        $createOrder = Gate::allows('create', [MedicalOrder::class, $admission->id]);
+        $createNurseRecord = Gate::allows('create', [NurseRecord::class, $admission]);
 
         return Inertia::render('Admissions/Show', [
             'admission' => $admission,
@@ -202,8 +201,8 @@ class AdmissionController extends Controller
                 // 'create' => Gate::allows('create', Admission::class),
                 'update' => Gate::allows('update', $admission),
                 'delete' => Gate::allows('delete', $admission),
-                'createOrder' => $createOrder->allowed(),
-                'createNurseRecord' => $createNurseRecord->allowed(),
+                'createOrder' => $createOrder,
+                'createNurseRecord' => $createNurseRecord,
             ],
         ]);
     }
@@ -213,7 +212,6 @@ class AdmissionController extends Controller
      */
     public function edit(Admission $admission)
     {
-
         $this->authorize('update', $admission);
 
         $patients = Patient::all()->filter->isAvailable();
@@ -254,6 +252,7 @@ class AdmissionController extends Controller
 
             $fileName = $firmService->createImag($request->doctor_sign, $admission->doctor_sign);
             $validated['doctor_sign'] = $fileName;
+
             if ($request->discharged_date) {
                 $validated['discharged_date'] = now();
             } else {

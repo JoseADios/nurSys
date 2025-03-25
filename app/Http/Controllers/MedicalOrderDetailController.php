@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MedicalOrder;
 use App\Models\MedicalOrderDetail;
 use App\Models\MedicationNotification;
 use App\Models\MedicationRecordDetail;
@@ -11,21 +12,21 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-class MedicalOrderDetailController extends Controller  implements HasMiddleware
+class MedicalOrderDetailController extends Controller implements HasMiddleware
 {
 
-        use AuthorizesRequests;
-        public static function middleware(): array
-        {
-            return [
-                new Middleware('permission:medicalOrder.view', only: ['index', 'show']),
-                new Middleware('permission:medicalOrder.create', only: [ 'edit','store']),
-                new Middleware('permission:medicalOrder.update', only: ['update']),
-                new Middleware('permission:medicalOrder.delete', only: ['destroy']),
-            ];
-        }  /**
-     * Display a listing of the resource.
-     */
+    use AuthorizesRequests;
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:medicalOrder.view', only: ['index', 'show']),
+            new Middleware('permission:medicalOrder.create', only: ['edit', 'store']),
+            new Middleware('permission:medicalOrder.update', only: ['update']),
+            new Middleware('permission:medicalOrder.delete', only: ['destroy']),
+        ];
+    }  /**
+       * Display a listing of the resource.
+       */
     public function index()
     {
         //
@@ -44,9 +45,13 @@ class MedicalOrderDetailController extends Controller  implements HasMiddleware
      */
     public function store(Request $request)
     {
+        $medicalOrder = MedicalOrder::find($request->medical_order_id);
+
+        $this->authorize('update', [MedicalOrder::class, $medicalOrder]);
+
         MedicalOrderDetail::create([
             'medical_order_id' => $request->medical_order_id,
-            'order' =>  $request->order,
+            'order' => $request->order,
             'regime' => $request->regime,
             'created_at' => now()
         ]);
@@ -76,7 +81,11 @@ class MedicalOrderDetailController extends Controller  implements HasMiddleware
      */
     public function update(Request $request, MedicalOrderDetail $medicalOrderDetail)
     {
-       $medicalOrderDetail->update($request->all());
+        $medicalOrder = MedicalOrder::find($medicalOrderDetail->medical_order_id);
+
+        $this->authorize('update', [MedicalOrder::class, $medicalOrder]);
+
+        $medicalOrderDetail->update($request->all());
         $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)->first();
         if ($request->suspended_at == null) {
             if ($medicationRecordDetail) {
@@ -85,7 +94,7 @@ class MedicalOrderDetailController extends Controller  implements HasMiddleware
             } else {
                 Log::warning("No se encontró un MedicationRecordDetail para MedicalOrderDetail ID: " . $medicalOrderDetail->id);
             }
-        }else{
+        } else {
             if ($medicationRecordDetail) {
                 $medicationRecordDetail->update(['suspended_at' => now()]);
                 Log::info("MedicationRecordDetail actualizado: ", ['id' => $medicationRecordDetail->id, 'suspended_at' => now()]);
@@ -102,17 +111,16 @@ class MedicalOrderDetailController extends Controller  implements HasMiddleware
      */
     public function destroy(MedicalOrderDetail $medicalOrderDetail)
     {
+        $medicalOrder = MedicalOrder::find($medicalOrderDetail->medical_order_id);
+        $this->authorize('update', [MedicalOrder::class, $medicalOrder]);
 
         $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)->first();
 
-
-            if ($medicationRecordDetail) {
-                return Redirect::back()->withErrors(['message' => 'No se puede eliminar este Detalle Orden Medica porque tiene registros de detalle de ficha de medicamento asociados.']);
-
-            } else {
-
+        if ($medicationRecordDetail) {
+            return Redirect::back()->withErrors(['message' => 'No se puede eliminar este Detalle Orden Medica porque tiene registros de detalle de ficha de medicamento asociados.']);
+        } else {
             $medicalOrderDetail->update(['active' => 0]);
-                 }
+        }
 
         return Redirect::route('medicalOrders.show', $medicalOrderDetail->medical_order_id);
     }

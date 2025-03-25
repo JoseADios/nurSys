@@ -112,6 +112,8 @@ class MedicalOrderController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
+        $this->authorize('create', [MedicalOrder::class, $request->admission_id]);
+
         $medicalOrder = MedicalOrder::create([
             'admission_id' => $request->admission_id,
             'doctor_id' => Auth::id(),
@@ -195,7 +197,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
     {
         $firmService = new FirmService;
 
-
+        $this->authorize('update', $medicalOrder);
 
         if ($request->has('admission_id') && $request->admission_id !== $medicalOrder->admission_id) {
             $this->authorize('updateAdmission', [MedicalOrder::class, $request->admission_id]);
@@ -235,14 +237,14 @@ class MedicalOrderController extends Controller implements HasMiddleware
      */
     public function destroy(MedicalOrder $medicalOrder)
     {
+        $this->authorize('delete', $medicalOrder);
+
         $medicalOrderDetailIds = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->pluck('id');
         $medicationRecordDetails = MedicationRecordDetail::whereIn('medical_order_detail_id', $medicalOrderDetailIds)->get();
-
 
         if ($medicationRecordDetails->isNotEmpty()) {
             return Redirect::back()->withErrors(['message' => 'No se puede eliminar esta Orden Medica porque tiene registros de ficha de medicamento asociados.']);
         }
-
 
         $medicalOrder->update(['active' => 0]);
 

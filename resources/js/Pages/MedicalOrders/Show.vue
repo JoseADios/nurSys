@@ -4,7 +4,7 @@
         <h2 class="font-semibold text-xl text-white leading-tight text-center">
             <BreadCrumb :items="[
                     ...(medicalOrder.id ? [{
-                        formattedId: { id: medicalOrder.id, prefix: 'ING' },
+                        formattedId: { id: medicalOrder.admission_id, prefix: 'ING' },
                         route: route('admissions.show', medicalOrder.id)
                     }] : []),
                     {

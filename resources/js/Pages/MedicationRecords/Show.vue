@@ -5,7 +5,7 @@
 
             <BreadCrumb :items="[
                     ...(medicationRecord.id ? [{
-                        formattedId: { id: medicationRecord.id, prefix: 'ING' },
+                        formattedId: { id: medicationRecord.admission.id, prefix: 'ING' },
                         route: route('admissions.show', medicationRecord.id)
                     }] : []),
                     {

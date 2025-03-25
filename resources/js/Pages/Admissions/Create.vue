@@ -2,7 +2,13 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Nuevo ingreso
+                <BreadCrumb :items="[
+                     {
+                        text: 'Ingresos',
+                        route: route('admissions.index')
+
+                    },
+                ]" />
             </h2>
         </template>
 
@@ -65,7 +71,7 @@ import InputError from '@/Components/InputError.vue';
 import BedSelector from '@/Components/BedSelector.vue';
 import UserSelector from '@/Components/UserSelector.vue';
 import PatientSelector from '@/Components/PatientSelector.vue';
-
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     components: {
         AppLayout,
@@ -73,7 +79,8 @@ export default {
         BedSelector,
         InputError,
         UserSelector,
-        PatientSelector
+        PatientSelector,
+        BreadCrumb
     },
     props: {
         doctors: Array,

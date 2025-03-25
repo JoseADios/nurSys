@@ -2,25 +2,31 @@
 <AppLayout>
     <template #header>
         <h2 class="font-semibold text-xl text-white leading-tight text-center">
-            Editar Orden Médica
+            <BreadCrumb :items="[
+                    ...(medicalOrder.id ? [{
+                        formattedId: { id: medicalOrder.id, prefix: 'ING' },
+                        route: route('admissions.show', medicalOrder.id)
+                    }] : []),
+                    {
+                        text: 'Ordenes Medicas',
+                        route: medicalOrder.id
+                            ? route('medicalOrders.index', { id: medicalOrder.id })
+                            : route('medicalOrders.index')
+                    },
+
+                    {
+                        formattedId: { id: medicalOrder.id, prefix: 'ORD' }
+                    }
+                ]" />
         </h2>
+
     </template>
 
     <!-- <div class="text-white">Datos {{ adm_id }}</div> -->
 
     <div class="container mx-auto px-4 py-8">
         <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                <div class="flex items-center space-x-2  text-gray-700 dark:text-gray-400 ">
-                    <Link :href="route('medicalOrders.index')" class="inline-flex  items-center hover:text-blue-600 dark:hover:text-white">
-                    Ordenes Medicas
-                    </Link>
-                    <svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
-                    </svg>
-                    <div class="ml-2 inline-flex items-center">
-                        <FormatId :id="medicalOrder.id" prefix="ORD"></FormatId>
-                    </div>
-                </div>
+
 
             </div>
          <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
@@ -239,7 +245,7 @@
                         Firma
                     </label>
 
-                    <SignaturePad v-model="formSignature.doctor_sign" input-name="doctor_sign" />
+                    <SignaturePad  class="w-full max-w-lg lg:max-w-md" v-model="formSignature.doctor_sign" input-name="doctor_sign" />
                     <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
 
                     <div class="my-4">
@@ -378,6 +384,7 @@ import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 import Modal from '@/Components/Modal.vue';
 import BackIcon from '@/Components/Icons/BackIcon.vue';
 import ReportIcon from '@/Components/Icons/ReportIcon.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     components: {
         AppLayout,
@@ -393,7 +400,8 @@ export default {
         AdmissionSelector,
         Modal,
         BackIcon,
-        ReportIcon
+        ReportIcon,
+        BreadCrumb
 
     },
     props: {

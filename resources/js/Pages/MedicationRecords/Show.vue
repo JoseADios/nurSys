@@ -2,22 +2,28 @@
 <AppLayout>
     <template #header>
         <h2 class="font-semibold text-xl text-white leading-tight text-center">
-            Ficha de Medicamentos
+
+            <BreadCrumb :items="[
+                    ...(medicationRecord.id ? [{
+                        formattedId: { id: medicationRecord.id, prefix: 'ING' },
+                        route: route('admissions.show', medicationRecord.id)
+                    }] : []),
+                    {
+                        text: 'Fichas de Medicamentos',
+                        route: medicationRecord.id
+                            ? route('medicationRecords.index', { id: medicationRecord.id })
+                            : route('medicationRecords.index')
+                    },
+
+                    {
+                        formattedId: { id: medicationRecord.id, prefix: 'FICH' }
+                    }
+                ]" />
         </h2>
+
     </template>
     <div class="container mx-auto px-4   py-8">
-        <!-- Navigation -->
-         <div class="inline-flex items-center mb-2 text-sm font-medium text-gray-700 dark:text-gray-400">
-            <Link :href="route('medicationRecords.index')" class="inline-flex ml-20  items-center hover:text-blue-600 dark:hover:text-white">
-                Ficha de Medicamentos
-                </Link>
-                <svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
-                </svg>
-                <div class="ml-2 inline-flex items-center">
-                    <FormatId :id="medicationRecord.id" prefix="FIC"></FormatId>
-                </div>
-         </div>
+
         <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
 
             <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
@@ -39,10 +45,7 @@
                     </button>
                 </div>
 
-
-
             </div>
-
 
             <!-- Mostrar errores -->
             <div class="mb-4 flex flex-col items-center">
@@ -68,7 +71,7 @@
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             <!-- Verifica que la relación drug esté definida -->
-                            {{ medicationRecord.doctor.name }} {{ medicationRecord.doctor.last_name }}
+                            {{ medicationRecord.admission.doctor.name }} {{ medicationRecord.admission.doctor.last_name }}
                         </p>
                     </div>
 
@@ -121,40 +124,67 @@
                     </button>
                 </div>
 
-                <div v-if="showCreateDetailForm" class="grid border grid-cols-1 lg:grid-cols-2 shadow-xl rounded-lg gap-6  lg:mx-10 mt-6 " id="formcreaterecord">
+                <div v-if="showCreateDetailForm" class="grid border grid-cols-1 lg:grid-cols-2 shadow-xl rounded-lg gap-4  lg:mx-2 mt-6 " id="formcreaterecord">
                     <!-- Tarjeta para información del Medical Order -->
                     <div class="relative overflow-hidden rounded-lg   bg-white dark:bg-gray-800 mb-5">
 
-                        <div class="max-h-80 overflow-y-auto  shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
-                            <div v-if="order.length === 0" class="text-center text-gray-500 dark:text-gray-300 p-4">
-                                No hay órdenes disponibles.
-                            </div>
+                        <div class="max-h-80 overflow-y-auto   shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
+                            <div class="col w-full md:w-[100%] p-4 md:p-8 ">
+                                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Órdenes médicas</h3>
+                                <!-- Mensaje cuando no hay órdenes -->
+                                <div v-if="!orders || orders.length === 0 " class="text-center text-sm text-gray-500 dark:text-gray-400">
+                                    No hay órdenes médicas disponibles
+                                </div>
 
-                            <div v-for="orders in order" :key="orders.id" class="border rounded-lg">
-                                <p class="text-lg ml-2 font-semibold text-gray-900 dark:text-white">Order {{
-                                        orders.id }}
-                                </p>
-                                <div v-for="orderdetail in orders.medical_order_detail" :key="orderdetail.id" :value="orderdetail.description" @click="selectOrder(orderdetail.id)" :class="{
-                                            'bg-blue-500 text-white': selectedOrderId === orderdetail.id && !orderdetail.suspended_at,
-                                            'bg-white dark:bg-gray-800': selectedOrderId !== orderdetail.id && !orderdetail.suspended_at,
+                                <!-- Acordeón de Órdenes Médicas -->
+                                <div v-else class="space-y-4 max-h-72 overflow-y-auto">
+                                    <div v-for="(order, index) in orders" :key="order.id">
+                                    <div v-if="order.medical_order_detail.length !== 0"  class="accordion-item border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+
+                                        <div  @click="toggleAccordion(index)" class="accordion-header cursor-pointer flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                                            <div class="flex items-center justify-between w-full space-x-2">
+                                                <span class="font-semibold text-gray-800 dark:text-white">
+                                                    <Link :href="route('medicalOrders.show', order.id)">
+                                                    <FormatId :id="order.id" prefix="ORD" />
+                                                    </Link>
+                                                    <!-- - {{ order.doctor.name }} {{ order.doctor.last_name }} -->
+                                                </span>
+                                                <span class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
+                                            formatDateFromNow(order.created_at)
+                                            }}</span>
+                                            </div>
+                                            <ChevronDown class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white" :class="{ 'rotate-180': openAccordion === index }" />
+                                        </div>
+
+                                        <!-- Contenido del Acordeón -->
+                                        <div v-if="openAccordion === index  " class="accordion-content p-4 bg-white dark:bg-gray-900">
+                                            <div v-for="(detail, detailIndex) in order.medical_order_detail" :key="detailIndex" @click="selectOrder(detail.id)" :class="{
+                                            'bg-blue-500 text-white': selectedOrderId === detail.id && !detail.suspended_at,
+                                            'bg-white dark:bg-gray-800': selectedOrderId !== detail.id && !detail.suspended_at,
 
                                         }" class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200">
 
-                                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
-                                        Detalle de Orden # - {{ orderdetail.id }}
-                                    </h3>
-                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                        {{ orderdetail.order }} <br />
-                                        <!-- Mostrar régimen solo si la orden está seleccionada -->
-                                        <span v-if="selectedOrderId === orderdetail.id" class="text-lg font-semibold text-gray-900 dark:text-white">
-                                            Régimen: {{ orderdetail.regime }}
-                                            {{ orderdetail.medicalOrder }}
-                                        </span>
-                                    </p>
+                                                <div  class="flex flex-col justify-between items-start">
+                                                    <div class="w-full flex flex-col">
+                                                        <div class="flex justify-between items-center w-full">
+                                                            <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                                                {{ detail.order }}
+                                                            </p>
+                                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                                {{ formatDateFromNow(detail.created_at) }}
+                                                            </p>
+                                                        </div>
+                                                        <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                                                            {{ detail.regime }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-
                             </div>
-
+                        </div>
                         </div>
 
                         <!-- Espacio del detalle de Medical Orders -->
@@ -433,16 +463,16 @@ import DrugSelector from '@/Components/DrugSelector.vue';
 import InputError from '@/Components/InputError.vue';
 import BackIcon from '@/Components/Icons/BackIcon.vue';
 import ReportIcon from '@/Components/Icons/ReportIcon.vue';
-
+import ChevronDown from '@/Components/Icons/ChevronDown.vue';
 import moment from 'moment/moment';
 import 'moment/locale/es';
-
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
 
     props: {
         medicationRecord: Object,
         details: Array,
-        order: Object,
+        orders: Object,
         drug: Array,
         routeOptions: Array,
         dose: Array,
@@ -462,7 +492,9 @@ export default {
         FormatId,
         DrugSelector,
         InputError,
-        ReportIcon
+        ReportIcon,
+        ChevronDown,
+        BreadCrumb
     },
     data() {
         return {
@@ -485,7 +517,7 @@ export default {
             errors: '',
             isVisible: false,
             isVisibleEditSign: ref(null),
-
+            openAccordion: ref(null),
             modalform: {
                 description: '',
                 name: '',
@@ -576,12 +608,22 @@ export default {
                 preserveScroll: true
             });
         },
+        toggleAccordion(index) {
+            if (this.openAccordion === index) {
+                this.openAccordion = null // Cierra si ya está abierto
+            } else {
+                this.openAccordion = index // Abre el acordeón seleccionado
+            }
+        },
+        formatDateFromNow(date) {
+            return moment(date).fromNow();
+        },
         selectOrder(id) {
             this.selectedOrderId = id;
             this.form.selectedOrderId = id;
         },
         hasApplied(detail) {
-            return detail.medication_notification?.some(item => item.applied === 1) ?? false ;
+            return detail.medication_notification?.some(item => item.applied === 1) ?? false;
         },
         Firstnoapplied(notifications) {
             for (const detail of this.details) {

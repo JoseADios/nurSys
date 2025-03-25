@@ -2,7 +2,13 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Ingresos
+                <BreadCrumb :items="[
+                     {
+                        text: 'Ingresos',
+                        route: route('admissions.index')
+
+                    },
+                ]" />
             </h2>
         </template>
         <div
@@ -181,6 +187,7 @@ import { Link } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
 import FormatId from '@/Components/FormatId.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     props: {
         admissions: Object,
@@ -192,7 +199,8 @@ export default {
         Link,
         Pagination,
         FormatId,
-        AccessGate
+        AccessGate,
+        BreadCrumb
     },
     data() {
         return {

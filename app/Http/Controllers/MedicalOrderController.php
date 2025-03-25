@@ -216,6 +216,9 @@ class MedicalOrderController extends Controller implements HasMiddleware
             $fileName = $firmService
                 ->createImag($request->doctor_sign, $medicalOrder->doctor_sign);
             $validated['doctor_sign'] = $fileName;
+            $medicalOrder->update($validated);
+
+            return back()->with('flash.toast', 'Registro actualizado correctamente');
         }
         $validated = $request->validate([
             'admission_id' => 'numeric',
@@ -224,7 +227,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
         ]);
         $medicalOrder->update($validated);
 
-        return back()->with('succes', 'Registro actualizado correctamente');
+        return back()->with('flash.toast', 'Registro actualizado correctamente');
     }
 
     /**

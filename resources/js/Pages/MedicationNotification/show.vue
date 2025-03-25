@@ -2,33 +2,36 @@
 <AppLayout>
     <template #header>
         <h2 class="font-semibold text-xl text-white leading-tight text-center">
-            Notificaciones
+            <BreadCrumb :items="[
+                    ...(details.medication_record_id ? [{
+                        formattedId: { id: details.medication_record_id, prefix: 'ING' },
+                        route: route('admissions.show', details.medication_record_id)
+                    }] : []),
+                    {
+                        text: 'Fichas de Medicamentos',
+                        route: details.medication_record_id
+                            ? route('medicationRecords.show', { id: details.medication_record_id })
+                            : route('medicationRecords.show')
+                    },
+
+                    {
+                        formattedId: { id: details.medication_record_id, prefix: 'FICH' },
+                        route: details.medication_record_id
+                            ? route('medicationRecords.show', { id: details.medication_record_id })
+                            : route('medicationRecords.show')
+                    },
+                    {
+                        formattedId: { id: details.id, prefix: 'DET' }
+                    }
+                ]" />
         </h2>
+
 
     </template>
 
     <div class="container mx-auto px-4 py-8">
 
-        <div class="ml-12 my-2 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400">
 
-            <Link :href="route('medicationRecords.index')" class="inline-flex ml-8  items-center hover:text-blue-600 dark:hover:text-white">
-            Ficha de Medicamentos
-            </Link>
-            <svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
-            </svg>
-            <Link :href="route('medicationRecords.show',details.medication_record_id)">
-            <div class="ml-2 inline-flex items-center dark:hover:text-white">
-                <FormatId :id="details.medication_record_id" prefix="FIC"></FormatId>
-            </div>
-            </Link>
-            <svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
-            </svg>
-            <div class="ml-2 inline-flex items-center">
-                <FormatId :id="details.id" prefix="NOT"></FormatId>
-            </div>
-        </div>
 
         <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
 
@@ -50,7 +53,7 @@
                 <!-- Iterando sobre las notificaciones -->
                 <div class="flex-grow">
                     <div class="font-semibold text-gray-900 dark:text-white">
-                        Enfermera: {{ notification.nurse_id }}
+                        Enfermera: {{ notification.nurse.name }}
                     </div>
 
                     <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
@@ -139,6 +142,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 import BackIcon from '@/Components/Icons/BackIcon.vue';
 import ReportIcon from '@/Components/Icons/ReportIcon.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 import {
     ref
 } from 'vue';
@@ -157,7 +161,8 @@ export default {
         PrimaryButton,
         SignaturePad,
         BackIcon,
-        ReportIcon
+        ReportIcon,
+        BreadCrumb
     },
     data() {
         return {

@@ -2,21 +2,24 @@
 <AppLayout>
     <template #header>
         <h2 class="font-semibold text-xl text-white leading-tight text-center">
-            Ingresos
+            <h2 class="font-semibold text-xl text-white leading-tight text-center">
+            <BreadCrumb :items="[
+                    ...(admission.id ? [{
+                        text: 'Ingresos',
+                        route: admission.id
+                            ? route('admissions.index', { id: admission.id })
+                            : route('admissions.index') }] : []),
+
+
+                    {
+                        formattedId: { id: admission.id, prefix: 'ING' }
+                    }
+                ]" />
+        </h2>
         </h2>
     </template>
     <div class="container mx-auto px-4 py-8">
-        <div class="inline-flex items-center ml-12 mb-2">
-            <Link :href="route('admissions.index')" class="inline-flex ml-12  items-center hover:text-blue-600  text-gray-400 dark:hover:text-white">
-            Ingresos
-            </Link>
-            <svg class="rtl:rotate-180 w-3 ml-2 h-3 text-gray-400 mx-1" aria-hidden="true" fill="none" viewBox="0 0 6 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
-            </svg>
-            <div class="ml-2 inline-flex items-center text-gray-400">
-                <FormatId :id="admission.id" prefix="ING"></FormatId>
-            </div>
-        </div>
+
         <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
 
             <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
@@ -286,7 +289,7 @@
                     final</label>
                 <textarea required id="final_dx" rows="4" v-model="formSignature.final_dx" class="block p-2.5 mb-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el diagnóstico final..."></textarea>
 
-                <SignaturePad v-model="formSignature.doctor_sign" input-name="doctor_sign" />
+                <SignaturePad class="w-full max-w-lg lg:max-w-md" v-model="formSignature.doctor_sign" input-name="doctor_sign" />
                 <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
 
             </div>
@@ -331,7 +334,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import FormatId from '@/Components/FormatId.vue';
 import BackIcon from '@/Components/Icons/BackIcon.vue';
 import ReportIcon from '@/Components/Icons/ReportIcon.vue';
-
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 import {
     Link
 } from '@inertiajs/vue3';
@@ -363,6 +366,7 @@ export default {
         ReportIcon,
         FormatId,
         SignaturePad,
+        BreadCrumb,
     },
     data() {
         return {

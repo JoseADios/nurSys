@@ -2,7 +2,13 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Editar ingreso
+                <BreadCrumb :items="[
+                     {
+                        text: 'Ingresos',
+                        route: route('admissions.index')
+
+                    },
+                ]" />
             </h2>
         </template>
 
@@ -149,7 +155,7 @@ import { ref } from "vue";
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     props: {
         admission: Object,
@@ -166,7 +172,8 @@ export default {
         BedSelector,
         ConfirmationModal,
         DangerButton,
-        SecondaryButton
+        SecondaryButton,
+        BreadCrumb
     },
     data() {
         return {

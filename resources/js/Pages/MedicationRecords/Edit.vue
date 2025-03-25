@@ -3,7 +3,15 @@
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
 
-                Editar Ficha de Medicamentos
+                <h2 class="font-semibold text-xl text-white leading-tight text-center">
+                <BreadCrumb :items="[
+                     {
+                        text: 'Fichas de Medicamentos',
+                        route: route('medicationRecords.index')
+
+                    },
+                ]" />
+            </h2>
             </h2>
         </template>
 
@@ -54,7 +62,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
-
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     props: {
 
@@ -64,6 +72,7 @@ export default {
     components: {
         AppLayout,
         Link,
+        BreadCrumb
     },
     data() {
         return {

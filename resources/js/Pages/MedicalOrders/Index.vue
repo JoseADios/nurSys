@@ -1,9 +1,16 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Ordenes médicas
-            </h2>
+             <h2 class="font-semibold text-xl text-white leading-tight text-center">
+
+                           <BreadCrumb :items="[
+                                {
+                                   text: 'Órdenes Médicas',
+                                   route: route('medicalOrders.index')
+
+                               },
+                           ]" />
+                       </h2>
         </template>
 
         <!-- <div class="text-white">Datos:  {{ admission_id }}</div> -->
@@ -170,6 +177,7 @@ import {
 } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
 import FormatId from '@/Components/FormatId.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     props: {
         medicalOrders: Object,
@@ -180,7 +188,8 @@ export default {
         AppLayout,
         Link,
         Pagination,
-        FormatId
+        FormatId,
+        BreadCrumb
     },
     data() {
         return {

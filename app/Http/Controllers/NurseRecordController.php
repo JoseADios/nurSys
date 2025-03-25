@@ -182,7 +182,8 @@ class NurseRecordController extends Controller implements HasMiddleware
         $medicalOrders = MedicalOrder::with([
             'medicalOrderDetail' => function ($query) {
                 $query->where('active', true)
-                    ->whereNull('suspended_at');
+                    ->whereNull('suspended_at')
+                    ->orderByDesc('updated_at');
             },
             'admission.patient',
             'doctor'

@@ -1,8 +1,16 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-bold text-2xl text-gray-900 dark:text-white leading-tight text-center">
-                Nuevo Usuario
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                <BreadCrumb :items="[
+                    {
+                        text: 'Usuarios',
+                        route: route('users.index')
+                    },
+                    {
+                        text: 'Crear'
+                    },
+                ]" />
             </h2>
         </template>
 
@@ -166,6 +174,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import TextAreaInput from '@/Components/TextAreaInput.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 
 export default {
     components: {
@@ -180,7 +189,8 @@ export default {
         InputLabel,
         TextInput,
         SelectInput,
-        TextAreaInput
+        TextAreaInput,
+        BreadCrumb
     },
     props: {
         roles: Array,

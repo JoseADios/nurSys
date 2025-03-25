@@ -228,10 +228,11 @@ async function fetchData() {
                             <BedsByStatusChart :status-data="stats.beds_by_status" class="h-full" />
                         </div>
 
-                        <!-- grafico donut cantidad de pacientes por ars -->
-                        <div class="w-full">
-                            <PatientsByArsChart :ars-data="stats.patients_by_ars" class="h-full" />
-                        </div>
+                        <AccessGate :except-role="['receptionist']">
+                            <PendingDocumentsToSign :pending-documents="stats.pending_docs"
+                                :user-role="stats.user_role" />
+                        </AccessGate>
+
 
                         <!-- medicaciones pendientes -->
                         <AccessGate :permission="['medicationRecord.view']">
@@ -321,6 +322,12 @@ async function fetchData() {
                             </div>
                         </AccessGate>
 
+
+                        <!-- grafico donut cantidad de pacientes por ars -->
+                        <div class="w-full">
+                            <PatientsByArsChart :ars-data="stats.patients_by_ars" class="h-full" />
+                        </div>
+
                         <!-- pacientes con temperatura alta -->
                         <AccessGate :permission="['temperatureRecord.view']">
                             <div
@@ -400,11 +407,6 @@ async function fetchData() {
                                 </div>
                             </div>
                         </AccessGate>
-
-                        <AccessGate :except-role="['receptionist']">
-                            <PendingDocumentsToSign :pending-documents="stats.pending_docs" :user-role="stats.user_role" />
-                        </AccessGate>
-
 
                         <AccessGate role="admin">
                             <TopDoctorsAdmissions :doctors="stats.top_doctors_most_admissions" />

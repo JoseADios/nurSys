@@ -2,7 +2,14 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Nuevas Órdenes Médicas
+
+                <BreadCrumb :items="[
+                     {
+                        text: 'Órdenes Médicas',
+                        route: route('medicalOrders.index')
+
+                    },
+                ]" />
             </h2>
         </template>
 
@@ -35,6 +42,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     props: {
         admissions: Array,
@@ -47,22 +55,24 @@ export default {
     components: {
         AppLayout,
         Link,
-        AdmissionSelector
+        AdmissionSelector,
+        BreadCrumb
     },
     data() {
         return {
             form: {
                 admission_id: this.admission_id
-            }
+            },
+            errorMessage: this.error || null,
         }
     },
     methods: {
         submit() {
             if (!this.form.admission_id) {
-                this.error = 'Por favor, seleccione un ingreso.';
+                this.errorMessage = 'Por favor, seleccione un ingreso.';
                 return;
             }
-            this.error = null;
+            this.errorMessage = null;
             this.$inertia.post(route('medicalOrders.store'), this.form);
         }
     }

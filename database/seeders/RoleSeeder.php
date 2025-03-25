@@ -95,6 +95,9 @@ class RoleSeeder extends Seeder
             'medicationRecordDetail.delete',
             'medicalOrder.view',
             'medicalOrderDetail.view',
+            'medicationNotification.view',
+            'medicationNotification.create',
+            'medicationNotification.update',
         ]);
 
         $user = User::where('name', 'Test User')->first();

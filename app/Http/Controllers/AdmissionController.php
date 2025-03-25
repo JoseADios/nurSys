@@ -8,6 +8,8 @@ use App\Models\Patient;
 use App\Models\TemperatureRecord;
 use App\Models\User;
 use App\Models\MedicationRecord;
+use App\Policies\MedicalOrderPolicy;
+use App\Policies\NurseRecordPolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -32,7 +34,7 @@ class AdmissionController extends Controller
         $search = $request->input('search');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
-        $beds_available = $request->input('beds_available', 'true');
+        $beds_available = $request->input('beds_available');
         $days = $request->integer('days');
 
         $query = Admission::query()->with('patient', 'bed', 'doctor')->select([
@@ -63,8 +65,6 @@ class AdmissionController extends Controller
 
         } elseif ($beds_available === '2') {
             $query->whereNull('admissions.bed_id');
-
-        } else {
 
         }
 
@@ -110,7 +110,6 @@ class AdmissionController extends Controller
      */
     public function create(Request $request)
     {
-        $this->authorize('create', Admission::class);
 
         $selectedPatient = null;
         if ($request->query('patient_id')) {
@@ -173,7 +172,7 @@ class AdmissionController extends Controller
      */
     public function show(Admission $admission)
     {
-        $user = User::find(Auth::id());
+        $user = Auth::user();
         $admission->load('receptionist');
 
         $patient = $admission->patient;
@@ -185,6 +184,11 @@ class AdmissionController extends Controller
             ->where('active', true)->first('id');
         $medicationRecord = MedicationRecord::where('admission_id', $admission->id)->first();
 
+        $medidcalOrderPolicy = new MedicalOrderPolicy();
+        $createOrder = $user instanceof User ? $medidcalOrderPolicy->create($user, $admission->id) : false;
+
+        $nurseRecordPolicy = new NurseRecordPolicy();
+        $createNurseRecord = $user instanceof User ? $nurseRecordPolicy->create($user, $admission) : false;
 
         return Inertia::render('Admissions/Show', [
             'admission' => $admission,
@@ -195,11 +199,11 @@ class AdmissionController extends Controller
             'doctor' => $doctor,
             'temperatureRecordId' => $temperatureRecordId,
             'can' => [
-                'create' => Gate::allows('create', Admission::class),
+                // 'create' => Gate::allows('create', Admission::class),
                 'update' => Gate::allows('update', $admission),
                 'delete' => Gate::allows('delete', $admission),
-                'createOrder' => $user->hasRole(['admin']) || ($user->hasRole(['doctor']) && $admission->doctor_id == $user->id),
-                'createNurseRecord' => $user->hasRole(['nurse', 'admin']),
+                'createOrder' => $createOrder->allowed(),
+                'createNurseRecord' => $createNurseRecord->allowed(),
             ],
         ]);
     }
@@ -210,6 +214,27 @@ class AdmissionController extends Controller
     public function edit(Admission $admission)
     {
 
+        $this->authorize('update', $admission);
+
+        $patients = Patient::all()->filter->isAvailable();
+        $patients->add(Patient::find($admission->patient_id));
+        $doctors = User::all();
+        $beds = Bed::all()->filter->isAvailable()->values();
+        $selectedBed = Bed::find($admission->bed_id);
+
+        if ($selectedBed) {
+            $beds->add($selectedBed);
+        }
+
+        $beds->toArray();
+
+        return Inertia::render('Admissions/Edit', [
+            'admission' => $admission,
+            'patients' => $patients,
+            'doctors' => $doctors,
+            'beds' => $beds,
+            'previousUrl' => URL::previous(),
+        ]);
     }
 
     /**
@@ -226,6 +251,7 @@ class AdmissionController extends Controller
                 'doctor_sign' => 'string|required',
                 'final_dx' => 'string|required',
             ]);
+
             $fileName = $firmService->createImag($request->doctor_sign, $admission->doctor_sign);
             $validated['doctor_sign'] = $fileName;
             if ($request->discharged_date) {
@@ -247,20 +273,16 @@ class AdmissionController extends Controller
                         return back()->with('error', 'La cama seleccionada no está disponible');
                     }
                 }
-
             } elseif ($admission->discharged_date == null && $request->discharged_date != null) {
 
                 if ($bed) {
                     $bed->status = 'cleaning';
                     $bed->save();
                 }
-
             }
             $admission->update($validated);
 
             return back()->with('flash.toast', 'Ingreso actualizado exitosamente.');
-
-
 
         } else {
             $validated = $request->validate([
@@ -298,7 +320,6 @@ class AdmissionController extends Controller
             $bed->status = 'cleaning';
             $bed->save();
         }
-
 
         // desactivar todas las ordenes médicas relacionadas
         DB::table('medical_orders')

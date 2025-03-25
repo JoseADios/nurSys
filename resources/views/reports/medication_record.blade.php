@@ -222,7 +222,7 @@
                                 </tr>
                                 <tr>
                                     <td><span class="bold">Diagnostico:</span> {{ $medicationRecord->diagnosis }}
-                                        {{ $medicationRecord->doctor->last_name }}</td>
+                                        {{ $medicationRecord->admission->doctor->last_name }}</td>
                                     <td><span class="bold">Dieta:</span> {{ $medicationRecord->diet }}
 
                                     </td>

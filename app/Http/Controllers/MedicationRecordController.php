@@ -157,7 +157,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
     public function show(MedicationRecord $medicationRecord, Request $request)
     {
         try {
-            $medicationRecord->load(['admission.patient', 'admission.bed', 'doctor', 'medicationRecordDetail', 'admission.medicalOrders']);
+            $medicationRecord->load(['admission.patient', 'admission.bed', 'admission.doctor', 'medicationRecordDetail', 'admission.medicalOrders']);
             $allMedicalOrders = MedicalOrder::where('active', true)
                 ->where('admission_id', $medicationRecord->admission->id)
                 ->with([
@@ -193,7 +193,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             return Inertia::render('MedicationRecords/Show', [
                 'medicationRecord' => $medicationRecord,
                 'details' => $details,
-                'order' => $allMedicalOrders,
+                'orders' => $allMedicalOrders,
                 'drug' => $drug,
                 'dose' => $dose,
                 'routeOptions' => $route,

@@ -470,13 +470,10 @@ export default {
             this.showEditModal = null;
         },
         formatDate(date) {
-            moment.locale('es');
             return moment(date).format('DD MMM YYYY, HH:mm');
         },
         daysHospitalized(date) {
-            moment.locale('es');
-            var dated = moment(date);
-            return dated.fromNow();
+            return moment(date).fromNow();
         },
         toggleDarkMode() {
             this.isDarkMode = !this.isDarkMode;

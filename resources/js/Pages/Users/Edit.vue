@@ -127,21 +127,21 @@
                     </div>
 
                     <!-- Buttons -->
-                    <div class="flex justify-end space-x-4 pt-4">
+                    <div class="flex flex-col items-center md:flex-row justify-end space-y-4 md:space-y-0 md:space-x-4 pt-4">
                         <button v-if="user.active == 1" @click="userBeingDeleted = true" type="button"
-                            class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:to-red-600 transition-all duration-200">
+                        class=" max-w-xs px-4 text-center py-2 text-sm font-medium text-gray-300 bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-200">
                             Deshabilitar
                         </button>
                         <button v-else @click="restoreUser" type="button"
-                            class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
+                            class=" max-w-sm inline-flex text-center items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
                             Habilitar
                         </button>
                         <Link :href="route('users.index')" type="button"
-                            class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
+                            class=" max-w-sm px-4 text-center py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
                         Cancelar
                         </Link>
                         <button type="submit"
-                            class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
+                            class=" max-w-sm px-4 py-2 text-center text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
                             Actualizar
                         </button>
                     </div>

@@ -58,7 +58,7 @@ class GraphController extends Controller
     {
         return EliminationRecord::where('temperature_record_id', $id)
             ->orderBy('updated_at', 'asc')
-            ->get(['id',  'urinations', 'evacuations', 'updated_at']);
+            ->get(['id', 'urinations', 'evacuations', 'updated_at']);
     }
 
     private function jsonResponse($message, $path, $status)
@@ -144,9 +144,16 @@ class GraphController extends Controller
         $turnTimestamps = $this->generateTurnTimestamps($timestamps);
         $timestampRange = max($timestamps) - min($timestamps);
 
+        if ($eliminations->isEmpty()) {
+            $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
+            return;
+        }
+
+
         // si solo hay un registro
         if ($timestampRange == 0) {
             $centerXPos = $graph->img->left_margin + ($graph->img->plotwidth / 2);
+
             $currentTurnData = $eliminations[0];
             $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
 

@@ -93,8 +93,8 @@
 
         <!-- Tabla responsive -->
         <div
-            class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 sm:rounded-lg mt-4 mx-2 lg:mx-10">
-            <div class="overflow-x-auto">
+            class="relative overflow-x-auto  mt-4 mx-2 lg:mx-10">
+            <div class="overflow-x-auto border border-gray-200 dark:border-gray-700/60 rounded-t-lg">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -177,7 +177,7 @@
                     No hay registros disponibles.
                 </div>
             </div>
-            <Pagination :pagination="temperatureRecords" :filters="form" />
+            <Pagination :pagination="temperatureRecords" :filters="form" class="border border-b-0 border-gray-200 dark:border-gray-700/60 rounded-b-lg mb-2" />
         </div>
     </AppLayout>
 </template>

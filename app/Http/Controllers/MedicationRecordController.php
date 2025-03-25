@@ -86,16 +86,14 @@ class MedicationRecordController extends Controller implements HasMiddleware
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
+        $admission_id = $request->integer('admission_id');
         $diet = Diet::all();
-        $admission = Admission::with('patient', 'bed', 'doctor')
-            ->whereDoesntHave('medicationRecord')
-            ->get();
 
         // Pasar los datos a la vista
         return Inertia::render('MedicationRecords/Create', [
-            'admission' => $admission,  // Enviar todos los registros de Admission
+            'admission_id' => $admission_id,  // Enviar todos los registros de Admission
             'diet' => $diet,
         ]);
 
@@ -134,7 +132,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         ]);
 
         // Redirigir o retornar una respuesta exitosa
-        return redirect()->route('medicationRecords.index')->with('flash.toast', 'Registro guardado correctamente');
+        return redirect()->route('medicationRecords.show', $medicationRecord->id)->with('flash.toast', 'Registro guardado correctamente');
     }
 
     /**

@@ -161,9 +161,9 @@ class PatientController extends Controller implements HasMiddleware
             'ars' => 'nullable|string|max:255',
         ]);
 
-        Patient::create($validated);
+        $patient = Patient::create($validated);
 
-        return Redirect::route('patients.index')->with('flash.toast', 'Registro creado exitosamente');
+        return Redirect::route('patients.show', $patient->id)->with('flash.toast', 'Registro creado exitosamente');
     }
 
     /**

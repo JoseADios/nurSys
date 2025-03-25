@@ -45,9 +45,9 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $medicalOrder = MedicalOrder::find($request->medical_order_id)->first();
+        $medicalOrder = MedicalOrder::findOrFail($request->medical_order_id);
 
-        $this->authorize('create', $medicalOrder);
+        $this->authorize('create', [MedicalOrderDetail::class, $medicalOrder]);
 
         MedicalOrderDetail::create([
             'medical_order_id' => $request->medical_order_id,
@@ -81,9 +81,7 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
      */
     public function update(Request $request, MedicalOrderDetail $medicalOrderDetail)
     {
-        $medicalOrder = MedicalOrder::find($medicalOrderDetail->medical_order_id);
-
-        $this->authorize('update', [MedicalOrder::class, $medicalOrder]);
+        $this->authorize('update', [MedicalOrderDetail::class, $medicalOrderDetail]);
 
         $medicalOrderDetail->update($request->all());
         $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)->first();
@@ -111,16 +109,8 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
      */
     public function destroy(MedicalOrderDetail $medicalOrderDetail)
     {
-        $medicalOrder = MedicalOrder::find($medicalOrderDetail->medical_order_id);
-        $this->authorize('update', [MedicalOrder::class, $medicalOrder]);
-
-        $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)->first();
-
-        if ($medicationRecordDetail) {
-            return Redirect::back()->withErrors(['message' => 'No se puede eliminar este Detalle Orden Medica porque tiene registros de detalle de ficha de medicamento asociados.']);
-        } else {
-            $medicalOrderDetail->update(['active' => 0]);
-        }
+        $this->authorize('delete', [MedicalOrderDetail::class, $medicalOrderDetail]);
+        $medicalOrderDetail->update(['active' => 0]);
 
         return Redirect::route('medicalOrders.show', $medicalOrderDetail->medical_order_id);
     }

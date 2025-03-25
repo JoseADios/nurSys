@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use App\Models\Admission;
 use Illuminate\Support\Facades\Auth;
+use Log;
 class MedicalOrderPolicy
 {
     /**
@@ -43,10 +44,11 @@ class MedicalOrderPolicy
             return Response::deny('No tienes el rol necesario para crear ordenes medicas');
         }
 
-        $admission = Admission::find($admission_id)->first();
+        // Log::info($admission_id);
+        $admission = Admission::findOrFail($admission_id);
 
         if ($admission->discharged_date !== null) {
-            return Response::deny('No se pueden actualizar registros en un ingreso que ya ha sido dado de alta');
+            return Response::deny('No se pueden crear registros en un ingreso que ya ha sido dado de alta');
         }
 
         if ($admission->doctor_id !== Auth::id()) {

@@ -2,9 +2,13 @@
 
 namespace App\Policies;
 
+use App\Models\MedicalOrder;
 use App\Models\MedicalOrderDetail;
+use App\Models\MedicationRecordDetail;
 use App\Models\User;
-use Response;
+use Illuminate\Auth\Access\Response;
+use Log;
+
 
 class MedicalOrderDetailPolicy
 {
@@ -17,7 +21,7 @@ class MedicalOrderDetailPolicy
         return null;
     }
 
-    public function view(User $user, MedicalOrderDetail $medicalOrder): bool
+    public function view(User $user, MedicalOrderDetail $medicalOrderDetail): bool
     {
         return false;
     }
@@ -25,16 +29,17 @@ class MedicalOrderDetailPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, $medicalOrder): Response
+    public function create(User $user, MedicalOrder $medicalOrder): Response
     {
         // padre
         $recordPolicy = new MedicalOrderPolicy();
-        $responseRecord = $recordPolicy->update($user, $medicalOrder->admission->id);
+        $responseRecord = $recordPolicy->update($user, $medicalOrder);
 
         if (!$responseRecord->allowed()) {
             return Response::deny($responseRecord->message());
         }
-        if (!$medicalOrder->doctor_id !== $user->id) {
+        if ($medicalOrder->doctor_id !== $user->id) {
+            Log::info('Doctor', [$medicalOrder->doctor_id, $user->id] );
             return Response::deny('No tienes permiso para crear este registro');
         }
 
@@ -44,15 +49,15 @@ class MedicalOrderDetailPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, MedicalOrderDetail $medicalOrder): bool
+    public function update(User $user, MedicalOrderDetail $medicalOrderDetail): Response
     {
         $recordPolicy = new MedicalOrderPolicy();
-        $responseRecord = $recordPolicy->update($user, $medicalOrder->admission->id);
+        $responseRecord = $recordPolicy->update($user, $medicalOrderDetail->medicalOrder);
 
         if (!$responseRecord->allowed()) {
             return Response::deny($responseRecord->message());
         }
-        if (!$medicalOrder->doctor_id !== $user->id) {
+        if ($medicalOrderDetail->medicalOrder->doctor_id !== $user->id) {
             return Response::deny('No tienes permiso para crear este registro');
         }
         return Response::allow();
@@ -61,16 +66,23 @@ class MedicalOrderDetailPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, MedicalOrderDetail $medicalOrder): bool
+    public function delete(User $user, MedicalOrderDetail $medicalOrderDetail): Response
     {
         $recordPolicy = new MedicalOrderPolicy();
-        $responseRecord = $recordPolicy->update($user, $medicalOrder->admission->id);
+        $responseRecord = $recordPolicy->update($user, $medicalOrderDetail->medicalOrder);
+
+        $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)
+        ->first();
+
+        if ($medicationRecordDetail) {
+            return Response::deny('No se puede eliminar porque tiene medicamentos relacionados en la ficha, solo puedes suspender la orden');
+        }
 
         if (!$responseRecord->allowed()) {
             return Response::deny($responseRecord->message());
         }
-        if (!$medicalOrder->doctor_id !== $user->id) {
-            return Response::deny('No tienes permiso para crear este registro');
+        if ($medicalOrderDetail->medicalOrder->doctor_id !== $user->id) {
+            return Response::deny('No tienes permiso para eliminar este registro');
         }
         return Response::allow();
     }
@@ -78,7 +90,7 @@ class MedicalOrderDetailPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, MedicalOrderDetail $medicalOrder): bool
+    public function restore(User $user, MedicalOrderDetail $medicalOrderDetail): bool
     {
         return false;
     }

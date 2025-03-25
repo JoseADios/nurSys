@@ -65,7 +65,6 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
     {
         $medicationRecord = MedicationRecord::findOrFail($request->medication_record_id);
         $this->authorize('create', [MedicationRecordDetail::class, $medicationRecord]);
-        dd($medicationRecord);
 
         $request->validate([
             'medication_record_id' => 'required|exists:medication_records,id',

@@ -14,9 +14,9 @@ class MedicalOrderPolicy
      */
     public function before(User $user, string $ability): bool|null
     {
-        if ($user->hasRole('admin')) {
-            return true;
-        }
+        // if ($user->hasRole('admin')) {
+        //     return true;
+        // }
 
         return null;
     }
@@ -40,7 +40,7 @@ class MedicalOrderPolicy
     public function create(User $user, $admission_id): Response
     {
         if (!$user->hasRole('doctor')) {
-            return Response::deny('No tienes el rol necesarion para crear ordenes medicas');
+            return Response::deny('No tienes el rol necesario para crear ordenes medicas');
         }
 
         $admission = Admission::find($admission_id);
@@ -62,7 +62,7 @@ class MedicalOrderPolicy
     public function update(User $user, MedicalOrder $medicalOrder): Response
     {
         if (!$user->hasRole('doctor')) {
-            return Response::deny('No tienes el rol necesarion para crear ordenes medicas');
+            return Response::deny('No tienes el rol necesario para crear ordenes medicas');
         }
 
         $admission = $medicalOrder->admission;
@@ -88,7 +88,7 @@ class MedicalOrderPolicy
     public function delete(User $user, MedicalOrder $medicalOrder): Response
     {
         if (!$user->hasRole('doctor')) {
-            return Response::deny('No tienes el rol necesarion para crear ordenes medicas');
+            return Response::deny('No tienes el rol necesario para crear ordenes medicas');
         }
 
         $admission = $medicalOrder->admission;

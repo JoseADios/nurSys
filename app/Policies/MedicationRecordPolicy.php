@@ -2,12 +2,19 @@
 
 namespace App\Policies;
 
+use App\Models\Admission;
 use App\Models\MedicationRecord;
+use App\Models\MedicationRecordDetail;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Auth;
 
 class MedicationRecordPolicy
-{  public function before(User $user, string $ability): bool|null
+{
+    // crear: enfermera, ingreso no dado de alta,
+    // actualizar: ...
+    // eliminar que no tenga detalles
+    public function before(User $user, string $ability): bool|null
     {
         if ($user->hasRole('admin')) {
             return true;
@@ -25,51 +32,68 @@ class MedicationRecordPolicy
      */
     public function view(User $user, MedicationRecord $medicationRecord): bool
     {
-       if ($user->hasRole('nurse') || $user->hasRole('doctor')) {
-        return Response::allow();
-
-       }
-       return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
-
+        return false;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user, $admission_id): Response
     {
-        if ($user->hasRole('nurse') ) {
-            return Response::allow();
+        if (!$user->hasRole('nurse')) {
+            return Response::deny('No tienes el rol necesario para crear fichas de medicamentos');
+        }
 
-           }
-           return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
+        $admission = Admission::find($admission_id);
 
+        if ($admission->discharged_date !== null) {
+            return Response::deny('No se pueden actualizar registros en un ingreso que ya ha sido dado de alta');
+        }
+
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, MedicationRecord $medicationRecord): bool
+    public function update(User $user, MedicationRecord $medicationRecord): Response
     {
-        if ($user->hasRole('nurse') ) {
-            return Response::allow();
+        if (!$user->hasRole('nurse')) {
+            return Response::deny('No tienes el rol necesario para actualizar este registro');
+        }
 
-           }
-           return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
+        $admission = $medicationRecord->admission;
 
+        if ($admission->discharged_date !== null) {
+            return Response::deny('No se pueden actualizar registros en un ingreso que ya ha sido dado de alta');
+        }
+
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, MedicationRecord $medicationRecord): bool
+    public function delete(User $user, MedicationRecord $medicationRecord): Response
     {
-        if ($user->hasRole('nurse') ) {
-            return Response::allow();
+        if (!$user->hasRole('nurse')) {
+            return Response::deny('No tienes el rol necesario para crear ordenes medicas');
+        }
 
-           }
-           return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
+        $admission = $medicationRecord->admission;
 
+        if ($admission->discharged_date !== null) {
+            return Response::deny('No se pueden actualizar registros en un ingreso que ya ha sido dado de alta');
+        }
+
+        // verificar que no tenga detalles activos
+        $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
+
+        if (!$details->isEmpty()) {
+            return Response::deny('No se pueden eliminar registros con medicamentos registrados');
+        }
+
+        return Response::allow();
     }
 
     /**
@@ -77,12 +101,7 @@ class MedicationRecordPolicy
      */
     public function restore(User $user, MedicationRecord $medicationRecord): bool
     {
-        if ($user->hasRole('nurse') ) {
-            return Response::allow();
-
-           }
-           return Response::deny('Ya hay un registro de enfermería creado para este ingreso en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
-
+        return false;
     }
 
     /**

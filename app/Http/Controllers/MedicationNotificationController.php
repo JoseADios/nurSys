@@ -56,7 +56,7 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
     public function show($id)
 {
     $MedicationRecordDetail = MedicationRecordDetail::find($id);
-    $MedicationNotificacion = MedicationNotification::where('medication_record_detail_id', $id)->get();
+    $MedicationNotificacion = MedicationNotification::where('medication_record_detail_id', $id)->with('nurse')->get();
 
     if ($MedicationRecordDetail->active == 0) {
         return redirect()->route('medicationRecords.show', $MedicationRecordDetail->medication_record_id)->withErrors([

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admission;
+use App\Models\MedicalOrder;
 use App\Models\NurseRecord;
 use App\Models\NurseRecordDetail;
 use App\Services\FirmService;
@@ -168,7 +169,7 @@ class NurseRecordController extends Controller implements HasMiddleware
     public function show(NurseRecord $nurseRecord, Request $request)
     {
         $this->authorize('view', $nurseRecord);
-
+        $nurseRecord->load('admission.doctor');
         $showDeleted = $request->boolean('showDeleted');
         $admission_id = $request->integer('admission_id');
         $patient = $nurseRecord->admission->patient;
@@ -177,6 +178,19 @@ class NurseRecordController extends Controller implements HasMiddleware
 
         $response = Gate::inspect('update', $nurseRecord);
         $canUpdateRecord = $response->allowed();
+
+        $medicalOrders = MedicalOrder::with([
+            'medicalOrderDetail' => function ($query) {
+                $query->where('active', true)
+                    ->whereNull('suspended_at');
+            },
+            'admission.patient',
+            'doctor'
+        ])
+            ->where('admission_id', $nurseRecord->admission_id)
+            ->orderByDesc('created_at')
+            ->where('active', true)
+            ->get();
 
         $queryDetails = NurseRecordDetail::query()
             ->where('nurse_record_id', operator: $nurseRecord->id)
@@ -199,6 +213,7 @@ class NurseRecordController extends Controller implements HasMiddleware
             'canUpdateRecord' => $canUpdateRecord,
             'details' => $details,
             'showDeleted' => $showDeleted,
+            'medicalOrders' => $medicalOrders,
             'errors' => !empty($errors) ? $errors : [],
         ]);
     }

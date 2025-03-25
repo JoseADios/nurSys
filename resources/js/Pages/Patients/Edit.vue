@@ -2,7 +2,7 @@
     <AppLayout>
         <template #header>
             <h2 class="font-bold text-2xl text-gray-800 dark:text-white leading-tight text-center">
-                Editar Ingreso de Paciente
+                Editar Paciente
             </h2>
         </template>
 

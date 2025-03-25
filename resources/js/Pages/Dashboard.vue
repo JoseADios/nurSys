@@ -18,8 +18,10 @@ import TrendingUpIcon from '@/Components/Icons/TrendingUpIcon.vue';
 import ThermometerIcon from '@/Components/Icons/ThermometerIcon.vue';
 import MedicationIcon from '@/Components/Icons/MedicationIcon.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
+import TopDoctorsAdmissions from '@/Components/TopDoctorsAdmissions.vue';
 import axios from 'axios';
 import { ref } from 'vue';
+import PendingDocumentsToSign from '@/Components/PendingDocumentsToSign.vue';
 
 const props = defineProps({
     stats: {
@@ -261,7 +263,7 @@ async function fetchData() {
                                             <div class="flex items-center space-x-4">
                                                 <div class="flex-shrink-0">
                                                     <div
-                                                        class="h-12 w-12 rounded-full bg-[#71DD37] flex items-center justify-center text-white font-medium shadow-sm">
+                                                        class="size-8 sm:h-12 sm:w-12 text-sm rounded-full bg-[#71DD37] flex items-center justify-center text-white sm:font-medium shadow-sm">
                                                         {{ getInitials(medication.patient_name) }}
                                                     </div>
                                                 </div>
@@ -393,10 +395,19 @@ async function fetchData() {
                                     </div>
                                     <h3 class="text-lg font-medium text-gray-900 dark:text-white"></h3>
                                     <p class="mt-2 text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-                                        No hay pacientes con temperatura alta (mayor a 38°)
+                                        No hay pacientes con temperatura alta (mayor o igual a 38°)
                                     </p>
                                 </div>
                             </div>
+                        </AccessGate>
+
+                        <AccessGate :except-role="['receptionist']">
+                            <PendingDocumentsToSign :pending-documents="stats.pending_docs" :user-role="stats.user_role" />
+                        </AccessGate>
+
+
+                        <AccessGate role="admin">
+                            <TopDoctorsAdmissions :doctors="stats.top_doctors_most_admissions" />
                         </AccessGate>
                     </div>
                 </div>

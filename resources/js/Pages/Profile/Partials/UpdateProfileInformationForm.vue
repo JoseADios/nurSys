@@ -11,7 +11,6 @@ import TextInput from '@/Components/TextInput.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import axios from 'axios';
 import DateInput from '@/Components/DateInput.vue';
-import TimeInput from '@/Components/TimeInput.vue';
 import TextAreaInput from '@/Components/TextAreaInput.vue';
 import PhoneInput from '@/Components/PhoneInput.vue';
 import CedulaInput from '@/Components/CedulaInput.vue';

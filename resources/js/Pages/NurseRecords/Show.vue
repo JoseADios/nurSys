@@ -129,7 +129,14 @@
                                 </button>
                             </AccessGate>
                         </div>
-
+                        <!-- Doctor info -->
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ nurseRecord.admission.doctor.name }} {{ nurseRecord.admission.doctor.last_name }}
+                            </p>
+                        </div>
                         <!-- Created date -->
                         <div
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
@@ -138,6 +145,7 @@
                                 {{ formatDate(nurseRecord.created_at) }}
                             </p>
                         </div>
+
                     </div>
                 </div>
 
@@ -148,52 +156,110 @@
                     </div>
                 </div>
 
-                <!-- Form -->
-                <!-- Formulario para agregar nuevo detalle -->
-                <AccessGate :permission="['nurseRecordDetail.create']">
-                    <div v-if="canUpdateRecord">
-                        <div class="p-8">
-                            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Eventos
-                            </h3>
+                <div class="flex flex-col md:flex-row">
+                    <div class="col w-full md:w-[50%] p-4 md:p-8">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Órdenes médicas</h3>
+                        <!-- Mensaje cuando no hay órdenes -->
+                        <div v-if="!medicalOrders || medicalOrders.length === 0"
+                            class="text-center text-sm text-gray-500 dark:text-gray-400">
+                            No hay órdenes médicas disponibles
+                        </div>
 
-                            <form @submit.prevent="submit" class="space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="medication"
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Medicación
-                                        </label>
-                                        <input maxlength="255" type="text" id="medication"
-                                            v-model="formDetail.medication" required
-                                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                                            placeholder="Nombre del medicamento" />
+                        <!-- Acordeón de Órdenes Médicas -->
+                        <div v-else class="space-y-4 max-h-72 overflow-y-auto">
+                            <div v-for="(order, index) in medicalOrders" :key="order.id"
+                                class="accordion-item border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                                <!-- Cabecera del Acordeón -->
+                                <div @click="toggleAccordion(index)"
+                                    class="accordion-header cursor-pointer flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                                    <div class="flex items-center justify-between w-full space-x-2">
+                                        <span class="font-semibold text-gray-800 dark:text-white">
+                                            <Link :href="route('medicalOrders.show', order.id)">
+                                            <FormatId :id="order.id" prefix="ORD" />
+                                            </Link>
+                                            <!-- - {{ order.doctor.name }} {{ order.doctor.last_name }} -->
+                                        </span>
+                                        <span class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
+                                            formatDateFromNow(order.created_at)
+                                            }}</span>
                                     </div>
-
-                                    <div>
-                                        <label for="comment"
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Observaciones
-                                        </label>
-                                        <input type="text" id="comment" v-model="formDetail.comment"
-                                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                                            placeholder="Comentarios adicionales" />
-                                    </div>
+                                    <ChevronDown
+                                        class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white"
+                                        :class="{ 'rotate-180': openAccordion === index }" />
                                 </div>
 
-                                <div class="pt-4">
-                                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
-        hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-        transition-colors duration-300">
-                                        Agregar Evento
-                                    </button>
+                                <!-- Contenido del Acordeón -->
+                                <div v-if="openAccordion === index"
+                                    class="accordion-content p-4 bg-white dark:bg-gray-900">
+                                    <div v-for="(detail, detailIndex) in order.medical_order_detail" :key="detailIndex"
+                                        class="mb-3 pb-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+                                        <div class="flex flex-col justify-between items-start">
+                                            <div class="w-full flex flex-col">
+                                                <div class="flex justify-between items-center w-full">
+                                                    <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                                        {{ detail.order }}
+                                                    </p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                        {{ formatDateFromNow(detail.created_at) }}
+                                                    </p>
+                                                </div>
+                                                <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                                                    {{ detail.regime }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                    <div v-else>
-                        <hr class="my-2 border-transparent dark:border-transparent">
-                    </div>
-                </AccessGate>
+                    <!-- Form -->
+                    <!-- Formulario para agregar nuevo detalle -->
+                    <AccessGate :permission="['nurseRecordDetail.create']" class="col w-full md:w-[50%] p-4 md:p-8">
+                        <div v-if="canUpdateRecord">
+                            <div class="">
+                                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos
+                                    Eventos
+                                </h3>
+
+                                <form @submit.prevent="submit" class="space-y-4">
+                                    <div class="grid grid-cols-1 gap-4">
+                                        <div>
+                                            <label for="medication"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Medicación
+                                            </label>
+                                            <TextAreaInput maxlength="255" class="w-full h-16 resize-none"
+                                                v-model="formDetail.medication" id="medication"
+                                                placeholder="Nombre del medicamento" required />
+                                        </div>
+
+                                        <div>
+                                            <label for="comment"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Observaciones
+                                            </label>
+                                            <TextAreaInput maxlength="255" class="w-full resize-none h-24"
+                                                v-model="formDetail.comment" id="comment"
+                                                placeholder="Comentarios adicionales" required />
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-4">
+                                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+            hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+            transition-colors duration-300">
+                                            Agregar Evento
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <hr class="my-2 border-transparent dark:border-transparent">
+                        </div>
+                    </AccessGate>
+                </div>
 
                 <AccessGate :except-permission="['nurseRecordDetail.create']">
                     <hr class="my-2 border-transparent dark:border-transparent">
@@ -246,7 +312,7 @@
                                 <div class="sm:text-right">
                                     <!-- eliminar -->
                                     <div v-if="detail.active === 1">
-                                        <button @click="deleteDetail(detail.id)"
+                                        <button @click="selectedDetail = detail; detailBeingDeleted = true"
                                             class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
                                             <TrashIcon class="size-5" />
                                             <span class="font-medium sm:hidden md:inline-flex">Eliminar</span>
@@ -269,7 +335,7 @@
                     </div>
                 </div>
 
-
+                <!-- Firma -->
                 <section class=" p-8 space-y-4 ">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Firma</h3>
 
@@ -372,6 +438,7 @@
             </Modal>
         </AccessGate>
 
+        <!-- Edit event -->
         <DialogModal :show="isVisibleDetail" @close="isVisibleDetail = false">
             <!-- Header del modal -->
             <template #title>
@@ -401,22 +468,24 @@
 
             <!-- Footer del modal -->
             <template #footer>
-                <button v-if="selectedDetail.active" type="button" @click="detailBeingDeleted = true"
-                    class="mr-6 focus:outline-none text-white bg-red-800 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                    Eliminar
-                </button>
-                <button v-if="!selectedDetail.active" type="button" @click="restoreDetail"
-                    class="mr-6 focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
-                    Restaurar
-                </button>
-                <button type="button" @click="isVisibleDetail = false"
-                    class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    Cerrar
-                </button>
-                <button type="submit" @click="submitUpdateDetail"
-                    class="ml-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                    Actualizar
-                </button>
+                <div class="flex sm:justify-between items-center">
+                    <button v-if="selectedDetail.active" type="button" @click="detailBeingDeleted = true"
+                        class="mr-2 focus:outline-none text-white bg-red-800 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                        Eliminar
+                    </button>
+                    <button v-if="!selectedDetail.active" type="button" @click="restoreDetail"
+                        class="mr-2 focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+                        Restaurar
+                    </button>
+                    <button type="button" @click="isVisibleDetail = false"
+                        class="mr-2 py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        Cerrar
+                    </button>
+                    <button type="submit" @click="submitUpdateDetail"
+                        class="focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                        Actualizar
+                    </button>
+                </div>
             </template>
         </DialogModal>
 
@@ -498,6 +567,7 @@ import TextAreaInput from '@/Components/TextAreaInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
+import ChevronDown from '@/Components/Icons/ChevronDown.vue';
 
 export default {
     props: {
@@ -513,7 +583,11 @@ export default {
         bed: Object,
         details: Array,
         canUpdateRecord: Boolean,
-        showDeleted: Boolean
+        showDeleted: Boolean,
+        medicalOrders: {
+            type: Array,
+            default: () => []
+        }
     },
     components: {
         AppLayout,
@@ -541,10 +615,12 @@ export default {
         TextAreaInput,
         InputLabel,
         TextInput,
-        InputError
+        InputError,
+        ChevronDown
     },
     data() {
         return {
+            openAccordion: ref(null),
             recordBeingDeleted: ref(null),
             detailBeingDeleted: ref(null),
             isVisibleEditSign: ref(null),
@@ -580,6 +656,13 @@ export default {
             })
             this.showEditAdmission = null
             this.showEditNurse = null
+        },
+        toggleAccordion(index) {
+            if (this.openAccordion === index) {
+                this.openAccordion = null // Cierra si ya está abierto
+            } else {
+                this.openAccordion = index // Abre el acordeón seleccionado
+            }
         },
         selectAdmission(admission) {
             this.formRecord.admission_id = admission.id;
@@ -683,6 +766,9 @@ export default {
         },
         formatDate(date) {
             return moment(date).format('DD MMMM YYYY HH:mm');
+        },
+        formatDateFromNow(date) {
+            return moment(date).fromNow();
         },
         async downloadRecordReport() {
             window.open(route('reports.nurseRecord', { id: this.nurseRecord.id }), '_blank');

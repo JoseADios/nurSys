@@ -13,7 +13,10 @@
                 <div class="flex flex-col sm:flex-row gap-3 mb-3">
                     <!-- Búsqueda general - siempre visible -->
                     <div class="relative flex-grow">
-                        <TextInput v-model="form.search" placeholder="Buscar por nombre" class="w-full"
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
+                        </div>
+                        <TextInput v-model="form.search" placeholder="Buscar por nombre" class="pl-10 w-full"
                             @input="applyFilters" />
                         <button v-if="form.search" @click="form.search = ''; applyFilters()" type="button"
                             class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
@@ -129,23 +132,23 @@
 
         <!-- Tabla con scroll horizontal en móvil -->
         <div class="px-4 lg:px-10">
-            <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-t-lg">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap hidden sm:table-cell"
                                 @click="sort('id')">
                                 ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                                    }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('name')">
                                 Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑' :
                                     '↓'
-                                }}</span>
+                                    }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('role')">
                                 Rol <span v-if="form.sortField === 'role'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
+                                    }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
                                 @click="sort('specialty')">
@@ -157,12 +160,12 @@
                                 @click="sort('position')">
                                 Posición <span v-if="form.sortField === 'position'">{{ form.sortDirection === 'asc' ?
                                     '↑' : '↓'
-                                }}</span>
+                                    }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('email')">
                                 Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' :
                                     '↓'
-                                }}</span>
+                                    }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 whitespace-nowrap">Acciones</th>
                         </tr>
@@ -216,8 +219,9 @@
                 <div v-if="!users.data.length" class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
                     No hay registros disponibles.
                 </div>
-                <Pagination :pagination="users" :filters="form" />
             </div>
+            <Pagination :pagination="users" :filters="form"
+                class="rounded-b-lg border border-t-0 border-gray-200 dark:border-gray-700" />
         </div>
         <div class="pb-4"></div>
     </AppLayout>
@@ -229,6 +233,7 @@ import FormatRole from '@/Components/FormatRole.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
+import SearchIcon from '@/Components/Icons/SearchIcon.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
 import Pagination from '@/Components/Pagination.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -250,7 +255,8 @@ export default {
         PlusIcon,
         CirclePlusIcon,
         CircleXIcon,
-        TextInput
+        TextInput,
+        SearchIcon
     },
     data() {
         return {

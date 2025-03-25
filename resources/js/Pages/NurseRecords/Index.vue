@@ -33,7 +33,7 @@
 
                 <input @input="submitFilters()"
                     class="pl-10 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                    type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
+                    type="text" name="search" id="search" v-model="form.search" placeholder="Buscar..." />
 
                 <button v-if="form.search" @click="form.search = ''; submitFilters()"
                     class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
@@ -96,7 +96,7 @@
 
         <!-- Tabla con scroll horizontal para móviles -->
         <div
-            class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 rounded-lg mt-4 mx-4 lg:mx-10">
+            class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 rounded-lg my-4 mx-4 lg:mx-10">
             <div class="min-w-full overflow-x-auto">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -190,7 +190,7 @@
             <div v-if="!nurseRecords.data.length" class="text-center text-gray-500 dark:text-gray-400 py-4">
                 No hay registros disponibles.
             </div>
-            <Pagination :pagination="nurseRecords" :filters="form" />
+            <Pagination :pagination="nurseRecords" :filters="form"/>
         </div>
     </AppLayout>
 </template>

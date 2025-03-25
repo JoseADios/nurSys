@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Admission;
 use App\Models\Bed;
+use App\Models\MedicalOrder;
+use App\Models\NurseRecord;
 use App\Models\Patient;
+use App\Services\TurnService;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 
@@ -32,6 +36,9 @@ class DashboardController extends Controller
             'beds_by_status' => $this->getBedsByStatus(),
             'upcoming_medications' => $this->getUpcomingMedications(),
             'patients_high_temperature' => $this->getPatientsHighTemperature(),
+            'top_doctors_most_admissions' => $this->getTop3DoctorsWithMostAdmissions(),
+            'pending_docs' => $this->getPendingDocumentsForCurrentUser(),
+            'user_role' => Auth::user()->roles[0]->name,
         ];
 
         return Inertia::render('Dashboard', [
@@ -247,11 +254,6 @@ class DashboardController extends Controller
         return $pendingMedications;
     }
 
-    // obtener la ultima temperatura por paciente si es mas alta de 38 grados
-    // si el ingreso esta activo
-    // si el ingreso esta en progreso
-    // si el record esta activo
-
     private function getPatientsHighTemperature()
     {
         $details = DB::table('temperature_details as d')
@@ -281,6 +283,59 @@ class DashboardController extends Controller
         ;
 
         return $highTempPatients;
+    }
+
+    private function getTop3DoctorsWithMostAdmissions()
+    {
+        $query = DB::table('admissions as a')
+            ->join('users as u', 'a.doctor_id', '=', 'u.id')
+            ->selectRaw('u.id, CONCAT_WS(" ", u.name, u.last_name) AS doctor, u.specialty, u.profile_photo_path, COUNT(a.id) AS cant')
+            ->whereBetween('a.created_at', [now()->startOfMonth(), now()->endOfMonth()])
+            ->groupBy('u.id', 'doctor', 'u.specialty', 'u.profile_photo_path')
+            ->orderByDesc('cant')
+            ->limit(3);
+
+        return $query->get();
+    }
+
+    private function getPendingDocumentsForCurrentUser()
+    {
+        $userRole = Auth::user()->roles[0]->name;
+        $pendingOrders = null;
+        $pendingNurseR = null;
+
+        if ($userRole === 'doctor' || $userRole === 'admin') {
+            $pendingOrders = MedicalOrder::query()
+                ->with('admission', 'admission.bed', 'admission.patient')
+                ->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()])
+                ->where('doctor_id', Auth::id())
+                ->whereNull('doctor_sign')
+                ->get()
+            ;
+        }
+
+        if ($userRole === 'nurse' || $userRole === 'admin') {
+            $turnService = new TurnService();
+            $currentTurn = $turnService->getCurrentTurn();
+            $dateRange = $turnService->getDateRangeForTurn($currentTurn);
+
+            $pendingNurseR = NurseRecord::query()
+                ->with('admission', 'admission.bed', 'admission.patient')
+                ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+                ->where('nurse_id', Auth::id())
+                ->whereNull('nurse_sign')
+                ->get()
+            ;
+        }
+
+        if ($userRole === 'admin') {
+            return $pendingOrders->merge($pendingNurseR);
+        } elseif ($userRole === 'doctor') {
+            return $pendingOrders;
+        } elseif ($userRole === 'nurse') {
+            return $pendingNurseR;
+        }
+
     }
 
 }

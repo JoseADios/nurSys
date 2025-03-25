@@ -53,7 +53,7 @@ class MedicationRecordDetailPolicy
         // permisos del record
         $recordPolicy = new MedicationRecordPolicy();
 
-        if ($recordPolicy->update($user, $medicationRecordDetail->medicationRecord)) {
+        if (!$recordPolicy->update($user, $medicationRecordDetail->medicationRecord)) {
             return Response::deny('No se puede actualizar este registro, ya se ha iniciado su aplicación al paciente');
         }
 

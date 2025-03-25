@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\EliminationRecord;
+use App\Models\TemperatureRecord;
 use App\Models\User;
 use App\Services\TurnService;
 use Illuminate\Auth\Access\Response;
@@ -31,6 +32,15 @@ class EliminationRecordPolicy
      */
     public function create(User $user, $temperature_record_id): Response
     {
+        $temperatureRecord = TemperatureRecord::find($temperature_record_id)->first();
+
+        $temperatureRecordPolicy = new TemperatureRecordPolicy();
+        $responseRecord = $temperatureRecordPolicy->update($user, $temperatureRecord);
+
+        if (!$responseRecord->allowed()) {
+            return Response::deny($responseRecord->message());
+        }
+
         if ($this->hasEliminationInCurrentTurn($temperature_record_id)) {
             return Response::deny('Ya existe un registro de eliminaciones creado en este turno');
         }
@@ -68,8 +78,17 @@ class EliminationRecordPolicy
      */
     public function update(User $user, EliminationRecord $eliminationRecord): Response
     {
+        $temperatureRecord = $eliminationRecord->temperatureRecord;
+
+        $temperatureRecordPolicy = new TemperatureRecordPolicy();
+        $responseRecord = $temperatureRecordPolicy->update($user, $temperatureRecord);
+
+        if (!$responseRecord->allowed()) {
+            return Response::deny($responseRecord->message());
+        }
+
         if (!$user->hasRole(['admin', 'nurse'])) {
-            return Response::deny('No tienes el rol para actualizar este registro');
+            return Response::deny('No tienes el rol necesario para actualizar este registro');
         }
 
         if ($user->id !== $eliminationRecord->nurse_id) {

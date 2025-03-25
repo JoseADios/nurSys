@@ -3,7 +3,7 @@
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
                 <BreadCrumb :items="[
-                     {
+                    {
                         text: 'Fichas de Medicamentos',
                         route: route('medicationRecords.index')
 
@@ -23,8 +23,6 @@
                 </label>
                 <AdmissionSelector :doesnt-have-medication-r=true @update:admission="form.admission_id = $event"
                     :selected-admission-id="admission_id" />
-                <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
-
 
                 <!-- Diagnóstico -->
                 <label for="diagnosis" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
@@ -67,9 +65,6 @@
                     </div>
                 </div>
 
-
-
-
                 <!-- Botones -->
                 <div class="flex justify-end mt-6 mb-2">
                     <Link :href="route('medicationRecords.index')"
@@ -81,7 +76,6 @@
                         class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
                         Guardar
                     </button>
-
                 </div>
             </form>
         </div>
@@ -149,10 +143,9 @@ import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     props: {
-        errors: Array,
-        admission: Array,
+        errors: [Array, Object],
         diet: Array,
-
+        admission_id: Number
     },
     components: {
         AppLayout,
@@ -165,12 +158,9 @@ export default {
         return {
             isVisible: false,
             form: {
-                admission_id: this.admission.id,
+                admission_id: this.admission_id,
                 diagnosis: '',
                 diet: '',
-
-
-
             },
             modalform: {
                 description: '',

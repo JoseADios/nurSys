@@ -2,7 +2,13 @@
 
 namespace App\Policies;
 
+use App\Models\MedicalOrder;
+use App\Models\MedicalOrderDetail;
+use App\Models\MedicationRecordDetail;
 use App\Models\User;
+use Illuminate\Auth\Access\Response;
+use Log;
+
 
 class MedicalOrderDetailPolicy
 {
@@ -14,58 +20,79 @@ class MedicalOrderDetailPolicy
 
         return null;
     }
-    public function view(User $user, MedicalOrder $medicalOrder): bool
-    {
 
-        if ($user->hasRole('doctor') || $user->hasRole('nurse')) {
-            return Response::allow();
-        }
-        return Response::deny('No tienes permiso para ver este registro');
+    public function view(User $user, MedicalOrderDetail $medicalOrderDetail): bool
+    {
+        return false;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user, MedicalOrder $medicalOrder): Response
     {
+        // padre
+        $recordPolicy = new MedicalOrderPolicy();
+        $responseRecord = $recordPolicy->update($user, $medicalOrder);
 
-        if ($user->hasRole('doctor')) {
-            return Response::allow();
+        if (!$responseRecord->allowed()) {
+            return Response::deny($responseRecord->message());
         }
-        return Response::deny('No tienes permiso para crear este registro');
+        if ($medicalOrder->doctor_id !== $user->id) {
+            Log::info('Doctor', [$medicalOrder->doctor_id, $user->id] );
+            return Response::deny('No tienes permiso para crear este registro');
+        }
+
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, MedicalOrder $medicalOrder): bool
+    public function update(User $user, MedicalOrderDetail $medicalOrderDetail): Response
     {
-        if ($user->hasRole('doctor')) {
-            return Response::allow();
+        $recordPolicy = new MedicalOrderPolicy();
+        $responseRecord = $recordPolicy->update($user, $medicalOrderDetail->medicalOrder);
+
+        if (!$responseRecord->allowed()) {
+            return Response::deny($responseRecord->message());
         }
-        return Response::deny('No tienes permiso para actualizar este registro');
+        if ($medicalOrderDetail->medicalOrder->doctor_id !== $user->id) {
+            return Response::deny('No tienes permiso para crear este registro');
+        }
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, MedicalOrder $medicalOrder): bool
+    public function delete(User $user, MedicalOrderDetail $medicalOrderDetail): Response
     {
-        if ($user->hasRole('doctor')) {
-            return Response::allow();
+        $recordPolicy = new MedicalOrderPolicy();
+        $responseRecord = $recordPolicy->update($user, $medicalOrderDetail->medicalOrder);
+
+        $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)
+        ->first();
+
+        if ($medicationRecordDetail) {
+            return Response::deny('No se puede eliminar porque tiene medicamentos relacionados en la ficha, solo puedes suspender la orden');
         }
-        return Response::deny('No tienes permiso para eliminar este registro');
+
+        if (!$responseRecord->allowed()) {
+            return Response::deny($responseRecord->message());
+        }
+        if ($medicalOrderDetail->medicalOrder->doctor_id !== $user->id) {
+            return Response::deny('No tienes permiso para eliminar este registro');
+        }
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, MedicalOrder $medicalOrder): bool
+    public function restore(User $user, MedicalOrderDetail $medicalOrderDetail): bool
     {
-        if ($user->hasRole('doctor')) {
-            return Response::allow();
-        }
-        return Response::deny('No tienes permiso para restaurar este registro');
+        return false;
     }
 
 }

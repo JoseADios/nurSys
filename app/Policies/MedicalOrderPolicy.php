@@ -6,12 +6,13 @@ use App\Models\MedicalOrder;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use App\Models\Admission;
+use Illuminate\Support\Facades\Auth;
+use Log;
 class MedicalOrderPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
-
     public function before(User $user, string $ability): bool|null
     {
         if ($user->hasRole('admin')) {
@@ -30,46 +31,83 @@ class MedicalOrderPolicy
      */
     public function view(User $user, MedicalOrder $medicalOrder): bool
     {
-
-        if ($user->hasRole('doctor') || $user->hasRole('nurse')) {
-            return Response::allow();
-        }
-        return Response::deny('No tienes permiso para ver este registro');
-
-     }
+        return false;
+    }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+      //  crear: doctores, en el ingreso solo crear el doctor relacionado,
+    public function create(User $user, $admission_id): Response
     {
-
-        if ($user->hasRole('doctor')) {
-            return Response::allow();
+        if (!$user->hasRole('doctor')) {
+            return Response::deny('No tienes el rol necesario para crear ordenes medicas');
         }
-        return Response::deny('No tienes permiso para crear este registro');
+
+        // Log::info($admission_id);
+        $admission = Admission::findOrFail($admission_id);
+
+        if ($admission->discharged_date !== null) {
+            return Response::deny('No se pueden crear registros en un ingreso que ya ha sido dado de alta');
+        }
+
+        if ($admission->doctor_id !== Auth::id()) {
+            return Response::deny('No tienes permiso para crear este registro');
+        }
+
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, MedicalOrder $medicalOrder): bool
+    public function update(User $user, MedicalOrder $medicalOrder): Response
     {
-        if ($user->hasRole('doctor')) {
-            return Response::allow();
+        if (!$user->hasPermissionTo('medicalOrder.update')) {
+            return Response::deny('No tienes los permisos necesarios para crear ordenes medicas');
         }
-        return Response::deny('No tienes permiso para actualizar este registro');
+
+        $admission = $medicalOrder->admission;
+
+        if ($admission->discharged_date !== null) {
+            return Response::deny('No se pueden actualizar registros en un ingreso que ya ha sido dado de alta');
+        }
+
+        if ($admission->doctor_id !== Auth::id()) {
+            return Response::deny('No tienes permiso para crear este registro');
+        }
+
+        if (!($medicalOrder->created_at >= now()->startOfDay() && $medicalOrder->created_at <= now()->endOfDay())) {
+            return Response::deny('No se pueden actualizar registros de un dia pasado');
+        }
+
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, MedicalOrder $medicalOrder): bool
+    public function delete(User $user, MedicalOrder $medicalOrder): Response
     {
-        if ($user->hasRole('doctor')) {
-            return Response::allow();
+        if (!$user->hasRole('doctor')) {
+            return Response::deny('No tienes el rol necesario para crear ordenes medicas');
         }
-        return Response::deny('No tienes permiso para eliminar este registro');
+
+        $admission = $medicalOrder->admission;
+
+        if ($admission->discharged_date !== null) {
+            return Response::deny('No se pueden actualizar registros en un ingreso que ya ha sido dado de alta');
+        }
+
+        if ($admission->doctor_id !== Auth::id()) {
+            return Response::deny('No tienes permiso para crear este registro');
+        }
+
+        if (!($medicalOrder->created_at >= now()->startOfDay() && $medicalOrder->created_at <= now()->endOfDay())) {
+            return Response::deny('No se pueden actualizar registros de un dia pasado');
+        }
+
+        return Response::allow();
     }
 
     /**
@@ -77,10 +115,7 @@ class MedicalOrderPolicy
      */
     public function restore(User $user, MedicalOrder $medicalOrder): bool
     {
-        if ($user->hasRole('doctor')) {
-            return Response::allow();
-        }
-        return Response::deny('No tienes permiso para restaurar este registro');
+        return false;
     }
 
     /**
@@ -89,20 +124,5 @@ class MedicalOrderPolicy
     public function forceDelete(User $user, MedicalOrder $medicalOrder): bool
     {
         return false;
-    }
-    public function updateAdmission(User $user, $new_admission_id): Response
-    {
-        // Validar que la nueva admisión no tenga otra hoja de temperatura activa
-        $newAdmission = Admission::where('id', $new_admission_id)
-            ->whereDoesntHave('medicalOrders', function (Builder $query) {
-                $query->where('active', true);
-            })
-            ->first();
-
-        if ($newAdmission) {
-            return Response::allow();
-        }
-
-        return Response::deny('El nuevo ingreso ya tiene una Orden Medica activa.');
     }
 }

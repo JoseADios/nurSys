@@ -66,6 +66,13 @@ class NurseRecordDetailPolicy
     // verificar si el record fue creado en un turno pasado
     public function canCreateInTurn(User $user, NurseRecord $nurseRecord): Response
     {
+        $nurseRecordPolicy = new NurseRecordPolicy();
+        $responseRecord = $nurseRecordPolicy->update($user, $nurseRecord);
+
+        if (!$responseRecord->allowed()) {
+            return Response::deny($responseRecord->message());
+        }
+
         $turnService = new TurnService();
         $currentTurn = $turnService->getCurrentTurn();
         $dateRange = $turnService->getDateRangeForTurn($currentTurn);
@@ -83,8 +90,14 @@ class NurseRecordDetailPolicy
      */
     public function update(User $user, NurseRecordDetail $nurseRecordDetail): Response
     {
-        // verificar que el user pueda actualizar el padre
-        return Gate::inspect('update', $nurseRecordDetail->nurseRecord);
+        $nurseRecordPolicy = new NurseRecordPolicy();
+        $responseRecord = $nurseRecordPolicy->update($user, $nurseRecordDetail->nurseRecord);
+
+        if (!$responseRecord->allowed()) {
+            return Response::deny($responseRecord->message());
+        }
+
+        return Response::allow();
     }
 
     /**
@@ -92,7 +105,7 @@ class NurseRecordDetailPolicy
      */
     public function delete(User $user, NurseRecordDetail $nurseRecordDetail): Response
     {
-        return Gate::inspect('delete', $nurseRecordDetail->nurseRecord);
+        return Response::deny();
     }
 
     /**

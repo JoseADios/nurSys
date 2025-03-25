@@ -8,12 +8,21 @@ use Illuminate\Auth\Access\Response;
 
 class AdmissionPolicy
 {
+    public function before(User $user, string $ability): bool|null
+    {
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        return null;
+    }
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -21,29 +30,39 @@ class AdmissionPolicy
      */
     public function view(User $user, Admission $admission): bool
     {
-        if (!$admission->active) {
-            return $user->hasRole(['admin', 'doctor']);
-        }
-        return true;
+        return false;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user): Response
     {
-        return $user->hasRole(['admin', 'receptionist']);
+        if (!$user->hasPermissionTo('admission.create')) {
+            return Response::deny('El usuario no tiene los permisos necesarios para crear ingresos');
+        }
+
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Admission $admission): bool
+    public function update(User $user, Admission $admission): Response
     {
-        if ($user->hasRole('doctor') && $admission->doctor_id == $user->id) {
-            return true;
+        if (!$user->hasPermissionTo('admission.update')) {
+            return Response::deny('El usuario no tiene los permisos necesarios para crear ingresos');
         }
-        return $user->hasRole(['admin', 'nurse', 'receptionist']);
+
+        if ($user->id !== $admission->doctor_id) {
+            return Response::deny('No eres el doctor asignado a este ingreso, no puede modificarlo');
+        }
+
+        if ($admission->discharged_date) {
+            return Response::deny('No se puede modificar un ingreso dado de alta');
+        }
+
+        return Response::allow();
     }
 
     /**
@@ -51,7 +70,7 @@ class AdmissionPolicy
      */
     public function delete(User $user, Admission $admission): bool
     {
-        return $user->hasRole(['admin', 'receptionist']);
+        return false;
     }
 
     /**
@@ -59,7 +78,7 @@ class AdmissionPolicy
      */
     public function restore(User $user, Admission $admission): bool
     {
-        return $user->hasRole(['admin', 'receptionist']);
+        return false;
     }
 
     /**

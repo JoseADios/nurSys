@@ -51,10 +51,6 @@ class MedicationRecordController extends Controller implements HasMiddleware
             ->join('patients', 'admissions.patient_id', '=', 'patients.id')
             ->where('medication_records.active', !$showDeleted);
 
-
-
-
-
         if ($search) {
             $query->where(function (Builder $q) use ($search) {
                 $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
@@ -90,21 +86,14 @@ class MedicationRecordController extends Controller implements HasMiddleware
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-
-
+        $admission_id = $request->integer('admission_id');
         $diet = Diet::all();
-        $admission = Admission::with('patient', 'bed', 'doctor')
-            ->whereDoesntHave('medicationRecord')
-            ->get();
-
-
-
 
         // Pasar los datos a la vista
         return Inertia::render('MedicationRecords/Create', [
-            'admission' => $admission,  // Enviar todos los registros de Admission
+            'admission_id' => $admission_id,  // Enviar todos los registros de Admission
             'diet' => $diet,
         ]);
 
@@ -115,14 +104,13 @@ class MedicationRecordController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
+        $this->authorize('create', [MedicationRecord::class, $request->admission_id]);
+
         // Validación de los datos de entrada
         $request->validate([
             'admission_id' => 'required|exists:admissions,id', // Validamos que exista en la tabla admissions
             'diagnosis' => 'required|string',
             'diet' => 'required|string',
-
-
-
         ]);
 
         // Verificar si ya existe un MedicationRecord para la admisión especificada
@@ -141,15 +129,11 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
             'diagnosis' => $request->diagnosis,
             'diet' => $request->diet,
-
-
         ]);
 
         // Redirigir o retornar una respuesta exitosa
-        return redirect()->route('medicationRecords.index')->with('flash.toast', 'Registro guardado correctamente');
+        return redirect()->route('medicationRecords.show', $medicationRecord->id)->with('flash.toast', 'Registro guardado correctamente');
     }
-
-
 
     /**
      * Display the specified resource.
@@ -162,7 +146,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
                 ->where('admission_id', $medicationRecord->admission->id)
                 ->with([
                     'medicalOrderDetail' => function ($query) {
-                        $query->whereNull('suspended_at')->where('active',true);
+                        $query->whereNull('suspended_at')->where('active', true);
                     }
                 ])
                 ->get();
@@ -224,6 +208,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
     public function update(Request $request, MedicationRecord $medicationRecord)
     {
 
+        $this->authorize('update', $medicationRecord);
 
         if ($request->has('active')) {
             $this->restore($medicationRecord->id);
@@ -247,6 +232,8 @@ class MedicationRecordController extends Controller implements HasMiddleware
      */
     public function destroy(MedicationRecord $medicationRecord)
     {
+        $this->authorize('delete', $medicationRecord);
+
         $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
 
         $hasNotifications = MedicationNotification::whereIn('medication_record_detail_id', function ($query) use ($medicationRecord) {
@@ -269,7 +256,6 @@ class MedicationRecordController extends Controller implements HasMiddleware
         foreach ($details as $detail) {
             $detail->update(['active' => 0]);
         }
-
 
         MedicationNotification::whereIn('medication_record_detail_id', $details->pluck('id'))
             ->update(['active' => 0]);

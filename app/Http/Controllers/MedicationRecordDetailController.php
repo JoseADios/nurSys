@@ -63,6 +63,9 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
      */
     public function store(Request $request)
     {
+        $medicationRecord = MedicationRecord::findOrFail($request->medication_record_id);
+        $this->authorize('create', [MedicationRecordDetail::class, $medicationRecord]);
+
         $request->validate([
             'medication_record_id' => 'required|exists:medication_records,id',
             'drug' => 'required|string',
@@ -88,7 +91,6 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             'medical_order_detail_id' => $request->selectedOrderId,
         ]);
 
-
         // Obtén el valor de fc
         $fc = $request->fc;
         $start_time = Carbon::parse($request->start_time);
@@ -103,8 +105,6 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
                 'scheduled_time' => $scheduled_time,
                 "active" => 1,
                 "nurse_id" => Auth::id(),
-
-
             ]);
         }
 
@@ -160,6 +160,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
     public function update(Request $request, MedicationRecordDetail $medicationRecordDetail)
     {
 
+        $this->authorize('update', $medicationRecordDetail);
         if ($request->has('active')) {
             $medicationRecordDetail->update($request->all());
 
@@ -174,7 +175,6 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
 
             if ($request->suspended_at) {
                 $this->restore($medicationRecordDetail->id);
-
             } else {
                 $this->suspend($medicationRecordDetail->id);
 
@@ -186,16 +186,17 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
 
                 'fc' => 'required|integer',
                 'interval_in_hours' => 'required|integer',
-
-
             ]);
+
             $fc = $request->fc;
             $interval_in_hours = $request->interval_in_hours;
             $start_time = $request->start_time;
+
             if ($start_time) {
                 $start_time = Carbon::createFromFormat('H:i', $start_time)->toDateTimeString();
                 $request->merge(['start_time' => $start_time]); // Update the request with the formatted datetime
             }
+
             $notifications = $medicationRecordDetail->medicationNotification()->count();
             $lastNotification = $medicationRecordDetail
                 ->medicationNotification()
@@ -210,10 +211,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
                 $notifications_add = $fc - $notifications;
 
                 for ($i = 1; $i < $notifications_add; $i++) {
-
-
                     $scheduled_time = $lastNotificationform->copy()->addHours($i * $request->interval_in_hours);
-
                     try {
                         $medicationRecordDetail->medicationNotification()->create([
                             'medication_record_detail_id' => $medicationRecordDetail->id,
@@ -221,17 +219,13 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
 
                             "active" => 1,
                             "nurse_id" => Auth::id(),
-
-
                         ]);
                     } catch (\Throwable $th) {
                         Log::error('error en crear' . $th->getMessage());
                     }
-
                 }
 
             } elseif ($fc < $notifications) {
-
                 try {
                     $notifications_delete = $notifications - $fc;
                     $medicationRecordDetail->medicationNotification()->latest()->take($notifications_delete)->get()->each(function ($notification) {
@@ -291,67 +285,46 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
                 Log::error('no hubo cambios');
             }
             // Si se cambia hora de inicio actualizar hora programada para todas las notificaciones relacionadas.
-
-
-
-
             $medicationRecordDetail->update($request->all());
             return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->with('flash.toast', 'Detalle Ficha de Medicamento actualizada correctamente');
         }
-
-
     }
 
     private function restore($id)
     {
-
         $medicationRecordDetail = MedicationRecordDetail::findOrFail($id);
-
-
-
-
         $medicationRecordDetail->update(['suspended_at' => null]);
-
         return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->with('flash.toast', 'Detalle Ficha de Medicamento restaurada correctamente');
     }
+
     private function suspend($id)
     {
-
         $medicationRecordDetail = MedicationRecordDetail::findOrFail($id);
 
-
-
-
+        $this->authorize('suspend', $medicationRecordDetail);
 
         $medicationRecordDetail->update(['suspended_at' => now()]);
-
         return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->with('flash.toast', 'Detalle Ficha de Medicamento suspendida correctamente');
     }
-
-
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(MedicationRecordDetail $medicationRecordDetail)
     {
+        $this->authorize('delete', $medicationRecordDetail);
 
         $hasNotifications = MedicationNotification::where('medication_record_detail_id', $medicationRecordDetail->id)->where('applied', 1)->get();
-
-
         if ($hasNotifications->isNotEmpty()) {
             return Redirect::back()->withErrors(['message' => 'No se puede eliminar este Detalle de Ficha de Medicamentos porque tiene notificaciones aplicadas.']);
         }
-
 
         $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();
         foreach ($medicationNotifications as $notification) {
             $notification->update(['active' => 0]);
         }
 
-
         $medicationRecordDetail->update(['active' => 0]);
-
         return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->with('flash.toast', 'Detalle Ficha de Medicamento eliminada correctamente');
     }
 }

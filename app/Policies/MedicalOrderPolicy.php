@@ -61,7 +61,7 @@ class MedicalOrderPolicy
      */
     public function update(User $user, MedicalOrder $medicalOrder): Response
     {
-        if (!$user->hasRole('doctor')) {
+        if (!$user->hasPermissionTo('medicalOrder.update')) {
             return Response::deny('No tienes el rol necesario para crear ordenes medicas');
         }
 

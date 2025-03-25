@@ -2,7 +2,13 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Crear Ficha Medicamentos
+                <BreadCrumb :items="[
+                     {
+                        text: 'Fichas de Medicamentos',
+                        route: route('medicationRecords.index')
+
+                    },
+                ]" />
             </h2>
         </template>
 
@@ -140,6 +146,7 @@ import {
 } from '@inertiajs/vue3';
 import DialogModal from '@/Components/DialogModal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     props: {
         errors: Array,
@@ -151,7 +158,8 @@ export default {
         AppLayout,
         Link,
         DialogModal,
-        AdmissionSelector
+        AdmissionSelector,
+        BreadCrumb
     },
     data() {
         return {

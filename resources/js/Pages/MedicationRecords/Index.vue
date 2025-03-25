@@ -2,7 +2,13 @@
 <AppLayout>
     <template #header>
         <h2 class="font-semibold text-xl text-white leading-tight text-center">
-            Fichas Medicamentos
+            <BreadCrumb :items="[
+                     {
+                        text: 'Fichas de Medicamentos',
+                        route: route('medicationRecords.index')
+
+                    },
+                ]" />
         </h2>
     </template>
 
@@ -190,6 +196,7 @@ import {
 } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
 import FormatId from '@/Components/FormatId.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     props: {
         medicationRecords: Object,
@@ -202,7 +209,8 @@ export default {
 
         Pagination,
         AccessGate,
-        FormatId
+        FormatId,
+        BreadCrumb
 
     },
     data() {

@@ -27,12 +27,7 @@
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <BackIcon class="size-5" />Volver
                     </Link>
-                    <div class="flex items-center">
-                        <button v-if="admission.active" @click="downloadRecordReport"
-                            class=" mr-4 inline-flex   px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
-                            <ReportIcon class="size-5 mr-1" /> Crear Reporte
-                        </button>
-                    </div>
+
 
                 </div>
 
@@ -479,11 +474,6 @@ export default {
 
         restoreAdmission() {
             this.$inertia.put(route('admissions.restore', this.admission.id));
-        },
-        async downloadRecordReport() {
-            window.open(route('reports.admission', {
-                id: this.admission.id
-            }), '_blank');
         },
     }
 }

@@ -134,7 +134,9 @@ class ReportController extends Controller
 
 
         $clinic = Clinic::get()->first();
-        $details = medicationRecordDetail::where('medication_record_id', $id)->with('medicationNotification')->get();
+        $details = medicationRecordDetail::where('medication_record_id', $id)
+        ->where('active', true)
+        ->with('medicationNotification')->get();
 
         foreach ($details as $detail) {
             $notifications = MedicationNotification::where('medication_record_detail_id', $detail->id)->with('medicationRecordDetail')->get();

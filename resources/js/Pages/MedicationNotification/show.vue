@@ -52,8 +52,8 @@
 
                 <!-- Iterando sobre las notificaciones -->
                 <div class="flex-grow">
-                    <div class="font-semibold text-gray-900 dark:text-white">
-                        Enfermera: {{ notification.nurse.name }}
+                    <div v-if="notification.nurse" class="font-semibold text-gray-900 dark:text-white">
+                        Enfermera: {{ notification.nurse.name }} {{ notification.nurse.last_name }}
                     </div>
 
                     <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
@@ -185,7 +185,7 @@ export default {
                 return false
             }
             this.signatureError = false;
-            console.log('update', this.formSignature.nurse_sign);
+            // console.log('update', this.formSignature.nurse_sign);
             this.$inertia.put(route('medicationNotification.update', this.notificationBeingUpdated.id), this.formSignature, {
                 preserveScroll: true,
                 onSuccess: (response) => {

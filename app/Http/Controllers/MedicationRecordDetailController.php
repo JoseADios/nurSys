@@ -104,7 +104,6 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
                 'medication_record_detail_id' => $detail->id, // Usa el ID del detalle
                 'scheduled_time' => $scheduled_time,
                 "active" => 1,
-                "nurse_id" => Auth::id(),
             ]);
         }
 

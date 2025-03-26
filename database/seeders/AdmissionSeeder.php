@@ -28,6 +28,11 @@ class AdmissionSeeder extends Seeder
                 'created_at' => now(),
                 'comment' => Str::random(),
             ]);
+
+            // Actualizar el estado de la cama a "occupied"
+            DB::table('beds')->where('id', $i)->update([
+                'status' => 'occupied',
+            ]);
         }
     }
 }

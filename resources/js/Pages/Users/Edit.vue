@@ -332,6 +332,9 @@ export default {
     methods: {
         submit() {
             this.$inertia.put(route('users.update', this.user.id), this.form, {
+                onSuccess: () => {
+                    this.form.errors = []
+                },
                 onError: (errors) => {
                     this.form.errors = errors
                 }

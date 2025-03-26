@@ -169,7 +169,7 @@ class AdmissionController extends Controller
 
         $admission = Admission::create($validated);
         if ($bed) {
-            $bed->update(['status' => 'ocuppied']);
+            $bed->update(['status' => 'occupied']);
         }
         return Redirect::route('admissions.show', $admission->id)->with('flash.toast', 'Ingreso registrado correctamente');
     }
@@ -296,13 +296,13 @@ class AdmissionController extends Controller
                         return back()->with('flash.toast', 'La cama seleccionada no está disponible')->with('flash.toastStyle', 'danger');
                     }
                     // poner la anterior en limpieza y la nueva ocupada
-                    $bed->update(['status' => 'ocuppied']);
+                    $bed->update(['status' => 'occupied']);
                     $anteriorBed = Bed::findOrFail($admission->bed_id);
                     $anteriorBed->update(['status' => 'cleaning']);
 
                 // si no tenia cama asignada
                 } elseif ($admission->bed_id == null) {
-                    $bed->update(['status' => 'ocuppied']);
+                    $bed->update(['status' => 'occupied']);
                 }
 
             } else {

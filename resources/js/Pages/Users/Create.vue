@@ -290,7 +290,7 @@ export default {
             this.$inertia.post(route('users.store'), this.form, {
                 onSuccess: () => {
                     this.form.reset(),
-                    this.form.errors = null;
+                    this.form.errors = [];
                 },
                 onError: (errors) => {
                     this.form.errors = errors;

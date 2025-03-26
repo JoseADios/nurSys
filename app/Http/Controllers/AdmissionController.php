@@ -248,7 +248,7 @@ class AdmissionController extends Controller
         $this->authorize('update', $admission);
 
         // si se esta dando de alta
-        if ($request->has('discharged_date') && $request->discharged_date !== null) {
+        if ($request->has('discharge') && $request->discharge == true) {
             $firmService = new FirmService;
             $validated = $request->validate([
                 'discharged_date' => 'required|string',
@@ -290,22 +290,23 @@ class AdmissionController extends Controller
             if ($validated['bed_id']) {
                 $bed = Bed::find($validated['bed_id']);
 
-                if (!$bed->isAvailable()) {
-                    return back()->with('flash.toast', 'La cama seleccionada no está disponible')->with('flash.toastStyle', 'danger');
-                } else {
-                    // si no tenia cama asignada
-                    if ($admission->bed_id == null) {
-                        $bed->update(['status' => 'ocuppied']);
-
-                        // si se cambia la cama poner la anterior en limpieza y la nueva ocupada
-                    } elseif ($bed->id !== $admission->bed_id) {
-                        $bed->update(['status' => 'ocuppied']);
-                        $anteriorBed = Bed::findOrFail($admission->bed_id);
-                        $anteriorBed->update(['status' => 'cleaning']);
+                // tenia otra, se cambia
+                if ($admission->bed_id && $bed->id !== $admission->bed_id) {
+                    if (!$bed->isAvailable()) {
+                        return back()->with('flash.toast', 'La cama seleccionada no está disponible')->with('flash.toastStyle', 'danger');
                     }
+                    // poner la anterior en limpieza y la nueva ocupada
+                    $bed->update(['status' => 'ocuppied']);
+                    $anteriorBed = Bed::findOrFail($admission->bed_id);
+                    $anteriorBed->update(['status' => 'cleaning']);
+
+                // si no tenia cama asignada
+                } elseif ($admission->bed_id == null) {
+                    $bed->update(['status' => 'ocuppied']);
                 }
+
             } else {
-                // si se quiere eliminar la cama
+                // si tenia una
                 if ($admission->bed_id !== null) {
                     $bed = Bed::find($admission->bed_id);
                     $bed->update(['status' => 'cleaning']);
@@ -323,7 +324,6 @@ class AdmissionController extends Controller
 
         $admission->update($validated);
         return back()->with('flash.toast', 'Ingreso actualizado exitosamente.');
-
     }
 
     /**

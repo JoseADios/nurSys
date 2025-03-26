@@ -376,6 +376,7 @@ export default {
             signatureError: false,
             signatureError: false,
             form: {
+                charge: false,
                 patient_id: this.admission.patient_id,
                 bed_id: this.admission.bed_id,
                 doctor_id: this.admission.doctor_id,
@@ -386,6 +387,7 @@ export default {
                 discharged_date: this.admission.discharged_date
             },
             formDischarge: {
+                discharge: true,
                 doctor_sign: this.admission.doctor_sign,
                 final_dx: this.admission.final_dx,
                 discharged_date: this.admission.discharged_date
@@ -415,6 +417,7 @@ export default {
         },
 
         charge() {
+            this.form.charge = true,
             this.form.discharged_date = null
             this.form.doctor_sign = null
             this.form.final_dx = null

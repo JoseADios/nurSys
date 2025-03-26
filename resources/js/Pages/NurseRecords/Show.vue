@@ -233,7 +233,7 @@
                                             </label>
                                             <TextAreaInput maxlength="255" class="w-full h-16 resize-none"
                                                 v-model="formDetail.medication" id="medication"
-                                                placeholder="Nombre del medicamento" required />
+                                                placeholder="Medicación" required />
                                         </div>
 
                                         <div>

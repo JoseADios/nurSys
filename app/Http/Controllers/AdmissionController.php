@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Log;
 use App\Services\FirmService;
+use Storage;
 class AdmissionController extends Controller
 {
     use AuthorizesRequests;
@@ -139,6 +140,7 @@ class AdmissionController extends Controller
      */
     public function store(Request $request)
     {
+        $bed = null;
         $this->authorize('create', Admission::class);
 
         $request->merge(['receptionist_id' => Auth::id()]);
@@ -166,6 +168,9 @@ class AdmissionController extends Controller
         }
 
         $admission = Admission::create($validated);
+        if ($bed) {
+            $bed->update(['status' => 'ocuppied']);
+        }
         return Redirect::route('admissions.show', $admission->id)->with('flash.toast', 'Ingreso registrado correctamente');
     }
 
@@ -242,67 +247,83 @@ class AdmissionController extends Controller
     {
         $this->authorize('update', $admission);
 
-        if ($request->has('doctor_sign')) {
+        // si se esta dando de alta
+        if ($request->has('discharged_date') && $request->discharged_date !== null) {
             $firmService = new FirmService;
             $validated = $request->validate([
-                'discharged_date' => 'nullable|string',
+                'discharged_date' => 'required|string',
                 'doctor_sign' => 'string|required',
                 'final_dx' => 'string|required',
             ]);
 
+            $validated['discharged_date'] = now();
+
             $fileName = $firmService->createImag($request->doctor_sign, $admission->doctor_sign);
             $validated['doctor_sign'] = $fileName;
 
-            if ($request->discharged_date) {
-                $validated['discharged_date'] = now();
-            } else {
-                $validated['discharged_date'] = null;
-            }
-
             $bed = Bed::find($admission->bed_id);
-
-            if ($admission->discharged_date != null && $request->discharged_date == null) {
-                $patient = Patient::find($request->patient_id);
-
-                if (!$patient->isAvailable()) {
-                    return back()->with('error', 'Ya existe otro registro de ingreso en proceso para este paciente');
-                }
-                if ($bed) {
-                    if (!$bed->isAvailable()) {
-                        return back()->with('error', 'La cama seleccionada no está disponible');
-                    }
-                }
-            } elseif ($admission->discharged_date == null && $request->discharged_date != null) {
-
-                if ($bed) {
-                    $bed->status = 'cleaning';
-                    $bed->save();
-                }
+            if ($bed) {
+                $bed->update(['status' => 'cleaning']);
             }
-            $admission->update($validated);
 
-            return back()->with('flash.toast', 'Ingreso actualizado exitosamente.');
-
+            // actualizacion normal
         } else {
             $validated = $request->validate([
                 'bed_id' => 'numeric|nullable',
                 'patient_id' => 'required|numeric',
                 'doctor_id' => 'numeric|required',
                 'admission_dx' => 'required|string|max:255',
+                'discharged_date' => 'nullable|string|max:255',
+                'doctor_sign' => 'nullable|string|max:255',
                 'final_dx' => 'string|max:255|nullable',
                 'comment' => 'nullable|string|max:255',
             ]);
-        }
 
-        if ($request->bed_id && ($request->bed_id !== $admission->bed_id)) {
-            $bed = Bed::find($request->bed_id);
-            if (!$bed->isAvailable()) {
-                return back()->with('error', 'La cama seleccionada no está disponible');
+            if ($validated['patient_id']) {
+                $patient = Patient::find($request->patient_id);
+
+                if ($patient->id !== $admission->patient_id && !$patient->isAvailable()) {
+                    return back()->with('flash.toast', 'Ya existe otro registro de ingreso en proceso para este paciente')->with('flash.toastStyle', 'danger');
+                }
+            }
+
+            if ($validated['bed_id']) {
+                $bed = Bed::find($validated['bed_id']);
+
+                if (!$bed->isAvailable()) {
+                    return back()->with('flash.toast', 'La cama seleccionada no está disponible')->with('flash.toastStyle', 'danger');
+                } else {
+                    // si no tenia cama asignada
+                    if ($admission->bed_id == null) {
+                        $bed->update(['status' => 'ocuppied']);
+
+                        // si se cambia la cama poner la anterior en limpieza y la nueva ocupada
+                    } elseif ($bed->id !== $admission->bed_id) {
+                        $bed->update(['status' => 'ocuppied']);
+                        $anteriorBed = Bed::findOrFail($admission->bed_id);
+                        $anteriorBed->update(['status' => 'cleaning']);
+                    }
+                }
+            } else {
+                // si se quiere eliminar la cama
+                if ($admission->bed_id !== null) {
+                    $bed = Bed::find($admission->bed_id);
+                    $bed->update(['status' => 'cleaning']);
+                }
+            }
+
+            // si quiere poner el ingreso en progreso
+            if ($request->has('discharged_date') && $request->discharged_date == null && $admission->discharged_date != null) {
+                // eliminar la img de la firma
+                if ($admission->doctor_sign && Storage::disk('public')->exists($admission->doctor_sign)) {
+                    Storage::disk('public')->delete($admission->doctor_sign);
+                }
             }
         }
 
         $admission->update($validated);
         return back()->with('flash.toast', 'Ingreso actualizado exitosamente.');
+
     }
 
     /**

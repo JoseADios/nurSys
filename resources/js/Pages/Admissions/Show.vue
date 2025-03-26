@@ -287,9 +287,9 @@
             <div>
                 <label for="final_dx" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico
                     final</label>
-                <textarea required id="final_dx" rows="4" v-model="formSignature.final_dx" class="block p-2.5 mb-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el diagnóstico final..."></textarea>
+                <textarea required id="final_dx" rows="4" v-model="formDischarge.final_dx" class="block p-2.5 mb-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el diagnóstico final..."></textarea>
 
-                <SignaturePad class="w-full max-w-lg lg:max-w-md" v-model="formSignature.doctor_sign" input-name="doctor_sign" />
+                <SignaturePad class="w-full max-w-lg lg:max-w-md" v-model="formDischarge.doctor_sign" input-name="doctor_sign" />
                 <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
 
             </div>
@@ -377,12 +377,17 @@ export default {
             signatureError: false,
             form: {
                 patient_id: this.admission.patient_id,
+                bed_id: this.admission.bed_id,
+                doctor_id: this.admission.doctor_id,
+                admission_dx: this.admission.admission_dx,
+                doctor_sign: this.admission.doctor_sign,
+                final_dx: this.admission.final_dx,
+                comment: this.admission.comment,
                 discharged_date: this.admission.discharged_date
             },
-            formSignature: {
+            formDischarge: {
                 doctor_sign: this.admission.doctor_sign,
-                final_dx: this.final_dx,
-                patient_id: this.admission.patient_id,
+                final_dx: this.admission.final_dx,
                 discharged_date: this.admission.discharged_date
             },
         }
@@ -394,19 +399,16 @@ export default {
             })
         },
         discharge() {
-            this.form.discharged_date = new Date().toISOString()
-
-            this.formSignature.discharged_date = new Date().toISOString()
-
-            this.submitSignature();
+            this.formDischarge.discharged_date = new Date().toISOString()
+            this.submitDischarge();
         },
-        submitSignature() {
-            if (!this.formSignature.doctor_sign) {
+        submitDischarge() {
+            if (!this.formDischarge.doctor_sign) {
                 this.signatureError = true;
                 return false
             }
             this.signatureError = false;
-            this.$inertia.put(route('admissions.update', this.admission.id), this.formSignature, {
+            this.$inertia.put(route('admissions.update', this.admission.id), this.formDischarge, {
                 preserveScroll: true
             });
             this.admissionUpdateCharge = null
@@ -414,6 +416,8 @@ export default {
 
         charge() {
             this.form.discharged_date = null
+            this.form.doctor_sign = null
+            this.form.final_dx = null
             this.admissionBeingPutInProgress = null
             this.submit()
         },

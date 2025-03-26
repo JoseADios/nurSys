@@ -68,9 +68,9 @@
 
                             <div class="mb-6">
                                 <InputLabel for="role" value="Rol" />
-                                <select required id="role" v-model="form.role"
+                                <select @change="setExequaturVisibily" required id="role" v-model="form.role"
                                     class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                                    <option v-for="role in roles" :key="role" :value="role.id">
+                                    <option v-for="role in roles" :key="role" :value="role.name">
                                         <FormatRole :role="role.name" />
                                     </option>
                                 </select>
@@ -83,10 +83,10 @@
                                 <InputError :message="form.errors.identification_card" class="mt-2" />
                             </div>
 
-                            <div class="mb-6">
+                            <div class="mb-6" v-if="exequaturVisible">
                                 <InputLabel for="exequatur" value="Exequatur" />
-                                <TextInput id="exequatur" v-model="form.exequatur" type="number" class="mt-1 block w-full"
-                                    required autocomplete="exequatur" />
+                                <TextInput id="exequatur" v-model="form.exequatur" type="number"
+                                    class="mt-1 block w-full" autocomplete="exequatur" />
                                 <InputError :message="form.errors.exequatur" class="mt-2" />
                             </div>
 
@@ -103,7 +103,7 @@
 
                             <div class="mb-6">
                                 <InputLabel for="area" value="Área" />
-                                <SelectInput v-model:model-value="form.area" :options="areas"   />
+                                <SelectInput v-model:model-value="form.area" :options="areas" />
                                 <InputError :message="form.errors.specialty" class="mt-2" />
                             </div>
 
@@ -119,7 +119,7 @@
                                 <InputError :message="form.errors.birthdate" class="mt-2" />
                             </div>
                             <div class="mb-6">
-                                <InputLabel for="position" value="Posicón" />
+                                <InputLabel for="position" value="Posición" />
                                 <TextInput id="position" v-model="form.position" type="text" class="mt-1 block w-full"
                                     required autocomplete="position" />
                                 <InputError :message="form.errors.position" class="mt-2" />
@@ -133,7 +133,7 @@
                             <div class="mb-6">
                                 <InputLabel for="comment" value="Observación" />
                                 <TextAreaInput id="comment" v-model="form.comment" type="text" class="mt-1 block w-full"
-                                     autocomplete="comment" />
+                                    autocomplete="comment" />
                                 <InputError :message="form.errors.comment" class="mt-2" />
                             </div>
                         </div>
@@ -175,6 +175,7 @@ import TextInput from '@/Components/TextInput.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import TextAreaInput from '@/Components/TextAreaInput.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import { ref } from 'vue';
 
 export default {
     components: {
@@ -199,6 +200,7 @@ export default {
     },
     data() {
         return {
+            exequaturVisible: ref(false),
             form: useForm({
                 name: '',
                 last_name: '',
@@ -235,6 +237,13 @@ export default {
         saveAndNew() {
             this.form.saveAndNew = true;
             this.submit()
+        },
+        setExequaturVisibily() {
+            if (this.form.role === 'doctor' || this.form.role === 'nurse') {
+                this.exequaturVisible = true;
+            } else {
+                this.exequaturVisible = false;
+            }
         }
     }
 }

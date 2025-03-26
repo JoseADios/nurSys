@@ -58,21 +58,22 @@
                             </div>
 
                             <div class="space-y-2">
-                                <InputLabel for="exequatur" value="Exequatur" />
-                                <TextInput type="number" id="exequatur" required class="mt-1 block w-full"
-                                    v-model="form.exequatur" />
-                                <InputError :message="form.errors.exequatur" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
                                 <InputLabel for="role" value="Rol" />
-                                <select required id="role" v-model="form.role" name="role"
+                                <select @change="setExequaturVisibily" required id="role" v-model="form.role"
+                                    name="role"
                                     class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                                     <option v-for="role in roles" :key="role.id" :value="role.name">
                                         <FormatRole :role="role.name" />
                                     </option>
                                 </select>
                                 <InputError :message="form.errors.role" class="mt-2" />
+                            </div>
+
+                            <div class="space-y-2" v-if="exequaturVisible">
+                                <InputLabel for="exequatur" value="Exequatur" />
+                                <TextInput type="text" id="exequatur" class="mt-1 block w-full"
+                                    v-model="form.exequatur" />
+                                <InputError :message="form.errors.exequatur" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
@@ -95,33 +96,34 @@
                             </div>
 
                             <div class="space-y-2">
-                                <InputLabel for="email" value="Área" />
-                                <SelectInput id="area" v-model="form.area" :options="areas"
-                                    return-value="name" class="mt-1 block w-full" required />
+                                <InputLabel for="area" value="Área" />
+                                <SelectInput id="area" v-model="form.area" :options="areas" return-value="name"
+                                    class="mt-1 block w-full" required />
                                 <InputError :message="form.errors.area" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <InputLabel for="email" value="Teléfono" />
-                                <PhoneInput id="phone" v-model="form.phone" class="mt-1 block w-full" required/>
+                                <InputLabel for="phone" value="Teléfono" />
+                                <PhoneInput id="phone" v-model="form.phone" class="mt-1 block w-full" required />
                                 <InputError :message="form.errors.phone" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <InputLabel for="email" value="Fecha de nacimiento" />
-                                <BirthDateInput v-model="form.birthdate" required/>
+                                <InputLabel for="birthdate" value="Fecha de nacimiento" />
+                                <BirthDateInput id="birthdate" v-model="form.birthdate" required />
                                 <InputError :message="form.errors.birthdate" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <InputLabel for="email" value="Posición" />
-                                <TextInput type="text" id="position" v-model="form.position" class="mt-1 block w-full" required />
+                                <InputLabel for="position" value="Posición" />
+                                <TextInput type="text" id="position" v-model="form.position" class="mt-1 block w-full"
+                                    required />
                                 <InputError :message="form.errors.position" class="mt-2" />
                             </div>
 
                             <div class="space-y-2">
-                                <InputLabel for="email" value="Comentarios" />
-                                <TextAreaInput id="comment" v-model="form.comment" rows="4" class="mt-1 block w-full"/>
+                                <InputLabel for="comment" value="Comentarios" />
+                                <TextAreaInput id="comment" v-model="form.comment" rows="4" class="mt-1 block w-full" />
                                 <InputError :message="form.errors.comment" class="mt-2" />
                             </div>
                         </div>
@@ -135,9 +137,10 @@
                     </div>
 
                     <!-- Buttons -->
-                    <div class="flex flex-col items-center md:flex-row justify-end space-y-4 md:space-y-0 md:space-x-4 pt-4">
+                    <div
+                        class="flex flex-col items-center md:flex-row justify-end space-y-4 md:space-y-0 md:space-x-4 pt-4">
                         <button v-if="user.active == 1" @click="userBeingDeleted = true" type="button"
-                        class=" max-w-xs px-4 text-center py-2 text-sm font-medium text-gray-300 bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-200">
+                            class=" max-w-xs px-4 text-center py-2 text-sm font-medium text-gray-300 bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-200">
                             Deshabilitar
                         </button>
                         <button v-else @click="restoreUser" type="button"
@@ -276,6 +279,7 @@ export default {
         return {
             userBeingDeleted: ref(null),
             userChangingPass: ref(null),
+            exequaturVisible: ref(false),
             form: useForm({
                 name: this.user.name,
                 last_name: this.user.last_name,
@@ -320,6 +324,13 @@ export default {
                     this.userChangingPass = null;
                 },
             });
+        },
+        setExequaturVisibily() {
+            if (this.form.role === 'doctor' || this.form.role === 'nurse') {
+                this.exequaturVisible = true;
+            } else {
+                this.exequaturVisible = false;
+            }
         }
     }
 }

@@ -22,7 +22,7 @@ import SidebarFilledIcon from '@/Components/Icons/SidebarFilledIcon.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import SunIcon from '@/Components/Icons/SunIcon.vue';
 import MoonIcon from '@/Components/Icons/MoonIcon.vue';
-import FileAnalyticsIcon from '@/Components/Icons/FileAnalyticsIcon.vue';
+import ChartDotsIcon from '@/Components/Icons/ChartDotsIcon.vue';
 
 defineProps({
     title: String,
@@ -186,7 +186,7 @@ const logout = () => {
                                     'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
                                     { 'justify-center': !sidebarExpanded }
                                 ]">
-                                <FileAnalyticsIcon
+                                <ChartDotsIcon
                                     class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                 <span v-if="sidebarExpanded" class="truncate ml-3">Hojas de Temperatura</span>
                                 </Link>
@@ -343,7 +343,7 @@ const logout = () => {
                                 <div>
                                     <div
                                         class="font-medium text-base text-gray-800 dark:text-gray-200 flex items-center">
-                                        {{ $page.props.auth.user.name }}
+                                        {{ $page.props.auth.user.name }} {{ $page.props.auth.user.last_name }}
                                         <span
                                             class="bg-blue-100 ml-2 text-indigo-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-indigo-900 dark:text-indigo-300">
                                             <div v-if="$page.props.auth.user.roles">

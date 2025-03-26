@@ -137,12 +137,13 @@ export default {
         });
 
         const filteredBeds = computed(() => {
-            if (filtersForm.value.bed_room) {
+            if (filtersForm.value.bed_floor && filtersForm.value.bed_room) {
                 return props.beds.filter(bed =>
+                    bed.floor === filtersForm.value.bed_floor &&
                     bed.room === filtersForm.value.bed_room
                 );
             }
-            return props.beds;
+            return []; // Devuelve una lista vacía si no se ha seleccionado piso o sala
         });
 
         // Métodos

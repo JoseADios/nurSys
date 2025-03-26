@@ -199,7 +199,7 @@ class DashboardController extends Controller
 
     private function getBedsByStatus()
     {
-        $statuses = ['available' => 'Disponible', 'cleaning' => 'En limpieza', 'out_of_service' => 'Fuera de servicio', 'ocuppied' => 'Ocupada'];
+        $statuses = ['available' => 'Disponible', 'cleaning' => 'En limpieza', 'out_of_service' => 'Fuera de servicio', 'occupied' => 'Ocupada'];
         $query = Bed::query()
             ->selectRaw('COUNT(*) AS count, status AS status')
             ->groupBy('status')

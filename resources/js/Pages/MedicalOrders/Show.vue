@@ -4,7 +4,7 @@
         <h2 class="font-semibold text-xl text-white leading-tight text-center">
             <BreadCrumb :items="[
                     ...(medicalOrder.id ? [{
-                        formattedId: { id: medicalOrder.id, prefix: 'ING' },
+                        formattedId: { id: medicalOrder.admission_id, prefix: 'ING' },
                         route: route('admissions.show', medicalOrder.id)
                     }] : []),
                     {
@@ -61,7 +61,7 @@
                         <div class="">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                             <Link :href="route('admissions.show', medicalOrder.admission_id)" as="button" class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
-                            {{ medicalOrder.admission_id }}
+                                <FormatId :id="medicalOrder.admission_id" prefix="ING"></FormatId>
                             </Link>
 
                         </div>

@@ -65,16 +65,60 @@
         </div>
       </div>
     </div>
+    <DialogModal :show="isVisible" @close="isVisible = false" class="">
+
+<!-- Header del modal -->
+<template #title>
+    Crear Medicamentos
+</template>
+<!-- Contenido del modal -->
+<template #content>
+    <div>
+        <form>
+            <div class="grid gap-4">
+                <!-- Campo Nombre -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Nombre
+                    </label>
+                    <input type="text" id="name" v-model="modalform.name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white" placeholder="Nombre del Medicamento" />
+                </div>
+                <!-- Campo Descripción -->
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Descripción
+                    </label>
+                    <textarea id="description" v-model="modalform.description" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white" placeholder="Descripción del Medicamento"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+</template>
+<!-- Footer del modal -->
+<template #footer>
+    <button @click="submitModal" class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+        Guardar
+    </button>
+    <button @click="isVisible = false" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+        Cerrar
+    </button>
+</template>
+</DialogModal>
+
   </template>
 
 <script>
 import debounce from 'lodash/debounce';
 import axios from 'axios';
 import moment from "moment/moment";
-
+import DialogModal from './DialogModal.vue';
 export default {
     props: {
         selectedDrugId: Number
+    },
+    components:{
+        DialogModal,
+
     },
     data() {
         return {

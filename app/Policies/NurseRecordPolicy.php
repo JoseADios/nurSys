@@ -50,6 +50,14 @@ class NurseRecordPolicy
      */
     public function create(User $user, Admission $admission): Response
     {
+        if (!$user->hasPermissionTo('admission.create')) {
+            return Response::deny('El usuario no tiene los permisos necesarios para crear ingresos');
+        }
+
+        if (!$admission->active) {
+            return Response::deny('No se pueden actualizar registros en un ingreso desactivado');
+        }
+
         if ($admission->discharged_date !== null) {
             return Response::deny('No se pueden crear registros para un ingreso que ya ha sido dado de alta');
         }
@@ -62,6 +70,12 @@ class NurseRecordPolicy
      */
     public function canCreateInTurn(User $user, int $admission_id): Response
     {
+        $admission = Admission::find($admission_id);
+
+        if (!$admission->active) {
+            return Response::deny('No se pueden actualizar registros en un ingreso desactivado');
+        }
+
         $turnService = new TurnService();
         $currentTurn = $turnService->getCurrentTurn();
         $dateRange = $turnService->getDateRangeForTurn($currentTurn);
@@ -103,6 +117,10 @@ class NurseRecordPolicy
             return Response::deny('No se pueden actualizar registros de un turno pasado');
         }
 
+        if (!$nurseRecord->admission->active) {
+            return Response::deny('No se pueden actualizar registros en un ingreso desactivado');
+        }
+
         if ($nurseRecord->admission->discharged_date !== null) {
             return Response::deny('No se pueden actualizar registros en un ingreso que ya ha sido dado de alta');
         }
@@ -123,6 +141,10 @@ class NurseRecordPolicy
             return Response::deny('No se pueden eliminar registros de un turno pasado');
         }
 
+        if (!$nurseRecord->admission->active) {
+            return Response::deny('No se pueden actualizar registros en un ingreso desactivado');
+        }
+
         if ($nurseRecord->admission->discharged_date !== null) {
             return Response::deny('No se pueden eliminar registros en un ingreso que ya ha sido dado de alta.');
         }
@@ -132,20 +154,12 @@ class NurseRecordPolicy
 
     public function updateAdmission(User $user): Response
     {
-        if (!$user->hasRole('admin')) {
-            return Response::deny('No tienes permiso para actualizar esta información');
-        }
-
         return Response::allow();
     }
 
     public function updateNurse(User $user): Response
     {
-        if (!$user->hasRole('admin')) {
-            return Response::deny('No tienes permiso para actualizar esta información');
-        }
-
-        return Response::allow();
+        return Response::deny('No tienes permiso para actualizar esta información');
     }
 
     /**

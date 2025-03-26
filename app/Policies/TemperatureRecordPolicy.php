@@ -49,7 +49,9 @@ class TemperatureRecordPolicy
     {
         $admission = Admission::where('id',$admission_id)->first();
 
-        Log::info($admission);
+        if (!$admission->active) {
+            return Response::deny('No se pueden crear registros en un ingreso desactivado');
+        }
 
         if ($admission->discharged_date !== null) {
             return Response::deny('No se pueden crear registros en un ingreso que ha sido dado de alta');
@@ -73,6 +75,9 @@ class TemperatureRecordPolicy
     {
         if ($user->hasRole('admin')) {
             return Response::allow();
+        }
+        if (!$temperatureRecord->admission->active) {
+            return Response::deny('No se pueden crear registros en un ingreso desactivado');
         }
 
         if ($temperatureRecord->admission->discharged_date !== null) {
@@ -117,6 +122,9 @@ class TemperatureRecordPolicy
         if ($temperatureRecord->admission->discharged_date !== null) {
             return Response::deny('No se pueden modificar registros en un ingreso que ha sido dado de alta');
         }
+        if (!$temperatureRecord->admission->active) {
+            return Response::deny('No se pueden crear registros en un ingreso desactivado');
+        }
         if (!$temperatureRecord->active) {
             return Response::deny('No se pueden modificar registros eliminados');
         }
@@ -132,15 +140,11 @@ class TemperatureRecordPolicy
      */
     public function delete(User $user, TemperatureRecord $temperatureRecord): Response
     {
-        if ($user->hasRole('admin')) {
-            return Response::allow();
+        if (!$user->hasRole('admin')) {
+            return Response::deny('No tienes permiso para eliminar este registro');
         }
 
-        if ($temperatureRecord->admission->discharged_date === null) {
-            return Response::allow();
-        }
-
-        return Response::deny('No se pueden eliminar registros en un ingreso que ha sido dado de alta');
+        return Response::allow();
     }
 
     /**

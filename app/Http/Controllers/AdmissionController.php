@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Admission;
 use App\Models\Bed;
+use App\Models\MedicalOrder;
+use App\Models\NurseRecord;
 use App\Models\Patient;
 use App\Models\TemperatureRecord;
 use App\Models\User;
 use App\Models\MedicationRecord;
+use App\Policies\MedicalOrderPolicy;
+use App\Policies\NurseRecordPolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -28,16 +32,14 @@ class AdmissionController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Admission::class);
-
         $showDeleted = $request->boolean('showDeleted');
         $search = $request->input('search');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
-        $beds_available = $request->input('beds_available', 'true');
+        $beds_available = $request->input('beds_available');
         $days = $request->integer('days');
 
-        $query = Admission::query()->with('patient','bed','doctor')->select([
+        $query = Admission::query()->with('patient', 'bed', 'doctor')->select([
             'admissions.id',
             'admissions.patient_id',
             'admissions.bed_id',
@@ -46,14 +48,10 @@ class AdmissionController extends Controller
             'admissions.discharged_date',
             'admissions.active'
         ])
-        ->join('patients', 'admissions.patient_id', '=', 'patients.id')
-        ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
-        ->join('users', 'admissions.doctor_id', '=', 'users.id')
-        ->where('admissions.active', !$showDeleted);
-
-
-
-
+            ->join('patients', 'admissions.patient_id', '=', 'patients.id')
+            ->leftJoin('beds', 'admissions.bed_id', '=', 'beds.id')
+            ->join('users', 'admissions.doctor_id', '=', 'users.id')
+            ->where('admissions.active', !$showDeleted);
 
         if ($search) {
             $query->where(function (Builder $q) use ($search) {
@@ -64,39 +62,34 @@ class AdmissionController extends Controller
             });
         }
 
-
         if ($beds_available === '1') {
             $query->whereNotNull('admissions.bed_id');
 
         } elseif ($beds_available === '2') {
             $query->whereNull('admissions.bed_id');
 
-        } else {
-
         }
 
+        if ($sortField) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->latest('admissions.updated_at')
+                ->latest('admissions.created_at');
+        }
+        if ($days) {
+            $query->where('admissions.created_at', '>=', now()->subDays($days));
+        }
 
-
-            if ($sortField) {
-                $query->orderBy($sortField, $sortDirection);
-            } else {
-                $query->latest('admissions.updated_at')
-                    ->latest('admissions.created_at');
-            }
-            if ($days) {
-                $query->where('admissions.created_at', '>=', now()->subDays($days));
-            }
-
-            $admissions = $query->paginate(10);
+        $admissions = $query->paginate(10);
 
         $admissions->getCollection()->transform(function ($admission) {
-                if ($admission->discharged_date) {
-                    $admission->days_admitted = intval($admission->created_at->diffInDays($admission->discharged_date));
-                } else {
-                    $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
-                }
-                return $admission;
-            });
+            if ($admission->discharged_date) {
+                $admission->days_admitted = intval($admission->created_at->diffInDays($admission->discharged_date));
+            } else {
+                $admission->days_admitted = intval($admission->created_at->diffInDays(now()));
+            }
+            return $admission;
+        });
 
         return Inertia::render('Admissions/Index', [
             'admissions' => $admissions,
@@ -119,7 +112,6 @@ class AdmissionController extends Controller
      */
     public function create(Request $request)
     {
-        $this->authorize('create', Admission::class);
 
         $selectedPatient = null;
         if ($request->query('patient_id')) {
@@ -174,7 +166,7 @@ class AdmissionController extends Controller
         }
 
         $admission = Admission::create($validated);
-        return Redirect::route('admissions.show', $admission->id)->with('flash.toast','Ingreso registrado correctamente');
+        return Redirect::route('admissions.show', $admission->id)->with('flash.toast', 'Ingreso registrado correctamente');
     }
 
     /**
@@ -182,8 +174,7 @@ class AdmissionController extends Controller
      */
     public function show(Admission $admission)
     {
-        $this->authorize('view', $admission);
-        $user = User::find(Auth::id());
+        $user = Auth::user();
         $admission->load('receptionist');
 
         $patient = $admission->patient;
@@ -193,8 +184,10 @@ class AdmissionController extends Controller
 
         $temperatureRecordId = TemperatureRecord::where('admission_id', $admission->id)
             ->where('active', true)->first('id');
-  $medicationRecord = MedicationRecord::where('admission_id', $admission->id)->first();
+        $medicationRecord = MedicationRecord::where('admission_id', $admission->id)->first();
 
+        $createOrder = Gate::allows('create', [MedicalOrder::class, $admission->id]);
+        $createNurseRecord = Gate::allows('create', [NurseRecord::class, $admission]);
 
         return Inertia::render('Admissions/Show', [
             'admission' => $admission,
@@ -205,11 +198,11 @@ class AdmissionController extends Controller
             'doctor' => $doctor,
             'temperatureRecordId' => $temperatureRecordId,
             'can' => [
-                'create' => Gate::allows('create', Admission::class),
+                // 'create' => Gate::allows('create', Admission::class),
                 'update' => Gate::allows('update', $admission),
                 'delete' => Gate::allows('delete', $admission),
-                'createOrder' => $user->hasRole(['admin']) || ($user->hasRole(['doctor']) && $admission->doctor_id == $user->id),
-                'createNurseRecord' => $user->hasRole(['nurse', 'admin']),
+                'createOrder' => $createOrder,
+                'createNurseRecord' => $createNurseRecord,
             ],
         ]);
     }
@@ -219,7 +212,6 @@ class AdmissionController extends Controller
      */
     public function edit(Admission $admission)
     {
-
         $this->authorize('update', $admission);
 
         $patients = Patient::all()->filter->isAvailable();
@@ -254,11 +246,13 @@ class AdmissionController extends Controller
             $firmService = new FirmService;
             $validated = $request->validate([
                 'discharged_date' => 'nullable|string',
-                'doctor_sign'=> 'string|required',
-                'final_dx'=> 'string|required',
+                'doctor_sign' => 'string|required',
+                'final_dx' => 'string|required',
             ]);
+
             $fileName = $firmService->createImag($request->doctor_sign, $admission->doctor_sign);
             $validated['doctor_sign'] = $fileName;
+
             if ($request->discharged_date) {
                 $validated['discharged_date'] = now();
             } else {
@@ -278,20 +272,16 @@ class AdmissionController extends Controller
                         return back()->with('error', 'La cama seleccionada no está disponible');
                     }
                 }
-
             } elseif ($admission->discharged_date == null && $request->discharged_date != null) {
 
-                    if ($bed) {
-                        $bed->status = 'cleaning';
-                        $bed->save();
-                    }
-
+                if ($bed) {
+                    $bed->status = 'cleaning';
+                    $bed->save();
+                }
             }
             $admission->update($validated);
 
             return back()->with('flash.toast', 'Ingreso actualizado exitosamente.');
-
-
 
         } else {
             $validated = $request->validate([
@@ -324,12 +314,11 @@ class AdmissionController extends Controller
 
         $admission->update(['active' => 0, 'discharged_date' => now()]);
         $bed = Bed::find($admission->bed_id);
-if ($bed) {
+        if ($bed) {
 
-    $bed->status = 'cleaning';
-    $bed->save();
-}
-
+            $bed->status = 'cleaning';
+            $bed->save();
+        }
 
         // desactivar todas las ordenes médicas relacionadas
         DB::table('medical_orders')
@@ -351,7 +340,7 @@ if ($bed) {
             ->where('admission_id', $admission->id)
             ->update(['active' => 0]);
 
-        return back()->with('flash.toast','Ingreso eliminado correctamente');
+        return back()->with('flash.toast', 'Ingreso eliminado correctamente');
     }
 
     public function restore(Admission $admission)
@@ -380,7 +369,7 @@ if ($bed) {
             ->where('admission_id', $admission->id)
             ->update(['active' => true]);
 
-        return back()->with('flash.toast','Ingreso restaurado correctamente');
+        return back()->with('flash.toast', 'Ingreso restaurado correctamente');
     }
 
 

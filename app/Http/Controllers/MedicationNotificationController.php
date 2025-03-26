@@ -54,20 +54,20 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
      * Display the specified resource.
      */
     public function show($id)
-{
-    $MedicationRecordDetail = MedicationRecordDetail::find($id);
-    $MedicationNotificacion = MedicationNotification::where('medication_record_detail_id', $id)->with('nurse')->get();
+    {
+        $MedicationRecordDetail = MedicationRecordDetail::find($id);
+        $MedicationNotificacion = MedicationNotification::where('medication_record_detail_id', $id)->with('nurse')->get();
 
-    if ($MedicationRecordDetail->active == 0) {
-        return redirect()->route('medicationRecords.show', $MedicationRecordDetail->medication_record_id)->withErrors([
-            'medication_record_detail_id' => 'Ya Existe una notifiacion con medicamentos administrados.',
-        ])->withInput();
-     }
-    return Inertia::render('MedicationNotification/show', [
-        'details' => $MedicationRecordDetail,
-        'notifications' => $MedicationNotificacion,
-    ]);
-}
+        if ($MedicationRecordDetail->active == 0) {
+            return redirect()->route('medicationRecords.show', $MedicationRecordDetail->medication_record_id)->withErrors([
+                'medication_record_detail_id' => 'Ya Existe una notifiacion con medicamentos administrados.',
+            ])->withInput();
+        }
+        return Inertia::render('MedicationNotification/show', [
+            'details' => $MedicationRecordDetail,
+            'notifications' => $MedicationNotificacion,
+        ]);
+    }
 
 
 
@@ -85,17 +85,20 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
     public function update($id, Request $request)
     {
         $medication_notification = MedicationNotification::find($id);
+
+        $this->authorize('update', $medication_notification);
+
         $detail = MedicationRecordDetail::find($medication_notification->medication_record_detail_id);
 
         $firmService = new FirmService;
 
         if ($request->has('nurse_sign')) {
-         $fileName = $firmService->createImag($request->nurse_sign, $medication_notification->nurse_sign);
-         $medication_notification->update(['nurse_sign' => $fileName]);
+            $fileName = $firmService->createImag($request->nurse_sign, $medication_notification->nurse_sign);
+            $medication_notification->update(['nurse_sign' => $fileName]);
 
-         return back()->with('flash.toast', 'Registro actualizado correctamente');
+            return back()->with('flash.toast', 'Registro actualizado correctamente');
 
-     }
+        }
         if ($request->has('markAsAdministered')) {
 
             if ($detail->active == 1 && $detail->suspended_at == null) {
@@ -111,18 +114,17 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
 
             //dd('entro al if',$medication_notification);
 
-        } elseif($request->has('revert')){
+        } elseif ($request->has('revert')) {
             if ($detail->active == 1 && $detail->suspended_at == null) {
                 $medication_notification->update([
                     'nurse_id' => Auth::id(),
-                    'administered_time' =>now(),
-                    'applied'=>false
+                    'administered_time' => now(),
+                    'applied' => false
                 ]);
                 return redirect()->back()->with('toast.flash.success', 'Medicamento administrado correctamente.');
 
-                }
             }
-        else {
+        } else {
             $medication_notification->update($request->all());
             return redirect()->back()->with('toast.flash.success', 'Medicamento administrado correctamente.');
 
@@ -130,18 +132,15 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
 
 
     }
-
-
-        //Validar el caso de que el request solo tenga el campo applied y que sea true, actualizar la hora de administered_time y el nurse_id con el usuario authenticado.
-        //else update normal.
-
-
+    //Validar el caso de que el request solo tenga el campo applied y que sea true, actualizar la hora de administered_time y el nurse_id con el usuario authenticado.
+    //else update normal.
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(MedicationNotification $medication_notification)
     {
+        $this->authorize('delete', $medication_notification);
 
         $medication_notification->update(['active' => 0]);
 

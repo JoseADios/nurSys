@@ -2,7 +2,15 @@
     <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Paciente
+                <BreadCrumb :items="[
+                    {
+                        text: 'Pacientes',
+                        route: route('patients.index')
+                    },
+                    {
+                        text: 'Ver'
+                    },
+                ]" />
             </h2>
         </template>
 
@@ -261,6 +269,7 @@ import CheckCircleIcon from '@/Components/Icons/CheckCircleIcon.vue';
 import EyeIcon from '@/Components/Icons/EyeIcon.vue';
 import AlertTriangleIcon from '@/Components/Icons/AlertTriangleIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 
 
 export default {
@@ -290,6 +299,7 @@ export default {
         EyeIcon,
         AlertTriangleIcon,
         PlusIcon,
+        BreadCrumb
     },
     data() {
         return {

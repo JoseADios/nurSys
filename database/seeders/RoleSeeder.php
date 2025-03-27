@@ -70,6 +70,7 @@ class RoleSeeder extends Seeder
         $role = Role::findByName('nurse');
         $role->syncPermissions([
             'admission.view',
+            'admission.update',
             'temperatureRecord.view',
             'temperatureRecord.create',
             'temperatureRecord.update',

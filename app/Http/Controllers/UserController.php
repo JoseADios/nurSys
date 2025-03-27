@@ -193,43 +193,24 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function updateProfile(Request $request, User $user)
     {
-        if ($request->has('active')) {
-
-            $validated = Validator::make($request->all(), [
-                'active' => 'boolean'
-            ])->validate();
-
-        } elseif ($request->has('password')) {
-
-            $validated = Validator::make($request->all(), [
-                'password' => $this->passwordRules(),
-            ])->validate();
-
-            $user->update(attributes: [
-                'password' => Hash::make($validated['password']),
-            ]);
-
-            return back()->with('flash.toast', 'Contraseña actualizada correctamente');
-        } else {
-            $validated = Validator::make($request->all(), [
-                'name' => ['required', 'string', 'max:255'],
-                'last_name' => ['required', 'string', 'max:255'],
-                'role' => ['required', 'string', 'max:255', Rule::exists('roles', 'name')],
-                'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-                'identification_card' => ['required', 'max:12', 'min:12', Rule::unique('users')->ignore($user->id)],
-                'specialty' => ['required', 'string', 'max:255'],
-                'area' => ['required', 'string', 'max:255'],
-                'phone' => ['required', 'max:14', 'min:14'],
-                'address' => ['required', 'string', 'max:255'],
-                'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
-                'position' => ['required', 'string', 'max:255'],
-                'comments' => ['string'],
-            ])->sometimes('exequatur', ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)], function ($input) {
-                return in_array($input->role, ['doctor', 'nurse']);
-            })->validate();
-        }
+        $validated = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'role' => ['required', 'string', 'max:255', Rule::exists('roles', 'name')],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'identification_card' => ['required', 'max:12', 'min:12', Rule::unique('users')->ignore($user->id)],
+            'specialty' => ['required', 'string', 'max:255'],
+            'area' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'max:14', 'min:14'],
+            'address' => ['required', 'string', 'max:255'],
+            'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
+            'position' => ['required', 'string', 'max:255'],
+            'comments' => ['string'],
+        ])->sometimes('exequatur', ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)], function ($input) {
+            return in_array($input->role, ['doctor', 'nurse']);
+        })->validate();
 
         $user->update($validated);
 
@@ -237,7 +218,31 @@ class UserController extends Controller implements HasMiddleware
             $user->syncRoles($request->role);
         }
 
-        return back()->with('flash.toast', 'Usuario actualizado correctamente');
+        return back()->with('flash.toast', 'Perfil de usuario actualizado correctamente');
+    }
+
+    public function updatePassword(Request $request, User $user)
+    {
+        $validated = Validator::make($request->all(), [
+            'password' => $this->passwordRules(),
+        ])->validate();
+
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return back()->with('flash.toast', 'Contraseña actualizada correctamente');
+    }
+
+    public function toggleActive(Request $request, User $user)
+    {
+        $validated = Validator::make($request->all(), [
+            'active' => 'boolean'
+        ])->validate();
+
+        $user->update($validated);
+
+        return back()->with('flash.toast', 'Estado del usuario actualizado correctamente');
     }
 
     /**

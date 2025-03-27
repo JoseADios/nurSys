@@ -3,7 +3,7 @@
         <input type="text" id="cedula-input" aria-describedby="helper-text-explanation" :value="formattedValue"
             @input="handleInput" @keydown="handleKeyDown"
             class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm block w-full p-2.5"
-            placeholder="402-250219-1" required maxlength="12" />
+            placeholder="402-250219-1" maxlength="12" />
     </div>
 </template>
 
@@ -22,6 +22,9 @@ export default {
     },
     methods: {
         formatCedula(value) {
+            if (!value) {
+                return '';
+            }
             // Elimina cualquier carácter que no sea número
             const cleanedValue = value.replace(/[^0-9]/g, '');
 

@@ -15,7 +15,8 @@
         </template>
 
         <div class="max-w-3xl mx-auto py-8 px-4 sm:px-6">
-            <form @submit.prevent="submit"
+
+            <form @submit.prevent="submitProfile"
                 class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
 
                 <!-- Información Personal Section -->
@@ -156,36 +157,6 @@
                     </div>
                 </div>
 
-                <!-- Credenciales Section -->
-                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                        Cambiar Contraseña
-                    </h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Contraseña -->
-                        <div>
-                            <InputLabel for="password" value="Nueva Contraseña" />
-                            <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full"
-                                autocomplete="new-password" />
-                            <InputError :message="form.errors.password" class="mt-2" />
-                        </div>
-
-                        <!-- Confirmar Contraseña -->
-                        <div>
-                            <InputLabel for="password_confirmation" value="Confirmar Nueva Contraseña" />
-                            <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password"
-                                class="mt-1 block w-full" autocomplete="new-password" />
-                            <InputError :message="form.errors.password_confirmation" class="mt-2" />
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Observaciones Section -->
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
@@ -215,6 +186,10 @@
                             class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             Habilitar
                         </button>
+                        <button @click="userChangingPass = true, console.log(userChangingPass)" type="button"
+                            class="ml-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Cambiar contraseña
+                        </button>
                     </div>
                     <div class="flex space-x-4">
                         <Link :href="route('users.index')" as="button"
@@ -230,6 +205,66 @@
             </form>
         </div>
 
+        <DialogModal :show="userChangingPass" @close="userChangingPass = false">
+            <!-- Header del modal -->
+            <template #title>
+                <div class="flex items-center justify-between py-4">
+                    <div class="flex items-center space-x-3">
+                        <PasswordUserIcon class="w-6 h-6 text-blue-500" />
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
+                            Cambiar Contraseña
+                        </h3>
+                    </div>
+                    <button @click="userChangingPass = false"
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </template>
+
+            <!-- Contenido del modal -->
+            <template #content>
+                <form @submit.prevent="submitPassword" class="px-4 space-y-2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <InputLabel for="password" value="Nueva Contraseña"
+                                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300" />
+                            <TextInput id="password" v-model="passwordForm.password" type="password"
+                                autocomplete="new-password"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:border-gray-700" />
+                            <InputError :message="passwordForm.errors.password" class="mt-2 text-sm text-red-500" />
+                        </div>
+
+                        <div class="md:col-span-1">
+                            <InputLabel for="password_confirmation" value="Confirmar Nueva Contraseña"
+                                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300" />
+                            <TextInput id="password_confirmation" v-model="passwordForm.password_confirmation"
+                                type="password" autocomplete="new-password"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:border-gray-700" />
+                            <InputError :message="passwordForm.errors.password_confirmation"
+                                class="mt-2 text-sm text-red-500" />
+                        </div>
+                    </div>
+                </form>
+            </template>
+
+            <!-- Footer del modal -->
+            <template #footer>
+                <div class="flex justify-end p-4">
+                    <SecondaryButton type="button" @click="userChangingPass = false" class="mr-2">
+                        Cancelar
+                    </SecondaryButton>
+
+                    <PrimaryButton type="submit" @click="submitPassword"
+                        class="bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all duration-200">
+                        Cambiar Contraseña
+                    </PrimaryButton>
+                </div>
+            </template>
+        </DialogModal>
         <!-- Modal para confirmar eliminación -->
         <ConfirmationModal :show="userBeingDeleted != null" @close="userBeingDeleted = null">
             <template #title>
@@ -253,6 +288,7 @@
         </ConfirmationModal>
     </AppLayout>
 </template>
+
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
@@ -273,6 +309,8 @@ import TextAreaInput from '@/Components/TextAreaInput.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import DateInput from '@/Components/DateInput.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import PasswordUserIcon from '@/Components/Icons/PasswordUserIcon.vue';
 
 export default {
     props: {
@@ -301,12 +339,15 @@ export default {
         TextAreaInput,
         DialogModal,
         BreadCrumb,
-        DateInput
+        DateInput,
+        DialogModal,
+        PrimaryButton,
+        PasswordUserIcon
     },
     data() {
         return {
             userBeingDeleted: ref(null),
-            userChangingPass: ref(null),
+            userChangingPass: ref(false),
             exequaturVisible: ref(false),
             form: useForm({
                 name: this.user.name,
@@ -323,15 +364,21 @@ export default {
                 position: this.user.position,
                 comment: this.user.comment,
             }),
-            formPassword: {
+            passwordForm: useForm({
                 password: null,
                 password_confirmation: null,
-            },
+            }),
         }
     },
     methods: {
-        submit() {
-            this.$inertia.put(route('users.update', this.user.id), this.form, {
+        submitProfile() {
+            Object.keys(this.form.errors).forEach((key) => {
+                if (this.form[key]) {
+                    delete this.form.errors[key];
+                }
+            });
+            this.form.put(route('users.update.profile', this.user.id), {
+                preserveScroll: true,
                 onSuccess: () => {
                     this.form.errors = []
                 },
@@ -347,13 +394,16 @@ export default {
         restoreUser() {
             this.$inertia.put(route('users.update', this.user.id), { active: true });
         },
-        changePassword() {
-            this.$inertia.put(route('users.update', this.user.id), this.formPassword, {
+        submitPassword() {
+            this.passwordForm.put(route('users.update.password', this.user.id), {
+                preserveScroll: true,
                 onSuccess: () => {
-                    this.formPassword.password = null;
-                    this.formPassword.password_confirmation = null;
-                    this.userChangingPass = null;
+                    this.passwordForm.reset();
+                    this.userChangingPass = false
                 },
+                onError: (errors) => {
+                    this.passwordForm.errors = errors
+                }
             });
         },
         setExequaturVisibily() {

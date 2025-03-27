@@ -277,6 +277,12 @@ export default {
     },
     methods: {
         submit() {
+            Object.keys(this.form.errors).forEach((key) => {
+                if (this.form[key]) {
+                    delete this.form.errors[key];
+                }
+            });
+
             this.$inertia.put(route('patients.update', this.patient.id), this.form, {
                 onError: (errors) => {
                     this.form.errors = errors;

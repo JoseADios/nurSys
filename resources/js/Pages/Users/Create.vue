@@ -287,10 +287,16 @@ export default {
     },
     methods: {
         submit() {
+            Object.keys(this.form.errors).forEach((key) => {
+                if (this.form[key]) {
+                    delete this.form.errors[key];
+                }
+            });
+
             this.$inertia.post(route('users.store'), this.form, {
                 onSuccess: () => {
-                    this.form.reset(),
-                    this.form.errors = [];
+                    this.form.reset();
+                    this.form.errors = {};
                 },
                 onError: (errors) => {
                     this.form.errors = errors;

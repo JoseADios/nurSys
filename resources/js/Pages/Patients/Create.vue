@@ -241,11 +241,21 @@ export default {
     },
     methods: {
         submit() {
+            // Limpiar errores de los campos que ya no tienen problemas
+            Object.keys(this.form.errors).forEach((key) => {
+                if (this.form[key]) {
+                    delete this.form.errors[key];
+                }
+            });
+
             this.$inertia.post(route('patients.store'), this.form, {
                 onError: (errors) => {
                     this.form.errors = errors;
+                },
+                onSuccess: () => {
+                    this.form.errors = {};
                 }
-            })
+            });
         }
     }
 }

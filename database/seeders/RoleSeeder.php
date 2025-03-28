@@ -104,6 +104,9 @@ class RoleSeeder extends Seeder
         $user = User::where('name', 'Test User')->first();
         $user->assignRole('admin');
 
+        $user = User::where('name', 'Admin')->first();
+        $user->assignRole('admin');
+
         // a los usuarios que estan creados en la base de datos, excepto test user asigna roles aleatorios
         $users = User::where('name', '!=', 'Test User')->get();
         $roles = Role::all()->pluck('name')->toArray();

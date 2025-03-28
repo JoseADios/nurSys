@@ -215,7 +215,13 @@ class UserController extends Controller implements HasMiddleware
         $user->update($validated);
 
         if ($request->has('role')) {
-            $user->syncRoles($request->role);
+            try {
+                $user->updateRole($request->role);
+
+                return redirect()->back()->with('flash.toast', 'Rol actualizado correctamente');
+            } catch (Exception $e) {
+                return redirect()->back()->with('flash.toast', $e->getMessage())->with('flash.toastStyle', 'danger');
+            }
         }
 
         return back()->with('flash.toast', 'Perfil de usuario actualizado correctamente');

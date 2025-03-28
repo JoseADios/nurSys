@@ -32,7 +32,7 @@ class User extends Authenticatable
         'name',
         'last_name',
         'email',
-        'password',
+        // 'password',
         'identification_card',
         'exequatur',
         'specialty',
@@ -77,6 +77,26 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Método para validar si se puede cambiar el rol
+    public function canChangeRole()
+    {
+        // Lista de IDs de usuarios protegidos (administradores principales)
+        // Típicamente los primeros usuarios creados o cuentas críticas
+        $protectedUserIds = [1,2]; // Ejemplo: el primer usuario (admin principal)
+
+        return !in_array($this->id, $protectedUserIds);
+    }
+
+    // Método para actualizar rol con validación
+    public function updateRole($newRole)
+    {
+        if (!$this->canChangeRole()) {
+            throw new \Exception('No puedes modificar el rol de este usuario administrador');
+        }
+
+        $this->syncRoles([$newRole]);
     }
 
     public function medicalOrder(): HasMany

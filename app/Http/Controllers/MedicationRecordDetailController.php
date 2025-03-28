@@ -25,7 +25,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
     {
         return [
             new Middleware('permission:medicationRecordDetail.view', only: ['index', 'show']),
-            new Middleware('permission:medicationRecordDetail.create', only: ['edit', 'store']),
+            new Middleware('permission:medicationRecordDetail.create', only: ['store']),
             new Middleware('permission:medicationRecordDetail.update', only: ['update']),
             new Middleware('permission:medicationRecordDetail.delete', only: ['destroy']),
         ];

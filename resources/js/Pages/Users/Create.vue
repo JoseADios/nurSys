@@ -142,7 +142,7 @@
                         <div>
                             <InputLabel for="position" value="Posición" />
                             <TextInput id="position" v-model="form.position" type="text" class="mt-1 block w-full"
-                                required autocomplete="position" />
+                                autocomplete="position" />
                             <InputError :message="form.errors.position" class="mt-2" />
                         </div>
 

@@ -139,7 +139,7 @@ class UserController extends Controller implements HasMiddleware
             'phone' => ['required', 'string', 'max:14', 'min:14'],
             'address' => ['required', 'string', 'max:255'],
             'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
-            'position' => ['required', 'string', 'max:255'],
+            'position' => ['nullable', 'string', 'max:255'],
             'comments' => ['string'],
         ])->sometimes('exequatur', ['required', 'string', 'max:255', 'unique:users'], function ($input) {
             return in_array($input->role, ['doctor', 'nurse']);
@@ -206,7 +206,7 @@ class UserController extends Controller implements HasMiddleware
             'phone' => ['required', 'max:14', 'min:14'],
             'address' => ['required', 'string', 'max:255'],
             'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
-            'position' => ['required', 'string', 'max:255'],
+            'position' => ['nullable', 'string', 'max:255'],
             'comments' => ['string'],
         ])->sometimes('exequatur', ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)], function ($input) {
             return in_array($input->role, ['doctor', 'nurse']);
@@ -214,7 +214,7 @@ class UserController extends Controller implements HasMiddleware
 
         $user->update($validated);
 
-        if ($request->has('role')) {
+        if ($request->has('role') && !$user->hasRole($validated['role'])) {
             try {
                 $user->updateRole($request->role);
 

@@ -292,7 +292,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -370,6 +370,9 @@ export default {
             }),
         }
     },
+    mounted() {
+        this.setExequaturVisibily();
+    },
     methods: {
         submitProfile() {
             Object.keys(this.form.errors).forEach((key) => {
@@ -413,6 +416,6 @@ export default {
                 this.exequaturVisible = false;
             }
         }
-    }
+    },
 }
 </script>

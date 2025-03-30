@@ -160,18 +160,18 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex justify-between items-center rounded-b-lg">
-                    <div>
+                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex flex-col sm:flex-row gap-2 justify-between items-center rounded-b-lg">
+                    <div class="space-y-2">
                         <button v-if="user.active == 1" @click="userBeingDeleted = true" type="button"
-                            class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            class="mr-2 px-4 py-2 text-sm h-fit font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                             Deshabilitar
                         </button>
                         <button v-else @click="restoreUser" type="button"
-                            class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            class="mr-2 px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             Habilitar
                         </button>
-                        <button @click="userChangingPass = true, console.log(userChangingPass)" type="button"
-                            class="ml-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <button @click="userChangingPass = true" type="button"
+                            class="px-4 py-2 text-sm h-fit font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             Cambiar contraseña
                         </button>
                     </div>

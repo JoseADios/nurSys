@@ -67,7 +67,7 @@
                                     admission.patient.second_surname }}
                             </span>
                             <span
-                                class="text-xs ml-2 px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-800 dark:text-gray-300">
+                                class="text-xs w-fit text-nowrap ml-2 px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-800 dark:text-gray-300">
                                 <FormatId :id="admission.id" prefix="ING"></FormatId>
                             </span>
                             <div class="text-xs text-gray-600 dark:text-gray-400">

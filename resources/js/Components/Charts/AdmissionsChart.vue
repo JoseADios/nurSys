@@ -165,37 +165,42 @@ function formatDate(dateString) {
 function handleTimeFilterChange(filter) {
     selectedTimeFilter.value = filter;
     emit('time-filter-change', filter);
+
+    // Reiniciar los datos de las series cuando cambia el filtro
+    // Esto soluciona el problema principal
+    resetAndUpdateSeries();
 }
 
-// Inicializar el estado del modo oscuro al montar el componente
-onMounted(() => {
-    updateDarkModeState();
-
-    // Escuchar cambios en el localStorage para actualizar en tiempo real
-    window.addEventListener('storage', (event) => {
-        if (event.key === 'darkMode') {
-            updateDarkModeState();
+// Función para reiniciar y actualizar las series
+function resetAndUpdateSeries() {
+    // Limpiar las series antes de actualizar con nuevos datos
+    series.value = [
+        {
+            name: 'Ingresos',
+            data: []
+        },
+        {
+            name: 'Altas',
+            data: []
         }
-    });
+    ];
 
-    // También podemos escuchar cambios en la preferencia del sistema
-    if (window.matchMedia) {
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateDarkModeState);
+    // Procesar los datos de admissions y discharges
+    if (props.admissions.length || props.discharges.length) {
+        processChartData(props.admissions, props.discharges);
     }
-});
+}
 
-// Vigilar cambios en ambas props
-watch([() => props.admissions, () => props.discharges], ([newAdmissions, newDischarges]) => {
-    if (!newAdmissions.length && !newDischarges.length) return;
-
+// Función para procesar los datos del gráfico
+function processChartData(admissions, discharges) {
     // Procesar los datos usando Moment.js para un manejo consistente de fechas
-    const processedAdmissions = newAdmissions.map(item => ({
+    const processedAdmissions = admissions.map(item => ({
         x: formatDate(item.date),
         y: item.total,
         rawDate: moment(item.date) // Guardar el objeto moment para ordenar después
     }));
 
-    const processedDischarges = newDischarges.map(item => ({
+    const processedDischarges = discharges.map(item => ({
         x: formatDate(item.date),
         y: item.total,
         rawDate: moment(item.date)
@@ -234,7 +239,7 @@ watch([() => props.admissions, () => props.discharges], ([newAdmissions, newDisc
         });
     });
 
-    // Actualizar series y categorías
+    // Actualizar series
     series.value = [
         {
             name: 'Ingresos',
@@ -245,7 +250,53 @@ watch([() => props.admissions, () => props.discharges], ([newAdmissions, newDisc
             data: dischargesData
         }
     ];
-}, { immediate: true, deep: true });
+}
+
+// Inicializar el estado del modo oscuro al montar el componente
+onMounted(() => {
+    updateDarkModeState();
+
+    // Escuchar cambios en el localStorage para actualizar en tiempo real
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'darkMode') {
+            updateDarkModeState();
+        }
+    });
+
+    // También podemos escuchar cambios en la preferencia del sistema
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateDarkModeState);
+    }
+
+    // Procesar datos iniciales si están disponibles
+    if (props.admissions.length || props.discharges.length) {
+        processChartData(props.admissions, props.discharges);
+    }
+});
+
+// Vigilar cambios en ambas props y en el filtro de tiempo seleccionado
+watch([() => props.admissions, () => props.discharges, () => selectedTimeFilter.value],
+    ([newAdmissions, newDischarges]) => {
+        if (!newAdmissions.length && !newDischarges.length) {
+            // Reiniciar las series si no hay datos
+            series.value = [
+                {
+                    name: 'Ingresos',
+                    data: []
+                },
+                {
+                    name: 'Altas',
+                    data: []
+                }
+            ];
+            return;
+        }
+
+        // Procesar los datos con los nuevos filtros
+        processChartData(newAdmissions, newDischarges);
+    },
+    { deep: true }
+);
 </script>
 
 <template>

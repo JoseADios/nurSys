@@ -79,12 +79,12 @@
                         <Link v-if="!form.admission_id" :href="route('temperatureRecords.create')"
                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
                         <PlusIcon class="size-5" />
-                        <span class="">Nueva Hoja</span>
+                        <span class="">Nuevo Registro</span>
                         </Link>
                         <Link v-else :href="route('temperatureRecords.create', { admission_id: form.admission_id })"
                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
                         <PlusIcon class="size-5" />
-                        <span class="">Nueva Hoja</span>
+                        <span class="">Nuevo Registro</span>
                         </Link>
                     </div>
                 </AccessGate>
@@ -122,8 +122,8 @@
                                     '↓' }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap hidden lg:table-cell"
-                                @click="sort('temperature_records.updated_at')">
-                                Actualización <span v-if="form.sortField === 'temperature_records.updated_at'">{{
+                                @click="sort('temperature_records.created_at')">
+                                Fecha <span v-if="form.sortField === 'temperature_records.created_at'">{{
                                     form.sortDirection === 'asc' ? '↑' : '↓' }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3"> Acciones </th>
@@ -161,10 +161,10 @@
                                 {{ temperatureRecord.nurse.name }} {{ temperatureRecord.nurse.last_name }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap hidden lg:table-cell">
-                                {{ formatDate(temperatureRecord.updated_at) }}
+                                {{ formatDate(temperatureRecord.created_at) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <button class="ml-2 text-green-500 hover:text-green-800"
+                                <button class="ml-2 text-blue-500 hover:text-blue-800"
                                     @click="temperatureRecordShow(temperatureRecord.id)">
                                     Abrir
                                 </button>
@@ -230,7 +230,7 @@ export default {
                 admission_id: this.filters.admission_id,
                 showDeleted: this.filters.show_deleted,
                 days: this.filters.days || '',
-                sortField: this.filters.sortField || 'temperature_records.updated_at',
+                sortField: this.filters.sortField || 'temperature_records.created_at',
                 sortDirection: this.filters.sortDirection || 'asc',
             },
         };

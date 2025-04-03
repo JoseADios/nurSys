@@ -92,8 +92,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         if ($sortField) {
             $query->orderBy($sortField, $sortDirection);
         } else {
-            $query->latest('temperature_records.updated_at')
-                ->latest('temperature_records.created_at');
+            $query->latest('temperature_records.created_at')
+                ->latest('temperature_records.updated_at');
         }
 
         $temperatureRecords = $query->paginate(10);

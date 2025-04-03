@@ -1,6 +1,6 @@
 <template>
-    <div class="bed-status-chart-container h-full">
-        <div class="h-full bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200/60 dark:border-gray-700/60">
+    <div class="bed-status-chart-container h-full w-full">
+        <div class="h-full flex flex-col justify-center bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200/60 dark:border-gray-700/60">
             <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">
                 Distribución de camas por estado
             </h3>
@@ -11,7 +11,6 @@
 
 <script>
 import ApexCharts from 'apexcharts';
-import { ref } from 'vue';
 
 export default {
     name: 'BedStatusPieChart',

@@ -162,11 +162,11 @@
                     <AccessGate :permission="['patient.delete']">
                         <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
                             class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-all duration-200">
-                            Eliminar
+                            Desactivar
                         </button>
                         <button type="button" v-else @click="restorePatient"
                             class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-all duration-200">
-                            Restaurar
+                            Activar
                         </button>
                     </AccessGate>
                     <Link :href="route('patients.index')" as="button"
@@ -183,11 +183,11 @@
         <AccessGate :permission="['patient.delete']">
             <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
                 <template #title>
-                    Eliminar Ingreso
+                    Desactivar Paciente
                 </template>
 
                 <template #content>
-                    ¿Estás seguro de que deseas eliminar este ingreso?
+                    ¿Estás seguro de que deseas Desactivar este paciente?
                 </template>
 
                 <template #footer>
@@ -196,7 +196,7 @@
                     </SecondaryButton>
 
                     <DangerButton class="ms-3" @click="deletePatient">
-                        Eliminar
+                        Desactivar
                     </DangerButton>
                 </template>
             </ConfirmationModal>

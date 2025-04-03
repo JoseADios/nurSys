@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\Fortify\PasswordValidationRules;
 use App\Models\ClinicArea;
 use App\Models\User;
+use Auth;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -193,24 +194,32 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function updateProfile(Request $request, User $user)
+    public function update(Request $request, User $user)
     {
-        $validated = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'string', 'max:255', Rule::exists('roles', 'name')],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'identification_card' => ['required', 'max:12', 'min:12', Rule::unique('users')->ignore($user->id)],
-            'specialty' => ['required', 'string', 'max:255'],
-            'area' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'max:14', 'min:14'],
-            'address' => ['required', 'string', 'max:255'],
-            'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
-            'position' => ['nullable', 'string', 'max:255'],
-            'comments' => ['string'],
-        ])->sometimes('exequatur', ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)], function ($input) {
-            return in_array($input->role, ['doctor', 'nurse']);
-        })->validate();
+
+        if ($request->has('active')) {
+            $validated = Validator::make($request->all(), [
+                'active' => 'nullable|boolean',
+            ])->validate();
+        } else {
+            $validated = Validator::make($request->all(), [
+                'name' => ['required', 'string', 'max:255'],
+                'last_name' => ['required', 'string', 'max:255'],
+                'role' => ['required', 'string', 'max:255', Rule::exists('roles', 'name')],
+                'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+                'identification_card' => ['required', 'max:12', 'min:12', Rule::unique('users')->ignore($user->id)],
+                'specialty' => ['required', 'string', 'max:255'],
+                'area' => ['required', 'string', 'max:255'],
+                'phone' => ['required', 'max:14', 'min:14'],
+                'address' => ['required', 'string', 'max:255'],
+                'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
+                'position' => ['nullable', 'string', 'max:255'],
+                'comments' => ['string'],
+                'active' => ['nullable', 'boolean'],
+            ])->sometimes('exequatur', ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)], function ($input) {
+                return in_array($input->role, ['doctor', 'nurse']);
+            })->validate();
+        }
 
         $user->update($validated);
 
@@ -254,6 +263,11 @@ class UserController extends Controller implements HasMiddleware
      */
     public function destroy(User $user)
     {
+        //validar que el usuario no sea protegido
+        if (in_array($user->id, [1, 2])) {
+            return back()->with('flash.toast', 'No se puede desactivar este usuario porque está protegido.')->with('flash.toastStyle', 'danger');
+        }
+
         $user->update(['active' => false]);
         DB::table('sessions')->where('user_id', $user->id)->delete();
         return back()->with('flash.toast', 'Usuario desactivado y sesión cerrada.');

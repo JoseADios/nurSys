@@ -83,8 +83,7 @@ class User extends Authenticatable
     public function canChangeRole()
     {
         // Lista de IDs de usuarios protegidos (administradores principales)
-        // Típicamente los primeros usuarios creados o cuentas críticas
-        $protectedUserIds = [1,2]; // Ejemplo: el primer usuario (admin principal)
+        $protectedUserIds = [1,2];
 
         return !in_array($this->id, $protectedUserIds);
     }

@@ -74,7 +74,7 @@ Route::middleware([
     Route::resource('Diet', DietController::class);
     Route::resource('beds', BedController::class);
 
-    Route::put('/users/{user}/profile', [UserController::class, 'updateProfile'])->name('users.update.profile');
+    // Route::put('/users/{user}/profile', [UserController::class, 'updateProfile'])->name('users.update.profile');
     Route::put('/users/{user}/password', [UserController::class, 'updatePassword'])->name('users.update.password');
     Route::get('/users/filter', [UserController::class, 'filterUsers'])->name('users.filter');
     Route::resource('users', UserController::class);

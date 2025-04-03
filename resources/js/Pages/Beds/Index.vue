@@ -71,10 +71,10 @@
                 <h3 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4 text-center">Piso {{
                     floor.number }}
                 </h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 justify-center">
-                    <div v-for="(room, index) in floor.rooms" :key="index"
-                        :class="[
-                            'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
+                <div
+                    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 justify-center">
+                    <div v-for="(room, index) in floor.rooms" :key="index" :class="[
+                        'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
                         {
                             // responsive design
                             'p-3': room.beds.length === 1,
@@ -240,7 +240,8 @@
                                             class="w-full space-y-1 flex justify-evenly items-end">
 
                                             <!-- crear ingreso -->
-                                            <AccessGate :role="['receptionist', 'admin']" v-if="bed.status !== 'cleaning' && bed.status !== 'out_of_service'">
+                                            <AccessGate :role="['receptionist', 'admin']"
+                                                v-if="bed.status !== 'cleaning' && bed.status !== 'out_of_service'">
                                                 <Link :href="route('admissions.create', { bed_id: bed.id })"
                                                     class="text-center h-6 w-8 bg-gray-700 dark:bg-gray-700 hover:bg-blue-600 dark:hover:bg-blue-600 text-white rounded-md text-xs transition-colors flex items-center justify-center">
                                                 <PlusIcon width="14" height="14" />
@@ -249,7 +250,7 @@
 
                                             <AccessGate :permission="['bed.update']">
                                                 <button @click="onBedClick(bed)"
-                                                    class="h-6 w-8 bg-gray-600 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-500 text-white rounded-md text-xs transition-colors flex items-center justify-center">
+                                                    class="h-6 w-8 bg-gray-600 dark:bg-gray-600 hover:bg-[#696CFF] dark:hover:bg-[#696CFF] text-white rounded-md text-xs transition-colors flex items-center justify-center">
                                                     <EditIcon width="14" height="14" />
                                                 </button>
                                             </AccessGate>

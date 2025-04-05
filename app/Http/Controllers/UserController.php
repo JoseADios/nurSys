@@ -129,12 +129,11 @@ class UserController extends Controller implements HasMiddleware
         $validated = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'numeric', 'max:10'],
+            'role' => ['required', 'string', 'max:255', Rule::exists('roles', 'name')],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => array_merge($this->passwordRules(), ['confirmed']),
             'password_confirmation' => ['required'],
             'identification_card' => ['required', 'max:12', 'min:12', 'unique:users'],
-            'exequatur' => ['required', 'string', 'max:255', 'unique:users'],
             'specialty' => ['required', 'string', 'max:255'],
             'area' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:14', 'min:14'],
@@ -142,8 +141,9 @@ class UserController extends Controller implements HasMiddleware
             'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
             'position' => ['required', 'string', 'max:255'],
             'comments' => ['string'],
-
-        ])->validate();
+        ])->sometimes('exequatur', ['required', 'string', 'max:255', 'unique:users'], function ($input) {
+            return in_array($input->role, ['doctor', 'nurse']);
+        })->validate();
 
         try {
             DB::beginTransaction();
@@ -219,7 +219,6 @@ class UserController extends Controller implements HasMiddleware
                 'role' => ['required', 'string', 'max:255', Rule::exists('roles', 'name')],
                 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
                 'identification_card' => ['required', 'max:12', 'min:12', Rule::unique('users')->ignore($user->id)],
-                'exequatur' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
                 'specialty' => ['required', 'string', 'max:255'],
                 'area' => ['required', 'string', 'max:255'],
                 'phone' => ['required', 'max:14', 'min:14'],
@@ -227,7 +226,9 @@ class UserController extends Controller implements HasMiddleware
                 'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
                 'position' => ['required', 'string', 'max:255'],
                 'comments' => ['string'],
-            ])->validate();
+            ])->sometimes('exequatur', ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)], function ($input) {
+                return in_array($input->role, ['doctor', 'nurse']);
+            })->validate();
         }
 
         $user->update($validated);

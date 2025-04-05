@@ -1,7 +1,7 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-bold text-2xl text-gray-800 dark:text-white leading-tight text-center">
                 <BreadCrumb :items="[
                     {
                         text: 'Usuarios',
@@ -14,192 +14,223 @@
             </h2>
         </template>
 
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-                <div v-if="Object.keys(errors).length"
-                    class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <strong class="font-bold">¡Ups!</strong>
-                    <span class="block sm:inline">Por favor, corrige los errores en el formulario.</span>
-                    <ul>
-                        <li v-for="error in Object.values(errors)" class="text-sm">{{ error }}</li>
-                    </ul>
+        <div class="max-w-3xl mx-auto py-8 px-4 sm:px-6">
+            <form @submit.prevent="submit"
+                class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+
+                <!-- Información Personal Section -->
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Información Personal
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Nombre -->
+                        <div>
+                            <InputLabel for="name" value="Nombres" />
+                            <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required
+                                autocomplete="name" />
+                            <InputError :message="form.errors.name" class="mt-2" />
+                        </div>
+
+                        <!-- Apellidos -->
+                        <div>
+                            <InputLabel for="last_name" value="Apellidos" />
+                            <TextInput id="last_name" v-model="form.last_name" type="text" class="mt-1 block w-full"
+                                required autocomplete="last_name" />
+                            <InputError :message="form.errors.last_name" class="mt-2" />
+                        </div>
+
+                        <!-- Cédula -->
+                        <div>
+                            <InputLabel for="identification_card" value="Cédula" />
+                            <CedulaInput v-model="form.identification_card" class="mt-1" />
+                            <InputError :message="form.errors.identification_card" class="mt-2" />
+                        </div>
+
+                        <!-- Fecha de Nacimiento -->
+                        <div>
+                            <InputLabel for="birthdate" value="Fecha de Nacimiento" />
+                            <DateInput v-model="form.birthdate" />
+                            <InputError :message="form.errors.birthdate" class="mt-2" />
+                        </div>
+                    </div>
                 </div>
 
-                <form @submit.prevent="submit" class="space-y-6">
+                <!-- Información de Contacto Section -->
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Información de Contacto
+                    </h3>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Left Column -->
-                        <div class="space-y-4">
-                            <div class="space-y-2">
-                                <InputLabel for="name" value="Nombre" />
-                                <TextInput type="text" id="name" v-model="form.name" class="mt-1 block w-full"
-                                    required />
-                                <InputError :message="form.errors.name" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
-                                <InputLabel for="last_name" value="Apellidos" />
-                                <TextInput type="text" id="last_name" v-model="form.last_name" class="mt-1 block w-full"
-                                    required />
-                                <InputError :message="form.errors.last_name" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
-                                <InputLabel for="email" value="Correo" />
-                                <TextInput type="email" id="email" v-model="form.email" class="mt-1 block w-full"
-                                    required />
-                                <InputError :message="form.errors.email" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
-                                <InputLabel for="identification_card" value="Cédula" />
-                                <CedulaInput id="identification_card" v-model="form.identification_card"
-                                    class="mt-1 block w-full" required />
-                                <InputError :message="form.errors.identification_card" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
-                                <InputLabel for="exequatur" value="Exequatur" />
-                                <TextInput type="number" id="exequatur" required class="mt-1 block w-full"
-                                    v-model="form.exequatur" />
-                                <InputError :message="form.errors.exequatur" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
-                                <InputLabel for="role" value="Rol" />
-                                <select required id="role" v-model="form.role" name="role"
-                                    class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                                    <option v-for="role in roles" :key="role.id" :value="role.name">
-                                        <FormatRole :role="role.name" />
-                                    </option>
-                                </select>
-                                <InputError :message="form.errors.role" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
-                                <label for="address"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Dirección</label>
-                                <TextAreaInput id="address" v-model="form.address" rows="4"
-                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
-                                    required />
-                                <InputError :message="form.errors.address" class="mt-2" />
-                            </div>
+                        <!-- Correo Electrónico -->
+                        <div>
+                            <InputLabel for="email" value="Correo Electrónico" />
+                            <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full" required
+                                autocomplete="email" />
+                            <InputError :message="form.errors.email" class="mt-2" />
                         </div>
 
-                        <!-- Right Column -->
-                        <div class="space-y-4">
-                            <div class="space-y-2">
-                                <InputLabel for="specialty" value="Especialidad" />
-                                <TextInput type="text" id="specialty" v-model="form.specialty" class="mt-1 block w-full"
-                                    required />
-                                <InputError :message="form.errors.specialty" class="mt-2" />
-                            </div>
+                        <!-- Teléfono -->
+                        <div>
+                            <InputLabel for="phone" value="Teléfono" />
+                            <PhoneInput v-model="form.phone" />
+                            <InputError :message="form.errors.phone" class="mt-2" />
+                        </div>
 
-                            <div class="space-y-2">
-                                <InputLabel for="email" value="Área" />
-                                <SelectInput id="area" v-model="form.area" :options="areas"
-                                    return-value="name" class="mt-1 block w-full" required />
-                                <InputError :message="form.errors.area" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
-                                <InputLabel for="email" value="Teléfono" />
-                                <PhoneInput id="phone" v-model="form.phone" class="mt-1 block w-full" required/>
-                                <InputError :message="form.errors.phone" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
-                                <InputLabel for="email" value="Fecha de nacimiento" />
-                                <BirthDateInput v-model="form.birthdate" required/>
-                                <InputError :message="form.errors.birthdate" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
-                                <InputLabel for="email" value="Posición" />
-                                <TextInput type="text" id="position" v-model="form.position" class="mt-1 block w-full" required />
-                                <InputError :message="form.errors.position" class="mt-2" />
-                            </div>
-
-                            <div class="space-y-2">
-                                <InputLabel for="email" value="Comentarios" />
-                                <TextAreaInput id="comment" v-model="form.comment" rows="4" class="mt-1 block w-full"/>
-                                <InputError :message="form.errors.comment" class="mt-2" />
-                            </div>
+                        <!-- Dirección -->
+                        <div class="md:col-span-2">
+                            <InputLabel for="address" value="Dirección" />
+                            <TextAreaInput id="address" v-model="form.address" rows="3" class="mt-1 block w-full"
+                                required />
+                            <InputError :message="form.errors.address" class="mt-2" />
                         </div>
                     </div>
+                </div>
 
-                    <div class="space-x-4 pt-4">
-                        <button v-show="userChangingPass == null" type="button" @click="userChangingPass = true"
-                            class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:to-blue-600 transition-all duration-200">
-                            Cambiar Contraseña
-                        </button>
+                <!-- Información Profesional Section -->
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Información Profesional
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Rol -->
+                        <div>
+                            <InputLabel for="role" value="Rol" />
+                            <select @change="setExequaturVisibily" required id="role" v-model="form.role"
+                                class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                                <option v-for="role in roles" :key="role" :value="role.name">
+                                    <FormatRole :role="role.name" />
+                                </option>
+                            </select>
+                            <InputError :message="form.errors.role" class="mt-2" />
+                        </div>
+
+                        <!-- Especialidad -->
+                        <div>
+                            <InputLabel for="specialty" value="Especialidad" />
+                            <TextInput id="specialty" v-model="form.specialty" type="text" class="mt-1 block w-full"
+                                required autocomplete="specialty" />
+                            <InputError :message="form.errors.specialty" class="mt-2" />
+                        </div>
+
+                        <!-- Área -->
+                        <div>
+                            <InputLabel for="area" value="Área" />
+                            <SelectInput v-model:model-value="form.area" :options="areas" />
+                            <InputError :message="form.errors.area" class="mt-2" />
+                        </div>
+
+                        <!-- Posición -->
+                        <div>
+                            <InputLabel for="position" value="Posición" />
+                            <TextInput id="position" v-model="form.position" type="text" class="mt-1 block w-full"
+                                required autocomplete="position" />
+                            <InputError :message="form.errors.position" class="mt-2" />
+                        </div>
+
+                        <!-- Exequatur (Condicional) -->
+                        <div v-if="exequaturVisible">
+                            <InputLabel for="exequatur" value="Exequatur" />
+                            <TextInput id="exequatur" v-model="form.exequatur" type="text" class="mt-1 block w-full"
+                                autocomplete="exequatur" />
+                            <InputError :message="form.errors.exequatur" class="mt-2" />
+                        </div>
                     </div>
+                </div>
 
-                    <!-- Buttons -->
-                    <div class="flex flex-col items-center md:flex-row justify-end space-y-4 md:space-y-0 md:space-x-4 pt-4">
+                <!-- Credenciales Section -->
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        Cambiar Contraseña
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Contraseña -->
+                        <div>
+                            <InputLabel for="password" value="Nueva Contraseña" />
+                            <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full"
+                                autocomplete="new-password" />
+                            <InputError :message="form.errors.password" class="mt-2" />
+                        </div>
+
+                        <!-- Confirmar Contraseña -->
+                        <div>
+                            <InputLabel for="password_confirmation" value="Confirmar Nueva Contraseña" />
+                            <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password"
+                                class="mt-1 block w-full" autocomplete="new-password" />
+                            <InputError :message="form.errors.password_confirmation" class="mt-2" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Observaciones Section -->
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Observaciones
+                    </h3>
+
+                    <div>
+                        <InputLabel for="comment" value="Comentarios Adicionales" />
+                        <TextAreaInput id="comment" v-model="form.comment" rows="3" class="mt-1 block w-full" />
+                        <InputError :message="form.errors.comment" class="mt-2" />
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex justify-between items-center rounded-b-lg">
+                    <div>
                         <button v-if="user.active == 1" @click="userBeingDeleted = true" type="button"
-                        class=" max-w-xs px-4 text-center py-2 text-sm font-medium text-gray-300 bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-200">
+                            class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                             Deshabilitar
                         </button>
                         <button v-else @click="restoreUser" type="button"
-                            class=" max-w-sm inline-flex text-center items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:to-green-600 transition-all duration-200">
+                            class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             Habilitar
                         </button>
-                        <Link :href="route('users.index')" type="button"
-                            class=" max-w-sm px-4 text-center py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
+                    </div>
+                    <div class="flex space-x-4">
+                        <Link :href="route('users.index')" as="button"
+                            class="px-4 py-2 text-sm font-medium text-gray-100 bg-slate-600 dark:text-white border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-500 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Cancelar
                         </Link>
                         <button type="submit"
-                            class=" max-w-sm px-4 py-2 text-center text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
+                            class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                             Actualizar
                         </button>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
 
-        <!-- modal para cambiar contraseña -->
-        <DialogModal :show="userChangingPass" @close="userChangingPass = null">
-            <template #title>
-                Cambiar Contraseña
-            </template>
-
-            <template #content>
-                <div v-show="userChangingPass != null" class="py-2 px-4">
-
-                    <!-- Formulario para cambiar la contraseña  -->
-                    <form>
-                        <div class="space-y-2">
-                            <InputLabel for="email" value="Nueva contraseña" />
-                            <TextInput type="password" id="password" v-model="formPassword.password" name="password"
-                                class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500" />
-                        </div>
-                        <div class="space-y-2">
-                            <label for="password_confirmation"
-                                class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Confirmar
-                                Contraseña</label>
-                            <TextInput type="password" id="password_confirmation" name="password_confirmation"
-                                v-model="formPassword.password_confirmation"
-                                class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500" />
-                        </div>
-                    </form>
-                </div>
-            </template>
-
-            <template #footer>
-                <div class="flex justify-end space-x-4 pt-4">
-                    <button @click="userChangingPass = null"
-                        class="px-4 py-2 text-sm font-medium text-gray-300 bg-slate-600 dark:bg-gray-700 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200">
-                        Cancelar
-                    </button>
-                    <button @click="changePassword"
-                        class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200">
-                        Actualizar
-                    </button>
-                </div>
-            </template>
-        </DialogModal>
-
-        <!-- Modal para confirmar eliminacion -->
+        <!-- Modal para confirmar eliminación -->
         <ConfirmationModal :show="userBeingDeleted != null" @close="userBeingDeleted = null">
             <template #title>
                 Deshabilitar Usuario
@@ -220,10 +251,8 @@
                 </DangerButton>
             </template>
         </ConfirmationModal>
-
     </AppLayout>
 </template>
-
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
@@ -243,6 +272,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextAreaInput from '@/Components/TextAreaInput.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import DateInput from '@/Components/DateInput.vue';
 
 export default {
     props: {
@@ -270,12 +300,14 @@ export default {
         InputLabel,
         TextAreaInput,
         DialogModal,
-        BreadCrumb
+        BreadCrumb,
+        DateInput
     },
     data() {
         return {
             userBeingDeleted: ref(null),
             userChangingPass: ref(null),
+            exequaturVisible: ref(false),
             form: useForm({
                 name: this.user.name,
                 last_name: this.user.last_name,
@@ -300,6 +332,9 @@ export default {
     methods: {
         submit() {
             this.$inertia.put(route('users.update', this.user.id), this.form, {
+                onSuccess: () => {
+                    this.form.errors = []
+                },
                 onError: (errors) => {
                     this.form.errors = errors
                 }
@@ -320,6 +355,13 @@ export default {
                     this.userChangingPass = null;
                 },
             });
+        },
+        setExequaturVisibily() {
+            if (this.form.role === 'doctor' || this.form.role === 'nurse') {
+                this.exequaturVisible = true;
+            } else {
+                this.exequaturVisible = false;
+            }
         }
     }
 }

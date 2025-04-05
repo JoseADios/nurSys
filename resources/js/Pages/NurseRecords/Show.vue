@@ -77,7 +77,7 @@
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <Link :href="route('admissions.show', nurseRecord.admission_id)" as="button"
                                     class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
-                                ING-00{{ nurseRecord.admission_id }}
+                                    <FormatId :id="nurseRecord.admission_id" prefix="ING" />
                                 </Link>
                             </div>
                             <AccessGate :role="['admin']" v-if="canUpdateRecord">
@@ -181,7 +181,7 @@
                                             </span>
                                             <span class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
                                                 formatDateFromNow(order.created_at)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <ChevronDown
                                             class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white"
@@ -191,7 +191,8 @@
                                     <!-- Contenido del Acordeón -->
                                     <div v-if="openAccordion === index"
                                         class="accordion-content p-4 bg-white dark:bg-gray-900">
-                                        <div v-for="(detail, detailIndex) in order.medical_order_detail" :key="detailIndex"
+                                        <div v-for="(detail, detailIndex) in order.medical_order_detail"
+                                            :key="detailIndex"
                                             class="mb-3 pb-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
                                             <div class="flex flex-col justify-between items-start">
                                                 <div class="w-full flex flex-col">
@@ -232,7 +233,7 @@
                                             </label>
                                             <TextAreaInput maxlength="255" class="w-full h-16 resize-none"
                                                 v-model="formDetail.medication" id="medication"
-                                                placeholder="Nombre del medicamento" required />
+                                                placeholder="Medicación" required />
                                         </div>
 
                                         <div>
@@ -617,7 +618,7 @@ export default {
         InputLabel,
         TextInput,
         InputError,
-        ChevronDown
+        ChevronDown,
     },
     data() {
         return {

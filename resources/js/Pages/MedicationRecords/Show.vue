@@ -139,44 +139,45 @@
                                 <!-- Acordeón de Órdenes Médicas -->
                                 <div v-else class="space-y-4 max-h-72 overflow-y-auto">
                                     <div v-for="(order, index) in orders" :key="order.id">
-                                    <div v-if="order.medical_order_detail.length !== 0"  class="accordion-item border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                                        <div v-if="order.medical_order_detail.length !== 0" class="accordion-item border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
 
-                                        <div  @click="toggleAccordion(index)" class="accordion-header cursor-pointer flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                                            <div class="flex items-center justify-between w-full space-x-2">
-                                                <span class="font-semibold text-gray-800 dark:text-white">
-                                                    <Link :href="route('medicalOrders.show', order.id)">
-                                                    <FormatId :id="order.id" prefix="ORD" />
-                                                    </Link>
-                                                    <!-- - {{ order.doctor.name }} {{ order.doctor.last_name }} -->
-                                                </span>
-                                                <span class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
+                                            <div @click="toggleAccordion(index)" class="accordion-header cursor-pointer flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                                                <div class="flex items-center justify-between w-full space-x-2">
+                                                    <span class="font-semibold text-gray-800 dark:text-white">
+                                                        <Link :href="route('medicalOrders.show', order.id)">
+                                                        <FormatId :id="order.id" prefix="ORD" />
+                                                        </Link>
+                                                        <!-- - {{ order.doctor.name }} {{ order.doctor.last_name }} -->
+                                                    </span>
+                                                    <span class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
                                             formatDateFromNow(order.created_at)
                                             }}</span>
+                                                </div>
+                                                <ChevronDown class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white" :class="{ 'rotate-180': openAccordion === index }" />
                                             </div>
-                                            <ChevronDown class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white" :class="{ 'rotate-180': openAccordion === index }" />
-                                        </div>
 
-                                        <!-- Contenido del Acordeón -->
-                                        <div v-if="openAccordion === index  " class="accordion-content p-4 bg-white dark:bg-gray-900">
-                                            <div v-for="(detail, detailIndex) in order.medical_order_detail" :key="detailIndex" @click="selectOrder(detail.id)" :class="{
+                                            <!-- Contenido del Acordeón -->
+                                            <div v-if="openAccordion === index  " class="accordion-content p-4 bg-white dark:bg-gray-900">
+                                                <div v-for="(detail, detailIndex) in order.medical_order_detail" :key="detailIndex" @click="selectOrder(detail.id)" :class="{
                                             'bg-blue-500 text-white': selectedOrderId === detail.id && !detail.suspended_at,
                                             'bg-white dark:bg-gray-800': selectedOrderId !== detail.id && !detail.suspended_at,
 
                                         }" class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200">
 
-                                                <div  class="flex flex-col justify-between items-start">
-                                                    <div class="w-full flex flex-col">
-                                                        <div class="flex justify-between items-center w-full">
-                                                            <p class="text-sm font-semibold text-gray-800 dark:text-white">
-                                                                {{ detail.order }}
-                                                            </p>
-                                                            <p class="text-xs text-gray-500 dark:text-gray-400">
-                                                                {{ formatDateFromNow(detail.created_at) }}
+                                                    <div class="flex flex-col justify-between items-start">
+                                                        <div class="w-full flex flex-col">
+                                                            <div class="flex justify-between items-center w-full">
+                                                                <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                                                    {{ detail.order }}
+                                                                </p>
+                                                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                                    {{ formatDateFromNow(detail.created_at) }}
+                                                                </p>
+                                                            </div>
+                                                            <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                                                                {{ detail.regime }}
                                                             </p>
                                                         </div>
-                                                        <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">
-                                                            {{ detail.regime }}
-                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -184,7 +185,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         </div>
 
                         <!-- Espacio del detalle de Medical Orders -->
@@ -313,7 +313,7 @@
 
                         </div>
                         <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                            Dosis: {{ detail.dose }}
+                            Dosis: {{ detail.dose }} {{ detail.dose_metric }}
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             Via: {{ detail.route }}
@@ -529,9 +529,7 @@ export default {
         this.form.start_time = moment().format('HH:mm');
     },
     computed: {
-        concatenatedDose() {
-            return `${this.form.dose} ${this.form.dose_metric}`;
-        },
+
         currentTime() {
             return moment().format('HH:mm');
         }
@@ -587,17 +585,15 @@ export default {
                 return;
             }
             this.errorMessage = "";
-            const formData = {
-                ...this.form,
-                dose: this.concatenatedDose // Usa la propiedad computada aquí
-            };
-            this.$inertia.post(route('medicationRecordDetails.store'), formData, {
+
+            this.$inertia.post(route('medicationRecordDetails.store'), this.form, {
                 onSuccess: () => {
                     this.form = {
                         medication_record_id: this.medicationRecord.id,
                         drug: '',
                         dose: '',
                         route: '',
+                        dose_metric: '',
                         fc: '',
                         interval_in_hours: '',
                         selectedOrderId: null,

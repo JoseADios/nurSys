@@ -69,10 +69,11 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         $request->validate([
             'medication_record_id' => 'required|exists:medication_records,id',
             'drug' => 'required|string',
-            'dose' => 'required|string',
+            'dose' => 'required|numeric|gt:0',
+            'dose_metric' => 'required|string',
             'route' => 'required|string',
-            'fc' => 'required|integer',
-            'interval_in_hours' => 'required|integer',
+            'fc' => 'required|integer|gt:0',
+            'interval_in_hours' => 'required|integer|gt:0',
             'start_time' => 'required',
 
         ]);
@@ -82,6 +83,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             'medication_record_id' => $request->medication_record_id,
             'drug' => $request->drug,
             'dose' => $request->dose,
+            'dose_metric' => $request->dose_metric,
             'route' => $request->route,
             'fc' => $request->fc,
             'interval_in_hours' => $request->interval_in_hours,
@@ -184,8 +186,9 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
 
             $request->validate([
 
-                'fc' => 'required|integer',
-                'interval_in_hours' => 'required|integer',
+                'fc' => 'required|integer|gt:0',
+                'interval_in_hours' => 'required|integer|gt:0',
+                'dose' => 'required|integer|gt:0',
             ]);
 
             $fc = $request->fc;

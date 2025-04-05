@@ -18,7 +18,7 @@
                     Via
                 </label>
                 <select id="route-select" required v-model="form.route" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option v-for="routeOptions in routes" :key="routeOptions.id" :value="routeOptions.description">
+                    <option v-for="routeOptions in routes" :key="routeOptions.id" :value="routeOptions.name">
                         {{ routeOptions.name }} - {{ routeOptions.description }}
                     </option>
                 </select>
@@ -32,9 +32,20 @@
                     <label for="dose" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Dosis
                     </label>
-                    <input id="dose" required type="text" v-model="form.dose" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe la Dosis asignada..." />
+                    <input id="dose" required type="number" v-model="form.dose" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe la Dosis asignada..." />
                 </div>
+                <!-- Selector -->
+                <div class="flex-1">
+                    <label for="dose-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        Dosis
+                    </label>
+                    <select id="dose-select" required v-model="form.dose_metric" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option v-for="doses in dose" :key="doses.id" :value="doses.name">
+                            {{ doses.name }} - {{ doses.description }}
+                        </option>
+                    </select>
 
+                </div>
             </div>
 
             <label for="fc" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Frecuencia</label>
@@ -77,15 +88,16 @@ export default {
         dose: Object,
     },
     watch: {
-    'medicationRecordDetail.start_time': function (newStartTime) {
-        this.form.start_time = this.formatStartTime(newStartTime);
+        'medicationRecordDetail.start_time': function (newStartTime) {
+            this.form.start_time = this.formatStartTime(newStartTime);
+        },
     },
-},
     data() {
         return {
             form: {
                 drug: this.medicationRecordDetail.drug,
                 dose: this.medicationRecordDetail.dose,
+                dose_metric: this.medicationRecordDetail.dose_metric,
                 route: this.medicationRecordDetail.route,
                 fc: this.medicationRecordDetail.fc,
                 interval_in_hours: this.medicationRecordDetail.interval_in_hours,
@@ -99,9 +111,9 @@ export default {
             this.$inertia.put(route('medicationRecordDetails.update', this.medicationRecordDetail.id), this.form)
         },
         formatStartTime(datetime) {
-        if (!datetime) return '';
-        return new Date(datetime).toTimeString().slice(0, 5);
-    },
+            if (!datetime) return '';
+            return new Date(datetime).toTimeString().slice(0, 5);
+        },
     }
 }
 </script>

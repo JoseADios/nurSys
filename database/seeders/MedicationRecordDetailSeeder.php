@@ -17,7 +17,8 @@ class MedicationRecordDetailSeeder extends Seeder
         MedicationRecordDetail::create([
             'medication_record_id' => 1,
             'drug' => 'Acetominofen',
-            'dose' => '100cc',
+            'dose' => '100',
+            'dose_metric' => 'cc',
             'route' => 'Oral',
             'fc' => 2,
             'start_time' => now(),

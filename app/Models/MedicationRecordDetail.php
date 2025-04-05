@@ -12,6 +12,7 @@ class MedicationRecordDetail extends Model
         'medication_record_id',
         'drug',
         'dose',
+        'dose_metric',
         'route',
         'fc',
         'interval_in_hours',

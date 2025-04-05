@@ -197,8 +197,10 @@ class MedicationRecordController extends Controller implements HasMiddleware
      */
     public function edit(MedicationRecord $medicationRecord)
     {
+        $diet = Diet::all();
         return Inertia::render('MedicationRecords/Edit', [
             'medicationRecord' => $medicationRecord,
+            "diet" => $diet
         ]);
     }
 
@@ -216,8 +218,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $validated = $request->validate([
                 'diagnosis' => 'required|string|max:255',
                 'diet' => 'required|string|max:255',
-                'referrals' => 'required|string|max:255',
-                'pending_studies' => 'required|string|max:255',
+
             ]);
             $medicationRecord->update($validated);
         }

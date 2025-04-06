@@ -20,11 +20,7 @@
                 <!-- Personal Information Section -->
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
+                        <UserIcon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Información Personal
                     </h3>
 
@@ -65,11 +61,7 @@
                 <!-- Identification Section -->
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                        </svg>
+                        <Id2Icon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Identificación y Nacionalidad
                     </h3>
 
@@ -101,11 +93,7 @@
                 <!-- Contact Information -->
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
+                        <MailIcon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Información de Contacto
                     </h3>
 
@@ -131,11 +119,7 @@
                 <!-- Additional Information -->
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
+                        <FileTexIcon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Información Adicional
                     </h3>
 
@@ -180,7 +164,7 @@
                     Cancelar
                     </Link>
                     <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Guardar
                     </button>
                 </div>
@@ -201,6 +185,10 @@ import TextAreaInput from '@/Components/TextAreaInput.vue';
 import DateInput from '@/Components/DateInput.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import Id2Icon from '@/Components/Icons/Id2Icon.vue';
+import MailIcon from '@/Components/Icons/MailIcon.vue';
+import UserIcon from '@/Components/Icons/UserIcon.vue';
+import FileTexIcon from '@/Components/Icons/FileTexIcon.vue';
 
 export default {
     props: {
@@ -219,7 +207,11 @@ export default {
         TextAreaInput,
         DateInput,
         SelectInput,
-        BreadCrumb
+        BreadCrumb,
+        Id2Icon,
+        MailIcon,
+        UserIcon,
+        FileTexIcon,
     },
     data() {
         return {
@@ -241,11 +233,21 @@ export default {
     },
     methods: {
         submit() {
+            // Limpiar errores de los campos que ya no tienen problemas
+            Object.keys(this.form.errors).forEach((key) => {
+                if (this.form[key]) {
+                    delete this.form.errors[key];
+                }
+            });
+
             this.$inertia.post(route('patients.store'), this.form, {
                 onError: (errors) => {
                     this.form.errors = errors;
+                },
+                onSuccess: () => {
+                    this.form.errors = {};
                 }
-            })
+            });
         }
     }
 }

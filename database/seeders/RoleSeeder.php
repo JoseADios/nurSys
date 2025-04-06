@@ -70,6 +70,7 @@ class RoleSeeder extends Seeder
         $role = Role::findByName('nurse');
         $role->syncPermissions([
             'admission.view',
+            'admission.update',
             'temperatureRecord.view',
             'temperatureRecord.create',
             'temperatureRecord.update',
@@ -101,6 +102,9 @@ class RoleSeeder extends Seeder
         ]);
 
         $user = User::where('name', 'Test User')->first();
+        $user->assignRole('admin');
+
+        $user = User::where('name', 'Admin')->first();
         $user->assignRole('admin');
 
         // a los usuarios que estan creados en la base de datos, excepto test user asigna roles aleatorios

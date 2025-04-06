@@ -1,6 +1,6 @@
 <template>
     <div class="insurance-chart-container h-full">
-        <div class="h-full bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200/60 dark:border-gray-700/60">
+        <div class="h-full flex flex-col justify-center bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200/60 dark:border-gray-700/60">
             <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
                 Distribución de pacientes por tipo de seguro
             </h3>

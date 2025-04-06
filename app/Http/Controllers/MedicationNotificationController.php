@@ -21,7 +21,7 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
     {
         return [
             new Middleware('permission:medicationNotification.view', only: ['index', 'show']),
-            new Middleware('permission:medicationNotification.create', only: ['edit', 'store']),
+            new Middleware('permission:medicationNotification.create', only: ['store']),
             new Middleware('permission:medicationNotification.update', only: ['update']),
             new Middleware('permission:medicationNotification.delete', only: ['destroy']),
         ];

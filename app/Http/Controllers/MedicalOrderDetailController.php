@@ -20,7 +20,7 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:medicalOrder.view', only: ['index', 'show']),
-            new Middleware('permission:medicalOrder.create', only: ['edit', 'store']),
+            new Middleware('permission:medicalOrder.create', only: ['store']),
             new Middleware('permission:medicalOrder.update', only: ['update']),
             new Middleware('permission:medicalOrder.delete', only: ['destroy']),
         ];

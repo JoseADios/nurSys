@@ -20,7 +20,7 @@
                 <!-- Personal Information Section -->
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <UserIcon class="h-5 w-5 mr-2 text-purple-600" />
+                        <UserIcon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Información Personal
                     </h3>
 
@@ -61,7 +61,7 @@
                 <!-- Identification Section -->
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <Id2Icon class="h-5 w-5 mr-2 text-purple-600" />
+                        <Id2Icon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Identificación y Nacionalidad
                     </h3>
 
@@ -93,7 +93,7 @@
                 <!-- Contact Information -->
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <MailIcon class="h-5 w-5 mr-2 text-purple-600" />
+                        <MailIcon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Información de Contacto
                     </h3>
 
@@ -119,7 +119,7 @@
                 <!-- Additional Information -->
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <FileInfoIcon class="h-5 w-5 mr-2 text-purple-600" />
+                        <FileTexIcon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Información Adicional
                     </h3>
 
@@ -162,11 +162,11 @@
                     <AccessGate :permission="['patient.delete']">
                         <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
                             class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-all duration-200">
-                            Eliminar
+                            Desactivar
                         </button>
                         <button type="button" v-else @click="restorePatient"
                             class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-all duration-200">
-                            Restaurar
+                            Activar
                         </button>
                     </AccessGate>
                     <Link :href="route('patients.index')" as="button"
@@ -174,7 +174,7 @@
                     Volver
                     </Link>
                     <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         Guardar
                     </button>
                 </div>
@@ -183,11 +183,11 @@
         <AccessGate :permission="['patient.delete']">
             <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
                 <template #title>
-                    Eliminar Ingreso
+                    Desactivar Paciente
                 </template>
 
                 <template #content>
-                    ¿Estás seguro de que deseas eliminar este ingreso?
+                    ¿Estás seguro de que deseas Desactivar este paciente?
                 </template>
 
                 <template #footer>
@@ -196,7 +196,7 @@
                     </SecondaryButton>
 
                     <DangerButton class="ms-3" @click="deletePatient">
-                        Eliminar
+                        Desactivar
                     </DangerButton>
                 </template>
             </ConfirmationModal>
@@ -212,20 +212,19 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import InputError from '@/Components/InputError.vue';
-import { useGoBack } from '@/composables/useGoBack';
 import CedulaInput from '@/Components/CedulaInput.vue';
 import PhoneInput from '@/Components/PhoneInput.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
 import Id2Icon from '@/Components/Icons/Id2Icon.vue';
 import MailIcon from '@/Components/Icons/MailIcon.vue';
-import FileInfoIcon from '@/Components/Icons/FileInfoIcon.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import DateInput from '@/Components/DateInput.vue';
 import TextAreaInput from '@/Components/TextAreaInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import FileTexIcon from '@/Components/Icons/FileTexIcon.vue';
 
 export default {
     props: {
@@ -248,7 +247,7 @@ export default {
         UserIcon,
         Id2Icon,
         MailIcon,
-        FileInfoIcon,
+        FileTexIcon,
         InputLabel,
         SelectInput,
         DateInput,
@@ -277,6 +276,12 @@ export default {
     },
     methods: {
         submit() {
+            Object.keys(this.form.errors).forEach((key) => {
+                if (this.form[key]) {
+                    delete this.form.errors[key];
+                }
+            });
+
             this.$inertia.put(route('patients.update', this.patient.id), this.form, {
                 onError: (errors) => {
                     this.form.errors = errors;

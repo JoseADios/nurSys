@@ -79,6 +79,25 @@ class User extends Authenticatable
         ];
     }
 
+    // Método para validar si se puede cambiar el rol
+    public function canChangeRole()
+    {
+        // Lista de IDs de usuarios protegidos (administradores principales)
+        $protectedUserIds = [1,2];
+
+        return !in_array($this->id, $protectedUserIds);
+    }
+
+    // Método para actualizar rol con validación
+    public function updateRole($newRole)
+    {
+        if (!$this->canChangeRole()) {
+            throw new \Exception('No puedes modificar el rol de este usuario administrador');
+        }
+
+        $this->syncRoles([$newRole]);
+    }
+
     public function medicalOrder(): HasMany
     {
         return $this->hasMany(MedicalOrder::class);

@@ -18,8 +18,8 @@
             <!-- Diagnóstico -->
             <!-- Selector -->
 
-            <label for="diet-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Admission ID
+            <label for="diet-select" class="block mb-2 mt-4 text-sm font-medium text-gray-900 dark:text-white">
+                Ingreso
             </label>
             <AdmissionSelector :doesnt-have-medication-r=true @update:admission="form.admission_id = $event" :selected-admission-id="admission_id" />
 

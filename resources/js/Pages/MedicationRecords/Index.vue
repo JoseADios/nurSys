@@ -69,7 +69,14 @@
                 </button>
 
             </div>
-            <div class="flex items-center">
+            <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-2 md:content-end md:justify-end">
+                <select @change="submitFilters()"
+                    class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    name="in_process" id="in_process" v-model="form.in_process">
+                    <option value="true">En proceso</option>
+                    <option value="false">Dados de alta</option>
+                    <option value="">Todos</option>
+                </select>
             <select @change="submitFilters()"
                     class="bg-gray-50 w-full  mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     name="days" id="days" v-model="form.days">
@@ -144,9 +151,23 @@
 
                 <tr v-for="record in medicationRecords.data.filter(record => record.id)" :key="record.id" :class="[
         'bg-white border-b dark:bg-gray-800 dark:border-gray-700'    ]">
-  <td class="px-6 py-4">   ING-00{{ record.admission.id }},
-                                Cama {{ record.admission.bed.number }}, Sala {{
-                                    record.admission.bed.room }}</td>
+  <td class="px-6 py-4 whitespace-nowrap">
+                                <div :class="[{
+                                    'max-w-fit border border-green-600 text-green-600 px-2.5 py-0.5 rounded-md dark:border-green-900 dark:text-green-300': record.in_process,
+                                    'max-w-fit border border-gray-500 text-gray-800 px-2.5 py-0.5 rounded-md dark:border-gray-600 dark:text-gray-300': !record.in_process
+                                }]">
+                                    <div v-if="record.admission.bed">
+                                        <FormatId :id="record.admission.id" prefix="ING"></FormatId>,
+                                        Cama {{ record.admission.bed.number }}, Sala {{
+                                            record.admission.bed.room
+                                        }}
+                                    </div>
+                                    <div v-else>
+                                        <FormatId :id="record.admission.id" prefix="ING"></FormatId>,
+                                        {{ record.admission.created_at }} N/A
+                                    </div>
+                                </div>
+                            </td>
                                     <td class="px-6 py-4"> {{ record.admission.patient.first_name }} {{
                                 record.admission.patient.first_surname }} {{
                                 record.admission.patient.second_surname }}</td>
@@ -218,6 +239,7 @@ export default {
 
             form: {
                 search: this.filters.search || '',
+                in_process: this.filters.in_process || '',
                 showDeleted: this.filters.show_deleted,
                 sortField: this.filters.sortField || 'medication_records.updated_at',
                 sortDirection: this.filters.sortDirection || 'asc',

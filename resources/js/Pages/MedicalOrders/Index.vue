@@ -144,9 +144,7 @@
                 <tbody>
                     <tr v-for="medicalOrder in medicalOrders.data.filter(medicalOrder => medicalOrder.id)"
                         :key="medicalOrder.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ medicalOrder.id}}
-                        </td>
+                        <td class="px-6 py-4">{{ medicalOrder.id }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                                 <div :class="[{
                                     'max-w-fit border border-green-600 text-green-600 px-2.5 py-0.5 rounded-md dark:border-green-900 dark:text-green-300': medicalOrder.in_process,

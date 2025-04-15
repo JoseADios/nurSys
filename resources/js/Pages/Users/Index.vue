@@ -57,9 +57,9 @@
                 <!-- Botón para mostrar/ocultar filtros en móvil -->
                 <button @click="showFilters = !showFilters"
                     class="md:hidden w-full flex items-center justify-center space-x-2 bg-gray-100 dark:bg-gray-700 p-2 rounded-lg mb-2">
-                    <span class="text-white">{{ showFilters ? 'Ocultar filtros' : 'Mostrar filtros' }}</span>
+                    <span class=" text-gray-700 dark:text-white">{{ showFilters ? 'Ocultar filtros' : 'Mostrar filtros' }}</span>
                     <span v-if="showFilters">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5  text-gray-700 dark:text-white" viewBox="0 0 20 20"
                             fill="currentColor">
                             <path fill-rule="evenodd"
                                 d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
@@ -67,7 +67,7 @@
                         </svg>
                     </span>
                     <span v-else>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5  text-gray-700 dark:text-white" viewBox="0 0 20 20"
                             fill="currentColor">
                             <path fill-rule="evenodd"
                                 d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
@@ -180,9 +180,9 @@
                                 class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
                                 <img :src="user.profile_photo_url" alt="Profile Photo"
                                     class="size-4 rounded-full mr-2 sm:size-8 md:size-10 md:mr-4 object-cover">
-                                <div>
+                                <Link as="button" :href="route('users.show', user.id)" class="hover:text-blue-600">
                                     {{ user.name }} {{ user.last_name }}
-                                </div>
+                                </Link>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div v-if="user.roles[0]">

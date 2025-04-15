@@ -195,8 +195,10 @@
                                     <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
                                 </td>
                                 <th scope="row"
-                                    class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                    {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
+                                    class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 dark:text-white hover:text-blue-600">
+                                    <Link as="button" :href="route('patients.show', patient.id)">
+                                        {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
+                                    </Link>
                                 </th>
                                 <td class="px-4 py-3 whitespace-nowrap hidden sm:table-cell">
                                     {{ patient.phone }}

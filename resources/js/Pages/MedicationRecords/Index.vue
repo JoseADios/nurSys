@@ -132,7 +132,7 @@
                 <tr v-for="record in medicationRecords.data.filter(record => record.id)" :key="record.id" :class="[
         'bg-white border-b dark:bg-gray-800 dark:border-gray-700'    ]">
 
-<td class="px-6 py-4">{{ record.id }}</td>
+<th scope="row" class="px-6 py-4">{{ record.id }}</th>
   <td class="px-6 py-4 whitespace-nowrap">
                                 <div :class="[{
                                     'max-w-fit border border-green-600 text-green-600 px-2.5 py-0.5 rounded-md dark:border-green-900 dark:text-green-300': record.in_process,

@@ -1,3 +1,4 @@
+
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
@@ -20,7 +21,7 @@ import MedicationIcon from '@/Components/Icons/MedicationIcon.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import TopDoctorsAdmissions from '@/Components/TopDoctorsAdmissions.vue';
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import PendingDocumentsToSign from '@/Components/PendingDocumentsToSign.vue';
 
 const props = defineProps({
@@ -34,12 +35,21 @@ const props = defineProps({
 const admissionsData = ref(props.stats.admissions_by_time || []);
 const dischargesData = ref(props.stats.admissions_discharged_by_time || []);
 const timeFilter = ref('week');
+const isLoading = ref(true);
 
+// Usar onMounted para asegurar que el componente esté completamente montado
+onMounted(async () => {
+    // Retrasar la carga inicial de datos para permitir que la UI se estabilice
+    await nextTick();
+    isLoading.value = false;
+});
 
 // Manejar el cambio de filtro de tiempo
-function handleTimeFilterChange(filter) {
+async function handleTimeFilterChange(filter) {
     timeFilter.value = filter;
-    fetchData();
+    isLoading.value = true;
+    await fetchData();
+    isLoading.value = false;
 }
 
 // Función para obtener datos del backend con el filtro seleccionado
@@ -129,10 +139,13 @@ async function fetchData() {
                         </div>
                     </div>
 
-                    <!-- Gráfico de ingresos -->
+                    <!-- Gráfico de ingresos con estado de carga -->
                     <div
                         class="mt-6 bg-white dark:bg-gray-800 overflow-hidden border border-gray-200/60 dark:border-gray-700/60 rounded-lg">
-                        <div class="">
+                        <div v-if="isLoading" class="h-64 flex items-center justify-center">
+                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent"></div>
+                        </div>
+                        <div v-else>
                             <AdmissionsChart :admissions="admissionsData" :discharges="dischargesData"
                                 @time-filter-change="handleTimeFilterChange" />
                         </div>
@@ -225,7 +238,10 @@ async function fetchData() {
 
                         <!-- grafico pie de cantidad de camas por estado -->
                         <div class="w-full ">
-                            <BedsByStatusChart :status-data="stats.beds_by_status" class="h-full" />
+                            <div v-if="isLoading" class="h-64 flex items-center justify-center">
+                                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent"></div>
+                            </div>
+                            <BedsByStatusChart v-else :status-data="stats.beds_by_status" class="h-full" />
                         </div>
 
                         <AccessGate :except-role="['receptionist']">
@@ -325,7 +341,10 @@ async function fetchData() {
 
                         <!-- grafico donut cantidad de pacientes por ars -->
                         <div class="w-full">
-                            <PatientsByArsChart :ars-data="stats.patients_by_ars" class="h-full" />
+                            <div v-if="isLoading" class="h-64 flex items-center justify-center">
+                                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent"></div>
+                            </div>
+                            <PatientsByArsChart v-else :ars-data="stats.patients_by_ars" class="h-full" />
                         </div>
 
                         <!-- pacientes con temperatura alta -->

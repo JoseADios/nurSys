@@ -24,7 +24,7 @@
 
         <!-- Filtros y barra de búsqueda - Responsive -->
         <div
-            class="bg-gray-100 dark:bg-gray-900 p-4 flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-end  overflow-x-auto rounded-lg mx-4 lg:mx-10">
+            class="bg-gray-100 dark:bg-gray-900 py-4 flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-end  overflow-x-auto rounded-lg mx-2 lg:mx-10">
             <!-- Búsqueda - Ancho completo en móvil -->
             <div class="relative w-full lg:w-1/3 mb-4 sm:mb-0">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">

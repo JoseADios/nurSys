@@ -57,7 +57,7 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
         ]);
 
 
-        return back()->with('success', 'Detalle agregado exitosamente');
+        return back()->with('success', 'Detalle agregado exitosamente')->with('flash.toast', 'Detalle guardado correctamente');
     }
 
     /**
@@ -83,25 +83,25 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
     {
         $this->authorize('update', [MedicalOrderDetail::class, $medicalOrderDetail]);
 
-        $medicalOrderDetail->update($request->all());
+
+
         $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)->first();
         if ($request->suspended_at == null) {
             if ($medicationRecordDetail) {
                 $medicationRecordDetail->update(['suspended_at' => null]);
-                Log::info("MedicationRecordDetail actualizado: ", ['id' => $medicationRecordDetail->id, 'suspended_at' => null]);
+
             } else {
-                Log::warning("No se encontró un MedicationRecordDetail para MedicalOrderDetail ID: " . $medicalOrderDetail->id);
+                return Redirect::back()->withErrors(['message' => 'No se puede actualizar esta Orden Medica porque tiene registros de ficha de medicamento asociados.']);
             }
         } else {
             if ($medicationRecordDetail) {
                 $medicationRecordDetail->update(['suspended_at' => now()]);
-                Log::info("MedicationRecordDetail actualizado: ", ['id' => $medicationRecordDetail->id, 'suspended_at' => now()]);
             } else {
-                Log::warning("No se encontró un MedicationRecordDetail para MedicalOrderDetail ID: " . $medicalOrderDetail->id);
-            }
+                return Redirect::back()->withErrors(['message' => 'No se puede actualizar esta Orden Medica porque tiene registros de ficha de medicamento asociados.']);
+           }
         }
-
-        return back();
+        $medicalOrderDetail->update($request->all());
+        return back()->with('flash.toast', 'Registro actualizado correctamente');
     }
 
     /**
@@ -112,6 +112,6 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
         $this->authorize('delete', [MedicalOrderDetail::class, $medicalOrderDetail]);
         $medicalOrderDetail->update(['active' => 0]);
 
-        return Redirect::route('medicalOrders.show', $medicalOrderDetail->medical_order_id);
+        return Redirect::route('medicalOrders.show', $medicalOrderDetail->medical_order_id)->with('flash.toast', 'Registro eliminado correctamente');;
     }
 }

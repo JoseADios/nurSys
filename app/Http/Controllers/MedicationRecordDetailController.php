@@ -66,6 +66,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         $medicationRecord = MedicationRecord::findOrFail($request->medication_record_id);
         $this->authorize('create', [MedicationRecordDetail::class, $medicationRecord]);
 
+
         $request->validate([
             'medication_record_id' => 'required|exists:medication_records,id',
             'drug' => 'required|string',
@@ -75,8 +76,14 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             'fc' => 'required|integer|gt:0',
             'interval_in_hours' => 'required|integer|gt:0',
             'start_time' => 'required',
-
+        ], [
+            'dose.gt' => 'La dosis debe ser mayor a 0.',
+            'fc.gt' => 'La frecuencia (fc) debe ser mayor a 0.',
         ]);
+
+
+
+
         $start_time_24 = Carbon::parse($request->start_time);
 
         $detail = MedicationRecordDetail::create([

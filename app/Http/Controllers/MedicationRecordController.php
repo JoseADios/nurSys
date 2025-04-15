@@ -198,6 +198,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
                 'filters' => [
                     'show_deleted' => $showDeleted,
                 ],
+                'errors' => !empty($errors) ? $errors : [],
             ]);
 
 

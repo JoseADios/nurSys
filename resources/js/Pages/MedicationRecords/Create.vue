@@ -8,6 +8,10 @@
                         route: route('medicationRecords.index')
 
                     },
+
+                    {
+                        text: 'Crear'
+                    },
                 ]" />
         </h2>
     </template>

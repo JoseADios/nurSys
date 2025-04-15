@@ -24,34 +24,35 @@
         </div>
 
         <div
-            class="bg-gray-100 dark:bg-gray-900 flex justify-between items-end overflow-x-auto sm:rounded-lg mt-2 lg:mx-10">
-
-            <div class="relative mb-2">
+            class="bg-gray-100 dark:bg-gray-900 p-4 flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-end  overflow-x-auto rounded-lg mx-4 lg:mx-10">
+            <!-- Búsqueda - Ancho completo en móvil -->
+            <div class="relative w-full lg:w-1/3 mb-4 sm:mb-0">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="none"
-                        viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
+                    <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                 </div>
 
                 <input @input="submitFilters()"
-                    class="block   p-3 ps-10 pr-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    type="text" name="search" id="search" v-model="form.search" placeholder="Buscar ..." />
+                    class="pl-10 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    type="text" name="search" id="search" v-model="form.search" placeholder="Buscar..." />
 
                 <button v-if="form.search" @click="form.search = ''; submitFilters()"
                     class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <XIcon class="h-5 w-5" />
                 </button>
-
             </div>
-            <div class="flex items-center">
+
+            <!-- Filtros y botones - Se apilan en móvil -->
+            <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-2 md:content-end md:justify-end">
                 <select @change="submitFilters()"
-                    class="bg-gray-50 w-full  mr-2 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    name="in_process" id="in_process" v-model="form.in_process">
+                    <option value="true">En proceso</option>
+                    <option value="false">Dados de alta</option>
+                    <option value="">Todos</option>
+                </select>
+
+                <select @change="submitFilters()"
+                    class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                     name="days" id="days" v-model="form.days">
                     <option value="">Siempre</option>
                     <option value="1">Último día</option>
@@ -61,39 +62,49 @@
                     <option value="180">Últimos 180 días</option>
                     <option value="365">Último año</option>
                 </select>
-                <!-- Filtro para mostrar registros eliminados -->
-                <button @click="toggleShowDeleted"
-                    class="flex  items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-4"
-                    :class="{
-                        'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                        'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                    }">
-                    {{ form.showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                    <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path v-if="form.showDeleted" fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                            clip-rule="evenodd" />
-                        <path v-else fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </button>
 
-                <Link :href="route('medicalOrders.create')"
-                    class="flex items-center ml-4 text-base bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-full whitespace-nowrap">
-                <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Nueva Orden Medica
-                </Link>
+                <AccessGate :permission="['medicalOrders.delete']">
+                    <!-- Filtro para mostrar registros eliminados -->
+                    <button @click="toggleShowDeleted"
+                        class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
+                        :class="{
+                            'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
+                            'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
+                        }">
+                        {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                        <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                        <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                    </button>
+                </AccessGate>
 
+                <AccessGate :permission="['medicalOrders.create']">
+                    <div class="w-full sm:w-auto">
+                        <Link v-if="!form.admission_id" :href="route('medicalOrders.create')"
+                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
+                        <PlusIcon class="size-5" />
+                        <span class="">Nueva Órden</span>
+                        </Link>
+                        <Link v-else :href="route('medicalOrders.create', { admission_id: form.admission_id })"
+                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
+                        <PlusIcon class="size-5" />
+                        <span class="">Nuevo Órden</span>
+                        </Link>
+                    </div>
+                </AccessGate>
             </div>
         </div>
+
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
 
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
+                        <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap hidden sm:table-cell"
+                                @click="sort('medical_orders.id')">
+                                ID <span v-if="form.sortField === 'medical_orders.id'">{{ form.sortDirection === 'asc' ?
+                                    '↑' :
+                                    '↓' }}</span>
+                            </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admission_id')"><span
                                 v-if="form.sortField === 'admission_id'">{{ form.sortDirection === 'asc' ? '↑' :
                                     '↓'
@@ -133,9 +144,26 @@
                 <tbody>
                     <tr v-for="medicalOrder in medicalOrders.data.filter(medicalOrder => medicalOrder.id)"
                         :key="medicalOrder.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th scope="row" class="px-6 py-4"> ING-00{{ medicalOrder.admission.id }},
-                            Cama {{ medicalOrder.admission.bed.number }}, Sala {{
-                                medicalOrder.admission.bed.room }}</th>
+                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ medicalOrder.id}}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                                <div :class="[{
+                                    'max-w-fit border border-green-600 text-green-600 px-2.5 py-0.5 rounded-md dark:border-green-900 dark:text-green-300': medicalOrder.in_process,
+                                    'max-w-fit border border-gray-500 text-gray-800 px-2.5 py-0.5 rounded-md dark:border-gray-600 dark:text-gray-300': !medicalOrder.in_process
+                                }]">
+                                    <div v-if="medicalOrder.admission.bed">
+                                        <FormatId :id="medicalOrder.admission.id" prefix="ING"></FormatId>,
+                                        Cama {{ medicalOrder.admission.bed.number }}, Sala {{
+                                            medicalOrder.admission.bed.room
+                                        }}
+                                    </div>
+                                    <div v-else>
+                                        <FormatId :id="medicalOrder.admission.id" prefix="ING"></FormatId>,
+                                        {{ medicalOrder.admission.created_at }} N/A
+                                    </div>
+                                </div>
+                            </td>
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ medicalOrder.admission.patient.first_name }} {{
                                 medicalOrder.admission.patient.first_surname }} {{
@@ -178,6 +206,11 @@ import {
 import Pagination from '@/Components/Pagination.vue';
 import FormatId from '@/Components/FormatId.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import SearchIcon from '@/Components/Icons/SearchIcon.vue';
+import XIcon from '@/Components/Icons/XIcon.vue';
+import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
+import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
+import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 export default {
     props: {
         medicalOrders: Object,
@@ -189,7 +222,12 @@ export default {
         Link,
         Pagination,
         FormatId,
-        BreadCrumb
+        BreadCrumb,
+        PlusIcon,
+        SearchIcon,
+        XIcon,
+        CirclePlusIcon,
+        CircleXIcon,
     },
     data() {
         return {
@@ -200,6 +238,8 @@ export default {
                 sortField: this.filters.sortField || 'medical_orders.updated_at',
                 sortDirection: this.filters.sortDirection || 'asc',
                 days: this.filters.days || '',
+                search: this.filters.search || '',
+                in_process: this.filters.in_process || '',
             },
             timeout: 1000,
         }

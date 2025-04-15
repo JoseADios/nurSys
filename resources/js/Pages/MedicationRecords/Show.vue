@@ -48,11 +48,11 @@
             </div>
 
             <!-- Mostrar errores -->
-            <div class="mb-4 flex flex-col items-center">
-                <div class="mb-4 text-red-500" v-for="error in errors" :key="error">
-                    {{ error }}
+            <div v-if="errors.length > 0" class="bg-red-50 border-l-4 border-red-500 p-4 mx-8 my-4">
+                    <div class="text-red-700" v-for="error in errors" :key="error">
+                        {{ error }}
+                    </div>
                 </div>
-            </div>
             <!-- Información Principal -->
             <div class="p-8 space-y-8">
                 <div class="grid md:grid-cols-2 gap-6">
@@ -191,7 +191,7 @@
 
                     </div>
 
-                    <div class="relative overflow-x-auto  sm:rounded-lg   lg:mx-10">
+                    <div class="relative overflow-x-auto   sm:rounded-lg   lg:mx-10">
                         <form @submit.prevent="submit" class="max-w-sm mx-auto">
 
                             <!-- Contenedor para la Medicamento y el selector -->
@@ -478,6 +478,10 @@ export default {
         dose: Array,
         filters: Object,
         selectedDrug: Array,
+        errors: {
+            type: Array,
+            default: () => []
+        },
     },
     components: {
         AppLayout,
@@ -584,6 +588,20 @@ export default {
                 this.errorMessage = "Debe seleccionar una orden antes de guardar.";
                 return;
             }
+            if (this.form.dose <= 0) {
+                this.errorMessage = "La Dosis debe ser mayor a 0";
+                return;
+            }
+
+            if (this.form.fc <= 0) {
+                this.errorMessage = "Frecuencia debe  ser mayor a 0";
+                return;
+            }
+            if (this.form.interval_in_hours <= 0) {
+                this.errorMessage = "El Intervalo en horas debe ser mayor a 0";
+                return;
+            }
+
             this.errorMessage = "";
 
             this.$inertia.post(route('medicationRecordDetails.store'), this.form, {

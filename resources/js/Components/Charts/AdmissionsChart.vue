@@ -338,6 +338,6 @@ watch([() => props.admissions, () => props.discharges, () => selectedTimeFilter.
                 </button>
             </div>
         </div>
-        <VueApexCharts :options="chartOptions" :series="series" height="300" />
+        <VueApexCharts class="w-full" :options="chartOptions" :series="series" height="300" />
     </div>
 </template>

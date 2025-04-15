@@ -32,9 +32,9 @@
                             <img :src="user.profile_photo_url" alt="Foto de Perfil"
                                 class="w-20 h-20 rounded-full object-cover">
                             <div>
-                                <h2 class="text-2xl font-bold text-white">{{ user.name }} {{ user.last_name }}</h2>
-                                <div class="flex items-center space-x-2">
-                                    <span class="px-2 py-1 bg-white/20 text-white text-sm rounded-full">
+                                <h2 class="text-2xl font-bold text-gray-700 dark:text-white">{{ user.name }} {{ user.last_name }}</h2>
+                                <div class="flex items-center space-x-2 mt-2 xl:mt-0">
+                                    <span class="px-2 py-1 bg-gray-200 dark:bg-white/20 text-gray-700 dark:text-white text-sm rounded-full">
                                         <div v-if="user.roles[0]">
                                             <FormatRole :role="user.roles[0].name" />
                                         </div>
@@ -51,7 +51,7 @@
                         </div>
                         <div class="flex space-x-3 md:flex md:space-x-3 lg:space-x-4">
                             <Link :href="route('users.index')"
-                                class="hidden md:inline-flex items-center px-4 py-2 bg-white/20 text-white text-sm rounded-lg hover:bg-white/40 transition-all duration-200">
+                                class="hidden md:inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-white/20 text-gray-700 dark:text-white text-sm rounded-lg hover:bg-white/40 transition-all duration-200">
                             <BackIcon class="w-4 h-4 mr-2" />
                             Volver
                             </Link>

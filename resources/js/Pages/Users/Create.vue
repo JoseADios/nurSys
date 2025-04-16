@@ -185,9 +185,9 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex flex-col sm:flex-row justify-center items-center sm:justify-end space-y-2 rounded-b-lg">
+                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex flex-col sm:flex-row justify-center items-center sm:justify-end space-y-2 sm:space-y-0 rounded-b-lg">
                     <button @click="saveAndNew" type="button"
-                        class="px-4 max-w-fit py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        class="px-4 max-w-fit py-2 text-sm sm:mr-2 font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                         Guardar y Crear Otro
                     </button>
                     <div class="flex justify-evenly space-x-2">

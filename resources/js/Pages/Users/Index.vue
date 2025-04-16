@@ -8,7 +8,7 @@
 
         <!-- Filtros con vista móvil mejorada -->
         <div class="px-4 lg:px-10 mt-4">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
+            <div class="mb-4">
                 <!-- Barra de búsqueda principal y botones de acción siempre visibles -->
                 <div class="flex flex-col sm:flex-row gap-3 mb-3">
                     <!-- Búsqueda general - siempre visible -->

@@ -470,11 +470,18 @@ class AdmissionController extends Controller implements HasMiddleware
 
         $admissions = $query->paginate(15);
 
-        if ($selectedAdm && !$admissions->contains('id', $selectedAdm->id)) {
+        if ($selectedAdm) {
             $admissionsCollection = $admissions->getCollection();
-            $admissionsCollection->add($selectedAdm);
-            $sortedAdmissions = $admissionsCollection->sortByDesc('id')->values();
-            $admissions->setCollection($sortedAdmissions);
+
+            if (!$admissionsCollection->contains('id', $selectedAdm->id)) {
+            $admissionsCollection->prepend($selectedAdm);
+            }
+
+            $admissionsCollection = $admissionsCollection->sortByDesc(function ($admission) use ($selectedAdm) {
+            return $admission->id === $selectedAdm->id ? PHP_INT_MAX : $admission->id;
+            })->values();
+
+            $admissions->setCollection($admissionsCollection);
         }
 
         return response()->json($admissions);

@@ -1,4 +1,3 @@
-
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
@@ -31,6 +30,8 @@ const props = defineProps({
     }
 });
 
+const cache = ref({});
+
 // Inicializar datos con valores iniciales de props
 const admissionsData = ref(props.stats.admissions_by_time || []);
 const dischargesData = ref(props.stats.admissions_discharged_by_time || []);
@@ -41,6 +42,15 @@ const isLoading = ref(true);
 onMounted(async () => {
     // Retrasar la carga inicial de datos para permitir que la UI se estabilice
     await nextTick();
+
+    // Guardar en caché los valores iniciales si el filtro es 'week'
+    if (timeFilter.value === 'week') {
+        cache.value['week'] = {
+            admissions: admissionsData.value,
+            discharges: dischargesData.value
+        };
+    }
+
     isLoading.value = false;
 });
 
@@ -48,8 +58,20 @@ onMounted(async () => {
 async function handleTimeFilterChange(filter) {
     timeFilter.value = filter;
     isLoading.value = true;
-    await fetchData();
-    isLoading.value = false;
+
+    if (cache.value[filter]) {
+        admissionsData.value = cache.value[filter].admissions;
+        dischargesData.value = cache.value[filter].discharges;
+        isLoading.value = false;
+    }
+    else {
+        await fetchData();
+        cache.value[filter] = {
+            admissions: admissionsData.value,
+            discharges: dischargesData.value
+        };
+        isLoading.value = false;
+    }
 }
 
 // Función para obtener datos del backend con el filtro seleccionado
@@ -142,13 +164,8 @@ async function fetchData() {
                     <!-- Gráfico de ingresos con estado de carga -->
                     <div
                         class="mt-6 bg-white dark:bg-gray-800 overflow-hidden border border-gray-200/60 dark:border-gray-700/60 rounded-lg">
-                        <div v-if="isLoading" class="h-64 flex items-center justify-center">
-                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent"></div>
-                        </div>
-                        <div v-else>
-                            <AdmissionsChart :admissions="admissionsData" :discharges="dischargesData"
-                                @time-filter-change="handleTimeFilterChange" />
-                        </div>
+                        <AdmissionsChart :admissions="admissionsData" :discharges="dischargesData"
+                            @time-filter-change="handleTimeFilterChange" />
                     </div>
 
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
@@ -239,7 +256,9 @@ async function fetchData() {
                         <!-- grafico pie de cantidad de camas por estado -->
                         <div class="w-full ">
                             <div v-if="isLoading" class="h-64 flex items-center justify-center">
-                                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent"></div>
+                                <div
+                                    class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent">
+                                </div>
                             </div>
                             <BedsByStatusChart v-else :status-data="stats.beds_by_status" class="h-full" />
                         </div>
@@ -342,7 +361,9 @@ async function fetchData() {
                         <!-- grafico donut cantidad de pacientes por ars -->
                         <div class="w-full">
                             <div v-if="isLoading" class="h-64 flex items-center justify-center">
-                                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent"></div>
+                                <div
+                                    class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent">
+                                </div>
                             </div>
                             <PatientsByArsChart v-else :ars-data="stats.patients_by_ars" class="h-full" />
                         </div>

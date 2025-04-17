@@ -40,19 +40,17 @@ export default {
             return `${cleanedValue.slice(0, 3)}-${cleanedValue.slice(3, 9)}-${cleanedValue.slice(9, 10)}`;
         },
         handleInput(event) {
-            // Elimina todos los guiones del valor de entrada
+            // Elimina todos los caracteres que no sean números
             const inputValue = event.target.value.replace(/[^0-9]/g, '');
 
             // Emite el evento de actualización del modelo con solo números
             this.$emit('update:modelValue', this.formatCedula(inputValue));
         },
         handleKeyDown(event) {
-            // Permite borrar incluso con guiones presentes
-            if (event.key === 'Backspace') {
+            // Permite solo teclas numéricas, Backspace, Delete, y teclas de navegación
+            const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+            if (!allowedKeys.includes(event.key) && !/^[0-9]$/.test(event.key)) {
                 event.preventDefault();
-                const currentValue = this.modelValue.replace(/[^0-9]/g, '');
-                const newValue = currentValue.slice(0, -1);
-                this.$emit('update:modelValue', newValue);
             }
         }
     },

@@ -178,7 +178,7 @@ class DashboardController extends Controller
         if ($totalLastMonth === 0) {
             return 100;
         }
-        return ($totalThisMonth * 100) / $totalLastMonth;
+        return (($totalThisMonth * 100) / $totalLastMonth) - 100;
     }
 
     private function getPatientsByArs()

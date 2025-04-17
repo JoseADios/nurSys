@@ -101,13 +101,7 @@
                                 }}</span>
                             Paciente
                         </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.discharged_date')">
-                            <span v-if="form.sortField === 'admissions.discharged_date'">{{ form.sortDirection === 'asc'
-                                ? '↑' :
-                                '↓'
-                            }}</span>
-                            Estado
-                        </th>
+
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')"><span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ? '↑' :
                                     '↓'
                                 }}</span>
@@ -149,10 +143,6 @@
                                 medicalOrder.admission.patient.second_surname }}
                         </td>
 
-                        <td class="px-6 py-4  w-2">
-                            <span v-if="medicalOrder.admission.discharged_date == null" class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
-                            <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
-                        </td>
                         <td class="px-6 py-4">
                             {{ medicalOrder.doctor.name }}
                         </td>

@@ -52,7 +52,7 @@
                         <!-- Teléfono -->
                         <div>
                             <InputLabel for="phone" value="Teléfono" />
-                            <PhoneInput v-model="form.phone" />
+                            <PhoneInput class="mt-1" v-model="form.phone" />
                             <InputError :message="form.errors.phone" class="mt-2" />
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                         <div>
                             <InputLabel for="nationality" value="Nacionalidad" />
                             <input list="options" id="nationality" v-model="form.nationality"
-                                class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                 required>
                             <datalist id="options">
                                 <option v-for="nationality in nationalities" :key="nationality.id">

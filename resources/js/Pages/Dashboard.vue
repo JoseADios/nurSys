@@ -36,6 +36,7 @@ const cache = ref({});
 const admissionsData = ref(props.stats.admissions_by_time || []);
 const dischargesData = ref(props.stats.admissions_discharged_by_time || []);
 const timeFilter = ref('week');
+const isLoadingMounted = ref(true);
 const isLoading = ref(true);
 
 // Usar onMounted para asegurar que el componente esté completamente montado
@@ -51,7 +52,7 @@ onMounted(async () => {
         };
     }
 
-    isLoading.value = false;
+    isLoadingMounted.value = false;
 });
 
 // Manejar el cambio de filtro de tiempo
@@ -255,7 +256,7 @@ async function fetchData() {
 
                         <!-- grafico pie de cantidad de camas por estado -->
                         <div class="w-full ">
-                            <div v-if="isLoading" class="h-64 flex items-center justify-center">
+                            <div v-if="isLoadingMounted" class="h-64 flex items-center justify-center">
                                 <div
                                     class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent">
                                 </div>
@@ -360,7 +361,7 @@ async function fetchData() {
 
                         <!-- grafico donut cantidad de pacientes por ars -->
                         <div class="w-full">
-                            <div v-if="isLoading" class="h-64 flex items-center justify-center">
+                            <div v-if="isLoadingMounted" class="h-64 flex items-center justify-center">
                                 <div
                                     class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent">
                                 </div>

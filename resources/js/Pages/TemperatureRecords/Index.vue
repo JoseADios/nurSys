@@ -24,70 +24,99 @@
 
         <!-- Filtros y barra de búsqueda - Responsive -->
         <div
-            class="bg-gray-100 dark:bg-gray-900 py-4 flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-end  overflow-x-auto rounded-lg mx-2 lg:mx-10">
+            class="bg-gray-100 dark:bg-gray-900 py-4 flex flex-col gap-4 items-center lg:flex-row lg:justify-between lg:items-end xl:items-center overflow-x-auto rounded-lg mx-4 lg:mx-10">
             <!-- Búsqueda - Ancho completo en móvil -->
             <div class="relative w-full lg:w-1/3 mb-4 sm:mb-0">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                 </div>
-                <TextInput v-model="form.search" placeholder="Buscar..." class="pl-10 w-full" @input="submitFilters" />
+
+                <input @input="submitFilters()"
+                    class="pl-10 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    type="text" name="search" id="search" v-model="form.search" placeholder="Buscar..." />
+
                 <button v-if="form.search" @click="form.search = ''; submitFilters()"
                     class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
                     <XIcon class="h-5 w-5" />
                 </button>
             </div>
 
-            <!-- Filtros y botones - Se apilan en móvil -->
-            <div
-                class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-2 md:content-end md:justify-end">
-                <select @change="submitFilters()"
-                    class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                    name="in_process" id="in_process" v-model="form.in_process">
-                    <option value="true">En proceso</option>
-                    <option value="false">Dados de alta</option>
-                    <option value="">Todos</option>
-                </select>
+            <!-- Filtros y botones - Reorganizados para mejor responsividad -->
+            <div class="flex flex-col w-full lg:w-auto xl:flex-row space-y-3 sm:space-y-3 xl:space-y-0">
 
-                <select @change="submitFilters()"
-                    class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                    name="days" id="days" v-model="form.days">
-                    <option value="">Siempre</option>
-                    <option value="1">Último día</option>
-                    <option value="7">Últimos 7 días</option>
-                    <option value="30">Últimos 30 días</option>
-                    <option value="90">Últimos 90 días</option>
-                    <option value="180">Últimos 180 días</option>
-                    <option value="365">Último año</option>
-                </select>
+                <!-- Primera fila en dispositivos medianos -->
+                <div class="flex flex-col sm:flex-row w-full gap-3 items-center">
+                    <!-- Grupo: Mis Registros + En proceso -->
+                    <div class="flex w-full sm:w-1/2 xl:w-full gap-2 items-center">
+                        <AccessGate :permission="['temperatureRecord.create']" class="flex-shrink-0">
+                            <!-- Filtro Mis Registros con ícono más grande -->
+                            <button @click="toggleFilterMyRecords"
+                                class="border border-gray-300 dark:border-gray-700 relative p-2.5 rounded-md transition-colors duration-200 "
+                                :class="{
+                                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.myRecords,
+                                    'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
+                                }" title="Mostrar solo mis registros">
+                                <UserIcon class="h-5 w-5" />
+                                <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
+                                    :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
+                                <div v-if="form.myRecords"
+                                    class="absolute -top-1 -right-1 h-2 w-2 bg-indigo-500 rounded-full">
+                                </div>
+                            </button>
+                        </AccessGate>
 
-                <AccessGate :permission="['temperatureRecords.delete']">
-                    <!-- Filtro para mostrar registros eliminados -->
-                    <button @click="toggleShowDeleted"
-                        class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
-                        :class="{
-                            'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                            'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                        }">
-                        {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                        <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
-                        <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                    </button>
-                </AccessGate>
+                        <select @change="submitFilters()"
+                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            name="in_process" id="in_process" v-model="form.in_process">
+                            <option value="true">En proceso</option>
+                            <option value="false">Dados de alta</option>
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
 
-                <AccessGate :permission="['temperatureRecords.create']">
-                    <div class="w-full sm:w-auto">
+                    <!-- Filtro de días -->
+                    <select @change="submitFilters()"
+                        class="w-full h-min sm:w-1/2 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                        name="days" id="days" v-model="form.days">
+                        <option value="">Siempre</option>
+                        <option value="1">Último día</option>
+                        <option value="7">Últimos 7 días</option>
+                        <option value="30">Últimos 30 días</option>
+                        <option value="90">Últimos 90 días</option>
+                        <option value="180">Últimos 180 días</option>
+                        <option value="365">Último año</option>
+                    </select>
+                </div>
+
+                <!-- Segunda fila en dispositivos medianos -->
+                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center">
+                    <AccessGate :permission="['temperatureRecord.delete']" class="w-full sm:w-1/2">
+                        <!-- Filtro para mostrar registros eliminados -->
+                        <button @click="toggleShowDeleted"
+                            class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full justify-center"
+                            :class="{
+                                'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
+                                'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
+                            }">
+                            {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                            <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                        </button>
+                    </AccessGate>
+
+                    <AccessGate :permission="['temperatureRecord.create']" class="w-full sm:w-1/2">
                         <Link v-if="!form.admission_id" :href="route('temperatureRecords.create')"
-                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
+                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm w-full">
                         <PlusIcon class="size-5" />
                         <span class="">Nuevo Registro</span>
                         </Link>
                         <Link v-else :href="route('temperatureRecords.create', { admission_id: form.admission_id })"
-                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
+                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm w-full">
                         <PlusIcon class="size-5" />
                         <span class="">Nuevo Registro</span>
                         </Link>
-                    </div>
-                </AccessGate>
+                    </AccessGate>
+                </div>
             </div>
         </div>
 
@@ -199,6 +228,8 @@ import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import TextInput from '@/Components/TextInput.vue';
+import UserIcon from '@/Components/Icons/UserIcon.vue';
+import FilterIcon from '@/Components/Icons/FilterIcon.vue';
 
 export default {
     props: {
@@ -221,6 +252,8 @@ export default {
         PlusIcon,
         BreadCrumb,
         TextInput,
+        UserIcon,
+        FilterIcon
     },
     data() {
         return {
@@ -246,6 +279,10 @@ export default {
         toggleShowDeleted() {
             this.form.showDeleted = !this.form.showDeleted;
             this.$inertia.get(route('temperatureRecords.index', this.form));
+        },
+        toggleFilterMyRecords() {
+            this.form.myRecords = !this.form.myRecords;
+            this.submitFilters();
         },
         submitFilters() {
             if (this.timeout) {

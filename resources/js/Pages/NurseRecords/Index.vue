@@ -272,7 +272,7 @@ export default {
                 days: this.filters.days || '',
                 sortField: this.filters.sortField || 'nurse_records.created_at',
                 sortDirection: this.filters.sortDirection || 'asc',
-                myRecords: false
+                myRecords: this.filters.myRecords || true
             },
             timeout: 500,
         }

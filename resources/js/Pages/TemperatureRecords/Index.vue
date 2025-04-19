@@ -42,25 +42,28 @@
             </div>
 
             <!-- Filtros y botones - Reorganizados para mejor responsividad -->
-            <div class="flex flex-col w-full lg:w-auto xl:flex-row space-y-3 sm:space-y-3 xl:space-y-0">
+            <div class="flex flex-col w-full lg:w-auto xl:flex-row space-y-3 sm:space-y-3 xl:space-y-0 xl:flex-grow">
 
                 <!-- Primera fila en dispositivos medianos -->
                 <div class="flex flex-col sm:flex-row w-full gap-3 items-center">
                     <!-- Grupo: Mis Registros + En proceso -->
-                    <div class="flex w-full sm:w-1/2 xl:w-full gap-2 items-center">
-                        <AccessGate :permission="['temperatureRecord.create']" class="flex-shrink-0">
+                    <div class="flex w-full flex-col sm:flex-row xl:w-full gap-2 items-center">
+                        <AccessGate :permission="['temperatureRecord.create']" class="w-full sm:w-fit">
                             <!-- Filtro Mis Registros con ícono más grande -->
-                            <button @click="toggleFilterMyRecords"
-                                class="border border-gray-300 dark:border-gray-700 relative p-2.5 rounded-md transition-colors duration-200 "
+                            <button
+                                class="w-full sm:w-fit border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 "
                                 :class="{
                                     'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.myRecords,
                                     'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
-                                }" title="Mostrar solo mis registros">
-                                <UserIcon class="h-5 w-5" />
-                                <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
-                                    :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
-                                <div v-if="form.myRecords"
-                                    class="absolute -top-1 -right-1 h-2 w-2 bg-indigo-500 rounded-full">
+                                }" @click="toggleFilterMyRecords" title="Mostrar solo mis registros">
+                                Mis registros
+                                <div class="relative p-2.5 pl-1" >
+                                    <UserIcon class="h-5 w-5" />
+                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
+                                        :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
+                                    <div v-if="form.myRecords"
+                                        class="absolute -top-1 -right-1 h-2 w-2 bg-indigo-500 rounded-full">
+                                    </div>
                                 </div>
                             </button>
                         </AccessGate>
@@ -72,24 +75,25 @@
                             <option value="false">Dados de alta</option>
                             <option value="">Todos</option>
                         </select>
+
+                        <!-- Filtro de días -->
+                        <select @change="submitFilters()"
+                            class="w-full h-min  border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            name="days" id="days" v-model="form.days">
+                            <option value="">Siempre</option>
+                            <option value="1">Último día</option>
+                            <option value="7">Últimos 7 días</option>
+                            <option value="30">Últimos 30 días</option>
+                            <option value="90">Últimos 90 días</option>
+                            <option value="180">Últimos 180 días</option>
+                            <option value="365">Último año</option>
+                        </select>
                     </div>
 
-                    <!-- Filtro de días -->
-                    <select @change="submitFilters()"
-                        class="w-full h-min sm:w-1/2 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                        name="days" id="days" v-model="form.days">
-                        <option value="">Siempre</option>
-                        <option value="1">Último día</option>
-                        <option value="7">Últimos 7 días</option>
-                        <option value="30">Últimos 30 días</option>
-                        <option value="90">Últimos 90 días</option>
-                        <option value="180">Últimos 180 días</option>
-                        <option value="365">Último año</option>
-                    </select>
                 </div>
 
                 <!-- Segunda fila en dispositivos medianos -->
-                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center">
+                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center xl:w-[80%]">
                     <AccessGate :permission="['temperatureRecord.delete']" class="w-full sm:w-1/2">
                         <!-- Filtro para mostrar registros eliminados -->
                         <button @click="toggleShowDeleted"
@@ -121,8 +125,7 @@
         </div>
 
         <!-- Tabla responsive -->
-        <div
-            class="relative overflow-x-auto  mt-4 mx-2 lg:mx-10">
+        <div class="relative overflow-x-auto  mt-4 mx-2 lg:mx-10">
             <div class="overflow-x-auto border border-gray-200 dark:border-gray-700/60 rounded-t-lg">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -206,7 +209,8 @@
                     No hay registros disponibles.
                 </div>
             </div>
-            <Pagination :pagination="temperatureRecords" :filters="form" class="border border-b-0 border-gray-200 dark:border-gray-700/60 rounded-b-lg mb-2" />
+            <Pagination :pagination="temperatureRecords" :filters="form"
+                class="border border-b-0 border-gray-200 dark:border-gray-700/60 rounded-b-lg mb-2" />
         </div>
     </AppLayout>
 </template>

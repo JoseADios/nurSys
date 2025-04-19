@@ -286,7 +286,7 @@
                         </button>
                     </div>
 
-                    <div class="max-h-[50rem] overflow-y-scroll space-y-4">
+                    <div class="max-h-[50rem] overflow-y-auto space-y-4">
                         <div v-for="detail in details" :key="detail.id"
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 backdrop-blur-sm flex flex-col sm:flex-row justify-between items-start sm:items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
                             <div class="flex-grow pr-4 w-full sm:w-auto">

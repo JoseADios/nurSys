@@ -29,8 +29,11 @@
                 <div class="p-6">
                     <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                         <div class="flex items-center space-x-4 mb-4 md:mb-0">
-                            <img :src="user.profile_photo_url" alt="Foto de Perfil"
-                                class="w-20 h-20 rounded-full object-cover">
+                            <img v-if="user.profile_photo_url" :src="user.profile_photo_url" alt="Foto de Perfil"
+                                class="size-20 rounded-full object-cover">
+
+                            <DynamicAvatar v-else
+                                :name="$page.props.auth.user.name" size-class="size-20" />
                             <div>
                                 <h2 class="text-2xl font-bold text-gray-700 dark:text-white">{{ user.name }} {{ user.last_name }}</h2>
                                 <div class="flex items-center space-x-2 mt-2 xl:mt-0">
@@ -168,6 +171,7 @@ import EditIcon from '@/Components/Icons/EditIcon.vue';
 import TrashIcon from '@/Components/Icons/TrashIcon.vue';
 import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import DynamicAvatar from '@/Components/DynamicAvatar.vue';
 
 export default {
     components: {
@@ -182,7 +186,8 @@ export default {
         EditIcon,
         TrashIcon,
         RestoreIcon,
-        BreadCrumb
+        BreadCrumb,
+        DynamicAvatar
     },
     props: {
         user: {

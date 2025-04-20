@@ -15,28 +15,21 @@
         </template>
 
         <div class="max-w-7xl mx-auto p-6">
-            <!-- Botón de Volver -->
-            <div class="mb-6 flex justify-end md:hidden">
-                <Link :href="route('users.index')"
-                    class="inline-flex items-center px-4 py-2 bg-white/20 text-white text-sm rounded-lg hover:bg-white/40 transition-all duration-200">
-                <BackIcon class="w-4 h-4 mr-2" />
-                Volver
-                </Link>
-            </div>
 
             <!-- Tarjeta Principal -->
             <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
                 <div class="p-6">
-                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="flex items-center space-x-4 mb-4 md:mb-0">
-                            <img v-if="user.profile_photo_url" :src="user.profile_photo_url" alt="Foto de Perfil"
-                                class="size-20 rounded-full object-cover">
-
-                            <DynamicAvatar v-else
-                                :name="$page.props.auth.user.name" size-class="size-20" />
+                    <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
+                        <div class="flex flex-col sm:flex-row items-center gap-4 mb-4 md:mb-0">
                             <div>
-                                <h2 class="text-2xl font-bold text-gray-700 dark:text-white">{{ user.name }} {{ user.last_name }}</h2>
-                                <div class="flex items-center space-x-2 mt-2 xl:mt-0">
+                                <img v-if="user.profile_photo_url" :src="user.profile_photo_url" alt="Foto de Perfil"
+                                    class="size-20 rounded-full object-cover">
+                                <DynamicAvatar v-else
+                                    :name="$page.props.auth.user.name" class="md:size-20" />
+                            </div>
+                            <div>
+                                <h2 class="text-2xl text-center font-bold text-gray-700 dark:text-white">{{ user.name }} {{ user.last_name }}</h2>
+                                <div class="flex items-center justify-evenly space-x-2 mt-2 xl:mt-0">
                                     <span class="px-2 py-1 bg-gray-200 dark:bg-white/20 text-gray-700 dark:text-white text-sm rounded-full">
                                         <div v-if="user.roles[0]">
                                             <FormatRole :role="user.roles[0].name" />
@@ -52,9 +45,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex space-x-3 md:flex md:space-x-3 lg:space-x-4">
+                        <div class="flex flex-col items-center space-y-2 md:space-y-0 md:space-x-3  md:flex-row lg:space-x-4">
                             <Link :href="route('users.index')"
-                                class="hidden md:inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-white/20 text-gray-700 dark:text-white text-sm rounded-lg hover:bg-white/40 transition-all duration-200">
+                                class="items-center flex px-4 py-2 bg-gray-200 dark:bg-white/20 text-gray-700 dark:text-white text-sm rounded-lg hover:bg-white/40 transition-all duration-200">
                             <BackIcon class="w-4 h-4 mr-2" />
                             Volver
                             </Link>
@@ -65,12 +58,12 @@
                             </Link>
                             <button v-if="user.active === '1'" @click="userBeingDeleted = true"
                                 class="px-4 flex items-center py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200">
-                                <TrashIcon class="w-4 h-4 mr-2" />
+                                <TrashIcon class="w-4 h-4 pr-1" />
                                 Deshabilitar
                             </button>
                             <button v-else @click="restoreUser"
                                 class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200">
-                                <RestoreIcon class="w-4 h-4 mr-2" />
+                                <RestoreIcon class="w-4 h-4" />
                                 Habilitar
                             </button>
                         </div>

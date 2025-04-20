@@ -20,9 +20,10 @@
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 mb-8 transform transition-all duration-300">
                     <div class="p-6 lg:p-8 flex flex-col lg:flex-row justify-between items-start md:items-center gap-6">
-                        <div class="flex items-center gap-5">
-                            <DynamicAvatar size-class="w-14 h-14" :name="patient.first_name + ' ' + patient.first_surname" bg-color="#696CFF"
-                            color="white" />
+                        <div class="flex flex-col sm:flex-row items-center gap-5">
+                            <DynamicAvatar class="size-8 md:size-14"
+                                :name="patient.first_name + ' ' + patient.first_surname" bg-color="#696CFF"
+                                color="white" />
                             <div>
                                 <div class="flex items-center gap-3">
                                     <h1 class="text-xl md:text-xl lg:text-3xl font-bold text-gray-900 dark:text-white">
@@ -44,7 +45,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="flex flex-wrap gap-3">
+                        <div class="flex flex-wrap gap-3 justify-center w-full md:w-auto">
 
                             <Link :href="route('patients.index')"
                                 class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 border border-gray-200 dark:border-gray-700">
@@ -93,19 +94,20 @@
                             <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                                 <PhoneIcon class="w-5 h-5 text-gray-800 dark:text-white" />
                                 <span class="ml-3 text-gray-800 dark:text-gray-200 font-medium">{{ patient.phone
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                                 <AtIcon class="w-5 h-5 text-gray-800 dark:text-white" />
                                 <a href="mailto:{{ patient.email }}"
-                                    class="ml-3 text-gray-800 dark:text-gray-200 font-medium hover:text-gray-700 dark:hover:text-white transition-colors">
+                                    class="ml-3 text-gray-800 dark:text-gray-200 font-medium hover:text-gray-700 dark:hover:text-white transition-colors truncate"
+                                    >
                                     {{ patient.email }}
                                 </a>
                             </div>
                             <div class="flex items-start p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                                 <MapPinIcon class="w-5 h-5 text-gray-800 dark:text-white mt-1" />
                                 <span class="ml-3 text-gray-800 dark:text-gray-200 font-medium">{{ patient.address
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -222,7 +224,8 @@
                 </template>
 
                 <template #content>
-                    <p class="text-gray-500 dark:text-gray-400">¿Estás seguro de que deseas deshabilitar este paciente? Esta
+                    <p class="text-gray-500 dark:text-gray-400">¿Estás seguro de que deseas deshabilitar este paciente?
+                        Esta
                         acción no se puede deshacer y puede afectar a todos los registros asociados.</p>
                 </template>
 

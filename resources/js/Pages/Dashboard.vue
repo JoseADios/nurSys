@@ -22,6 +22,7 @@ import TopDoctorsAdmissions from '@/Components/TopDoctorsAdmissions.vue';
 import axios from 'axios';
 import { ref, onMounted, nextTick } from 'vue';
 import PendingDocumentsToSign from '@/Components/PendingDocumentsToSign.vue';
+import DynamicAvatar from '@/Components/DynamicAvatar.vue';
 
 const props = defineProps({
     stats: {
@@ -299,10 +300,9 @@ async function fetchData() {
                                         <div class="flex items-center justify-between">
                                             <div class="flex items-center space-x-4">
                                                 <div class="flex-shrink-0">
-                                                    <div
-                                                        class="size-8 sm:h-12 sm:w-12 text-sm rounded-full bg-[#71DD37] flex items-center justify-center text-white sm:font-medium shadow-sm">
-                                                        {{ getInitials(medication.patient_name) }}
-                                                    </div>
+                                                    <DynamicAvatar :name="medication.patient_name"
+                                                        class="size-8 sm:h-12 sm:w-12" bg-color="#71DD37"
+                                                        color="white" />
                                                 </div>
                                                 <div>
                                                     <div
@@ -398,10 +398,8 @@ async function fetchData() {
                                         <div class="flex items-center justify-between">
                                             <div class="flex items-center space-x-4">
                                                 <div class="flex-shrink-0">
-                                                    <div
-                                                        class="h-10 w-10 rounded-full bg-[#5FC6FF] flex items-center justify-center text-white font-medium shadow-sm">
-                                                        {{ getInitials(patient.patient_name) }}
-                                                    </div>
+                                                    <DynamicAvatar :name="patient.patient_name" size-class="h-10 w-10"
+                                                        bg-color="#5FC6FF" color="white" />
                                                 </div>
                                                 <div>
                                                     <div class="font-medium text-gray-900 dark:text-white">
@@ -466,16 +464,6 @@ export default {
         formatDate(date) {
             return moment(date).fromNow();
 
-        },
-        getInitials(name) {
-            if (!name) return '';
-
-            return name
-                .split(' ')
-                .map(word => word.charAt(0))
-                .join('')
-                .toUpperCase()
-                .substring(0, 2);
         }
     }
 }

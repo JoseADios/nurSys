@@ -28,11 +28,9 @@
                         <!-- Información del paciente -->
                         <Link :href="getDocumentRoute(document)" class="flex items-start space-x-3 flex-grow">
                             <div class="flex-shrink-0">
-                                <div
-                                    class="size-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-300 font-medium">
-                                    {{ getInitials(document.admission.patient.first_name + ' ' +
-                                        document.admission.patient.first_surname) }}
-                                </div>
+                                <DynamicAvatar :name="document.admission.patient.first_name + ' ' + document.admission.patient.first_surname"
+                                class="size-10" bg-color="#374151" color="white" />
+
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="text-sm font-medium text-gray-900 dark:text-white truncate">
@@ -98,6 +96,7 @@ import BedIcon from './Icons/BedIcon.vue';
 import ClockIcon from './Icons/ClockIcon.vue';
 import EditIcon from './Icons/EditIcon.vue';
 import CheckIcon from './Icons/CheckIcon.vue';
+import DynamicAvatar from './DynamicAvatar.vue';
 
 moment.locale('es');
 
@@ -108,7 +107,8 @@ export default {
         BedIcon,
         ClockIcon,
         EditIcon,
-        CheckIcon
+        CheckIcon,
+        DynamicAvatar
     },
     props: {
         pendingDocuments: {
@@ -122,13 +122,6 @@ export default {
         }
     },
     methods: {
-        getInitials(name) {
-            return name.split(' ')
-                .map(word => word.charAt(0))
-                .join('')
-                .toUpperCase()
-                .substring(0, 2);
-        },
         formatTimeAgo(date) {
             moment.locale('es');
             return moment(date).fromNow();

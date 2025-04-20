@@ -21,12 +21,8 @@
                     class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 mb-8 transform transition-all duration-300">
                     <div class="p-6 lg:p-8 flex flex-col lg:flex-row justify-between items-start md:items-center gap-6">
                         <div class="flex items-center gap-5">
-                            <div
-                                class="size-14 rounded-full bg-[#696CFF] flex items-center justify-center border border-gray-200 dark:border-gray-700">
-                                <span class="text-md lg:text-2xl text-white font-bold">
-                                    {{ getInitials(patient.first_name, patient.first_surname) }}
-                                </span>
-                            </div>
+                            <DynamicAvatar size-class="w-14 h-14" :name="patient.first_name + ' ' + patient.first_surname" bg-color="#696CFF"
+                            color="white" />
                             <div>
                                 <div class="flex items-center gap-3">
                                     <h1 class="text-xl md:text-xl lg:text-3xl font-bold text-gray-900 dark:text-white">
@@ -270,6 +266,7 @@ import EyeIcon from '@/Components/Icons/EyeIcon.vue';
 import AlertTriangleIcon from '@/Components/Icons/AlertTriangleIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import DynamicAvatar from '@/Components/DynamicAvatar.vue';
 
 
 export default {
@@ -299,7 +296,8 @@ export default {
         EyeIcon,
         AlertTriangleIcon,
         PlusIcon,
-        BreadCrumb
+        BreadCrumb,
+        DynamicAvatar
     },
     data() {
         return {
@@ -312,9 +310,6 @@ export default {
         },
         calculateAge(birthdate) {
             return moment().diff(moment(birthdate), 'years');
-        },
-        getInitials(firstName, lastName) {
-            return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
         },
         deletePatient() {
             this.patientBeingDeleted = false

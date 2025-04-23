@@ -1,7 +1,7 @@
 <template>
 <AppLayout>
     <template #header>
-        <h2 class="font-semibold text-xl text-white leading-tight text-center">
+      <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
 
             <BreadCrumb :items="[
                     ...(medicationRecord.id ? [{
@@ -57,7 +57,7 @@
             <div class="p-8 space-y-8">
                 <div class="grid md:grid-cols-2 gap-6">
                     <!-- Paciente -->
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                         <Link :href="route('patients.show', medicationRecord.admission.patient.id)" as="button" class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
                         {{ medicationRecord.admission.patient.first_name }}
@@ -67,7 +67,7 @@
                     </div>
 
                     <!-- Doctor -->
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             <!-- Verifica que la relación drug esté definida -->
@@ -76,7 +76,7 @@
                     </div>
 
                     <!-- Diagnostico -->
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnostico</h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             {{ medicationRecord.diagnosis }}
@@ -84,7 +84,7 @@
                     </div>
 
                     <!-- bed -->
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             Cama {{ medicationRecord.admission.bed.number }} Habitacion {{
@@ -93,19 +93,18 @@
                     </div>
 
                     <!-- Dieta -->
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Dieta</h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             {{ medicationRecord.diet }}
                         </p>
                     </div>
                     <!-- Fecha Admission -->
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha Ficha de
-                            Medicamentos
+                    <div   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha
                         </h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                            {{ medicationRecord.created_at }}
+                            {{formatDate(medicationRecord.created_at) }}
                         </p>
                     </div>
                     <div v-if="$page.props.errors.message" class="alert alert-danger">
@@ -301,7 +300,7 @@
                 </div>
 
                 <div v-for="detail in details" :key="detail.id" :class="[
-                        'rounded-lg p-4 shadow-md flex justify-between items-center transition-colors',
+                        'rounded-lg p-4 border flex justify-between items-center transition-colors',
                         !detail.suspended_at
                             ? 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900'
                             : 'bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-900/30',
@@ -325,14 +324,14 @@
                             Intervarlo en Horas: {{ detail.interval_in_hours }}
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            Fecha: {{ detail.created_at }}
+                            Fecha: {{ formatDate(detail.created_at) }}
                         </div>
                         <div v-for="notifications in detail.medication_notification" :key=notifications.id class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             <div v-if="notifications.applied === 1">
-                                Medicamento Administrado: {{ notifications.administered_time }}
+                                Medicamento Administrado el: {{ formatDate(notifications.administered_time) }}
                             </div>
                             <div v-if="Firstnoapplied(notifications)">
-                                Siguiente: {{ notifications.scheduled_time }}
+                                Siguiente: {{formatDate( notifications.scheduled_time) }}
                             </div>
                         </div>
                     </div>
@@ -538,7 +537,11 @@ export default {
             return moment().format('HH:mm');
         }
     },
+
     methods: {
+        formatDate(date) {
+            return moment(date).format('DD MMMM YYYY HH:mm');
+        },
         toggleShowDeleted() {
             this.form.showDeleted = !this.form.showDeleted;
             this.$inertia.get(route('medicationRecords.show', {
@@ -590,6 +593,15 @@ export default {
             }
             if (this.form.dose <= 0) {
                 this.errorMessage = "La Dosis debe ser mayor a 0";
+                return;
+            }
+
+            if (this.form.fc > 25) {
+                this.errorMessage = "Frecuencia debe ser menor de 25 veces";
+                return;
+            }
+            if (this.form.interval_in_hours > 24) {
+                this.errorMessage = "El Intervalo en horas debe ser menor de 24 horas (1 dia)";
                 return;
             }
 

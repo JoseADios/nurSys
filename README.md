@@ -28,3 +28,9 @@ Nursys es un sistema web diseñado para optimizar la gestión del cuidado de pac
 Si tienes alguna pregunta o sugerencia, no dudes en contactarme.
 
 ¡Gracias por apoyar Nursys! 💙🏥
+
+
+## 📜 Licencia
+Este proyecto está protegido por derechos de autor. **No está permitido utilizar, copiar, modificar o distribuir el código fuente sin el permiso explícito del autor.**
+
+Para más información, por favor contacta al autor a través de los datos proporcionados en la sección de contacto.

@@ -8,7 +8,7 @@
                         route: route('admissions.show', form.admission_id)
                     }] : []),
                     {
-                        text: 'Registros de enfermeria'
+                        text: 'Registros de enfermería'
                     }
                 ]" />
             </h2>

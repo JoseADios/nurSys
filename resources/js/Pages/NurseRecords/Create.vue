@@ -1,7 +1,7 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-lg text-white leading-tight text-center">
+            <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
                 <BreadCrumb :items="[
                     // Condicionar el primer elemento (solo se muestra si hay admission_id)
                     ...(admission_id ? [{

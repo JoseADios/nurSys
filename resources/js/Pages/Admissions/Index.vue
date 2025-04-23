@@ -172,7 +172,7 @@
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            {{ admission.created_at }}
+                            {{ formatDate(admission.created_at) }}
                         </td>
                         <td class="px-6 py-4">
                             <Link class="ml-2 text-blue-500 hover:text-blue-800"
@@ -209,6 +209,8 @@ import XIcon from '@/Components/Icons/XIcon.vue';
 import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
+import moment from 'moment/moment';
+import 'moment/locale/es';
 export default {
     props: {
         admissions: Object,
@@ -244,6 +246,9 @@ export default {
         }
     },
     methods: {
+        formatDate(date) {
+            return moment(date).format('DD MMMM YYYY HH:mm');
+        },
         submitFilters() {
 
             if (this.timeout) {

@@ -54,13 +54,18 @@
                         <div class="flex items-center space-x-20">
                             <div class="font-semibold text-gray-900 dark:text-white mr-20">
                                 <div class="mb-2">Notificación - #{{ index + 1 }}</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Fecha programada:
-                                    {{ formatDate(
-                                    notification.scheduled_time) }}</div>
                                 <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Fecha: {{
-                                    formatDate(notification.created_at ) }}</div>
+                                    formatDate(notification.created_at) }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Fecha programada:
+                                    {{ formatDateFromNow(
+                                        notification.scheduled_time) }}</div>
+
                                 <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Medicamento: {{ details.drug
                                     }}</div>
+                                <div v-if="notification.administered_time"
+                                    class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Medicamento Administrado:
+                                    {{ formatDate(
+                                        notification.administered_time) }}</div>
                                 <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Via: {{ details.route }}
                                 </div>
 
@@ -202,6 +207,9 @@ export default {
         }
     },
     methods: {
+        formatDateFromNow(date) {
+            return moment(date).fromNow();
+        },
         formatDate(date) {
             return moment(date).format('DD MMMM YYYY HH:mm');
         },

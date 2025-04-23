@@ -1,8 +1,8 @@
 <template>
-<AppLayout>
-    <template #header>
-        <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
-            <BreadCrumb :items="[
+    <AppLayout>
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
+                <BreadCrumb :items="[
                     ...(details.medication_record_id ? [{
                         formattedId: { id: details.medication_record_id, prefix: 'ING' },
                         route: route('admissions.show', details.medication_record_id)
@@ -24,119 +24,131 @@
                         formattedId: { id: details.id, prefix: 'DET' }
                     }
                 ]" />
-        </h2>
+            </h2>
 
-    </template>
+        </template>
 
-    <div class="container mx-auto px-4 py-8">
+        <div class="container mx-auto px-4 py-8">
 
-        <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
+            <div
+                class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
 
-            <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                <Link :href="route('medicationRecords.show',details.medication_record_id)" class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                <BackIcon class="size-5" />Volver
-                </Link>
-                <div class="flex items-center">
-                    <button v-if="details.active" @click="downloadRecordReport" class=" mr-4 inline-flex   px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
-                        <ReportIcon class="size-5 mr-1" /> Crear Reporte
-                    </button>
-
-                </div>
-            </div>
-
-
-            <div v-for="notification in notifications" :key="notification.id" class=' dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60  p-8   flex justify-between items-center transition-colors'>
-                <div class="flex-grow">
-                    <div class="flex items-center space-x-20">
-  <div class="font-semibold text-gray-900 dark:text-white mr-20">
-    <div class="mb-2"> Notificación: # - {{ notification.id }}</div>
-    <div class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Fecha programada: {{formatDate( notification.scheduled_time) }}</div>
-    <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Fecha: {{ formatDate(notification.created_at ) }}</div>
-    <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Medicamento: {{ details.drug  }}</div>
-    <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Via: {{ details.route  }}</div>
-
-
-
-
-
-
-
-  </div>
-
-  <div v-if="notification.applied" class="text-sm  text-gray-500 dark:text-gray-400">
-    <img :src="`/storage/${notification.nurse_sign}`" width="250" alt="Firma">
-  </div>
-</div>
-
-
-
-
-                    <div v-if="notification.applied == 1">
-                        <div id="applied" class="text-sm text-green-500 dark:text-green-400 mt-1">
-                            APLICADO
-                        </div>
-                        <div v-if="lastApplied(notification)"class="flex justify-end mt-2">
-                            <button class="font-semibold text-red-500 dark:text-red-400 border border-red-300 px-4 py-1 rounded hover:bg-red-100 dark:hover:bg-gray-700 transition" @click="revert(notification)">
-                                Revertir
-                                <!-- Poner Icono de volver -->
-                            </button>
-                        </div>
+                <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+                    <Link :href="route('medicationRecords.show', details.medication_record_id)"
+                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                    <BackIcon class="size-5" />Volver
+                    </Link>
+                    <div class="flex items-center">
+                        <button v-if="details.active" @click="downloadRecordReport"
+                            class=" mr-4 inline-flex   px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
+                            <ReportIcon class="size-5 mr-1" /> Crear Reporte
+                        </button>
 
                     </div>
-
-                    <div v-else>
-                        <div id="no-applied" class="text-sm text-red-500 dark:text-red-400 mt-1">
-                            NO APLICADO
-                        </div>
-                        <div v-if="Firstnoapplied(notification)" class="flex justify-end mt-2">
-                            <button class="font-semibold text-green-500 dark:text-green-400 border border-green-300 px-4 py-1 rounded hover:bg-green-100 dark:hover:bg-gray-700 transition" @click="openModal(notification)">
-                                Administrar
-                            </button>
-                    </div>
-
                 </div>
 
 
+                <div v-for="notification, index in notifications" :key="notification.id"
+                    class=' dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60  p-8   flex justify-between items-center transition-colors'>
+                    <div class="flex-grow">
+                        <div class="flex items-center space-x-20">
+                            <div class="font-semibold text-gray-900 dark:text-white mr-20">
+                                <div class="mb-2">Notificación - #{{ index + 1 }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Fecha programada:
+                                    {{ formatDate(
+                                    notification.scheduled_time) }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Fecha: {{
+                                    formatDate(notification.created_at ) }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Medicamento: {{ details.drug
+                                    }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Via: {{ details.route }}
+                                </div>
 
+
+                            </div>
+
+                            <div v-if="notification.applied"
+                                class="text-sm  flex flex-col items-center text-gray-500 dark:text-gray-400 p-4">
+                                <div class="mb-2 font-medium">Firma de Enfermera</div>
+                                <img :src="`/storage/${notification.nurse_sign}`" width="250" alt="Firma">
+                            </div>
+
+                        </div>
+
+
+
+
+                        <div v-if="notification.applied == 1">
+                            <div id="applied" class="text-sm text-green-500 dark:text-green-400 mt-1">
+                                APLICADO
+                            </div>
+                            <div v-if="lastApplied(notification)" class="flex justify-end mt-2">
+                                <button
+                                    class="font-semibold text-red-500 dark:text-red-400 border border-red-300 px-4 py-1 rounded hover:bg-red-100 dark:hover:bg-gray-700 transition"
+                                    @click="revert(notification)">
+                                    Revertir
+                                    <!-- Poner Icono de volver -->
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <div v-else>
+                            <div id="no-applied" class="text-sm text-red-500 dark:text-red-400 mt-1">
+                                NO APLICADO
+                            </div>
+                            <div v-if="Firstnoapplied(notification)" class="flex justify-end mt-1">
+                                <button
+                                    class="font-semibold text-green-500 dark:text-green-400 border border-green-300 px-4 py-1 rounded hover:bg-green-100 dark:hover:bg-gray-700 transition"
+                                    @click="openModal(notification)">
+                                    Administrar
+                                </button>
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+
+                </div>
             </div>
 
         </div>
-    </div>
+        <!-- modal para dar de alta -->
+        <ConfirmationModal :show="notificationSignatureUpdate != null" @close="notificationSignatureUpdate = null">
+            <template #title>
+                <div v-if="notifications.applied != true">Administrar</div>
+                <div v-if="notifications.applied == true">Revertir</div>
+                <div>
 
-    </div>
-    <!-- modal para dar de alta -->
-    <ConfirmationModal :show="notificationSignatureUpdate != null" @close="notificationSignatureUpdate = null">
-        <template #title>
-            <div v-if="notifications.applied != true">Administrar</div>
-            <div v-if="notifications.applied == true">Revertir</div>
-            <div>
+                    <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" />
+                    <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
 
-                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign" />
-                <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
+                </div>
 
-            </div>
+            </template>
 
-        </template>
+            <template #content>
+                <div v-if="notificationBeingUpdated.applied != true">¿Estás seguro de que deseas aplicar este
+                    medicamento?
+                </div>
+            </template>
 
-        <template #content>
-            <div v-if="notificationBeingUpdated.applied != true">¿Estás seguro de que deseas aplicar este medicamento?
-            </div>
-        </template>
+            <template #footer>
+                <SecondaryButton @click="notificationSignatureUpdate = null">
+                    Cancelar
+                </SecondaryButton>
 
-        <template #footer>
-            <SecondaryButton @click="notificationSignatureUpdate = null">
-                Cancelar
-            </SecondaryButton>
+                <div v-if="notificationBeingUpdated.applied != true">
+                    <PrimaryButton class="ms-3" @click="markAsAdministered(notificationBeingUpdated)">
+                        Administrar
+                    </PrimaryButton>
+                </div>
 
-            <div v-if="notificationBeingUpdated.applied != true">
-                <PrimaryButton class="ms-3" @click="markAsAdministered(notificationBeingUpdated)">
-                    Administrar
-                </PrimaryButton>
-            </div>
-
-        </template>
-    </ConfirmationModal>
-</AppLayout>
+            </template>
+        </ConfirmationModal>
+    </AppLayout>
 </template>
 
 <script>
@@ -250,13 +262,13 @@ export default {
                 notification.applied = newAppliedValue;
 
                 this.$inertia.put(route('medicationNotification.update', id), {
-                    revert: true,  preserveScroll: true
+                    revert: true, preserveScroll: true
                 })
             }
         },
         async downloadRecordReport() {
             window.open(route('reports.medicationNotification', {
-                id: this.notification.id,  preserveScroll: true
+                id: this.notification.id, preserveScroll: true
             }), '_blank');
         },
 

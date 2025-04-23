@@ -155,6 +155,7 @@ export default {
             this.$inertia.post(route('Drugs.store'), this.modalform, {
                 preserveScroll: true
             });
+            this.applyFilters();
             this.isVisible = false;
             this.modalform = {
                 name: '',

@@ -1,7 +1,7 @@
 <template>
 <AppLayout>
     <template #header>
-        <h2 class="font-semibold text-xl text-white leading-tight text-center">
+        <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
             <BreadCrumb :items="[
                     ...(details.medication_record_id ? [{
                         formattedId: { id: details.medication_record_id, prefix: 'ING' },
@@ -26,12 +26,9 @@
                 ]" />
         </h2>
 
-
     </template>
 
     <div class="container mx-auto px-4 py-8">
-
-
 
         <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
 
@@ -47,52 +44,65 @@
                 </div>
             </div>
 
-            <div v-for="notification in notifications" :key="notification.id" class="p-8 space-y-4 bg-gray-50 dark:bg-gray-700">
-                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Notificación:</h3>
 
-                <!-- Iterando sobre las notificaciones -->
+            <div v-for="notification in notifications" :key="notification.id" class=' dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60  p-8   flex justify-between items-center transition-colors'>
                 <div class="flex-grow">
-                    <div class="font-semibold text-gray-900 dark:text-white">
-                        Enfermera: {{ notification.nurse.name }}
-                    </div>
+                    <div class="flex items-center space-x-20">
+  <div class="font-semibold text-gray-900 dark:text-white mr-20">
+    <div class="mb-2"> Notificación: # - {{ notification.id }}</div>
+    <div class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Fecha programada: {{formatDate( notification.scheduled_time) }}</div>
+    <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Fecha: {{ formatDate(notification.created_at ) }}</div>
+    <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Medicamento: {{ details.drug  }}</div>
+    <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Via: {{ details.route  }}</div>
 
-                    <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                        Hora Programada : {{ notification.scheduled_time }}
-                    </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Hora Aplicado: {{ notification.administered_time }}
-                    </div>
-                    <div v-if="notification.applied" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Firma de la enfermera: <img :src="`/storage/${notification.nurse_sign}`" width="200" alt="Firma">
-                    </div>
+
+
+
+
+
+
+  </div>
+
+  <div v-if="notification.applied" class="text-sm  text-gray-500 dark:text-gray-400">
+    <img :src="`/storage/${notification.nurse_sign}`" width="250" alt="Firma">
+  </div>
+</div>
+
+
+
 
                     <div v-if="notification.applied == 1">
                         <div id="applied" class="text-sm text-green-500 dark:text-green-400 mt-1">
                             APLICADO
                         </div>
-                        <div v-if="lastApplied(notification)">
-                            <button class="text-white" @click="revert(notification.id)">
+                        <div v-if="lastApplied(notification)"class="flex justify-end mt-2">
+                            <button class="font-semibold text-red-500 dark:text-red-400 border border-red-300 px-4 py-1 rounded hover:bg-red-100 dark:hover:bg-gray-700 transition" @click="revert(notification)">
                                 Revertir
+                                <!-- Poner Icono de volver -->
                             </button>
                         </div>
 
                     </div>
+
                     <div v-else>
                         <div id="no-applied" class="text-sm text-red-500 dark:text-red-400 mt-1">
                             NO APLICADO
-
                         </div>
-                        <div v-if="Firstnoapplied(notification)">
-                            <button class="text-white" @click="openModal(notification)">
-                                administrar
+                        <div v-if="Firstnoapplied(notification)" class="flex justify-end mt-2">
+                            <button class="font-semibold text-green-500 dark:text-green-400 border border-green-300 px-4 py-1 rounded hover:bg-green-100 dark:hover:bg-gray-700 transition" @click="openModal(notification)">
+                                Administrar
                             </button>
-                        </div>
-
                     </div>
 
                 </div>
+
+
+
             </div>
+
         </div>
+    </div>
+
     </div>
     <!-- modal para dar de alta -->
     <ConfirmationModal :show="notificationSignatureUpdate != null" @close="notificationSignatureUpdate = null">
@@ -146,6 +156,8 @@ import BreadCrumb from '@/Components/BreadCrumb.vue';
 import {
     ref
 } from 'vue';
+import moment from "moment/moment";
+import 'moment/locale/es';
 export default {
     props: {
         details: Object,
@@ -178,6 +190,9 @@ export default {
         }
     },
     methods: {
+        formatDate(date) {
+            return moment(date).format('DD MMMM YYYY HH:mm');
+        },
         markAsAdministered() {
 
             if (!this.formSignature.nurse_sign) {
@@ -224,7 +239,6 @@ export default {
             return lastApplied && lastApplied.id === notification.id;
         },
 
-
         revert(id) {
 
             const notification = this.notifications;
@@ -236,13 +250,13 @@ export default {
                 notification.applied = newAppliedValue;
 
                 this.$inertia.put(route('medicationNotification.update', id), {
-                    revert: true
+                    revert: true,  preserveScroll: true
                 })
             }
         },
         async downloadRecordReport() {
             window.open(route('reports.medicationNotification', {
-                id: this.notification.id
+                id: this.notification.id,  preserveScroll: true
             }), '_blank');
         },
 

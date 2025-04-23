@@ -47,9 +47,8 @@ class DrugController extends Controller
 
             if ($existingdrug) {
 
-                return redirect()->back()->withErrors([
-                    'name' => 'Ya Existe un Medicamento con ese nombre.',
-                ])->withInput();
+                return redirect()->back()->withErrors(['nombre' => 'Ya existe un Medicamento con ese nombre']);
+
             }
 
 
@@ -60,7 +59,7 @@ class DrugController extends Controller
             ]);
 
 
-            return redirect()->back()->with('success', 'Medicamento creado correctamente');
+            return redirect()->back()->with('flash.toast', 'Medicamento creado correctamente');
 
     }
     public function filterDrugs(Request $request)
@@ -70,6 +69,8 @@ class DrugController extends Controller
         if ($request->filled('filters.name')) {
             $query->where('name', 'LIKE', '%' . $request->input('filters.name') . '%');
         }
+        $query->orderBy('name', 'asc');
+
 
         $drugs = $query->get();
         $paginatedDrugs = new \Illuminate\Pagination\LengthAwarePaginator(

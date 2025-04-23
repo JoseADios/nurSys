@@ -117,9 +117,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             ]);
         }
 
-        return redirect()
-            ->route('medicationRecords.show', $request->medication_record_id)
-            ->with('flash.toast', 'Detalle de Ficha de Medicamento creada correctamente');
+        return  back()->with('flash.toast', 'Detalle de Ficha de Medicamento creada correctamente');
     }
 
     /**

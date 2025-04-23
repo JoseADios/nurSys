@@ -133,7 +133,7 @@
                                 </div>
                                 <div v-else>
                                     <FormatId :id="medicalOrder.admission.id" prefix="ING"></FormatId>,
-                                    {{ medicalOrder.admission.created_at }} N/A
+                                    {{ formatDate(medicalOrder.admission.created_at) }} N/A
                                 </div>
                             </div>
                         </td>
@@ -148,7 +148,7 @@
                         </td>
 
                         <td class="px-6 py-4">
-                            {{ medicalOrder.created_at }}
+                            {{ formatDate(medicalOrder.created_at) }}
                         </td>
                         <td class="px-6 py-4">
                             <Link class="ml-2 text-green-500 hover:text-green-800" :href="route('medicalOrders.show', medicalOrder.id)" as="button">
@@ -178,6 +178,8 @@ import XIcon from '@/Components/Icons/XIcon.vue';
 import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
+import moment from 'moment/moment';
+import 'moment/locale/es';
 export default {
     props: {
         medicalOrders: Object,
@@ -212,7 +214,9 @@ export default {
         }
     },
     methods: {
-
+        formatDate(date) {
+            return moment(date).format('DD MMMM YYYY HH:mm');
+        },
         submitFilters() {
 
             if (this.timeout) {

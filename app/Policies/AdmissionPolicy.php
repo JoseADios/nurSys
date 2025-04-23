@@ -54,12 +54,24 @@ class AdmissionPolicy
             return Response::deny('El usuario no tiene los permisos necesarios para crear ingresos');
         }
 
-        if ($user->id !== $admission->doctor_id) {
-            return Response::deny('No eres el doctor asignado a este ingreso, no puede modificarlo');
+        if ($user->id !== $admission->doctor_id && !$user->hasRole('nurse')) {
+            return Response::deny('No eres el doctor asignado a este ingreso, no puedes modificarlo');
         }
 
         if ($admission->discharged_date) {
             return Response::deny('No se puede modificar un ingreso dado de alta');
+        }
+
+        return Response::allow();
+    }
+
+    public function setBed(User $user, Admission $admission): Response
+    {
+        if (!$user->hasRole('nurse')) {
+            return Response::deny('No puedes tienes permiso para modificar la cama');
+        }
+        if ($admission->discharged_date) {
+            return Response::deny('No se puede modificar la cama de un ingreso dado de alta');
         }
 
         return Response::allow();

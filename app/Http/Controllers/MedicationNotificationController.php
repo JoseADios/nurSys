@@ -21,7 +21,7 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
     {
         return [
             new Middleware('permission:medicationNotification.view', only: ['index', 'show']),
-            new Middleware('permission:medicationNotification.create', only: ['edit', 'store']),
+            new Middleware('permission:medicationNotification.create', only: ['store']),
             new Middleware('permission:medicationNotification.update', only: ['update']),
             new Middleware('permission:medicationNotification.delete', only: ['destroy']),
         ];
@@ -116,12 +116,14 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
 
         } elseif ($request->has('revert')) {
             if ($detail->active == 1 && $detail->suspended_at == null) {
+                // eliminar img de la firma anterior
+
                 $medication_notification->update([
-                    'nurse_id' => Auth::id(),
+                    'nurse_id' => null,
                     'administered_time' => now(),
                     'applied' => false
                 ]);
-                return redirect()->back()->with('toast.flash.success', 'Medicamento administrado correctamente.');
+                return redirect()->back()->with('toast.flash.success', 'Medicamento actualizado correctamente.');
 
             }
         } else {

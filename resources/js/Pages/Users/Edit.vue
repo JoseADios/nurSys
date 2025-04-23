@@ -15,17 +15,14 @@
         </template>
 
         <div class="max-w-3xl mx-auto py-8 px-4 sm:px-6">
-            <form @submit.prevent="submit"
+
+            <form @submit.prevent="submitProfile"
                 class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
 
                 <!-- Información Personal Section -->
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
+                        <UserIcon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Información Personal
                     </h3>
 
@@ -65,11 +62,7 @@
                 <!-- Información de Contacto Section -->
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
+                        <MailIcon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Información de Contacto
                     </h3>
 
@@ -102,11 +95,7 @@
                 <!-- Información Profesional Section -->
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
+                        <BriefCaseIcon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Información Profesional
                     </h3>
 
@@ -142,7 +131,7 @@
                         <div>
                             <InputLabel for="position" value="Posición" />
                             <TextInput id="position" v-model="form.position" type="text" class="mt-1 block w-full"
-                                required autocomplete="position" />
+                                autocomplete="position" />
                             <InputError :message="form.errors.position" class="mt-2" />
                         </div>
 
@@ -156,44 +145,10 @@
                     </div>
                 </div>
 
-                <!-- Credenciales Section -->
-                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                        Cambiar Contraseña
-                    </h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Contraseña -->
-                        <div>
-                            <InputLabel for="password" value="Nueva Contraseña" />
-                            <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full"
-                                autocomplete="new-password" />
-                            <InputError :message="form.errors.password" class="mt-2" />
-                        </div>
-
-                        <!-- Confirmar Contraseña -->
-                        <div>
-                            <InputLabel for="password_confirmation" value="Confirmar Nueva Contraseña" />
-                            <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password"
-                                class="mt-1 block w-full" autocomplete="new-password" />
-                            <InputError :message="form.errors.password_confirmation" class="mt-2" />
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Observaciones Section -->
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
+                        <FileTexIcon class="h-5 w-5 mr-2 text-[#696CFF]" />
                         Observaciones
                     </h3>
 
@@ -205,15 +160,20 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex justify-between items-center rounded-b-lg">
-                    <div>
+                <div
+                    class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex flex-col sm:flex-row gap-2 justify-between items-center rounded-b-lg">
+                    <div class="space-y-2">
                         <button v-if="user.active == 1" @click="userBeingDeleted = true" type="button"
-                            class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            class="mr-2 px-4 py-2 text-sm h-fit font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                             Deshabilitar
                         </button>
                         <button v-else @click="restoreUser" type="button"
-                            class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            class="mr-2 px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             Habilitar
+                        </button>
+                        <button @click="userChangingPass = true" type="button"
+                            class="px-4 py-2 text-sm h-fit font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Cambiar contraseña
                         </button>
                     </div>
                     <div class="flex space-x-4">
@@ -222,7 +182,7 @@
                         Cancelar
                         </Link>
                         <button type="submit"
-                            class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                             Actualizar
                         </button>
                     </div>
@@ -230,6 +190,63 @@
             </form>
         </div>
 
+        <DialogModal :show="userChangingPass" @close="userChangingPass = false">
+            <!-- Header del modal -->
+            <template #title>
+                <div class="flex items-center justify-between py-4">
+                    <div class="flex items-center space-x-3">
+                        <PasswordUserIcon class="w-6 h-6 text-blue-500" />
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
+                            Cambiar Contraseña
+                        </h3>
+                    </div>
+                    <button @click="userChangingPass = false"
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                        <XIcon class="w-5 h-5" />
+                    </button>
+                </div>
+            </template>
+
+            <!-- Contenido del modal -->
+            <template #content>
+                <form @submit.prevent="submitPassword" class="px-4 space-y-2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <InputLabel for="password" value="Nueva Contraseña"
+                                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300" />
+                            <TextInput id="password" v-model="passwordForm.password" type="password"
+                                autocomplete="new-password"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:border-gray-700" />
+                            <InputError :message="passwordForm.errors.password" class="mt-2 text-sm text-red-500" />
+                        </div>
+
+                        <div class="md:col-span-1">
+                            <InputLabel for="password_confirmation" value="Confirmar Nueva Contraseña"
+                                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300" />
+                            <TextInput id="password_confirmation" v-model="passwordForm.password_confirmation"
+                                type="password" autocomplete="new-password"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:border-gray-700" />
+                            <InputError :message="passwordForm.errors.password_confirmation"
+                                class="mt-2 text-sm text-red-500" />
+                        </div>
+                    </div>
+                </form>
+            </template>
+
+            <!-- Footer del modal -->
+            <template #footer>
+                <div class="flex justify-end p-4">
+                    <SecondaryButton type="button" @click="userChangingPass = false" class="mr-2">
+                        Cancelar
+                    </SecondaryButton>
+
+                    <PrimaryButton type="submit" @click="submitPassword"
+                        class="bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all duration-200">
+                        Cambiar Contraseña
+                    </PrimaryButton>
+                </div>
+            </template>
+        </DialogModal>
         <!-- Modal para confirmar eliminación -->
         <ConfirmationModal :show="userBeingDeleted != null" @close="userBeingDeleted = null">
             <template #title>
@@ -253,10 +270,11 @@
         </ConfirmationModal>
     </AppLayout>
 </template>
+
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -273,6 +291,13 @@ import TextAreaInput from '@/Components/TextAreaInput.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import DateInput from '@/Components/DateInput.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import PasswordUserIcon from '@/Components/Icons/PasswordUserIcon.vue';
+import FileTexIcon from '@/Components/Icons/FileTexIcon.vue';
+import XIcon from '@/Components/Icons/XIcon.vue';
+import MailIcon from '@/Components/Icons/MailIcon.vue';
+import BriefCaseIcon from '@/Components/Icons/BriefCaseIcon.vue';
+import UserIcon from '@/Components/Icons/UserIcon.vue';
 
 export default {
     props: {
@@ -301,12 +326,20 @@ export default {
         TextAreaInput,
         DialogModal,
         BreadCrumb,
-        DateInput
+        DateInput,
+        DialogModal,
+        PrimaryButton,
+        PasswordUserIcon,
+        FileTexIcon,
+        XIcon,
+        MailIcon,
+        BriefCaseIcon,
+        UserIcon,
     },
     data() {
         return {
             userBeingDeleted: ref(null),
-            userChangingPass: ref(null),
+            userChangingPass: ref(false),
             exequaturVisible: ref(false),
             form: useForm({
                 name: this.user.name,
@@ -323,15 +356,24 @@ export default {
                 position: this.user.position,
                 comment: this.user.comment,
             }),
-            formPassword: {
+            passwordForm: useForm({
                 password: null,
                 password_confirmation: null,
-            },
+            }),
         }
     },
+    mounted() {
+        this.setExequaturVisibily();
+    },
     methods: {
-        submit() {
-            this.$inertia.put(route('users.update', this.user.id), this.form, {
+        submitProfile() {
+            Object.keys(this.form.errors).forEach((key) => {
+                if (this.form[key]) {
+                    delete this.form.errors[key];
+                }
+            });
+            this.form.put(route('users.update', this.user.id), {
+                preserveScroll: true,
                 onSuccess: () => {
                     this.form.errors = []
                 },
@@ -342,18 +384,25 @@ export default {
         },
         deleteUser() {
             this.userBeingDeleted = null;
-            this.$inertia.delete(route('users.destroy', this.user.id));
+            this.$inertia.delete(route('users.destroy', this.user.id), {
+                preserveScroll: true
+            });
         },
         restoreUser() {
-            this.$inertia.put(route('users.update', this.user.id), { active: true });
+            this.$inertia.put(route('users.update', this.user.id), { active: true },{
+                preserveScroll: true
+            });
         },
-        changePassword() {
-            this.$inertia.put(route('users.update', this.user.id), this.formPassword, {
+        submitPassword() {
+            this.passwordForm.put(route('users.update.password', this.user.id), {
+                preserveScroll: true,
                 onSuccess: () => {
-                    this.formPassword.password = null;
-                    this.formPassword.password_confirmation = null;
-                    this.userChangingPass = null;
+                    this.passwordForm.reset();
+                    this.userChangingPass = false
                 },
+                onError: (errors) => {
+                    this.passwordForm.errors = errors
+                }
             });
         },
         setExequaturVisibily() {
@@ -363,6 +412,6 @@ export default {
                 this.exequaturVisible = false;
             }
         }
-    }
+    },
 }
 </script>

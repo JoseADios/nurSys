@@ -83,6 +83,7 @@
 
 
 
+
                         <div v-if="notification.applied == 1">
                             <div id="applied" class="text-sm text-green-500 dark:text-green-400 mt-1">
                                 APLICADO
@@ -220,7 +221,7 @@ export default {
                 return false
             }
             this.signatureError = false;
-            console.log('update', this.formSignature.nurse_sign);
+            // console.log('update', this.formSignature.nurse_sign);
             this.$inertia.put(route('medicationNotification.update', this.notificationBeingUpdated.id), this.formSignature, {
                 preserveScroll: true,
                 onSuccess: (response) => {

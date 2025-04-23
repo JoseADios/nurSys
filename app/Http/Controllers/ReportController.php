@@ -102,39 +102,15 @@ class ReportController extends Controller
         // ]);
 
     }
-    public function admissionReport($id)
-    {
-        $admission = Admission::findOrFail($id);
-
-
-        $clinic = Clinic::get()->first();
-
-
-
-        if ($admission->active != true) {
-            return Redirect::route('admissions.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
-        }
-
-        $pdf = Pdf::loadView('reports.admission', [
-            'admission' => $admission,
-            'clinic' => $clinic,
-
-
-        ])->setPaper('a4');
-
-
-        return $pdf->stream('ficha_de_medicamentos.pdf');
-
-
-
-    }
     public function medicationRecordReport($id)
     {
         $medicationRecord = medicationRecord::findOrFail($id);
 
 
         $clinic = Clinic::get()->first();
-        $details = medicationRecordDetail::where('medication_record_id', $id)->with('medicationNotification')->get();
+        $details = medicationRecordDetail::where('medication_record_id', $id)
+        ->where('active', true)
+        ->with('medicationNotification')->get();
 
         foreach ($details as $detail) {
             $notifications = MedicationNotification::where('medication_record_detail_id', $detail->id)->with('medicationRecordDetail')->get();

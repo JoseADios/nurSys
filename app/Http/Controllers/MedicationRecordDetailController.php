@@ -25,7 +25,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
     {
         return [
             new Middleware('permission:medicationRecordDetail.view', only: ['index', 'show']),
-            new Middleware('permission:medicationRecordDetail.create', only: ['edit', 'store']),
+            new Middleware('permission:medicationRecordDetail.create', only: ['store']),
             new Middleware('permission:medicationRecordDetail.update', only: ['update']),
             new Middleware('permission:medicationRecordDetail.delete', only: ['destroy']),
         ];
@@ -113,7 +113,6 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
                 'medication_record_detail_id' => $detail->id, // Usa el ID del detalle
                 'scheduled_time' => $scheduled_time,
                 "active" => 1,
-                "nurse_id" => Auth::id(),
             ]);
         }
 

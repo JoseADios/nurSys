@@ -349,7 +349,7 @@
                                 Cancelar
                             </button>
                             <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
+                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition"
                                 :disabled="!formRecord.admission_id">
                                 Aceptar
                             </button>
@@ -377,7 +377,7 @@
                                 Cancelar
                             </button>
                             <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
+                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition"
                                 :disabled="!formRecord.nurse_id">
                                 Aceptar
                             </button>
@@ -391,11 +391,11 @@
         <AccessGate :permission="['temperatureRecord.delete']">
             <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
                 <template #title>
-                    Eliminar Ingreso
+                    Eliminar Registro
                 </template>
 
                 <template #content>
-                    ¿Estás seguro de que deseas eliminar este ingreso?
+                    ¿Estás seguro de que deseas eliminar este registro?
                 </template>
 
                 <template #footer>

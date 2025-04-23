@@ -201,12 +201,12 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex space-x-2 justify-center">
-                                    <Link class="text-green-500 hover:text-green-800"
+                                    <Link class="text-blue-500 hover:text-blue-800"
                                         :href="route('users.show', user.id)" as="button">
-                                    Abrir
+                                    Ver
                                     </Link>
                                     <AccessGate :permission="['user.update']">
-                                        <Link class="text-blue-500 hover:text-blue-800"
+                                        <Link class="text-green-500 hover:text-green-800"
                                             :href="route('users.edit', user.id)">
                                         Editar
                                         </Link>

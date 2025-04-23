@@ -27,7 +27,7 @@
 
                 <label for="patient"
                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Paciente</label>
-                <PatientSelector @update:patient="form.patient_id = $event" class=" p-4 border border-gray-600 rounded-lg"/>
+                <PatientSelector @update:patient="form.patient_id = $event" :selectedPatientId="form.patient_id" class=" p-4 border border-gray-600 rounded-lg"/>
                 <InputError :message="form.errors.patient_id" class="mt-2" />
 
                 <label for="doctor"

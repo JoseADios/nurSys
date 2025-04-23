@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\Fortify\PasswordValidationRules;
 use App\Models\ClinicArea;
 use App\Models\User;
+use Auth;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -139,7 +140,7 @@ class UserController extends Controller implements HasMiddleware
             'phone' => ['required', 'string', 'max:14', 'min:14'],
             'address' => ['required', 'string', 'max:255'],
             'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
-            'position' => ['required', 'string', 'max:255'],
+            'position' => ['nullable', 'string', 'max:255'],
             'comments' => ['string'],
         ])->sometimes('exequatur', ['required', 'string', 'max:255', 'unique:users'], function ($input) {
             return in_array($input->role, ['doctor', 'nurse']);
@@ -195,23 +196,11 @@ class UserController extends Controller implements HasMiddleware
      */
     public function update(Request $request, User $user)
     {
+
         if ($request->has('active')) {
-
             $validated = Validator::make($request->all(), [
-                'active' => 'boolean'
+                'active' => 'nullable|boolean',
             ])->validate();
-
-        } elseif ($request->has('password')) {
-
-            $validated = Validator::make($request->all(), [
-                'password' => $this->passwordRules(),
-            ])->validate();
-
-            $user->update(attributes: [
-                'password' => Hash::make($validated['password']),
-            ]);
-
-            return back()->with('flash.toast', 'Contraseña actualizada correctamente');
         } else {
             $validated = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
@@ -224,8 +213,9 @@ class UserController extends Controller implements HasMiddleware
                 'phone' => ['required', 'max:14', 'min:14'],
                 'address' => ['required', 'string', 'max:255'],
                 'birthdate' => ['required', 'date', 'before:' . Carbon::now()->subYears(18)->format('Y-m-d')],
-                'position' => ['required', 'string', 'max:255'],
+                'position' => ['nullable', 'string', 'max:255'],
                 'comments' => ['string'],
+                'active' => ['nullable', 'boolean'],
             ])->sometimes('exequatur', ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)], function ($input) {
                 return in_array($input->role, ['doctor', 'nurse']);
             })->validate();
@@ -233,11 +223,39 @@ class UserController extends Controller implements HasMiddleware
 
         $user->update($validated);
 
-        if ($request->has('role')) {
-            $user->syncRoles($request->role);
+        if ($request->has('role') && !$user->hasRole($validated['role'])) {
+            try {
+                $user->updateRole($request->role);
+            } catch (Exception $e) {
+                return redirect()->back()->with('flash.toast', $e->getMessage())->with('flash.toastStyle', 'danger');
+            }
         }
 
-        return back()->with('flash.toast', 'Usuario actualizado correctamente');
+        return back()->with('flash.toast', 'Perfil de usuario actualizado correctamente');
+    }
+
+    public function updatePassword(Request $request, User $user)
+    {
+        $validated = Validator::make($request->all(), [
+            'password' => $this->passwordRules(),
+        ])->validate();
+
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return back()->with('flash.toast', 'Contraseña actualizada correctamente');
+    }
+
+    public function toggleActive(Request $request, User $user)
+    {
+        $validated = Validator::make($request->all(), [
+            'active' => 'boolean'
+        ])->validate();
+
+        $user->update($validated);
+
+        return back()->with('flash.toast', 'Estado del usuario actualizado correctamente');
     }
 
     /**
@@ -245,6 +263,11 @@ class UserController extends Controller implements HasMiddleware
      */
     public function destroy(User $user)
     {
+        //validar que el usuario no sea protegido
+        if (in_array($user->id, [1, 2])) {
+            return back()->with('flash.toast', 'No se puede desactivar este usuario porque está protegido.')->with('flash.toastStyle', 'danger');
+        }
+
         $user->update(['active' => false]);
         DB::table('sessions')->where('user_id', $user->id)->delete();
         return back()->with('flash.toast', 'Usuario desactivado y sesión cerrada.');

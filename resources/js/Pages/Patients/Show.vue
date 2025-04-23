@@ -68,12 +68,12 @@
                                 <button v-if="patient.active == 1" @click="patientBeingDeleted = true"
                                     class="inline-flex items-center px-4 py-2 bg-red-500 dark:bg-red-600 text-white rounded-lg hover:bg-red-600 dark:hover:bg-red-700 transition-all duration-200 border border-gray-200 dark:border-gray-700">
                                     <TrashIcon class="w-4 h-4 mr-2" />
-                                    Eliminar
+                                    Deshabilitar
                                 </button>
                                 <button v-else @click="restorePatient"
                                     class="inline-flex items-center px-4 py-2 bg-emerald-500 dark:bg-emerald-600 text-white rounded-lg hover:bg-emerald-600 dark:hover:bg-emerald-700 transition-all duration-200 border border-gray-200 dark:border-gray-700">
                                     <RestoreIcon class="w-4 h-4 mr-2" />
-                                    Restaurar
+                                    Habilitar
                                 </button>
                             </AccessGate>
 
@@ -221,12 +221,12 @@
                 <template #title>
                     <div class="flex items-center text-red-500 dark:text-red-400">
                         <TrashIcon class="w-6 h-6 mr-2" />
-                        Eliminar Paciente
+                        Deshabilitar Paciente
                     </div>
                 </template>
 
                 <template #content>
-                    <p class="text-gray-500 dark:text-gray-400">¿Estás seguro de que deseas eliminar este paciente? Esta
+                    <p class="text-gray-500 dark:text-gray-400">¿Estás seguro de que deseas deshabilitar este paciente? Esta
                         acción no se puede deshacer y puede afectar a todos los registros asociados.</p>
                 </template>
 
@@ -236,7 +236,7 @@
                     </SecondaryButton>
 
                     <DangerButton class="ms-3" @click="deletePatient">
-                        Eliminar
+                        Deshabilitar
                     </DangerButton>
                 </template>
             </ConfirmationModal>

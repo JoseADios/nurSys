@@ -172,12 +172,12 @@
                                 {{ formatDate(nurseRecord.created_at) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <Link v-if="form.admission_id" class="ml-2 text-green-500 hover:text-green-800"
+                                <Link v-if="form.admission_id" class="ml-2 text-blue-500 hover:text-blue-800"
                                     :href="`${route('nurseRecords.show', nurseRecord.id)}?admission_id=${form.admission_id}`"
                                     as="button">
-                                Abrir
+                                Ver
                                 </Link>
-                                <Link v-else class="ml-2 text-green-500 hover:text-green-800"
+                                <Link v-else class="ml-2 text-blue-500 hover:text-blue-800"
                                     :href="route('nurseRecords.show', nurseRecord.id)" as="button">
                                 Abrir
                                 </Link>

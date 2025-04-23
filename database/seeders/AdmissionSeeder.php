@@ -24,7 +24,6 @@ class AdmissionSeeder extends Seeder
                 'receptionist_id' => rand(1, 10),
                 'doctor_id' => rand(1, 10),
                 'admission_dx' => Str::random(10),
-                'final_dx' => $i % 2 ? null : Str::random(),
                 'created_at' => now(),
                 'comment' => Str::random(),
             ]);

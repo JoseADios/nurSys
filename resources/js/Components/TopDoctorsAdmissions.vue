@@ -7,7 +7,7 @@
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-2">
                     <h3 class="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-100">
-                        Top 3 doctores por ingresos
+                        Top 3 doctores con más ingresos
                     </h3>
                 </div>
                 <span

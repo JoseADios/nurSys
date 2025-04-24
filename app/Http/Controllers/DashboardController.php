@@ -326,6 +326,8 @@ class DashboardController extends Controller
                 ->whereNull('nurse_sign')
                 ->get()
             ;
+
+            // agregar hojas de temperatura
         }
 
         if ($userRole === 'admin') {

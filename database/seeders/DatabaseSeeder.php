@@ -57,6 +57,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ClinicAreaSeeder::class);
         $this->call(DietSeeder::class);
         $this->call(DrugDoseSeeder::class);
+        $this->call(DrugRouteSeeder::class);
         $this->call(NationalitySeeder::class);
         $this->call(RegimeSeeder::class);
         $this->call(NurseRecordSeeder::class);

@@ -41,6 +41,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
         $sortDirection = $request->input('sortDirection', 'asc');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
+        $in_process = $request->input('in_process', 'true');
 
         $query = MedicalOrder::with('admission.patient', 'admission.bed', 'doctor')
             ->select([
@@ -66,7 +67,11 @@ class MedicalOrderController extends Controller implements HasMiddleware
         if ($days) {
             $query->where('medical_orders.created_at', '>=', now()->subDays($days));
         }
-
+        if ($in_process === 'true') {
+            $query->whereNull('admissions.discharged_date');
+        } elseif ($in_process === 'false') {
+            $query->whereNotNull('admissions.discharged_date');
+        }
         if ($sortField) {
             $query->orderBy($sortField, $sortDirection);
         } else {
@@ -78,6 +83,14 @@ class MedicalOrderController extends Controller implements HasMiddleware
         }
 
         $medicalOrders = $query->paginate(10);
+        $medicalOrders->getCollection()->transform(function ($order) {
+            if ($order->admission->discharged_date != null) {
+                $order->in_process = false;
+            } else {
+                $order->in_process = true;
+            }
+            return $order;
+        });
 
         return Inertia::render('MedicalOrders/Index', [
             'medicalOrders' => $medicalOrders,
@@ -87,6 +100,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
                 'show_deleted' => $showDeleted,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
+                'in_process' => $in_process,
             ],
         ]);
     }
@@ -120,7 +134,9 @@ class MedicalOrderController extends Controller implements HasMiddleware
             'created_at' => now(),
         ]);
 
-        return Redirect::route('medicalOrders.show', $medicalOrder->id);
+
+        return redirect()->route('medicalOrders.show', $medicalOrder->id)->with('flash.toast', 'Registro guardado correctamente');
+
     }
 
     /**
@@ -251,6 +267,6 @@ class MedicalOrderController extends Controller implements HasMiddleware
         foreach ($medicationRecordDetails as $medicationRecordDetail) {
             $medicationRecordDetail->update(['suspended_at' => now()]);
         }
-        return Redirect::route('medicalOrders.index');
+        return Redirect::route('medicalOrders.index')->with('flash.toast', 'Registro eliminado correctamente');
     }
 }

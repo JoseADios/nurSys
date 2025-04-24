@@ -44,7 +44,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
         $days = $request->integer('days');
-
+        $in_process = $request->input('in_process', 'true');
         $query = MedicationRecord::query()
             ->select('medication_records.*', 'patients.first_name', 'patients.first_surname', 'patients.second_surname')
             ->join('admissions', 'medication_records.admission_id', '=', 'admissions.id')
@@ -59,6 +59,11 @@ class MedicationRecordController extends Controller implements HasMiddleware
                     ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%']);
             });
         }
+        if ($in_process === 'true') {
+            $query->whereNull('admissions.discharged_date');
+        } elseif ($in_process === 'false') {
+            $query->whereNotNull('admissions.discharged_date');
+        }
         if ($sortField) {
             $query->orderBy($sortField, $sortDirection);
         } else {
@@ -72,6 +77,14 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
         $medicationRecords = $query->with('admission.bed', 'admission.patient', 'admission')->orderByDesc('created_at')->paginate(10);
 
+        $medicationRecords->getCollection()->transform(function ($record) {
+            if ($record->admission->discharged_date != null) {
+                $record->in_process = false;
+            } else {
+                $record->in_process = true;
+            }
+            return $record;
+        });
         return Inertia::render('MedicationRecords/Index', [
             'medicationRecords' => $medicationRecords,
             'filters' => [
@@ -79,6 +92,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
                 'show_deleted' => $showDeleted,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
+                'in_process' => $in_process,
             ],
         ]);
     }
@@ -184,6 +198,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
                 'filters' => [
                     'show_deleted' => $showDeleted,
                 ],
+                'errors' => !empty($errors) ? $errors : [],
             ]);
 
 
@@ -197,8 +212,10 @@ class MedicationRecordController extends Controller implements HasMiddleware
      */
     public function edit(MedicationRecord $medicationRecord)
     {
+        $diet = Diet::all();
         return Inertia::render('MedicationRecords/Edit', [
             'medicationRecord' => $medicationRecord,
+            "diet" => $diet
         ]);
     }
 
@@ -216,8 +233,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $validated = $request->validate([
                 'diagnosis' => 'required|string|max:255',
                 'diet' => 'required|string|max:255',
-                'referrals' => 'required|string|max:255',
-                'pending_studies' => 'required|string|max:255',
+
             ]);
             $medicationRecord->update($validated);
         }

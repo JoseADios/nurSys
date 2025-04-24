@@ -66,22 +66,31 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         $medicationRecord = MedicationRecord::findOrFail($request->medication_record_id);
         $this->authorize('create', [MedicationRecordDetail::class, $medicationRecord]);
 
+
         $request->validate([
             'medication_record_id' => 'required|exists:medication_records,id',
             'drug' => 'required|string',
-            'dose' => 'required|string',
+            'dose' => 'required|numeric|gt:0',
+            'dose_metric' => 'required|string',
             'route' => 'required|string',
-            'fc' => 'required|integer',
-            'interval_in_hours' => 'required|integer',
+            'fc' => 'required|integer|gt:0',
+            'interval_in_hours' => 'required|integer|gt:0',
             'start_time' => 'required',
-
+        ], [
+            'dose.gt' => 'La dosis debe ser mayor a 0.',
+            'fc.gt' => 'La frecuencia (fc) debe ser mayor a 0.',
         ]);
+
+
+
+
         $start_time_24 = Carbon::parse($request->start_time);
 
         $detail = MedicationRecordDetail::create([
             'medication_record_id' => $request->medication_record_id,
             'drug' => $request->drug,
             'dose' => $request->dose,
+            'dose_metric' => $request->dose_metric,
             'route' => $request->route,
             'fc' => $request->fc,
             'interval_in_hours' => $request->interval_in_hours,
@@ -107,9 +116,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             ]);
         }
 
-        return redirect()
-            ->route('medicationRecords.show', $request->medication_record_id)
-            ->with('flash.toast', 'Detalle de Ficha de Medicamento creada correctamente');
+        return  back()->with('flash.toast', 'Detalle de Ficha de Medicamento creada correctamente');
     }
 
     /**
@@ -183,8 +190,9 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
 
             $request->validate([
 
-                'fc' => 'required|integer',
-                'interval_in_hours' => 'required|integer',
+                'fc' => 'required|integer|gt:0',
+                'interval_in_hours' => 'required|integer|gt:0',
+                'dose' => 'required|integer|gt:0',
             ]);
 
             $fc = $request->fc;

@@ -57,7 +57,7 @@
             <!-- Patient and Record Information -->
             <div class="grid md:grid-cols-2 gap-6 p-8 bg-gray-50 dark:bg-gray-700">
                 <div class="space-y-4">
-                    <div v-if="!isVisibleAdm" class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md flex justify-between">
+                    <div v-if="!isVisibleAdm"   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 flex justify-between">
                         <div class="">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                             <Link :href="route('admissions.show', medicalOrder.admission_id)" as="button" class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
@@ -73,7 +73,7 @@
 
                     </div>
 
-                    <div v-if="isVisibleAdm" class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                    <div v-if="isVisibleAdm"   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                         <form @submit.prevent="submitAdmission">
 
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Seleccionar
@@ -96,7 +96,7 @@
                         </form>
 
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                    <div   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                         <Link :href="route('patients.show', medicalOrder.admission.patient.id)" as="button" class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
                         {{ medicalOrder.admission.patient.first_name }} {{
@@ -104,7 +104,7 @@
                             }} {{ medicalOrder.admission.patient.second_surname }}
                         </Link>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                    <div   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Sala</h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             Sala {{ medicalOrder.admission.bed.room }}, Cama {{ medicalOrder.admission.bed.number }}
@@ -113,16 +113,16 @@
                 </div>
 
                 <div class="space-y-4">
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermera</h3>
+                    <div   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor/a</h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             {{ medicalOrder.admission.doctor.name }} {{ medicalOrder.admission.doctor.last_name }}
                         </p>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                    <div   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Registro</h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                            {{ medicalOrder.created_at }}
+                            {{ formatDate(medicalOrder.created_at) }}
                         </p>
                     </div>
 
@@ -203,7 +203,7 @@
                             Suspendido: {{ detail.suspended_at }}
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            {{ detail.created_at }}
+                            {{ formatDate(detail.created_at) }}
                         </div>
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -385,6 +385,8 @@ import Modal from '@/Components/Modal.vue';
 import BackIcon from '@/Components/Icons/BackIcon.vue';
 import ReportIcon from '@/Components/Icons/ReportIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import moment from 'moment/moment';
+import 'moment/locale/es';
 export default {
     components: {
         AppLayout,
@@ -458,6 +460,9 @@ export default {
                 preserveState: true,
                 preserveScroll: true
             });
+        },
+        formatDate(date) {
+            return moment(date).format('DD MMMM YYYY HH:mm');
         },
         submitUpdateRecord() {
             this.showEditAdmission = null

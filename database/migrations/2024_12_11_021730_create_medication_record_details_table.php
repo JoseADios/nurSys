@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('medication_record_id')->constrained()->onDelete('restrict');
             $table->foreignId('medical_order_detail_id')->constrained()->onDelete('restrict');
             $table->string('drug');
-            $table->string('dose');
+            $table->integer('dose');
+            $table->string('dose_metric');
             $table->string('route');
             $table->integer('fc');
             $table->dateTime('start_time');

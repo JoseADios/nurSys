@@ -67,7 +67,7 @@
         </div>
 
         <!-- Barra de búsqueda y acciones -->
-        <div class="bg-gray-100 dark:bg-gray-900 px-4 lg:px-10 mt-4">
+        <div class="bg-gray-100 dark:bg-gray-900 px-4 lg:px-10 mt-2">
             <div class="flex flex-col md:flex-row gap-4 py-2">
                 <!-- Búsqueda -->
                 <div class="relative w-full md:w-1/3">
@@ -133,7 +133,7 @@
         </div>
 
         <!-- Tabla de pacientes -->
-        <div class="px-4 lg:px-10 mt-6 mb-6">
+        <div class="px-4 lg:px-10 mt-2 mb-6">
             <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 rounded-t-lg">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -195,8 +195,10 @@
                                     <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
                                 </td>
                                 <th scope="row"
-                                    class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                    {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
+                                    class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 dark:text-white hover:text-blue-600">
+                                    <Link as="button" :href="route('patients.show', patient.id)">
+                                        {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
+                                    </Link>
                                 </th>
                                 <td class="px-4 py-3 whitespace-nowrap hidden sm:table-cell">
                                     {{ patient.phone }}

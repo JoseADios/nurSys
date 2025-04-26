@@ -11,7 +11,7 @@
                     </h3>
                 </div>
                 <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+                    class="inline-flex whitespace-nowrap items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
                     Este mes
                 </span>
             </div>
@@ -27,40 +27,39 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
                         <!-- Información del doctor -->
                         <Link :href="route('users.show', doctor.id)" class="flex items-center space-x-3 flex-grow">
-                            <div class="flex-shrink-0 relative">
-                                <!-- Avatar: maneja tanto photo_path como generación automática -->
-                                <div v-if="doctor.profile_photo_path"
-                                    class="size-8 sm:h-10 sm:w-10 rounded-full overflow-hidden">
-                                    <img :src="getPhotoUrl(doctor.profile_photo_path)" alt="Doctor avatar"
-                                        class="h-full w-full object-cover">
-                                </div>
-                                <div v-else
-                                    class="size-8 sm:h-10 sm:w-10 text-sm rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-300 font-medium">
-                                    {{ getInitials(doctor.doctor) }}
-                                </div>
-                                <div class="absolute -top-1 -right-1 size-4 rounded-full flex items-center justify-center text-xs text-white font-bold shadow-sm"
-                                    :class="{
-                                        'bg-blue-500': index === 0,
-                                        'bg-indigo-500': index === 1,
-                                        'bg-purple-500': index === 2
-                                    }">
-                                    {{ index + 1 }}
-                                </div>
+                        <div class="flex-shrink-0 relative">
+                            <!-- Avatar: maneja tanto photo_path como generación automática -->
+                            <div v-if="doctor.profile_photo_path"
+                                class="size-8 sm:h-10 sm:w-10 rounded-full overflow-hidden">
+                                <img :src="getPhotoUrl(doctor.profile_photo_path)" alt="Doctor avatar"
+                                    class="h-full w-full object-cover">
                             </div>
-                            <div class="min-w-0 flex-1">
-                                <div class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                    {{ doctor.doctor }}
-                                </div>
-                                <div class="mt-1 flex items-center text-xs text-gray-500 dark:text-gray-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="h-3.5 w-3.5 mr-1 text-gray-400 dark:text-gray-500" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
-                                    {{ doctor.specialty }}
-                                </div>
+                            <DynamicAvatar v-else :name="doctor.doctor" class="size-8 sm:h-10 sm:w-10" bg-color="#374151"
+                                color="white" />
+
+                            <div class="absolute -top-1 -right-1 size-4 rounded-full flex items-center justify-center text-xs text-white font-bold shadow-sm"
+                                :class="{
+                                    'bg-blue-500': index === 0,
+                                    'bg-indigo-500': index === 1,
+                                    'bg-purple-500': index === 2
+                                }">
+                                {{ index + 1 }}
                             </div>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                {{ doctor.doctor }}
+                            </div>
+                            <div class="mt-1 flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="h-3.5 w-3.5 mr-1 text-gray-400 dark:text-gray-500" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                {{ doctor.specialty }}
+                            </div>
+                        </div>
                         </Link>
 
                         <!-- Contador de admisiones -->
@@ -110,11 +109,13 @@
 
 <script>
 import { Link } from '@inertiajs/vue3';
+import DynamicAvatar from './DynamicAvatar.vue';
 
 export default {
     name: 'TopDoctorsAdmissions',
     components: {
-        Link
+        Link,
+        DynamicAvatar
     },
     props: {
         doctors: {
@@ -128,13 +129,6 @@ export default {
             if (this.doctors.length === 0) return 0;
             const maxCount = Math.max(...this.doctors.map(d => d.cant));
             return (count / maxCount) * 100;
-        },
-        getInitials(name) {
-            return name.split(' ')
-                .map(word => word.charAt(0))
-                .join('')
-                .toUpperCase()
-                .substring(0, 2);
         },
         getPhotoUrl(photoPath) {
             // Verifica si ya es una URL completa

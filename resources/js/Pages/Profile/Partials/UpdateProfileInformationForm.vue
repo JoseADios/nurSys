@@ -14,6 +14,7 @@ import DateInput from '@/Components/DateInput.vue';
 import TextAreaInput from '@/Components/TextAreaInput.vue';
 import PhoneInput from '@/Components/PhoneInput.vue';
 import CedulaInput from '@/Components/CedulaInput.vue';
+import DynamicAvatar from '@/Components/DynamicAvatar.vue';
 
 const props = defineProps({
     user: Object,
@@ -182,8 +183,11 @@ const setActiveTab = (tab) => {
 
                         <!-- Current Profile Photo -->
                         <div v-show="!photoPreview" class="mt-2">
-                            <img :src="user.profile_photo_url" :alt="user.name"
+                            <img v-if="user.profile_photo_url" :src="user.profile_photo_url" :alt="user.name"
                                 class="rounded-full size-20 object-cover">
+
+                            <DynamicAvatar v-else
+                                :name="user.name" size-class="size-20" />
                         </div>
 
                         <!-- New Profile Photo Preview -->

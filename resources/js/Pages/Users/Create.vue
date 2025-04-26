@@ -1,7 +1,7 @@
 <template>
     <AppLayout>
         <template #header>
-            <h2 class="font-bold text-2xl text-gray-800 dark:text-white leading-tight text-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 <BreadCrumb :items="[
                     {
                         text: 'Usuarios',
@@ -52,7 +52,7 @@
                         <!-- Fecha de Nacimiento -->
                         <div>
                             <InputLabel for="birthdate" value="Fecha de Nacimiento" />
-                            <DateInput v-model="form.birthdate" />
+                            <DateInput class="mt-1" v-model="form.birthdate" />
                             <InputError :message="form.errors.birthdate" class="mt-2" />
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                         <!-- Teléfono -->
                         <div>
                             <InputLabel for="phone" value="Teléfono" />
-                            <PhoneInput v-model="form.phone" />
+                            <PhoneInput class="mt-1" v-model="form.phone" />
                             <InputError :message="form.errors.phone" class="mt-2" />
                         </div>
 
@@ -103,7 +103,7 @@
                         <div>
                             <InputLabel for="role" value="Rol" />
                             <select @change="setExequaturVisibily" required id="role" v-model="form.role"
-                                class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                                class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                                 <option v-for="role in roles" :key="role" :value="role.name">
                                     <FormatRole :role="role.name" />
                                 </option>
@@ -122,7 +122,7 @@
                         <!-- Área -->
                         <div>
                             <InputLabel for="area" value="Área" />
-                            <SelectInput v-model:model-value="form.area" :options="areas" />
+                            <SelectInput class="mt-1" v-model:model-value="form.area" :options="areas" />
                             <InputError :message="form.errors.area" class="mt-2" />
                         </div>
 
@@ -185,9 +185,9 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex flex-col sm:flex-row justify-center items-center sm:justify-end space-y-2 rounded-b-lg">
+                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex flex-col sm:flex-row justify-center items-center sm:justify-end space-y-2 sm:space-y-0 rounded-b-lg">
                     <button @click="saveAndNew" type="button"
-                        class="px-4 max-w-fit py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        class="px-4 max-w-fit py-2 text-sm sm:mr-2 font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                         Guardar y Crear Otro
                     </button>
                     <div class="flex justify-evenly space-x-2">

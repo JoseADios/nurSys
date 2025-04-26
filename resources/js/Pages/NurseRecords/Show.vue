@@ -27,7 +27,7 @@
             <div
                 class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 rounded-2xl overflow-hidden">
                 <!-- Navigation: Mejorar responsividad -->
-                <div class="p-4 bg-gray-100 dark:bg-gray-900 flex flex-row justify-between items-center sm:space-y-0">
+                <div class="p-4 dark:bg-gray-900 flex flex-row justify-between items-center sm:space-y-0">
                     <div v-if="admission_id">
                         <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
                             class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
@@ -77,7 +77,7 @@
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso</h3>
                                 <Link :href="route('admissions.show', nurseRecord.admission_id)" as="button"
                                     class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
-                                    <FormatId :id="nurseRecord.admission_id" prefix="ING" />
+                                <FormatId :id="nurseRecord.admission_id" prefix="ING" />
                                 </Link>
                             </div>
                             <AccessGate :role="['admin']" v-if="canUpdateRecord">
@@ -181,7 +181,7 @@
                                             </span>
                                             <span class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
                                                 formatDateFromNow(order.created_at)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <ChevronDown
                                             class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white"
@@ -196,11 +196,11 @@
                                             class="mb-3 pb-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
                                             <div class="flex flex-col justify-between items-start">
                                                 <div class="w-full flex flex-col">
-                                                    <div class="flex justify-between items-center w-full">
+                                                    <div class="flex justify-between items-center w-full gap-2">
                                                         <p class="text-sm font-semibold text-gray-800 dark:text-white">
                                                             {{ detail.order }}
                                                         </p>
-                                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 text-end">
                                                             {{ formatDateFromNow(detail.created_at) }}
                                                         </p>
                                                     </div>
@@ -232,8 +232,8 @@
                                                 Medicación
                                             </label>
                                             <TextAreaInput maxlength="255" class="w-full h-16 resize-none"
-                                                v-model="formDetail.medication" id="medication"
-                                                placeholder="Medicación" required />
+                                                v-model="formDetail.medication" id="medication" placeholder="Medicación"
+                                                required />
                                         </div>
 
                                         <div>
@@ -286,49 +286,51 @@
                         </button>
                     </div>
 
-                    <div v-for="detail in details" :key="detail.id"
-                        class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 backdrop-blur-sm flex flex-col sm:flex-row justify-between items-start sm:items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
-                        <div class="flex-grow pr-4 w-full sm:w-auto">
-                            <div class="font-semibold text-gray-900 dark:text-white">
-                                {{ detail.medication }}
-                            </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                                {{ detail.comment }}
-                            </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                {{ formatDate(detail.created_at) }}
-                            </div>
-                        </div>
-                        <div class="flex mt-3 sm:mt-0 space-x-4 w-full sm:w-auto">
-                            <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
-                                <div class="sm:text-right">
-                                    <!-- Editar -->
-                                    <button @click="openEditDetailModal(detail)"
-                                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                                        <EditIcon class="size-5" />
-                                        <span class="font-medium sm:hidden md:inline-flex">Editar</span>
-                                    </button>
+                    <div class="max-h-[50rem] overflow-y-auto space-y-4">
+                        <div v-for="detail in details" :key="detail.id"
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 backdrop-blur-sm flex flex-col sm:flex-row justify-between items-start sm:items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
+                            <div class="flex-grow pr-4 w-full sm:w-auto">
+                                <div class="font-semibold text-gray-900 dark:text-white">
+                                    {{ detail.medication }}
                                 </div>
-                            </AccessGate>
-                            <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
-                                <div class="sm:text-right">
-                                    <!-- eliminar -->
-                                    <div v-if="detail.active === 1">
-                                        <button @click="selectedDetail = detail; detailBeingDeleted = true"
-                                            class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                                            <TrashIcon class="size-5" />
-                                            <span class="font-medium sm:hidden md:inline-flex">Eliminar</span>
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                    {{ detail.comment }}
+                                </div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                    {{ formatDate(detail.created_at) }}
+                                </div>
+                            </div>
+                            <div class="flex mt-3 sm:mt-0 space-x-4 w-full sm:w-auto">
+                                <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
+                                    <div class="sm:text-right">
+                                        <!-- Editar -->
+                                        <button @click="openEditDetailModal(detail)"
+                                            class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                                            <EditIcon class="size-5" />
+                                            <span class="font-medium sm:hidden md:inline-flex">Editar</span>
                                         </button>
                                     </div>
+                                </AccessGate>
+                                <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
+                                    <div class="sm:text-right">
+                                        <!-- eliminar -->
+                                        <div v-if="detail.active === 1">
+                                            <button @click="selectedDetail = detail; detailBeingDeleted = true"
+                                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                                                <TrashIcon class="size-5" />
+                                                <span class="font-medium sm:hidden md:inline-flex">Eliminar</span>
+                                            </button>
+                                        </div>
 
-                                    <!-- restaurar -->
-                                    <button @click="restoreDetail(detail)" v-else
-                                        class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
-                                        <RestoreIcon class="size-5" />
-                                        <span class="font-medium sm:hidden md:inline-flex">Restaurar</span>
-                                    </button>
-                                </div>
-                            </AccessGate>
+                                        <!-- restaurar -->
+                                        <button @click="restoreDetail(detail)" v-else
+                                            class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                                            <RestoreIcon class="size-5" />
+                                            <span class="font-medium sm:hidden md:inline-flex">Restaurar</span>
+                                        </button>
+                                    </div>
+                                </AccessGate>
+                            </div>
                         </div>
                     </div>
 
@@ -402,7 +404,7 @@
                                 Cancelar
                             </button>
                             <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition"
+                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
                                 :disabled="!formRecord.admission_id">
                                 Aceptar
                             </button>
@@ -429,7 +431,7 @@
                                 Cancelar
                             </button>
                             <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition"
+                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
                                 :disabled="!formRecord.nurse_id">
                                 Aceptar
                             </button>

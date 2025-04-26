@@ -152,7 +152,7 @@ class PatientController extends Controller implements HasMiddleware
             'first_name' => 'required|string|max:255',
             'first_surname' => 'required|string|max:255',
             'second_surname' => 'required|string|max:255',
-            'phone' => 'required|string',
+            'phone' => 'required|string|size:14',
             'nationality' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:patients',
             'birthdate' => 'required|date',
@@ -163,8 +163,8 @@ class PatientController extends Controller implements HasMiddleware
         ]);
 
         Validator::make($request->all(), [
-            'identification_card' => 'nullable|string|unique:patients',
-        ])->sometimes('identification_card', 'required|string|unique:patients', function ($input) {
+            'identification_card' => 'nullable|string|unique:patients|size:12',
+        ])->sometimes('identification_card', 'required|string|unique:patients|size:12', function ($input) {
             // Verificar si el usuario es mayor de edad
             return Carbon::parse($input->birthdate)->age >= 18;
         })->validate();
@@ -235,8 +235,8 @@ class PatientController extends Controller implements HasMiddleware
                 'first_name' => 'required|string|max:255',
                 'first_surname' => 'required|string|max:255',
                 'second_surname' => 'required|string|max:255',
-                'phone' => 'required|string',
-                'identification_card' => 'nullable|string|max:255|unique:patients,identification_card,' . $patient->id,
+                'phone' => 'required|string|size:14',
+                'identification_card' => 'nullable|string|size:12|unique:patients,identification_card,' . $patient->id,
                 'nationality' => 'required|string|max:255',
                 'email' => 'required|email|max:255|unique:patients,email,' . $patient->id,
                 'birthdate' => 'required|date',

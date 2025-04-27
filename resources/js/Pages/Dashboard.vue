@@ -193,7 +193,7 @@ async function fetchData() {
 
                             <!-- Contenido con scroll -->
                             <div
-                                class="overflow-y-auto max-h-[350px] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/40 dark:[&::-webkit-scrollbar-track]:bg-neutral-700/30 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500/30">
+                                class="overflow-y-auto max-h-[20rem] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/40 dark:[&::-webkit-scrollbar-track]:bg-neutral-700/30 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500/30">
                                 <!-- Lista de pacientes con diseño más fluido -->
                                 <div>
                                     <div v-for="adm in stats.admissions_without_bed"
@@ -293,7 +293,7 @@ async function fetchData() {
 
                                 <!-- Contenido con scroll -->
                                 <div
-                                    class="overflow-y-scroll max-h-[350px] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/40 dark:[&::-webkit-scrollbar-track]:bg-neutral-700/30 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500/30">
+                                    class="overflow-y-scroll max-h-[20rem] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/40 dark:[&::-webkit-scrollbar-track]:bg-neutral-700/30 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500/30">
                                     <!-- Lista de medicaciones -->
                                     <div v-for="medication in stats.upcoming_medications"
                                         class="group relative px-6 py-3 hover:bg-gray-50 dark:hover:bg-indigo-600/10 transition-all duration-200">
@@ -391,7 +391,7 @@ async function fetchData() {
 
                                 <!-- Contenido con scroll -->
                                 <div
-                                    class="overflow-y-scroll max-h-[350px] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/40 dark:[&::-webkit-scrollbar-track]:bg-neutral-700/30 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500/30">
+                                    class="overflow-y-scroll max-h-[20rem] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/40 dark:[&::-webkit-scrollbar-track]:bg-neutral-700/30 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500/30">
                                     <!-- Lista de pacientes -->
                                     <div v-for="patient in stats.patients_high_temperature"
                                         class="group relative px-6 py-3 hover:bg-gray-50 dark:hover:bg-indigo-600/10 transition-all duration-200">

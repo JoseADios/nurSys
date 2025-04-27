@@ -58,7 +58,7 @@
                 <button @click="showFilters = !showFilters"
                     class="md:hidden w-full flex items-center justify-center space-x-2 bg-gray-100 dark:bg-gray-700 p-2 rounded-lg mb-2">
                     <span class=" text-gray-700 dark:text-white">{{ showFilters ? 'Ocultar filtros' : 'Mostrar filtros'
-                    }}</span>
+                        }}</span>
                     <span v-if="showFilters">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5  text-gray-700 dark:text-white"
                             viewBox="0 0 20 20" fill="currentColor">
@@ -133,100 +133,110 @@
 
         <!-- Tabla con scroll horizontal en móvil -->
         <div class="px-4 lg:px-10">
-            <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-t-lg">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap hidden sm:table-cell"
-                                @click="sort('id')">
-                                ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                    }}</span>
-                            </th>
-                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('name')">
-                                Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑' :
-                                    '↓'
-                                    }}</span>
-                            </th>
-                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('role')">
-                                Rol <span v-if="form.sortField === 'role'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                    }}</span>
-                            </th>
-                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
-                                @click="sort('specialty')">
-                                Especialidad <span v-if="form.sortField === 'specialty'">{{ form.sortDirection === 'asc'
-                                    ? '↑' :
-                                    '↓' }}</span>
-                            </th>
-                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
-                                @click="sort('position')">
-                                Posición <span v-if="form.sortField === 'position'">{{ form.sortDirection === 'asc' ?
-                                    '↑' : '↓'
-                                    }}</span>
-                            </th>
-                            <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap" @click="sort('email')">
-                                Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑' :
-                                    '↓'
-                                    }}</span>
-                            </th>
-                            <th scope="col" class="px-6 py-3 whitespace-nowrap">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody v-if="users.data.length">
-                        <tr v-for="(user, index) in users.data" :key="user.id"
-                            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <td class="px-6 py-4 hidden sm:table-cell">
-                                {{ user.id }}
-                            </td>
-                            <td
-                                class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
+            <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 rounded-lg my-4">
+                <div class="min-w-full overflow-x-auto">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap hidden sm:table-cell"
+                                    @click="sort('id')">
+                                    ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
+                                        }}</span>
+                                </th>
+                                <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                    @click="sort('name')">
+                                    Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑'
+                                        :
+                                        '↓'
+                                        }}</span>
+                                </th>
+                                <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                    @click="sort('role')">
+                                    Rol <span v-if="form.sortField === 'role'">{{ form.sortDirection === 'asc' ? '↑' :
+                                        '↓'
+                                        }}</span>
+                                </th>
+                                <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                    @click="sort('specialty')">
+                                    Especialidad <span v-if="form.sortField === 'specialty'">{{ form.sortDirection ===
+                                        'asc'
+                                        ? '↑' :
+                                        '↓' }}</span>
+                                </th>
+                                <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                    @click="sort('position')">
+                                    Posición <span v-if="form.sortField === 'position'">{{ form.sortDirection === 'asc'
+                                        ?
+                                        '↑' : '↓'
+                                        }}</span>
+                                </th>
+                                <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
+                                    @click="sort('email')">
+                                    Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑'
+                                        :
+                                        '↓'
+                                        }}</span>
+                                </th>
+                                <th scope="col" class="px-6 py-3 whitespace-nowrap">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody v-if="users.data.length">
+                            <tr v-for="(user, index) in users.data" :key="user.id"
+                                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td class="px-6 py-4 hidden sm:table-cell">
+                                    {{ user.id }}
+                                </td>
+                                <td
+                                    class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center">
 
-                                <img v-if="user.profile_photo_url" :src="user.profile_photo_url" alt="Profile Photo"
-                                    class="size-6 rounded-full mr-2 sm:size-8 md:size-10 md:mr-4 object-cover">
+                                    <img v-if="user.profile_photo_url" :src="user.profile_photo_url" alt="Profile Photo"
+                                        class="size-6 rounded-full mr-2 sm:size-8 md:size-10 md:mr-4 object-cover">
 
-                                <DynamicAvatar v-else :name="user.name" size-class="size-6 mr-2 sm:size-8 md:size-10 md:mr-4" />
+                                    <DynamicAvatar v-else :name="user.name"
+                                        size-class="size-6 mr-2 sm:size-8 md:size-10 md:mr-4" />
 
-                                <Link as="button" :href="route('users.show', user.id)" class="hover:text-blue-600">
-                                {{ user.name }} {{ user.last_name }}
-                                </Link>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div v-if="user.roles[0]">
-                                    <FormatRole :role="user.roles[0].name" />
-                                </div>
-                                <div v-else>N/A</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                {{ user.specialty }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                {{ user.position }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                {{ user.email }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex space-x-2 justify-center">
-                                    <Link class="text-blue-500 hover:text-blue-800" :href="route('users.show', user.id)"
-                                        as="button">
-                                    Ver
+                                    <Link as="button" :href="route('users.show', user.id)" class="hover:text-blue-600">
+                                    {{ user.name }} {{ user.last_name }}
                                     </Link>
-                                    <AccessGate :permission="['user.update']">
-                                        <Link class="text-green-500 hover:text-green-800"
-                                            :href="route('users.edit', user.id)">
-                                        Editar
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div v-if="user.roles[0]">
+                                        <FormatRole :role="user.roles[0].name" />
+                                    </div>
+                                    <div v-else>N/A</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {{ user.specialty }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {{ user.position }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {{ user.email }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex space-x-2 justify-center">
+                                        <Link class="text-blue-500 hover:text-blue-800"
+                                            :href="route('users.show', user.id)" as="button">
+                                        Ver
                                         </Link>
-                                    </AccessGate>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                        <AccessGate :permission="['user.update']">
+                                            <Link class="text-green-500 hover:text-green-800"
+                                                :href="route('users.edit', user.id)">
+                                            Editar
+                                            </Link>
+                                        </AccessGate>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 <div v-if="!users.data.length" class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
                     No hay registros disponibles.
                 </div>
+                <Pagination :pagination="users" :filters="form" />
             </div>
-            <Pagination :pagination="users" :filters="form"
-                class="rounded-b-lg border border-t-0 border-gray-200 dark:border-gray-700" />
         </div>
         <div class="pb-4"></div>
     </AppLayout>

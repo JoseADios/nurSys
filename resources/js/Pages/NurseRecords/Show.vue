@@ -278,7 +278,7 @@
                             class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
                             :class="{
                                 'bg-red-500 hover:bg-red-600 text-white': showDeletedLocal,
-                                'bg-gray-400 hover:bg-gray-500 text-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200': !showDeletedLocal
+                                'bg-gray-200 hover:bg-gray-400 text-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200': !showDeletedLocal
                             }">
                             {{ showDeletedLocal ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
                             <CirclePlusIcon v-if="showDeletedLocal" class="ml-1 h-5 w-5" />

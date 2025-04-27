@@ -19,7 +19,7 @@
                 <!-- Tarjeta del perfil principal -->
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 mb-8 transform transition-all duration-300">
-                    <div class="p-6 lg:p-8 flex flex-col lg:flex-row justify-between items-start md:items-center gap-6">
+                    <div class="p-6 lg:p-8 flex flex-col lg:flex-row justify-between items-center gap-6">
                         <div class="flex flex-col sm:flex-row items-center gap-5">
                             <DynamicAvatar class="size-8 md:size-14"
                                 :name="patient.first_name + ' ' + patient.first_surname" bg-color="#696CFF"

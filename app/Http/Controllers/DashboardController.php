@@ -7,6 +7,7 @@ use App\Models\Bed;
 use App\Models\MedicalOrder;
 use App\Models\NurseRecord;
 use App\Models\Patient;
+use App\Models\TemperatureRecord;
 use App\Services\TurnService;
 use Carbon\Carbon;
 use DB;
@@ -40,6 +41,7 @@ class DashboardController extends Controller
             'pending_docs' => $this->getPendingDocumentsForCurrentUser(),
             'user_role' => Auth::user()->roles[0]->name,
         ];
+        // dd($this->getPendingDocumentsForCurrentUser());
 
         return Inertia::render('Dashboard', [
             'stats' => $stats
@@ -300,15 +302,21 @@ class DashboardController extends Controller
 
     private function getPendingDocumentsForCurrentUser()
     {
+        // mostrar id de ingreso en cada uno
+
         $userRole = Auth::user()->roles[0]->name;
         $pendingOrders = null;
         $pendingNurseR = null;
+        $pendingDocs = [];
 
         if ($userRole === 'doctor' || $userRole === 'admin') {
             $pendingOrders = MedicalOrder::query()
                 ->with('admission', 'admission.bed', 'admission.patient')
                 ->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()])
                 ->where('doctor_id', Auth::id())
+                ->whereHas('admission', function ($query) {
+                    $query->whereNull('discharged_date');
+                })
                 ->whereNull('doctor_sign')
                 ->get()
             ;
@@ -323,19 +331,38 @@ class DashboardController extends Controller
                 ->with('admission', 'admission.bed', 'admission.patient')
                 ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
                 ->where('nurse_id', Auth::id())
+                ->whereHas('admission', function ($query) {
+                    $query->whereNull('discharged_date');
+                })
                 ->whereNull('nurse_sign')
                 ->get()
             ;
 
             // agregar hojas de temperatura
+            $pendignTempR = TemperatureRecord::query()
+            ->with('admission', 'admission.bed', 'admission.patient')
+            ->whereNull('nurse_sign')
+            ->where('nurse_id', Auth::id())
+            ->whereHas('admission', function ($query) {
+                $query->whereNull('discharged_date');
+            })
+            ->get();
         }
 
         if ($userRole === 'admin') {
-            return $pendingOrders->merge($pendingNurseR);
+            $pendingDocs['nurseRecords'] = $pendingNurseR;
+            $pendingDocs['medicalOrders'] = $pendingOrders;
+            $pendingDocs['temperatureRecords'] = $pendignTempR;
+            return $pendingDocs;
+
         } elseif ($userRole === 'doctor') {
-            return $pendingOrders;
+            $pendingDocs['medicalOrders'] = $pendingOrders;
+            return $pendingDocs;
+
         } elseif ($userRole === 'nurse') {
-            return $pendingNurseR;
+            $pendingDocs['nurseRecords'] = $pendingNurseR;
+            $pendingDocs['temperatureRecords'] = $pendignTempR;
+            return $pendingDocs;
         }
 
     }

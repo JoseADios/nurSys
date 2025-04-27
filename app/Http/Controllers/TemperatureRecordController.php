@@ -52,6 +52,11 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
 
+        // si se filtra por ingreso mostrar los registros aunque esten dados de alta
+        if ($admissionId && !$request->has('in_process')) {
+            $in_process = false;
+        }
+
         $query = TemperatureRecord::query()
             ->with([
                 'admission.patient',

@@ -129,6 +129,14 @@
                             {{ admission.comment || 'No hay observaciones' }}
                         </p>
                     </div>
+
+                    <div v-if="admission.doctor_sign" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Firma del Doctor/a</h3>
+                        <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
+                            <img :src="`/storage/${admission.doctor_sign}`" width="250" alt="Firma">
+                        </p>
+                    </div>
+
                     <AccessGate :except-role="['receptionist']"
                         class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 shadow-md">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Acciones Adicionales</h3>

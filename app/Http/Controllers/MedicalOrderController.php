@@ -43,7 +43,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
         $days = $request->integer('days');
         $in_process = $request->input('in_process', 'true');
 
-        $query = MedicalOrder::with('admission.patient', 'admission.bed', 'doctor')
+        $query = MedicalOrder::with('admission.patient', 'admission.bed', 'admission.doctor')
             ->select([
                 'medical_orders.created_at',
                 'medical_orders.*'

@@ -102,7 +102,7 @@
                             Paciente
                         </th>
 
-                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')"><span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ? '↑' :
+                        <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('medical_orders.doctor_id')"><span v-if="form.sortField === 'medical_orders.doctor_id'">{{ form.sortDirection === 'asc' ? '↑' :
                                     '↓'
                                 }}</span>
                             Doctor
@@ -144,7 +144,7 @@
                         </td>
 
                         <td class="px-6 py-4">
-                            {{ medicalOrder.doctor.name }}
+                            {{ medicalOrder.admission.doctor.name  }}  {{ medicalOrder.admission.doctor.last_name  }}
                         </td>
 
                         <td class="px-6 py-4">

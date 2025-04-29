@@ -237,7 +237,7 @@ import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
-import FilterIcon from '@/Components/Icons/FilterIcon.vue';
+
 export default {
     props: {
         medicationRecords: Object,
@@ -258,7 +258,7 @@ export default {
         CirclePlusIcon,
         CircleXIcon,
         UserIcon,
-        FilterIcon
+
 
     },
     data() {

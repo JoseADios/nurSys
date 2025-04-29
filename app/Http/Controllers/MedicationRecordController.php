@@ -76,7 +76,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         }
 
         if ($myRecords) {
-            $query->where('admissions.doctor_id', Auth::id());
+            $query->where('medication_records.nurse_id', Auth::id());
 
         }
 
@@ -146,7 +146,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         // Crear el MedicationRecord usando los datos validados
         $medicationRecord = MedicationRecord::create([
             'admission_id' => $request->admission_id,
-
+            'nurse_id' => Auth::id(),
 
             'diet' => $request->diet,
         ]);

@@ -45,6 +45,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         $sortDirection = $request->input('sortDirection', 'asc');
         $days = $request->integer('days');
         $in_process = $request->input('in_process', 'true');
+        $myRecords = $request->boolean('myRecords', true);
         $query = MedicationRecord::query()
             ->select('medication_records.*', 'patients.first_name', 'patients.first_surname', 'patients.second_surname')
             ->join('admissions', 'medication_records.admission_id', '=', 'admissions.id')
@@ -72,6 +73,11 @@ class MedicationRecordController extends Controller implements HasMiddleware
         }
         if ($days) {
             $query->where('medication_records.created_at', '>=', now()->subDays($days));
+        }
+
+        if ($myRecords) {
+            $query->where('admissions.doctor_id', Auth::id());
+
         }
 
 

@@ -7,6 +7,7 @@ use App\Models\Ars;
 use App\Models\MaritalStatus;
 use App\Models\Nationality;
 use App\Models\Patient;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
@@ -14,6 +15,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Controller;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Validator;
 
 class PatientController extends Controller implements HasMiddleware
 {
@@ -150,16 +152,22 @@ class PatientController extends Controller implements HasMiddleware
             'first_name' => 'required|string|max:255',
             'first_surname' => 'required|string|max:255',
             'second_surname' => 'required|string|max:255',
-            'phone' => 'required|string',
-            'identification_card' => 'required|string|max:255',
+            'phone' => 'required|string|size:14',
             'nationality' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:patients',
             'birthdate' => 'required|date',
             'position' => 'required|string|max:255',
             'marital_status' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'ars' => 'nullable|string|max:255',
         ]);
+
+        Validator::make($request->all(), [
+            'identification_card' => 'nullable|string|unique:patients|size:12',
+        ])->sometimes('identification_card', 'required|string|unique:patients|size:12', function ($input) {
+            // Verificar si el usuario es mayor de edad
+            return Carbon::parse($input->birthdate)->age >= 18;
+        })->validate();
 
         $patient = Patient::create($validated);
 
@@ -227,16 +235,22 @@ class PatientController extends Controller implements HasMiddleware
                 'first_name' => 'required|string|max:255',
                 'first_surname' => 'required|string|max:255',
                 'second_surname' => 'required|string|max:255',
-                'phone' => 'required|string',
-                'identification_card' => 'required|string|max:255',
+                'phone' => 'required|string|size:14',
+                'identification_card' => 'nullable|string|size:12|unique:patients,identification_card,' . $patient->id,
                 'nationality' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
+                'email' => 'required|email|max:255|unique:patients,email,' . $patient->id,
                 'birthdate' => 'required|date',
                 'position' => 'required|string|max:255',
                 'marital_status' => 'required|string|max:255',
                 'address' => 'required|string|max:255',
                 'ars' => 'nullable|string|max:255',
             ]);
+
+            Validator::make($request->all(), [
+                'identification_card' => 'nullable|string|unique:patients,identification_card,' . $patient->id,
+            ])->sometimes('identification_card', 'required|string|unique:patients,identification_card,' . $patient->id, function ($input) {
+                return Carbon::parse($input->birthdate)->age >= 18;
+            })->validate();
         }
 
         $patient->update($validated);
@@ -264,7 +278,7 @@ class PatientController extends Controller implements HasMiddleware
         return back()->with('flash.toast', 'Registro eliminado exitosamente');
     }
 
-      public function filterPatients(Request $request)
+    public function filterPatients(Request $request)
     {
         $query = Patient::query();
 

@@ -25,7 +25,7 @@ class NurseRecordController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:nurseRecord.view', only: ['index', 'show']),
-            new Middleware('permission:nurseRecord.create', only: ['edit', 'store']),
+            new Middleware('permission:nurseRecord.create', only: ['store']),
             new Middleware('permission:nurseRecord.update', only: ['update']),
             new Middleware('permission:nurseRecord.delete', only: ['destroy']),
         ];
@@ -39,6 +39,7 @@ class NurseRecordController extends Controller implements HasMiddleware
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
         $admissionId = $request->integer('admission_id');
+        $myRecords = $request->boolean('myRecords', true);
         $days = $request->integer('days');
         $sortField = $request->input('sortField');
         $in_process = $request->input('in_process', 'true');
@@ -58,6 +59,10 @@ class NurseRecordController extends Controller implements HasMiddleware
             $query->whereNull('admissions.discharged_date');
         } elseif ($in_process === 'false') {
             $query->whereNotNull('admissions.discharged_date');
+        }
+
+        if ($myRecords) {
+            $query->where('nurse_records.nurse_id', Auth::id());
         }
 
         if ($search) {
@@ -103,6 +108,7 @@ class NurseRecordController extends Controller implements HasMiddleware
                 'show_deleted' => $showDeleted,
                 'admission_id' => $admissionId,
                 'days' => $days,
+                'myRecords' => $myRecords,
                 'in_process' => $in_process,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,

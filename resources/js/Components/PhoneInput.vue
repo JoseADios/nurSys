@@ -2,7 +2,7 @@
     <div class="m-0 p-0 bg-transparent border-0">
         <!-- Input de teléfono -->
         <input id="phone-input" type="text" v-model="formattedPhone" @input="formatPhone"
-            class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm block w-full p-2.5"
+            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
             placeholder="(809)-453-2356" maxlength="14" required />
     </div>
 </template>

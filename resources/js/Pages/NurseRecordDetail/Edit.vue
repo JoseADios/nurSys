@@ -40,11 +40,11 @@
 
         <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
             <template #title>
-                Eliminar Ingreso
+                Eliminar Registro
             </template>
 
             <template #content>
-                ¿Estás seguro de que deseas eliminar este ingreso?
+                ¿Estás seguro de que deseas eliminar este registro?
             </template>
 
             <template #footer>

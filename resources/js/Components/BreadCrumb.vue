@@ -1,5 +1,5 @@
 <template>
-    <div class="inline-flex items-center">
+    <div class="inline-flex items-center flex-wrap">
       <template v-for="(item, index) in items" :key="index">
         <!-- Elemento del breadcrumb -->
         <div class="inline-flex items-center">

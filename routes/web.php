@@ -58,7 +58,7 @@ Route::middleware([
     Route::resource('nurseRecordDetails', NurseRecordDetailController::class);
 
     Route::get('/medication-record-details/create/{medicationRecordId}', [MedicationRecordDetailController::class, 'create'])
-    ->name('medicationRecordDetails.create');
+        ->name('medicationRecordDetails.create');
     Route::resource('medicalOrders', MedicalOrderController::class);
     Route::resource('medicalOrderDetails', MedicalOrderDetailController::class);
 
@@ -74,6 +74,8 @@ Route::middleware([
     Route::resource('Diet', DietController::class);
     Route::resource('beds', BedController::class);
 
+    // Route::put('/users/{user}/profile', [UserController::class, 'updateProfile'])->name('users.update.profile');
+    Route::put('/users/{user}/password', [UserController::class, 'updatePassword'])->name('users.update.password');
     Route::get('/users/filter', [UserController::class, 'filterUsers'])->name('users.filter');
     Route::resource('users', UserController::class);
 
@@ -81,14 +83,14 @@ Route::middleware([
     Route::get('clinicAreas', [ClinicAreaController::class, 'index'])->name('clinicAreas.index');
 
     // REPORTES
-    Route::get( '/reports/temperatureRecord/{id}', [ReportController::class, 'temperatureRecordReport'])
-    ->name('reports.temperatureRecord');
-    Route::get( '/reports/nurseRecord/{id}', [ReportController::class, 'nurseRecordReport'])
-    ->name('reports.nurseRecord');
-    Route::get( '/reports/medicationRecord/{id}', [ReportController::class, 'medicationRecordReport'])
-    ->name('reports.medicationRecord');
-    Route::get( '/reports/medicalOrder/{id}', [ReportController::class, 'medicalOrderReport'])
-    ->name('reports.medicalOrder');
-    Route::get( '/reports/admission/{id}', [ReportController::class, 'admissionReport'])
-    ->name('reports.admission');
+    Route::get('/reports/temperatureRecord/{id}', [ReportController::class, 'temperatureRecordReport'])
+        ->name('reports.temperatureRecord');
+    Route::get('/reports/nurseRecord/{id}', [ReportController::class, 'nurseRecordReport'])
+        ->name('reports.nurseRecord');
+    Route::get('/reports/medicationRecord/{id}', [ReportController::class, 'medicationRecordReport'])
+        ->name('reports.medicationRecord');
+    Route::get('/reports/medicalOrder/{id}', [ReportController::class, 'medicalOrderReport'])
+        ->name('reports.medicalOrder');
+    Route::get('/reports/admission/{id}', [ReportController::class, 'admissionReport'])
+        ->name('reports.admission');
 });

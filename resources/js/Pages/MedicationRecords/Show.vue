@@ -457,6 +457,7 @@
 
             </div>
         </div>
+
         <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
             <template #title>
                 Eliminar Ingreso
@@ -505,6 +506,7 @@
                                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
                                     placeholder="Descripción del Medicamento"></textarea>
                             </div>
+
                         </div>
                     </form>
                 </div>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,6 +12,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Storage;
 
 class User extends Authenticatable
 {
@@ -77,6 +79,40 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Override the default profile photo URL method.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    public function profilePhotoUrl(): Attribute
+    {
+        return Attribute::get(function (): string|null {
+            return $this->profile_photo_path
+                ? Storage::disk($this->profilePhotoDisk())->url($this->profile_photo_path)
+                : null; // No más UI Avatars
+        });
+    }
+
+
+    // Método para validar si se puede cambiar el rol
+    public function canChangeRole()
+    {
+        // Lista de IDs de usuarios protegidos (administradores principales)
+        $protectedUserIds = [1, 2];
+
+        return !in_array($this->id, $protectedUserIds);
+    }
+
+    // Método para actualizar rol con validación
+    public function updateRole($newRole)
+    {
+        if (!$this->canChangeRole()) {
+            throw new \Exception('No puedes modificar el rol de este usuario administrador');
+        }
+
+        $this->syncRoles([$newRole]);
     }
 
     public function medicalOrder(): HasMany

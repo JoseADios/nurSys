@@ -23,6 +23,7 @@ import Tooltip from '@/Components/Tooltip.vue';
 import SunIcon from '@/Components/Icons/SunIcon.vue';
 import MoonIcon from '@/Components/Icons/MoonIcon.vue';
 import ChartDotsIcon from '@/Components/Icons/ChartDotsIcon.vue';
+import DynamicAvatar from '@/Components/DynamicAvatar.vue';
 
 defineProps({
     title: String,
@@ -335,9 +336,12 @@ const logout = () => {
                         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                             <div class="flex items-center px-4">
                                 <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 me-3">
-                                    <img class="size-10 rounded-full object-cover"
-                                        :src="$page.props.auth.user.profile_photo_url"
-                                        :alt="$page.props.auth.user.name">
+                                    <div v-if="$page.props.auth.user.profile_photo_url" class="shrink-0 mr-3">
+                                        <img class="size-8 rounded-full object-cover"
+                                            :src="$page.props.auth.user.profile_photo_url"
+                                            :alt="$page.props.auth.user.name">
+                                    </div>
+                                    <DynamicAvatar key="1" class="mr-3" v-else :name="$page.props.auth.user.name"  />
                                 </div>
 
                                 <div>
@@ -466,16 +470,17 @@ const logout = () => {
                         <Dropdown align="right" width="48" class="mr-4">
                             <template #trigger>
                                 <button class="flex items-center text-sm">
-                                    <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 mr-3">
+                                    <div v-if="$page.props.auth.user.profile_photo_url" class="shrink-0 mr-3">
                                         <img class="size-8 rounded-full object-cover"
                                             :src="$page.props.auth.user.profile_photo_url"
                                             :alt="$page.props.auth.user.name">
                                     </div>
+                                    <DynamicAvatar class="mr-3" v-else :name="$page.props.auth.user.name" />
                                 </button>
                             </template>
+
                             <template #content>
                                 <!-- Account Management -->
-
                                 <div class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200">
                                     <div class="font-medium">{{
                                         $page.props.auth.user.name }} {{

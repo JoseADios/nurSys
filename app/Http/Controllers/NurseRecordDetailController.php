@@ -20,7 +20,7 @@ class NurseRecordDetailController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:nurseRecordDetail.view', only: ['index', 'show']),
-            new Middleware('permission:nurseRecordDetail.create', only: ['edit', 'store']),
+            new Middleware('permission:nurseRecordDetail.create', only: ['store']),
             new Middleware('permission:nurseRecordDetail.update', only: ['update']),
             new Middleware('permission:nurseRecordDetail.delete', only: ['destroy']),
         ];

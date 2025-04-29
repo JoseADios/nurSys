@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Record Diario de la Enfermería</title>
+    <title>Ficha control de medicamentos</title>
     <style>
         @page {
             margin: 20px;
@@ -25,7 +25,8 @@
             padding: 10px;
 
         }
-        .container-notifications{
+
+        .container-notifications {
 
             border-radius: 10px;
             padding: 10px;
@@ -214,17 +215,16 @@
                                         {{ $medicationRecord->admission->patient->first_name }}
                                         {{ $medicationRecord->admission->patient->first_surname }}
                                         {{ $medicationRecord->admission->patient->second_surname }}</td>
-                                        <td><span class="bold"> Hab.: </span>
-                                            {{ $medicationRecord->admission->bed->room }}</td>
-                                            <td><span class="bold"> Cama: </span>
-                                                {{ $medicationRecord->admission->bed->number}}</td>
+                                    <td><span class="bold"> Hab.: </span>
+                                        {{ $medicationRecord->admission->bed->room }}</td>
+                                    <td><span class="bold"> Cama: </span>
+                                        {{ $medicationRecord->admission->bed->number }}</td>
 
                                 </tr>
                                 <tr>
                                     <td><span class="bold">Diagnostico:</span> {{ $medicationRecord->admission->admission_dx }}
                                         {{ $medicationRecord->admission->doctor->last_name }}</td>
                                     <td><span class="bold">Dieta:</span> {{ $medicationRecord->diet }}
-
                                     </td>
                                 </tr>
                             </table>
@@ -244,39 +244,24 @@
                         <th class="hora-col">Via</th>
                         <th class="hora-col">FC</th>
                         <th class="hora-col">Horas</th>
-                        <th class="observaciones-col">Firma</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($details as $event)
-
                         <tr>
                             <td class="text-center">{{ $event->created_at->format('d/m/Y') }}</td>
                             <td>{{ $event->drug }}</td>
                             <td> {{ $event->dose }}</td>
                             <td>{{ $event->route }}</td>
                             <td>{{ $event->fc }} </td>
-                            <td class="text-center">{{ $event->created_at->format('h:i A') }}</td>
-                            <td>
-                                @if ($event->medicationNotification->isNotEmpty())
-                                    @php
-                                        $lastNotification = $event->medicationNotification->last();
-                                    @endphp
-
-                                    @if (!empty($lastNotification->nurse_sign))
-                                        <img src="{{ public_path('storage/signatures/' . basename($lastNotification->nurse_sign)) }}" width="100">
-                                    @endif
-                                @endif
-                            </td>
+                            <td class="text-center">{{ $event->interval_in_hours }}</td>
                         </tr>
-
                     @endforeach
 
                     <!-- Agregar filas vacías si hay pocos registros para mantener la estructura -->
                     @if (count($details) < 5)
                         @for ($i = 0; $i < 15 - count($details); $i++)
                             <tr>
-                                <td>&nbsp;</td>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
@@ -295,7 +280,7 @@
     </div>
 
 
-<div class="container-notifications"></div>
+    <div class="container-notifications"></div>
     <div class="header">
         <div class="logo">
             <img class="img-logo" src="{{ public_path('images/clinicLogo.jpg') }}" width="50" height="70">
@@ -344,37 +329,33 @@
                 <tr>
                     <th class="fecha-col">Fecha</th>
                     <th class="medicacion-col">Medicamentos</th>
-                    <th class="hora-col">Firma PCTE</th>
                     <th class="hora-col">Hora</th>
-                    <th class="observaciones-col">ENFE</th>
+                    <th class="observaciones-col">Enfermero/a</th>
+                    <th class="hora-col">Firma</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($details as $event)
+                    @foreach ($event->medicationNotification as $notifications)
+                        @if ($notifications->applied == true)
+                            <tr>
+                                <td>{{ $notifications->created_at->format('d/m/Y') }}</td>
+                                <td>{{ $event->drug }}</td>
+                                <td>{{ date('h:i:s', strtotime($notifications->administered_time)) }}</td>
+                                <td>{{ $notifications->nurse->name }} </td>
+                                <td>
+                                    @if (!empty($notifications->nurse_sign))
+                                        <img src="{{ public_path('storage/signatures/' . basename($notifications->nurse_sign)) }}"
+                                            width="100">
+                                    @else
+                                        <p>No hay firmas disponibles.</p>
+                                    @endif
+                                </td>
 
-                @foreach ($event->medicationNotification as $notifications)
-                @if ($notifications->applied == true)
-                <tr>
-                    <td>{{ $notifications->created_at->format('d/m/Y') }}</td>
-                    <td>{{ $event->drug }}</td>
-                    <td>   @if (!empty($notifications->nurse_sign))
-
-                        <img src="{{ public_path('storage/signatures/' . basename($notifications->nurse_sign)) }}" width="100">
-                        @else
-                        <p>No hay firmas disponibles.</p>
-                @endif   </td>
-                    <td>{{ date('h:i:s', strtotime($notifications->administered_time)) }}</td>
-                    <td>{{$notifications->nurse->name}} </td>
-
-                </tr>
-                @endif
-
+                            </tr>
+                        @endif
+                    @endforeach
                 @endforeach
-
-
-
-
-            @endforeach
                 <!-- Agregar filas vacías si hay pocos registros para mantener la estructura -->
                 @if (count($details) < 5)
                     @for ($i = 0; $i < 15 - count($details); $i++)
@@ -394,7 +375,7 @@
 
     </div>
 
-</div>
+    </div>
 
 
 

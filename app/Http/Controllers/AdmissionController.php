@@ -10,8 +10,6 @@ use App\Models\Patient;
 use App\Models\TemperatureRecord;
 use App\Models\User;
 use App\Models\MedicationRecord;
-use App\Policies\MedicalOrderPolicy;
-use App\Policies\NurseRecordPolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -24,9 +22,22 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Log;
 use App\Services\FirmService;
 use Storage;
-class AdmissionController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+
+class AdmissionController extends Controller implements HasMiddleware
 {
     use AuthorizesRequests;
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:admission.view', only: ['index', 'show']),
+            new Middleware('permission:admission.create', only: ['store']),
+            new Middleware('permission:admission.update', only: ['update']),
+            new Middleware('permission:admission.delete', only: ['destroy']),
+        ];
+    }
 
     /**
      * Display a listing of the resource.
@@ -245,7 +256,11 @@ class AdmissionController extends Controller
      */
     public function update(Request $request, Admission $admission)
     {
+
         $this->authorize('update', $admission);
+
+        $newBedToUpdate = null;
+        $anteriorBedToUpdate = null;
 
         // si se esta dando de alta
         if ($request->has('discharge') && $request->discharge == true) {
@@ -261,9 +276,9 @@ class AdmissionController extends Controller
             $fileName = $firmService->createImag($request->doctor_sign, $admission->doctor_sign);
             $validated['doctor_sign'] = $fileName;
 
-            $bed = Bed::find($admission->bed_id);
-            if ($bed) {
-                $bed->update(['status' => 'cleaning']);
+            $newBedToUpdate = Bed::find($admission->bed_id);
+            if ($newBedToUpdate) {
+                $newBedToUpdate->status = 'cleaning';
             }
 
             // actualizacion normal
@@ -288,28 +303,29 @@ class AdmissionController extends Controller
             }
 
             if ($validated['bed_id']) {
-                $bed = Bed::find($validated['bed_id']);
+                $newBedToUpdate = Bed::find($validated['bed_id']);
 
                 // tenia otra, se cambia
-                if ($admission->bed_id && $bed->id !== $admission->bed_id) {
-                    if (!$bed->isAvailable()) {
+                if ($admission->bed_id && $newBedToUpdate->id !== $admission->bed_id && $newBedToUpdate) {
+                    if (!$newBedToUpdate->isAvailable()) {
                         return back()->with('flash.toast', 'La cama seleccionada no está disponible')->with('flash.toastStyle', 'danger');
                     }
                     // poner la anterior en limpieza y la nueva ocupada
-                    $bed->update(['status' => 'occupied']);
-                    $anteriorBed = Bed::findOrFail($admission->bed_id);
-                    $anteriorBed->update(['status' => 'cleaning']);
+                    $newBedToUpdate->status= 'occupied';
+                    $anteriorBedToUpdate = Bed::findOrFail($admission->bed_id);
+                    $anteriorBedToUpdate->status= 'cleaning';
 
-                // si no tenia cama asignada
+                    // si no tenia cama asignada
                 } elseif ($admission->bed_id == null) {
-                    $bed->update(['status' => 'occupied']);
+                    $newBedToUpdate->status= 'occupied';
                 }
 
+            // si viene vacio
             } else {
                 // si tenia una
                 if ($admission->bed_id !== null) {
-                    $bed = Bed::find($admission->bed_id);
-                    $bed->update(['status' => 'cleaning']);
+                    $newBedToUpdate = Bed::find($admission->bed_id);
+                    $newBedToUpdate->status= 'cleaning';
                 }
             }
 
@@ -322,9 +338,25 @@ class AdmissionController extends Controller
             }
         }
 
+         // si se esta cambiando la
+         if (Auth::user()->hasRole('nurse')) {
+            if ($request->has('bed_id') && $request->bed_id !== $admission->bed_id) {
+                $this->authorize('setBed', $admission);
+            }
+        }
+
         $admission->update($validated);
+        if ($newBedToUpdate) {
+            $newBedToUpdate->save();
+        }
+        if ($anteriorBedToUpdate) {
+            $anteriorBedToUpdate->save();
+        }
+
         return back()->with('flash.toast', 'Ingreso actualizado exitosamente.');
     }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -438,11 +470,18 @@ class AdmissionController extends Controller
 
         $admissions = $query->paginate(15);
 
-        if ($selectedAdm && !$admissions->contains('id', $selectedAdm->id)) {
+        if ($selectedAdm) {
             $admissionsCollection = $admissions->getCollection();
-            $admissionsCollection->add($selectedAdm);
-            $sortedAdmissions = $admissionsCollection->sortByDesc('id')->values();
-            $admissions->setCollection($sortedAdmissions);
+
+            if (!$admissionsCollection->contains('id', $selectedAdm->id)) {
+            $admissionsCollection->prepend($selectedAdm);
+            }
+
+            $admissionsCollection = $admissionsCollection->sortByDesc(function ($admission) use ($selectedAdm) {
+            return $admission->id === $selectedAdm->id ? PHP_INT_MAX : $admission->id;
+            })->values();
+
+            $admissions->setCollection($admissionsCollection);
         }
 
         return response()->json($admissions);

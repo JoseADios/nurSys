@@ -6,6 +6,7 @@ use App\Models\Patient;
 use App\Models\TemperatureRecord;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Hash;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,22 +16,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
+        User::create([
+            'name' => 'Admin',
+            'last_name' => 'Principal',
+            'email' => 'admin@test.com',
+            'password' => Hash::make('password'),
+        ]);
 
         User::factory()->create([
             'name' => 'Test User',
             'last_name' => 'Apellido',
             'email' => 'test@example.com',
-            'password' => '12345678',
+            'password' => Hash::make('12345678'),
             'identification_card' => '6548463131',
             'phone' => '8094563245',
 
         ]);
+
+        User::factory(10)->create();
         User::factory()->create([
             'name' => 'San',
             'last_name' => 'Pedro',
             'email' => 'spedro@example.com',
-            'password' => '12345678',
+            'password' => Hash::make('12345678'),
             'identification_card' => '6548443131',
             'phone' => '8093563245',
 
@@ -49,6 +57,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ClinicAreaSeeder::class);
         $this->call(DietSeeder::class);
         $this->call(DrugDoseSeeder::class);
+        $this->call(DrugRouteSeeder::class);
         $this->call(NationalitySeeder::class);
         $this->call(RegimeSeeder::class);
         $this->call(NurseRecordSeeder::class);

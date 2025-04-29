@@ -46,6 +46,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
         $admissionId = $request->integer('admission_id');
+        $myRecords = $request->boolean('myRecords', true);
         $days = $request->integer('days');
         $in_process = $request->input('in_process', 'true');
         $sortField = $request->input('sortField');
@@ -71,6 +72,10 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $query->whereNotNull('admissions.discharged_date');
         }
 
+        if ($myRecords) {
+            $query->where('temperature_records.nurse_id', Auth::id());
+        }
+
         if ($search) {
             $query->where(function (Builder $query) use ($search) {
                 $query->whereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%'])
@@ -92,8 +97,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         if ($sortField) {
             $query->orderBy($sortField, $sortDirection);
         } else {
-            $query->latest('temperature_records.updated_at')
-                ->latest('temperature_records.created_at');
+            $query->latest('temperature_records.created_at')
+                ->latest('temperature_records.updated_at');
         }
 
         $temperatureRecords = $query->paginate(10);
@@ -114,6 +119,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
                 'show_deleted' => $showDeleted,
                 'admission_id' => $admissionId,
                 'days' => $days,
+                'myRecords' => $myRecords,
                 'in_process' => $in_process,
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,

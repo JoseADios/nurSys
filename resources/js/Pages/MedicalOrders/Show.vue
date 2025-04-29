@@ -1,7 +1,7 @@
 <template>
 <AppLayout>
     <template #header>
-        <h2 class="font-semibold text-xl text-white leading-tight text-center">
+        <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
             <BreadCrumb :items="[
                     ...(medicalOrder.id ? [{
                         formattedId: { id: medicalOrder.admission_id, prefix: 'ING' },
@@ -32,7 +32,7 @@
          <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
            <!-- Navigation -->
             <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                <Link :href="route('medicationRecords.index')" class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                <Link :href="route('medicalOrders.index')" class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                 <BackIcon class="size-5" />Volver
                 </Link>
                 <div class="flex items-center">

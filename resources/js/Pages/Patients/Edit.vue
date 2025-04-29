@@ -283,6 +283,7 @@ export default {
             });
 
             this.$inertia.put(route('patients.update', this.patient.id), this.form, {
+                preserveScroll: true,
                 onError: (errors) => {
                     this.form.errors = errors;
                 }
@@ -290,10 +291,14 @@ export default {
         },
         deletePatient() {
             this.patientBeingDeleted = null
-            this.$inertia.delete(route('patients.destroy', this.patient.id));
+            this.$inertia.delete(route('patients.destroy', this.patient.id), {
+                preserveScroll: true
+            });
         },
         restorePatient() {
-            this.$inertia.put(route('patients.update', this.patient.id), { active: true });
+            this.$inertia.put(route('patients.update', this.patient.id), { active: true }, {
+                preserveScroll: true
+            });
         }
     }
 }

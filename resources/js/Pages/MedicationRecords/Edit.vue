@@ -24,10 +24,6 @@
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
         <form @submit.prevent="submit" class="max-w-sm mx-auto">
-            <label for="diagnosis" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                Diagnóstico
-            </label>
-            <textarea required id="diagnosis" rows="4" v-model="form.diagnosis" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el diagnóstico..."></textarea>
 
             <!-- Selector -->
             <div class="flex-1">
@@ -77,7 +73,7 @@ export default {
     data() {
         return {
             form: {
-                diagnosis: this.medicationRecord.diagnosis,
+
                 diet: this.medicationRecord.diet,
 
                 doctor_sign: this.medicationRecord.doctor_sign,

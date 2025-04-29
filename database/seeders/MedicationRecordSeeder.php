@@ -18,7 +18,7 @@ class MedicationRecordSeeder extends Seeder
         MedicationRecord::create([
             'admission_id' => 1,
 
-            'diagnosis' => 'Diabetes tipo 2',
+
             'diet' => 'Baja en carbohidratos',
 
             'active' => true,
@@ -28,7 +28,6 @@ class MedicationRecordSeeder extends Seeder
         MedicationRecord::create([
             'admission_id' => 2, // Asegúrate de que exista un Admission con id=2
 
-            'diagnosis' => 'Hipertensión',
             'diet' => 'Baja en sodio',
 
             'active' => true,

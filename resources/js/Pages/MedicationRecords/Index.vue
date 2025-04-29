@@ -136,7 +136,7 @@
                         <td class="px-6 py-4"> {{ record.admission.patient.first_name }} {{
                                 record.admission.patient.first_surname }} {{
                                 record.admission.patient.second_surname }}</td>
-                        <td class="px-6 py-4">{{ record.diagnosis }} </td>
+                        <td class="px-6 py-4">{{ record.admission.admission_dx }} </td>
 
                         <td class="px-6 py-4">{{ record.diet }}</td>
 

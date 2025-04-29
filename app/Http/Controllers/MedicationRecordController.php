@@ -123,7 +123,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         // Validación de los datos de entrada
         $request->validate([
             'admission_id' => 'required|exists:admissions,id', // Validamos que exista en la tabla admissions
-            'diagnosis' => 'required|string',
+
             'diet' => 'required|string',
         ]);
 
@@ -141,7 +141,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         $medicationRecord = MedicationRecord::create([
             'admission_id' => $request->admission_id,
 
-            'diagnosis' => $request->diagnosis,
+
             'diet' => $request->diet,
         ]);
 
@@ -231,7 +231,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $this->restore($medicationRecord->id);
         } else {
             $validated = $request->validate([
-                'diagnosis' => 'required|string|max:255',
+
                 'diet' => 'required|string|max:255',
 
             ]);

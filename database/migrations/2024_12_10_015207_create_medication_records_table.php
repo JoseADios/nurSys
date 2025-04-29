@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('admission_id')->constrained()->onDelete('restrict');
 
-            $table->string('diagnosis');
+
             $table->string('diet');
 
             $table->boolean('active')->default(true);

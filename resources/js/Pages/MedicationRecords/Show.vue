@@ -92,7 +92,7 @@
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnostico</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ medicationRecord.diagnosis }}
+                                {{ medicationRecord.admission.admission_dx }}
                             </p>
                         </div>
 

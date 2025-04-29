@@ -92,21 +92,21 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center xl:w-[80%]">
-                <AccessGate :permission="['medicationRecords.delete']">
-                    <!-- Filtro para mostrar registros eliminados -->
-                    <button @click="toggleShowDeleted"
-                        class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
-                        :class="{
-                            'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                            'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                        }">
-                        {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                        <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
-                        <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                    </button>
-                </AccessGate>
+                    <AccessGate :permission="['medicationRecords.delete']">
+                        <!-- Filtro para mostrar registros eliminados -->
+                        <button @click="toggleShowDeleted"
+                            class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
+                            :class="{
+                                'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
+                                'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
+                            }">
+                            {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                            <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                        </button>
+                    </AccessGate>
 
-                <AccessGate :permission="['medicationRecords.create']">
+                    <AccessGate :permission="['medicationRecords.create']">
 
                         <Link v-if="!form.admission_id" :href="route('medicationRecords.create')"
                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
@@ -119,9 +119,9 @@
                         <span class="">Nueva Ficha</span>
                         </Link>
 
-                </AccessGate>
+                    </AccessGate>
+                </div>
             </div>
-        </div>
         </div>
 
         <div
@@ -146,14 +146,14 @@
                                     'asc' ?
                                     '↑' :
                                     '↓'
-                                }}</span>
+                                    }}</span>
                             </th>
 
                             <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('diagnosis')">Diagnóstico
                                 <span v-if="form.sortField === 'diagnosis'">{{ form.sortDirection === 'asc' ?
                                     '↑' :
                                     '↓'
-                                }}</span>
+                                    }}</span>
                             </th>
 
                             <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('diet')">Dieta<span
@@ -191,8 +191,8 @@
                             <td class="px-6 py-4"> {{ record.admission.patient.first_name }} {{
                                 record.admission.patient.first_surname }} {{
 
-                                record.admission.patient.second_surname }}</td>
-                        <td class="px-6 py-4">{{ record.admission.admission_dx }} </td>
+                                    record.admission.patient.second_surname }}</td>
+                            <td class="px-6 py-4">{{ record.admission.admission_dx }} </td>
 
 
                             <td class="px-6 py-4">{{ record.diet }}</td>
@@ -215,6 +215,10 @@
 
                     </tbody>
                 </table>
+                <div v-if="!medicationRecords.data.length"
+                    class="text-center text-gray-500 dark:text-gray-400 py-4 w-full">
+                    No hay registros disponibles.
+                </div>
             </div>
             <Pagination :pagination="medicationRecords" :filters="form" />
         </div>

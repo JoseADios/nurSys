@@ -36,15 +36,19 @@ class NurseRecordController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
+        $admissionId = $request->integer('admission_id');
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
-        $admissionId = $request->integer('admission_id');
-        $myRecords = $request->boolean('myRecords', true);
         $days = $request->integer('days');
         $sortField = $request->input('sortField');
-        $in_process = $request->input('in_process', 'true');
         $sortDirection = $request->input('sortDirection', 'asc');
+        $myRecords = $request->boolean('myRecords', true);
+        $in_process = $request->input('in_process', 'true');
 
+        // si se filtra por ingreso mostrar los registros aunque esten dados de alta
+        if ($admissionId && !$request->has('in_process')) {
+            $in_process = false;
+        }
 
         $query = NurseRecord::query()
             ->with('nurse', 'admission.patient', 'admission.bed')

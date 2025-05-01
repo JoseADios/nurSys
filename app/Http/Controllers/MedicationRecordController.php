@@ -6,6 +6,7 @@ use App\Models\Admission;
 use App\Models\MedicationNotification;
 use App\Models\MedicationRecordDetail;
 use App\Models\Diet;
+use App\Models\User;
 use App\Models\Drug;
 use App\Models\DrugRoute;
 use App\Models\DrugDose;
@@ -80,6 +81,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $query->where('medication_records.nurse_id', Auth::id());
 
         }
+
 
 
         $medicationRecords = $query->with('admission.bed', 'admission.patient','admission.doctor', 'admission')->orderByDesc('created_at')->paginate(10);
@@ -177,6 +179,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $route = DrugRoute::all();
             $dose = DrugDose::all();
             $showDeleted = $request->boolean('showDeleted');
+            $nurse = User::where('id', $medicationRecord->nurse_id)->first();
 
             if ($showDeleted || !$medicationRecord->active) {
 
@@ -198,6 +201,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             return Inertia::render('MedicationRecords/Show', [
                 'medicationRecord' => $medicationRecord,
                 'details' => $details,
+                'nurse' => $nurse,
                 'orders' => $allMedicalOrders,
                 'drug' => $drug,
                 'dose' => $dose,

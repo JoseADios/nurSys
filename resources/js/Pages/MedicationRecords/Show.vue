@@ -79,12 +79,16 @@
                         <!-- Doctor -->
                         <div
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermero</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 <!-- Verifica que la relación drug esté definida -->
-                                {{ medicationRecord.admission.doctor.name }} {{
-                                    medicationRecord.admission.doctor.last_name }}
+                                {{ nurse.name }}   {{ nurse.last_name }}
                             </p>
+                            <AccessGate :role="['admin']" >
+                                <button @click="showEditDoctor = true" class="text-blue-500 flex">
+                                    <EditIcon class="size-5" />
+                                </button>
+                            </AccessGate>
                         </div>
 
                         <!-- Diagnostico -->
@@ -526,6 +530,28 @@
                 </button>
             </template>
         </DialogModal>
+        <Modal :closeable="true" :show="showEditDoctor != null" @close="showEditDoctor == null">
+                <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                    <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
+
+                        <UserSelector roles="nurse" :selected-user-id="medicationRecord.nurse_id"
+                            @update:user="formRecord.nurse_id = $event" />
+                        <!-- Botones -->
+                        <div class="flex justify-end mt-4 space-x-3">
+                            <button type="button" @click="showEditDoctor = null"
+                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
+                                :disabled="!formRecord.nurse_id">
+                                Aceptar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </Modal>
 
     </AppLayout>
 </template>
@@ -553,12 +579,16 @@ import ReportIcon from '@/Components/Icons/ReportIcon.vue';
 import ChevronDown from '@/Components/Icons/ChevronDown.vue';
 import moment from 'moment/moment';
 import 'moment/locale/es';
+import UserSelector from '@/Components/UserSelector.vue';
+import EditIcon from '@/Components/Icons/EditIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import Modal from '@/Components/Modal.vue';
 export default {
 
     props: {
         medicationRecord: Object,
         details: Array,
+        nurse: Array,
         orders: Object,
         drug: Array,
         routeOptions: Array,
@@ -573,6 +603,8 @@ export default {
     components: {
         AppLayout,
         Link,
+        UserSelector,
+        EditIcon,
         ConfirmationModal,
         DangerButton,
         SecondaryButton,
@@ -582,6 +614,7 @@ export default {
         SignaturePad,
         FormatId,
         DrugSelector,
+        Modal,
         InputError,
         ReportIcon,
         ChevronDown,
@@ -601,9 +634,15 @@ export default {
                 selectedOrderId: null,
                 showDeleted: this.filters.show_deleted,
             }),
+            formRecord: {
+                admission_id: this.medicationRecord.admission_id,
+                nurse_id: this.medicationRecord.nurse_id,
+                active: this.medicationRecord.active,
+            },
             showCreateDetailForm: ref(false),
             recordBeingDeleted: ref(null),
             selectedOrderId: null,
+            showEditDoctor: ref(null),
             errorMessage: "",
 
             isVisible: false,

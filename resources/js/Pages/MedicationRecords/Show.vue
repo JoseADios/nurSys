@@ -101,9 +101,11 @@
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                Cama {{ medicationRecord.admission.bed.number }} Habitacion {{
-                                    medicationRecord.admission.bed.room }}
+                                Cama {{ medicationRecord?.admission?.bed?.number || "N/A" }}
+                                Habitación {{ medicationRecord?.admission?.bed?.room || "N/A" }}
+
                             </p>
+
                         </div>
 
                         <!-- Dieta -->
@@ -188,7 +190,8 @@
                                                             'bg-blue-500 text-white': selectedOrderId === detail.id && !detail.suspended_at,
                                                             'bg-white dark:bg-gray-800': selectedOrderId !== detail.id && !detail.suspended_at,
 
-                                                        }" class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200">
+                                                        }"
+                                                        class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200">
 
                                                         <div class="flex flex-col justify-between items-start">
                                                             <div class="w-full flex flex-col">

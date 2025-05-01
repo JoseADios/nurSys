@@ -83,7 +83,7 @@
                                     {{ admission.created_at }}
                                     {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
                                             admission.patient.second_surname }}
-                                    Cama {{ admission.bed.number }}, Sala {{ admission.bed.room }}
+                                Cama {{ admission?.bed?.number || "N/A" }}, Sala {{ admission?.bed?.room || "N/A" }}
                                 </option>
                             </select>
                             <div class="mt-3">
@@ -107,7 +107,7 @@
                     <div   class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Sala</h3>
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                            Sala {{ medicalOrder.admission.bed.room }}, Cama {{ medicalOrder.admission.bed.number }}
+                            Sala {{ admission?.bed?.room || "N/A" }}, Cama {{ admission?.bed?.number || "N/A" }}
                         </p>
                     </div>
                 </div>

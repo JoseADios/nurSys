@@ -57,6 +57,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
                 $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('diagnosis LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('admissions.doctor_id LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%']);
             });
         }
@@ -81,7 +82,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         }
 
 
-        $medicationRecords = $query->with('admission.bed', 'admission.patient', 'admission')->orderByDesc('created_at')->paginate(10);
+        $medicationRecords = $query->with('admission.bed', 'admission.patient','admission.doctor', 'admission')->orderByDesc('created_at')->paginate(10);
 
         $medicationRecords->getCollection()->transform(function ($record) {
             if ($record->admission->discharged_date != null) {

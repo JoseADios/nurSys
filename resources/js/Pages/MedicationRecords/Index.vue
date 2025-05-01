@@ -146,20 +146,23 @@
                                     'asc' ?
                                     '↑' :
                                     '↓'
-                                    }}</span>
+                                }}</span>
                             </th>
 
-                            <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('diagnosis')">Diagnóstico
-                                <span v-if="form.sortField === 'diagnosis'">{{ form.sortDirection === 'asc' ?
+                            <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.doctor_id')">Doctor
+                                <span v-if="form.sortField === 'admissions.doctor_id'">{{ form.sortDirection === 'asc' ?
                                     '↑' :
                                     '↓'
-                                    }}</span>
+                                }}</span>
                             </th>
 
-                            <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('diet')">Dieta<span
-                                    v-if="form.sortField === 'diet'">{{ form.sortDirection === 'asc' ? '↑' :
-                                        '↓'
+
+                            <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('created_at')">Fecha de
+                                Creación<span v-if="form.sortField === 'created_at'">{{ form.sortDirection === 'asc' ?
+                                    '↑' :
+                                    '↓'
                                     }}</span></th>
+
 
                             <th scope="col" class="px-6 py-3 ">Acciones</th>
                         </tr>
@@ -184,7 +187,7 @@
                                     </div>
                                     <div v-else>
                                         <FormatId :id="record.admission.id" prefix="ING"></FormatId>,
-                                        {{ record.admission.created_at }} N/A
+                                       N/A
                                     </div>
                                 </div>
                             </td>
@@ -192,10 +195,11 @@
                                 record.admission.patient.first_surname }} {{
 
                                     record.admission.patient.second_surname }}</td>
-                            <td class="px-6 py-4">{{ record.admission.admission_dx }} </td>
 
-
-                            <td class="px-6 py-4">{{ record.diet }}</td>
+                            <td class="px-6 py-4">{{ record.admission.doctor.name }} {{
+                                record.admission.doctor.last_name }}
+                            </td>
+                            <td class="px-6 py-4">{{ formatDate(record.created_at) }}</td>
 
                             <td class="px-6 py-4 flex items-center space-x-4">
 
@@ -241,7 +245,9 @@ import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
-
+import moment from 'moment/moment';
+import 'moment/locale/es';
+import FilterIcon from '@/Components/Icons/FilterIcon.vue';
 export default {
     props: {
         medicationRecords: Object,
@@ -251,7 +257,7 @@ export default {
     components: {
         AppLayout,
         Link,
-
+        FilterIcon,
         Pagination,
         AccessGate,
         FormatId,
@@ -282,6 +288,9 @@ export default {
         }
     },
     methods: {
+        formatDate(date) {
+            return moment(date).format('DD MMMM YYYY HH:mm');
+        },
         submitFilters() {
             if (this.timeout) {
                 clearTimeout(this.timeout);

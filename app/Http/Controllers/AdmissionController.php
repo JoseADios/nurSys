@@ -50,7 +50,7 @@ class AdmissionController extends Controller implements HasMiddleware
         $sortDirection = $request->input('sortDirection', 'asc');
         $beds_available = $request->input('beds_available');
         $days = $request->integer('days');
-
+        $myRecords = $request->boolean('myRecords', true);
         $query = Admission::query()->with('patient', 'bed', 'doctor')->select([
             'admissions.id',
             'admissions.patient_id',
@@ -92,6 +92,10 @@ class AdmissionController extends Controller implements HasMiddleware
             $query->where('admissions.created_at', '>=', now()->subDays($days));
         }
 
+        if ($myRecords ) {
+            $query->where('admissions.doctor_id', Auth::id());
+
+        }
         $admissions = $query->paginate(10);
 
         $admissions->getCollection()->transform(function ($admission) {

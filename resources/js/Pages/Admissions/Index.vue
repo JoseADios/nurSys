@@ -3,7 +3,7 @@
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 <BreadCrumb :items="[
-                     {
+                    {
                         text: 'Ingresos',
                         route: route('admissions.index')
 
@@ -37,44 +37,76 @@
                 </button>
             </div>
 
-            <!-- Filtros y botones - Se apilan en móvil -->
-            <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-2 md:content-end md:justify-end">
-                <select @change="submitFilters()"
-                class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                name="beds_available" id="beds_available" v-model="form.beds_available">
-                    <option value="">Todos</option>
-                    <option value="1">Con cama Asignada</option>
-                    <option value="2">Sin cama Asignada</option>
-                </select>
+            <!-- Filtros y botones - Reorganizados para mejor responsividad -->
+            <div class="flex flex-col w-full lg:w-auto xl:flex-row space-y-3 sm:space-y-3 xl:space-y-0 xl:flex-grow">
 
-                <select @change="submitFilters()"
-                    class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                    name="days" id="days" v-model="form.days">
-                    <option value="">Siempre</option>
-                    <option value="1">Último día</option>
-                    <option value="7">Últimos 7 días</option>
-                    <option value="30">Últimos 30 días</option>
-                    <option value="90">Últimos 90 días</option>
-                    <option value="180">Últimos 180 días</option>
-                    <option value="365">Último año</option>
-                </select>
+                <!-- Primera fila en dispositivos medianos -->
+                <div class="flex flex-col sm:flex-row w-full gap-3 items-center">
+                    <!-- Grupo: Mis Registros + En proceso -->
+                    <div class="flex w-full flex-col sm:flex-row xl:w-full gap-2 items-center">
+                        <AccessGate :permission="['admission.create']" class="w-full sm:w-fit">
+                            <!-- Filtro Mis Registros con ícono más grande -->
+                            <button
+                                class="w-full sm:w-fit border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 "
+                                :class="{
+                                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.myRecords,
+                                    'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
+                                }" @click="toggleFilterMyRecords" title="Mostrar solo mis registros">
+                                Mis registros
+                                <div class="relative p-2.5 pl-1">
+                                    <UserIcon class="h-5 w-5" />
+                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
+                                        :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
+                                    <div v-if="form.myRecords"
+                                        class="absolute -top-1 -right-1 h-2 w-2 bg-indigo-500 rounded-full">
+                                    </div>
+                                </div>
+                            </button>
+                        </AccessGate>
 
-                <AccessGate :permission="['admissions.delete']">
-                    <!-- Filtro para mostrar registros eliminados -->
-                    <button @click="toggleShowDeleted"
-                        class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
-                        :class="{
-                            'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                            'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                        }">
-                        {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                        <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
-                        <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                    </button>
-                </AccessGate>
 
-                <AccessGate :permission="['admissions.create']">
-                    <div class="w-full sm:w-auto">
+                        <select @change="submitFilters()"
+                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            name="beds_available" id="beds_available" v-model="form.beds_available">
+                            <option value="">Todos</option>
+                            <option value="1">Con cama Asignada</option>
+                            <option value="2">Sin cama Asignada</option>
+                        </select>
+
+                        <select @change="submitFilters()"
+                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            name="days" id="days" v-model="form.days">
+                            <option value="">Siempre</option>
+                            <option value="1">Último día</option>
+                            <option value="7">Últimos 7 días</option>
+                            <option value="30">Últimos 30 días</option>
+                            <option value="90">Últimos 90 días</option>
+                            <option value="180">Últimos 180 días</option>
+                            <option value="365">Último año</option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center xl:w-[80%]">
+
+                    <AccessGate :permission="['admission.delete']">
+                        <!-- Filtro para mostrar registros eliminados -->
+                        <button @click="toggleShowDeleted"
+                            class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
+                            :class="{
+                                'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
+                                'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
+                            }">
+                            {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                            <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                        </button>
+                    </AccessGate>
+
+                    <AccessGate :permission="['admission.create']">
+
                         <Link v-if="!form.admission_id" :href="route('admissions.create')"
                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
                         <PlusIcon class="size-5" />
@@ -85,8 +117,9 @@
                         <PlusIcon class="size-5" />
                         <span class="">Nuevo Ingreso</span>
                         </Link>
-                    </div>
-                </AccessGate>
+
+                    </AccessGate>
+                </div>
             </div>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
@@ -98,26 +131,26 @@
                                 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('patients.first_name')">
                             Paciente<span v-if="form.sortField === 'patients.first_name'">{{ form.sortDirection ===
                                 'asc' ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('beds.room')">
                             Ubicación<span v-if="form.sortField === 'beds.room'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('users.name')">
                             Doctor<span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('discharged_date')">
                             Dias ingresado
@@ -126,14 +159,14 @@
                             Estado<span v-if="form.sortField === 'discharged_date'">{{ form.sortDirection === 'asc' ?
                                 '↑' :
                                 '↓'
-                            }}</span>
+                                }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('created_at')">
                             Fecha de ingreso<span v-if="form.sortField === 'created_at'">{{ form.sortDirection === 'asc'
                                 ?
                                 '↑' :
                                 '↓'
-                                }}</span>
+                            }}</span>
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Acciones
@@ -143,8 +176,8 @@
                 <tbody>
                     <tr v-for="admission in admissions.data.filter(admission => admission.id)" :key="admission.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th scope="row"class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-{{ admission.id }}
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ admission.id }}
                         </th>
                         <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
@@ -211,6 +244,8 @@ import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import moment from 'moment/moment';
 import 'moment/locale/es';
+import FilterIcon from '@/Components/Icons/FilterIcon.vue';
+import UserIcon from '@/Components/Icons/UserIcon.vue';
 export default {
     props: {
         admissions: Object,
@@ -224,7 +259,8 @@ export default {
         FormatId,
         AccessGate,
         BreadCrumb,
-        BreadCrumb,
+        FilterIcon,
+        UserIcon,
         PlusIcon,
         SearchIcon,
         XIcon,
@@ -241,6 +277,7 @@ export default {
                 sortDirection: this.filters.sortDirection || 'asc',
                 days: this.filters.days || '',
                 beds_available: this.filters.beds_available || '',
+                myRecords: this.filters.myRecords || true
             },
             timeout: 1000,
         }
@@ -258,6 +295,11 @@ export default {
             this.$inertia.get(route('admissions.index'), this.form, {
                 preserveState: true,
             });
+        },
+        toggleFilterMyRecords() {
+
+            this.form.myRecords = !this.form.myRecords;
+            this.submitFilters();
         },
         sort(field) {
             this.form.sortField = field;

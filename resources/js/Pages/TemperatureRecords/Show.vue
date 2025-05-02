@@ -152,9 +152,9 @@
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Ultima temperatura</h3>
                         <form @submit.prevent="updateDetail" class="space-y-4">
                             <div>
-                                <InputLabel for="temperature" value="Temperatura" />
+                                <InputLabel for="temperature" value="Temperatura" :required="true" class="mb-2" />
                                 <input type="number" step="0.1" id="temperature" v-model="formDetailUpdate.temperature"
-                                    required
+                                    required min="0"
                                     class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                     placeholder="Temperatura del paciente (°C)" />
 
@@ -178,8 +178,8 @@
                             'md:grid-cols-1 place-items-center': !lastTemperature
                         }]">
                             <div>
-                                <InputLabel for="temperature" value="Temperatura" />
-                                <input type="number" step="0.1" id="temperature" v-model="formDetail.temperature"
+                                <InputLabel for="temperature" value="Temperatura" :required="true" class="mb-2" />
+                                <input type="number" min="0" step="0.1" id="temperature" v-model="formDetail.temperature"
                                     required
                                     class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                     placeholder="Temperatura del paciente (°C)" />
@@ -205,20 +205,14 @@
                         <form @submit.prevent="updateEliminations" class="space-y-4">
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="evacuations"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Evacuaciones
-                                    </label>
-                                    <input type="number" id="evacuations" v-model="formEliminationsUpdate.evacuations"
+                                    <InputLabel for="evacuations" value="Evacuaciones" :required="true" class="mb-2" />
+                                    <input type="number" min="0" id="evacuations" v-model="formEliminationsUpdate.evacuations"
                                         required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         placeholder="Num. de evacuaciones del paciente" />
                                 </div>
                                 <div>
-                                    <label for="urinations"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Micciones
-                                    </label>
-                                    <input type="text" id="urinations" v-model="formEliminationsUpdate.urinations"
+                                    <InputLabel for="urinations" value="Micciones" :required="true" class="mb-2" />
+                                    <input type="text" id="urinations" maxlength="2" v-model="formEliminationsUpdate.urinations"
                                         required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         placeholder="Num. de micciones del paciente" />
                                 </div>
@@ -244,21 +238,15 @@
                             <form @submit.prevent="submitCreateEliminations" class="space-y-4">
                                 <div class="grid md:grid-cols-2 gap-4">
                                     <div>
-                                        <label for="evacuations"
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Evacuaciones
-                                        </label>
-                                        <input type="number" id="evacuations" v-model="formEliminations.evacuations"
+                                        <InputLabel for="evacuations" value="Evacuaciones" :required="true" class="mb-2"/>
+                                        <input type="number" id="evacuations" min="0" v-model="formEliminations.evacuations"
                                             required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                             placeholder="Num. de evacuaciones del paciente" />
                                     </div>
                                     <div>
-                                        <label for="urinations"
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Micciones
-                                        </label>
+                                        <InputLabel for="urinations" value="Micciones" :required="true" class="mb-2"/>
                                         <input type="text" id="urinations" v-model="formEliminations.urinations"
-                                            required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                            required  maxlength="2" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                             placeholder="Num. de micciones del paciente" />
                                     </div>
                                 </div>

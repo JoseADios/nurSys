@@ -161,7 +161,7 @@
 
                 <!-- Form Actions -->
                 <div
-                    class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex flex-col sm:flex-row gap-2 justify-between items-center rounded-b-lg">
+                    class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex flex-col sm:flex-row gap-2 justify-between items-center rounded-b-lg">
                     <div class="space-y-2">
                         <button v-if="user.active == 1" @click="userBeingDeleted = true" type="button"
                             class="mr-2 px-4 py-2 text-sm h-fit font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">

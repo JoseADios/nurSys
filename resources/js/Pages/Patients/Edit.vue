@@ -157,7 +157,7 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
+                <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
                     <AccessGate :permission="['patient.delete']">
                         <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
                             class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-all duration-200">

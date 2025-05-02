@@ -27,7 +27,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Nombres -->
                         <div>
-                            <InputLabel for="first_name" value="Nombres" />
+                            <InputLabel for="first_name" value="Nombres" :required="true" />
                             <TextInput id="first_name" v-model="form.first_name" class="mt-1 block w-full" required
                                 autocomplete="first_name" />
                             <InputError :message="form.errors.first_name" class="mt-2" />
@@ -35,7 +35,7 @@
 
                         <!-- Primer Apellido -->
                         <div>
-                            <InputLabel for="first_surname" value="Primer Apellido" />
+                            <InputLabel for="first_surname" value="Primer Apellido" :required="true" />
                             <TextInput id="first_surname" v-model="form.first_surname" class="mt-1 block w-full"
                                 required autocomplete="first_surname" />
                             <InputError :message="form.errors.first_surname" class="mt-2" />
@@ -51,7 +51,7 @@
 
                         <!-- Teléfono -->
                         <div>
-                            <InputLabel for="phone" value="Teléfono" />
+                            <InputLabel for="phone" value="Teléfono" :required="true" />
                             <PhoneInput class="mt-1" id="phone" v-model="form.phone" />
                             <InputError :message="form.errors.phone" class="mt-2" />
                         </div>
@@ -68,14 +68,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Cédula -->
                         <div>
-                            <InputLabel for="identification_card" value="Cédula" />
-                            <CedulaInput class="mt-1" id="identification_card" v-model="form.identification_card" />
+                            <InputLabel for="identification_card" value="Cédula" :required="cedulaVisibility" />
+                            <CedulaInput v-model="form.identification_card" class="mt-1" :required="cedulaVisibility" />
                             <InputError :message="form.errors.identification_card" class="mt-2" />
                         </div>
 
                         <!-- Nacionalidad -->
                         <div>
-                            <InputLabel for="nationality" value="Nacionalidad" />
+                            <InputLabel for="nationality" value="Nacionalidad" :required="true" />
                             <input list="options" id="nationality" v-model="form.nationality"
                                 class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                 required>
@@ -101,14 +101,14 @@
                         <!-- Email -->
                         <div>
                             <InputLabel for="email" value="Correo Electrónico" />
-                            <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full" required
+                            <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full"
                                 autocomplete="email" />
                             <InputError :message="form.errors.email" class="mt-2" />
                         </div>
 
                         <!-- Dirección -->
                         <div class="md:col-span-2">
-                            <InputLabel for="address" value="Dirección" />
+                            <InputLabel for="address" value="Dirección" :required="true" />
                             <TextAreaInput id="address" v-model="form.address" rows="3" maxlength="255"
                                 class="mt-1 block w-full" required />
                             <InputError :message="form.errors.address" class="mt-2" />
@@ -126,14 +126,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Fecha de nacimiento -->
                         <div>
-                            <InputLabel for="birthdate" value="Fecha de Nacimiento" />
-                            <DateInput class="mt-1" v-model="form.birthdate" />
+                            <InputLabel for="birthdate" value="Fecha de Nacimiento" :required="true" />
+                            <DateInput v-model="form.birthdate" @change="setCedulaVisibility()" required />
                             <InputError :message="form.errors.birthdate" class="mt-2" />
                         </div>
 
                         <!-- Estado Civil -->
                         <div>
-                            <InputLabel for="marital_status" value="Estado Civil" />
+                            <InputLabel for="marital_status" value="Estado Civil" :required="true" />
                             <SelectInput id="marital_status" v-model="form.marital_status" :options="maritalSatuses"
                                 class="mt-1 block w-full" required />
                             <InputError :message="form.errors.marital_status" class="mt-2" />
@@ -142,8 +142,7 @@
                         <!-- Cargo -->
                         <div>
                             <InputLabel for="position" value="Cargo" />
-                            <TextInput id="position" v-model="form.position" type="text" class="mt-1 block w-full"
-                                required />
+                            <TextInput id="position" v-model="form.position" type="text" class="mt-1 block w-full" />
                             <InputError :message="form.errors.position" class="mt-2" />
                         </div>
 
@@ -225,6 +224,8 @@ import TextAreaInput from '@/Components/TextAreaInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import FileTexIcon from '@/Components/Icons/FileTexIcon.vue';
+import moment from 'moment/moment';
+import 'moment/locale/es';
 
 export default {
     props: {
@@ -274,6 +275,18 @@ export default {
             })
         }
     },
+    setup() {
+        const cedulaVisibility = ref(false)
+        return {
+            cedulaVisibility
+        };
+    },
+    mounted() {
+        if (this.form.birthdate) {
+            let birthdate = moment(this.form.birthdate);
+            this.cedulaVisibility = moment().diff(birthdate, 'years') >= 18;
+        }
+    },
     methods: {
         submit() {
             Object.keys(this.form.errors).forEach((key) => {
@@ -299,6 +312,10 @@ export default {
             this.$inertia.put(route('patients.update', this.patient.id), { active: true }, {
                 preserveScroll: true
             });
+        },
+        setCedulaVisibility() {
+            let birthdate = moment(this.form.birthdate);
+            this.cedulaVisibility = moment().diff(birthdate, 'years') >= 18;
         }
     }
 }

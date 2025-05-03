@@ -181,7 +181,7 @@
                                             </span>
                                             <span class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
                                                 formatDateFromNow(order.created_at)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <ChevronDown
                                             class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white"
@@ -227,20 +227,16 @@
                                 <form @submit.prevent="submit" class="space-y-4">
                                     <div class="grid grid-cols-1 gap-4">
                                         <div>
-                                            <label for="medication"
-                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                Medicación
-                                            </label>
+                                            <InputLabel for="medication" value="Medicación" :required="true"
+                                                class="mb-2" />
                                             <TextAreaInput maxlength="255" class="w-full h-16 resize-none"
                                                 v-model="formDetail.medication" id="medication" placeholder="Medicación"
                                                 required />
                                         </div>
 
                                         <div>
-                                            <label for="comment"
-                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                Observaciones
-                                            </label>
+                                            <InputLabel for="comment" value="Observaciones" :required="true"
+                                                class="mb-2" />
                                             <TextAreaInput maxlength="255" class="w-full resize-none h-24"
                                                 v-model="formDetail.comment" id="comment"
                                                 placeholder="Comentarios adicionales" required />
@@ -455,14 +451,16 @@
                     <form>
                         <div class="flex flex-col gap-6">
                             <div>
-                                <InputLabel for="medication" value="Medicación" />
+                                <InputLabel for="medication" value="Medicación" :required="true" />
                                 <TextInput id="medication" v-model="selectedDetail.medication" type="text"
                                     class="mt-1 block w-full" required autocomplete="medication" />
+                                <InputError v-if="!selectedDetail.medication" message="Este campo es obligatorio." />
                             </div>
 
                             <div>
-                                <InputLabel for="comment" value="Observaciones" />
-                                <TextAreaInput class="w-full" v-model="selectedDetail.comment" id="comment" />
+                                <InputLabel for="comment" value="Observaciones" :required="true"/>
+                                <TextAreaInput class="mt-1 w-full" v-model="selectedDetail.comment" required id="comment" />
+                                <InputError v-if="!selectedDetail.comment" message="Este campo es obligatorio." />
                             </div>
 
                         </div>
@@ -477,7 +475,7 @@
                         class="mr-2 focus:outline-none text-white bg-red-800 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
                         Eliminar
                     </button>
-                    <button v-if="!selectedDetail.active" type="button" @click="restoreDetail"
+                    <button v-if="!selectedDetail.active" type="button" @click="restoreDetail(selectedDetail)"
                         class="mr-2 focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
                         Restaurar
                     </button>
@@ -544,7 +542,7 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue'
 import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
@@ -652,7 +650,6 @@ export default {
             },
         }
     },
-
     methods: {
         submitAdmission() {
             this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formRecord, {
@@ -683,9 +680,7 @@ export default {
                     bed: this.filters.bed
                 },
                 {
-                    preserveState: true,
                     preserveScroll: true,
-                    only: ['admissions']
                 }
             );
         },
@@ -726,20 +721,19 @@ export default {
             this.isVisibleEditSign = false
         },
         submitUpdateDetail() {
+            if (!this.selectedDetail.medication || !this.selectedDetail.comment) {
+                return;
+            }
+
             this.$inertia.put(route('nurseRecordDetails.update', this.selectedDetail.id), this.selectedDetail, {
-                preserveScroll: true, preserveState: true
+                preserveScroll: true
             }),
-                this.isVisibleAdm = false
             this.isVisibleDetail = false
         },
         openEditDetailModal(detail) {
             this.selectedDetail = { ...detail };
             this.originalSuspendedState = detail.suspended_at;
             this.isVisibleDetail = true;
-        },
-        restoreDetail() {
-            this.selectedDetail.active = true
-            this.submitUpdateDetail()
         },
         deleteRecord() {
             this.recordBeingDeleted = null
@@ -765,8 +759,10 @@ export default {
                     ...detail,
                     showDeleted: this.showDeletedLocal
                 }, {
-                preserveScroll: true
+                preserveScroll: true,
+                // preserveState: true
             });
+            this.isVisibleDetail = false;
         },
         formatDate(date) {
             return moment(date).format('DD MMMM YYYY HH:mm');

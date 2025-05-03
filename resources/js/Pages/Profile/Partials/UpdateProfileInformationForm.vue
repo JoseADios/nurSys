@@ -46,8 +46,10 @@ const photoPreview = ref(null);
 const photoInput = ref(null);
 const clinicAreas = ref([]);
 const activeTab = ref('personal'); // 'personal', 'professional', 'contact'
+const exequaturRequired = ref(false);
 
 onMounted(async () => {
+    setExequaturVisibily();
     try {
         const response = await axios.get(route('clinicAreas.index'));
         clinicAreas.value = response.data.map(area => ({ id: area.id, name: area.name }));
@@ -67,6 +69,10 @@ const updateProfileInformation = () => {
         onSuccess: () => clearPhotoFileInput(),
     });
 };
+
+const setExequaturVisibily = () => {
+    exequaturRequired.value = ['nurse', 'doctor'].includes(props.user.roles[0]);
+}
 
 const sendEmailVerification = () => {
     verificationLinkSent.value = true;
@@ -113,7 +119,8 @@ const hasErrorsInTab = (tabName) => {
         contact: ['phone', 'address', 'comment']
     };
 
-    return errorFields[tabName].some(field => form.errors[field]);
+    // Verificar si hay errores o campos requeridos vacíos
+    return errorFields[tabName].some(field => form.errors[field] || (form[field] === null || form[field] === ''));
 };
 
 const setActiveTab = (tab) => {
@@ -186,8 +193,7 @@ const setActiveTab = (tab) => {
                             <img v-if="user.profile_photo_url" :src="user.profile_photo_url" :alt="user.name"
                                 class="rounded-full size-20 object-cover">
 
-                            <DynamicAvatar v-else
-                                :name="user.name" size-class="size-20" />
+                            <DynamicAvatar v-else :name="user.name" size-class="size-20" />
                         </div>
 
                         <!-- New Profile Photo Preview -->
@@ -214,7 +220,7 @@ const setActiveTab = (tab) => {
                         <div>
                             <!-- Name -->
                             <div class="mb-6">
-                                <InputLabel for="name" value="Nombre" />
+                                <InputLabel for="name" value="Nombre" :required="true" />
                                 <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required
                                     autocomplete="name" />
                                 <InputError :message="form.errors.name" class="mt-2" />
@@ -222,7 +228,7 @@ const setActiveTab = (tab) => {
 
                             <!-- Email -->
                             <div class="mb-6">
-                                <InputLabel for="email" value="Correo" />
+                                <InputLabel for="email" value="Correo" :required="true" />
                                 <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full"
                                     required autocomplete="username" />
                                 <InputError :message="form.errors.email" class="mt-2" />
@@ -249,7 +255,7 @@ const setActiveTab = (tab) => {
 
                             <!-- Fecha de nacimiento -->
                             <div>
-                                <InputLabel for="birthdate" value="Fecha de nacimiento" />
+                                <InputLabel for="birthdate" value="Fecha de nacimiento" :required="true" />
                                 <DateInput id="birthdate" v-model="form.birthdate" type="text" class="mt-1 block w-full"
                                     required autocomplete="birthdate" />
                                 <InputError :message="form.errors.birthdate" class="mt-2" />
@@ -260,7 +266,7 @@ const setActiveTab = (tab) => {
                         <div>
                             <!-- LastName -->
                             <div class="mb-6">
-                                <InputLabel for="last_name" value="Apellido" />
+                                <InputLabel for="last_name" value="Apellido" :required="true" />
                                 <TextInput id="last_name" v-model="form.last_name" type="text" class="mt-1 block w-full"
                                     required autocomplete="last_name" />
                                 <InputError :message="form.errors.last_name" class="mt-2" />
@@ -268,7 +274,7 @@ const setActiveTab = (tab) => {
 
                             <!-- Cedula -->
                             <div>
-                                <InputLabel for="identification_card" value="Cédula" />
+                                <InputLabel for="identification_card" value="Cédula" :required="true" />
                                 <CedulaInput id="identification_card" v-model="form.identification_card" type="text"
                                     class="mt-1 block w-full" required autocomplete="identification_card" />
                                 <InputError :message="form.errors.identification_card" class="mt-2" />
@@ -285,9 +291,9 @@ const setActiveTab = (tab) => {
                         <div>
                             <!-- Exequatur -->
                             <div class="mb-6">
-                                <InputLabel for="exequatur" value="Exequatur" />
-                                <TextInput id="exequatur" v-model="form.exequatur" type="text" class="mt-1 block w-full"
-                                    required autocomplete="exequatur" />
+                                <InputLabel for="exequatur" value="Exequatur" :required="exequaturRequired" />
+                                <TextInput id="exequatur" v-model="form.exequatur" :required="exequaturRequired"
+                                    type="text" class="mt-1 block w-full" autocomplete="exequatur" />
                                 <InputError :message="form.errors.exequatur" class="mt-2" />
                             </div>
 
@@ -295,7 +301,7 @@ const setActiveTab = (tab) => {
                             <div class="mb-6">
                                 <InputLabel for="area" value="Área" />
                                 <SelectInput v-model:model-value="form.area" :options="clinicAreas" />
-                                <InputError :message="form.errors.specialty" class="mt-2" />
+                                <InputError :message="form.errors.area" class="mt-2" />
                             </div>
                         </div>
 
@@ -303,7 +309,7 @@ const setActiveTab = (tab) => {
                         <div>
                             <!-- Especialidad -->
                             <div class="mb-6">
-                                <InputLabel for="specialty" value="Especialidad" />
+                                <InputLabel for="specialty" value="Especialidad" :required="true" />
                                 <TextInput id="specialty" v-model="form.specialty" type="text" class="mt-1 block w-full"
                                     required autocomplete="specialty" />
                                 <InputError :message="form.errors.specialty" class="mt-2" />
@@ -324,7 +330,7 @@ const setActiveTab = (tab) => {
                 <div v-show="activeTab === 'contact'">
                     <!-- Teléfono -->
                     <div class="mb-6">
-                        <InputLabel for="phone" value="Teléfono" />
+                        <InputLabel for="phone" value="Teléfono" :required="true" />
                         <PhoneInput id="phone" v-model="form.phone" type="text" class="mt-1 block w-full" required
                             autocomplete="phone" />
                         <InputError :message="form.errors.phone" class="mt-2" />
@@ -332,7 +338,7 @@ const setActiveTab = (tab) => {
 
                     <!-- Dirección -->
                     <div class="mb-6">
-                        <InputLabel for="address" value="Dirección" />
+                        <InputLabel for="address" value="Dirección" :required="true" />
                         <TextAreaInput id="address" v-model="form.address" type="text" class="mt-1 block w-full"
                             required autocomplete="address" />
                         <InputError :message="form.errors.address" class="mt-2" />

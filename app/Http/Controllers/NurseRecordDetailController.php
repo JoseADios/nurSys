@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Validator;
 
 
 class NurseRecordDetailController extends Controller implements HasMiddleware
@@ -52,8 +53,8 @@ class NurseRecordDetailController extends Controller implements HasMiddleware
 
         $validated = $request->validate([
             'nurse_record_id' => 'integer',
-            'medication' => 'string|max:255',
-            'comment' => 'string'
+            'medication' => 'string|max:255|required',
+            'comment' => 'string|required'
         ]);
 
         NurseRecordDetail::create($validated);
@@ -74,10 +75,7 @@ class NurseRecordDetailController extends Controller implements HasMiddleware
      */
     public function edit(NurseRecordDetail $nurseRecordDetail)
     {
-        $this->authorize('update', $nurseRecordDetail);
-        return Inertia::render('NurseRecordDetail/Edit', [
-            'nurseRecordDetail' => $nurseRecordDetail
-        ]);
+        //
     }
 
     /**
@@ -90,8 +88,8 @@ class NurseRecordDetailController extends Controller implements HasMiddleware
 
         $validated = $request->validate([
             'nurse_record_id' => 'integer',
-            'medication' => 'string|max:255',
-            'comment' => 'string',
+            'medication' => 'string|max:255|required',
+            'comment' => 'string|required',
             'active' => 'boolean'
         ]);
 

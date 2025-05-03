@@ -186,8 +186,17 @@ class PatientController extends Controller implements HasMiddleware
                 ->value('id');
         }
 
+        // obtener los ultimos 5 ingresos
+        $admissions = Admission::where('patient_id', $patient->id)
+        ->with('doctor', 'bed')
+        ->orderByDesc('created_at')
+        ->get();
+
+        // dd($admissions);
+
         return Inertia::render('Patients/Show', [
             'patient' => $patient,
+            'admissions' => $admissions,
             'inProcessAdmssion' => $inProcessAdmssion,
         ]);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +26,8 @@ class Admission extends Model
         'active',
         'doctor_sign',
     ];
+
+    protected $appends = ['days_admitted'];
 
     protected function casts(): array
     {
@@ -70,6 +73,15 @@ class Admission extends Model
             });
         }
         return $query;
+    }
+
+    // Accessor para calcular los días de ingreso
+    public function getDaysAdmittedAttribute()
+    {
+        $dischargedDate = $this->discharged_date ? Carbon::parse($this->discharged_date) : Carbon::now();
+        $createdDate = Carbon::parse($this->created_at);
+
+        return (int) $createdDate->diffInDays($dischargedDate);
     }
 
 

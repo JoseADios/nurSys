@@ -273,7 +273,7 @@
                 </div>
 
 
-                <section class=" p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
+                <section id="bottom" class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Firma</h3>
 
                     <!-- mostrar imagen firma -->

@@ -30,7 +30,7 @@
                                 <h2 class="text-2xl text-center font-bold text-gray-700 dark:text-white">{{ user.name }}
                                     {{
                                         user.last_name }}</h2>
-                                <div class="flex items-center justify-evenly space-x-2 mt-2 xl:mt-0">
+                                <div class="flex items-center justify-center sm:justify-start space-x-2 mt-2 xl:mt-0">
                                     <span
                                         class="px-2 py-1 bg-gray-200 dark:bg-white/20 text-gray-700 dark:text-white text-sm rounded-full">
                                         <div v-if="user.roles[0]">

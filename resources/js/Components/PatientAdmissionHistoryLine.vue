@@ -11,15 +11,15 @@
                     formatDate(admission.created_at) }}</time>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ admission.admission_dx }}</h3>
                 <p v-if="admission.discharged_date" class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
-                    El paciente fue atendido por el doctor <strong>{{ admission.doctor.name }} {{
+                    El paciente fue atendido por el doctor <strong class="text-white">{{ admission.doctor.name }} {{
                         admission.doctor.last_name }}</strong>.
-                    Duró <strong>{{ admission.days_admitted }}</strong> dia/s ingresado y el diagnóstico final fue
-                    <strong>{{ admission.final_dx }}</strong>.
+                    Duró <strong class="text-white">{{ admission.days_admitted }}</strong> dia/s ingresado y el diagnóstico final fue
+                    <strong class="text-white">{{ admission.final_dx }}</strong>.
                 </p>
                 <p v-else class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">El paciente está siendo
                     atendido
-                    por el doctor <strong>{{ admission.doctor.name }} {{ admission.doctor.last_name }}</strong>.
-                    Tiene <strong>{{ admission.days_admitted }}</strong> dia/s ingresado.
+                    por el doctor <strong class="text-white">{{ admission.doctor.name }} {{ admission.doctor.last_name }}</strong>.
+                    Tiene <strong class="text-white">{{ admission.days_admitted }}</strong> dia/s ingresado.
                     <span v-if="admission.bed">Está en la sala {{ admission.bed.room }}, cama {{ admission.bed.number
                         }}.</span>
                     <span v-else>No se le ha asignado una cama.</span>

@@ -39,7 +39,7 @@
                                         Inactivo
                                     </span>
                                 </div>
-                                <p class="text-gray-500 dark:text-gray-400 mt-1 flex items-center">
+                                <p class="text-gray-500 dark:text-gray-400 mt-1 flex items-center justify-center sm:justify-start">
                                     <Id2Icon class="w-4 h-4 mr-1 text-gray-400 dark:text-gray-500" />
                                     Cédula: {{ patient.identification_card }}
                                 </p>
@@ -84,8 +84,8 @@
                     <!-- Tarjeta de Información de contacto -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
-                            <div class="p-3 bg-[#5FC6FF] rounded-lg border border-gray-200 dark:border-gray-700">
-                                <MailIcon class="w-6 h-6 text-white" />
+                            <div class="p-3 border-2 border-[#5FC6FF] rounded-lg ">
+                                <MailIcon class="w-4 h-4 text-[#5FC6FF]" />
                             </div>
                             <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información de contacto
                             </h3>
@@ -114,8 +114,8 @@
                     <!-- Tarjeta de Información personal -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
-                            <div class="p-3 bg-[#696CFF] rounded-lg border border-gray-200 dark:border-gray-700">
-                                <UserIcon class="w-6 h-6 text-white" />
+                            <div class="p-3 border-2 border-[#696CFF] rounded-lg">
+                                <UserIcon class="w-4 h-4 text-[#696CFF]" />
                             </div>
                             <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información personal</h3>
                         </div>
@@ -150,8 +150,8 @@
                     <!-- Tarjeta de Información laboral -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
-                            <div class="p-3 bg-[#FFB400] rounded-lg border border-gray-200 dark:border-gray-700">
-                                <BriefCaseIcon class="w-6 h-6 text-white" />
+                            <div class="p-3 border-2 border-[#FFB400] rounded-lg">
+                                <BriefCaseIcon class="w-4 h-4 text-[#FFB400]" />
                             </div>
                             <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información laboral</h3>
                         </div>
@@ -175,7 +175,7 @@
                     <div v-if="inProcessAdmssion" class="flex flex-col sm:flex-row items-center justify-between">
                         <div class="flex items-center mb-4 sm:mb-0">
                             <div class="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-full mr-4">
-                                <CheckCircleIcon class="w-6 h-6 text-white" />
+                                <CheckCircleIcon class="w-4 h-4 text-white" />
                             </div>
                             <div>
                                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">Paciente ingresado</h3>
@@ -185,13 +185,13 @@
                         </div>
                         <div class="flex flex-col lg:flex-row gap-2">
                             <button
-                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200"
+                                class="inline-flex justify-center items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200"
                                 @click="showAdmissions = true">
-                                <EyeIcon class="w-5 h-5 mr-2" />
+                                <HistoryIcon class="w-5 h-5 mr-2" />
                                 Historial de ingresos
                             </button>
                             <Link
-                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-green-600 hover:to-green-700 transition-all duration-200"
+                                class="inline-flex justify-center items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-green-600 hover:to-green-700 transition-all duration-200"
                                 :href="route('admissions.show', inProcessAdmssion)">
                             <EyeIcon class="w-5 h-5 mr-2" />
                             Ir al ingreso
@@ -201,7 +201,7 @@
                     <div v-else class="flex flex-col sm:flex-row items-center justify-between">
                         <div class="flex items-center mb-4 sm:mb-0">
                             <div class="p-3 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-full mr-4">
-                                <AlertTriangleIcon class="w-6 h-6 text-white" />
+                                <AlertTriangleIcon class="w-4 h-4 text-white" />
                             </div>
                             <div>
                                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">Paciente no ingresado</h3>
@@ -213,20 +213,19 @@
                         <AccessGate :permission="['admission.create']" v-if="patient.active == 1">
                             <div class="flex flex-col lg:flex-row gap-2">
                                 <button
-                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200"
+                                    class="inline-flex justify-center items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200"
                                     @click="showAdmissions = true">
                                     <EyeIcon class="w-5 h-5 mr-2" />
                                     Historial de ingresos
                                 </button>
                                 <Link
-                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
+                                    class="inline-flex justify-center items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
                                     :href="route('admissions.create', { patient_id: patient.id })">
                                 <PlusIcon class="w-5 h-5 mr-2" />
                                 Crear ingreso
                                 </Link>
                             </div>
                         </AccessGate>
-
                     </div>
                 </div>
 
@@ -241,7 +240,6 @@
                                 <XIcon class="h-5 w-5" />
                             </button>
                         </div>
-
                         <PatientAdmissionHistoryLine :admissions="admissions" />
                     </div>
                 </Modal>
@@ -252,7 +250,7 @@
             <ConfirmationModal :show="patientBeingDeleted != null" @close="patientBeingDeleted = null">
                 <template #title>
                     <div class="flex items-center text-red-500 dark:text-red-400">
-                        <TrashIcon class="w-6 h-6 mr-2" />
+                        <TrashIcon class="w-4 h-4 mr-2" />
                         Deshabilitar Paciente
                     </div>
                 </template>
@@ -308,6 +306,7 @@ import PatientAdmissionHistoryLine from '@/Components/PatientAdmissionHistoryLin
 import Modal from '@/Components/Modal.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
+import HistoryIcon from '@/Components/Icons/HistoryIcon.vue';
 
 
 export default {
@@ -343,7 +342,8 @@ export default {
         PatientAdmissionHistoryLine,
         DialogModal,
         XIcon,
-        Modal
+        Modal,
+        HistoryIcon
     },
     data() {
         return {

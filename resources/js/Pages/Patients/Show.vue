@@ -18,7 +18,7 @@
             <div class="max-w-6xl mx-auto">
                 <!-- Tarjeta del perfil principal -->
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 mb-8 transform transition-all duration-300">
+                    class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 mb-8 transform transition-all duration-300">
                     <div class="p-6 lg:p-8 flex flex-col lg:flex-row justify-between items-center gap-6">
                         <div class="flex flex-col sm:flex-row items-center gap-5">
                             <DynamicAvatar class="size-8 md:size-14"
@@ -82,7 +82,7 @@
                 <!-- Layout de tarjetas informativas -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Tarjeta de Información de contacto -->
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
                             <div class="p-3 bg-[#5FC6FF] rounded-lg border border-gray-200 dark:border-gray-700">
                                 <MailIcon class="w-6 h-6 text-white" />
@@ -94,26 +94,25 @@
                             <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                                 <PhoneIcon class="w-5 h-5 text-gray-800 dark:text-white" />
                                 <span class="ml-3 text-gray-800 dark:text-gray-200 font-medium">{{ patient.phone
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                                 <AtIcon class="w-5 h-5 text-gray-800 dark:text-white" />
                                 <a href="mailto:{{ patient.email }}"
-                                    class="ml-3 text-gray-800 dark:text-gray-200 font-medium hover:text-gray-700 dark:hover:text-white transition-colors truncate"
-                                    >
+                                    class="ml-3 text-gray-800 dark:text-gray-200 font-medium hover:text-gray-700 dark:hover:text-white transition-colors truncate">
                                     {{ patient.email }}
                                 </a>
                             </div>
                             <div class="flex items-start p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                                 <MapPinIcon class="w-5 h-5 text-gray-800 dark:text-white mt-1" />
                                 <span class="ml-3 text-gray-800 dark:text-gray-200 font-medium">{{ patient.address
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tarjeta de Información personal -->
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
                             <div class="p-3 bg-[#696CFF] rounded-lg border border-gray-200 dark:border-gray-700">
                                 <UserIcon class="w-6 h-6 text-white" />
@@ -149,7 +148,7 @@
                     </div>
 
                     <!-- Tarjeta de Información laboral -->
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">
                             <div class="p-3 bg-[#FFB400] rounded-lg border border-gray-200 dark:border-gray-700">
                                 <BriefCaseIcon class="w-6 h-6 text-white" />
@@ -169,8 +168,10 @@
                     </div>
                 </div>
 
+
+
                 <!-- Estado de ingreso -->
-                <div class="mt-8 bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="mt-8 bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                     <div v-if="inProcessAdmssion" class="flex flex-col sm:flex-row items-center justify-between">
                         <div class="flex items-center mb-4 sm:mb-0">
                             <div class="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-full mr-4">
@@ -179,15 +180,23 @@
                             <div>
                                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">Paciente ingresado</h3>
                                 <p class="text-gray-500 dark:text-gray-400 text-sm">El paciente actualmente se encuentra
-                                    ingresado en el sistema</p>
+                                    ingresado en la clínica</p>
                             </div>
                         </div>
-                        <Link
-                            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-green-600 hover:to-green-700 transition-all duration-200"
-                            :href="route('admissions.show', inProcessAdmssion)">
-                        <EyeIcon class="w-5 h-5 mr-2" />
-                        Ir al ingreso
-                        </Link>
+                        <div class="flex flex-col lg:flex-row gap-2">
+                            <button
+                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200"
+                                @click="showAdmissions = true">
+                                <EyeIcon class="w-5 h-5 mr-2" />
+                                Historial de ingresos
+                            </button>
+                            <Link
+                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-green-600 hover:to-green-700 transition-all duration-200"
+                                :href="route('admissions.show', inProcessAdmssion)">
+                            <EyeIcon class="w-5 h-5 mr-2" />
+                            Ir al ingreso
+                            </Link>
+                        </div>
                     </div>
                     <div v-else class="flex flex-col sm:flex-row items-center justify-between">
                         <div class="flex items-center mb-4 sm:mb-0">
@@ -202,15 +211,40 @@
                             </div>
                         </div>
                         <AccessGate :permission="['admission.create']" v-if="patient.active == 1">
-                            <Link
-                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
-                                :href="route('admissions.create', { patient_id: patient.id })">
-                            <PlusIcon class="w-5 h-5 mr-2" />
-                            Crear ingreso
-                            </Link>
+                            <div class="flex flex-col lg:flex-row gap-2">
+                                <button
+                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200"
+                                    @click="showAdmissions = true">
+                                    <EyeIcon class="w-5 h-5 mr-2" />
+                                    Historial de ingresos
+                                </button>
+                                <Link
+                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
+                                    :href="route('admissions.create', { patient_id: patient.id })">
+                                <PlusIcon class="w-5 h-5 mr-2" />
+                                Crear ingreso
+                                </Link>
+                            </div>
                         </AccessGate>
+
                     </div>
                 </div>
+
+                <Modal :show="showAdmissions != null" @close="showAdmissions = null">
+                    <div class="p-4">
+                        <div class="flex justify-between items-center mt-2 mb-6">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Ingresos del paciente</h2>
+
+                            <button @click="showAdmissions = null"
+                                class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                                <span class="sr-only">Cerrar</span>
+                                <XIcon class="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <PatientAdmissionHistoryLine :admissions="admissions" />
+                    </div>
+                </Modal>
             </div>
         </div>
 
@@ -270,11 +304,16 @@ import AlertTriangleIcon from '@/Components/Icons/AlertTriangleIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import DynamicAvatar from '@/Components/DynamicAvatar.vue';
+import PatientAdmissionHistoryLine from '@/Components/PatientAdmissionHistoryLine.vue';
+import Modal from '@/Components/Modal.vue';
+import DialogModal from '@/Components/DialogModal.vue';
+import XIcon from '@/Components/Icons/XIcon.vue';
 
 
 export default {
     props: {
         patient: Object,
+        admissions: Object,
         inProcessAdmssion: Number,
     },
     components: {
@@ -300,11 +339,16 @@ export default {
         AlertTriangleIcon,
         PlusIcon,
         BreadCrumb,
-        DynamicAvatar
+        DynamicAvatar,
+        PatientAdmissionHistoryLine,
+        DialogModal,
+        XIcon,
+        Modal
     },
     data() {
         return {
-            patientBeingDeleted: ref(null)
+            patientBeingDeleted: ref(null),
+            showAdmissions: ref(null)
         }
     },
     methods: {

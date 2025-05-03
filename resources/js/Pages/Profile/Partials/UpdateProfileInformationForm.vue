@@ -119,7 +119,8 @@ const hasErrorsInTab = (tabName) => {
         contact: ['phone', 'address', 'comment']
     };
 
-    return errorFields[tabName].some(field => form.errors[field]);
+    // Verificar si hay errores o campos requeridos vacíos
+    return errorFields[tabName].some(field => form.errors[field] || (form[field] === null || form[field] === ''));
 };
 
 const setActiveTab = (tab) => {
@@ -192,8 +193,7 @@ const setActiveTab = (tab) => {
                             <img v-if="user.profile_photo_url" :src="user.profile_photo_url" :alt="user.name"
                                 class="rounded-full size-20 object-cover">
 
-                            <DynamicAvatar v-else
-                                :name="user.name" size-class="size-20" />
+                            <DynamicAvatar v-else :name="user.name" size-class="size-20" />
                         </div>
 
                         <!-- New Profile Photo Preview -->
@@ -228,7 +228,7 @@ const setActiveTab = (tab) => {
 
                             <!-- Email -->
                             <div class="mb-6">
-                                <InputLabel for="email" value="Correo" :required="true"/>
+                                <InputLabel for="email" value="Correo" :required="true" />
                                 <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full"
                                     required autocomplete="username" />
                                 <InputError :message="form.errors.email" class="mt-2" />
@@ -255,7 +255,7 @@ const setActiveTab = (tab) => {
 
                             <!-- Fecha de nacimiento -->
                             <div>
-                                <InputLabel for="birthdate" value="Fecha de nacimiento" :required="true"/>
+                                <InputLabel for="birthdate" value="Fecha de nacimiento" :required="true" />
                                 <DateInput id="birthdate" v-model="form.birthdate" type="text" class="mt-1 block w-full"
                                     required autocomplete="birthdate" />
                                 <InputError :message="form.errors.birthdate" class="mt-2" />
@@ -266,7 +266,7 @@ const setActiveTab = (tab) => {
                         <div>
                             <!-- LastName -->
                             <div class="mb-6">
-                                <InputLabel for="last_name" value="Apellido" :required="true"/>
+                                <InputLabel for="last_name" value="Apellido" :required="true" />
                                 <TextInput id="last_name" v-model="form.last_name" type="text" class="mt-1 block w-full"
                                     required autocomplete="last_name" />
                                 <InputError :message="form.errors.last_name" class="mt-2" />
@@ -274,7 +274,7 @@ const setActiveTab = (tab) => {
 
                             <!-- Cedula -->
                             <div>
-                                <InputLabel for="identification_card" value="Cédula" :required="true"/>
+                                <InputLabel for="identification_card" value="Cédula" :required="true" />
                                 <CedulaInput id="identification_card" v-model="form.identification_card" type="text"
                                     class="mt-1 block w-full" required autocomplete="identification_card" />
                                 <InputError :message="form.errors.identification_card" class="mt-2" />
@@ -291,9 +291,9 @@ const setActiveTab = (tab) => {
                         <div>
                             <!-- Exequatur -->
                             <div class="mb-6">
-                                <InputLabel for="exequatur" value="Exequatur" :required="exequaturRequired"/>
-                                <TextInput id="exequatur" v-model="form.exequatur" :required="exequaturRequired" type="text" class="mt-1 block w-full"
-                                     autocomplete="exequatur" />
+                                <InputLabel for="exequatur" value="Exequatur" :required="exequaturRequired" />
+                                <TextInput id="exequatur" v-model="form.exequatur" :required="exequaturRequired"
+                                    type="text" class="mt-1 block w-full" autocomplete="exequatur" />
                                 <InputError :message="form.errors.exequatur" class="mt-2" />
                             </div>
 
@@ -309,7 +309,7 @@ const setActiveTab = (tab) => {
                         <div>
                             <!-- Especialidad -->
                             <div class="mb-6">
-                                <InputLabel for="specialty" value="Especialidad" :required="true"/>
+                                <InputLabel for="specialty" value="Especialidad" :required="true" />
                                 <TextInput id="specialty" v-model="form.specialty" type="text" class="mt-1 block w-full"
                                     required autocomplete="specialty" />
                                 <InputError :message="form.errors.specialty" class="mt-2" />
@@ -330,7 +330,7 @@ const setActiveTab = (tab) => {
                 <div v-show="activeTab === 'contact'">
                     <!-- Teléfono -->
                     <div class="mb-6">
-                        <InputLabel for="phone" value="Teléfono" :required="true"/>
+                        <InputLabel for="phone" value="Teléfono" :required="true" />
                         <PhoneInput id="phone" v-model="form.phone" type="text" class="mt-1 block w-full" required
                             autocomplete="phone" />
                         <InputError :message="form.errors.phone" class="mt-2" />
@@ -338,7 +338,7 @@ const setActiveTab = (tab) => {
 
                     <!-- Dirección -->
                     <div class="mb-6">
-                        <InputLabel for="address" value="Dirección" :required="true"/>
+                        <InputLabel for="address" value="Dirección" :required="true" />
                         <TextAreaInput id="address" v-model="form.address" type="text" class="mt-1 block w-full"
                             required autocomplete="address" />
                         <InputError :message="form.errors.address" class="mt-2" />

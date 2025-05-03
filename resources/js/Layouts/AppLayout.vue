@@ -22,7 +22,7 @@ import SidebarFilledIcon from '@/Components/Icons/SidebarFilledIcon.vue';
 import Tooltip from '@/Components/Tooltip.vue';
 import SunIcon from '@/Components/Icons/SunIcon.vue';
 import MoonIcon from '@/Components/Icons/MoonIcon.vue';
-import ChartDotsIcon from '@/Components/Icons/ChartDotsIcon.vue';
+import ChartIcon from '@/Components/Icons/ChartIcon.vue';
 import DynamicAvatar from '@/Components/DynamicAvatar.vue';
 
 defineProps({
@@ -187,7 +187,7 @@ const logout = () => {
                                     'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
                                     { 'justify-center': !sidebarExpanded }
                                 ]">
-                                <ChartDotsIcon
+                                <ChartIcon
                                     class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
                                 <span v-if="sidebarExpanded" class="truncate ml-3">Hojas de Temperatura</span>
                                 </Link>

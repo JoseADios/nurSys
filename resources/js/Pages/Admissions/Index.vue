@@ -71,6 +71,8 @@
                             <option value="">Todos</option>
                             <option value="1">Con cama Asignada</option>
                             <option value="2">Sin cama Asignada</option>
+                            <option value="3">Dados de Alta</option>
+                            <option value="4">Ingresados</option>
                         </select>
 
                         <select @change="submitFilters()"

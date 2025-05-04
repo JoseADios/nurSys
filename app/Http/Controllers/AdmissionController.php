@@ -81,6 +81,14 @@ class AdmissionController extends Controller implements HasMiddleware
             $query->whereNull('admissions.bed_id');
 
         }
+        elseif ($beds_available === '3') {
+            $query->whereNotNull('admissions.discharged_date');
+
+        }
+        elseif ($beds_available === '4') {
+            $query->whereNull('admissions.discharged_date');
+
+        }
 
         if ($sortField) {
             $query->orderBy($sortField, $sortDirection);
@@ -96,7 +104,7 @@ class AdmissionController extends Controller implements HasMiddleware
             $query->where('admissions.doctor_id', Auth::id());
 
         }
-        $admissions = $query->paginate(10);
+        $admissions = $query->orderByDesc('created_at')->paginate(10);
 
         $admissions->getCollection()->transform(function ($admission) {
             if ($admission->discharged_date) {

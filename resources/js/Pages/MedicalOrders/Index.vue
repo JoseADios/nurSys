@@ -238,6 +238,8 @@ import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import moment from 'moment/moment';
 import 'moment/locale/es';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
+import FilterIcon from '@/Components/Icons/FilterIcon.vue';
+import AccessGate from '@/Components/Access/AccessGate.vue';
 export default {
     props: {
         medicalOrders: Object,
@@ -255,7 +257,9 @@ export default {
         XIcon,
         CirclePlusIcon,
         CircleXIcon,
-        UserIcon
+        UserIcon,
+        FilterIcon,
+        AccessGate
     },
     data() {
         return {

@@ -62,7 +62,7 @@ export default {
     props: {
 
         medicationRecord: Object,
-        errors: Array,
+        errors: Object,
         diet: Array,
     },
     components: {

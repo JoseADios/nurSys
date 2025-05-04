@@ -28,21 +28,64 @@
                 Seleccionar Medicamento ({{ drugs.total }} resultados)
             </h3>
             <div class="max-h-[250px] overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800">
-                <div v-for="drug in drugs.data" :key="drug.id" @click="selectDrug(drug)" :class="['p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20', selectedDrugLocal === drug.id ? 'bg-purple-100 dark:bg-purple-900/30' : '']">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="font-medium text-gray-900 dark:text-white text-sm">
-                                {{ drug.name }}
-                            </span>
-                            <div v-if="selectedDrugId === drug.id" class="text-xs text-green-500 dark:text-green-400">
-                                Medicamento actual
-                            </div>
-                        </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ formatDate(drug.created_at) }}
-                        </div>
-                    </div>
-                </div>
+                <div v-for="drug in drugs.data"
+     :key="drug.id"
+     @mouseenter="handleTooltip(drug.id)"
+     @mouseleave="handleTooltip(null)"
+     @click="selectDrug(drug)"
+     :class="[
+        'relative p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all',
+        selectedDrugLocal === drug.id ? 'bg-purple-100 dark:bg-purple-900/30' : ''
+     ]">
+
+    <!-- Contenido del medicamento -->
+    <div class="flex justify-between items-center">
+        <div>
+            <span class="font-medium text-gray-900 dark:text-white text-sm">
+                {{ drug.name }}
+                {{ drug.id }}
+            </span>
+            <div v-if="selectedDrugId === drug.id" class="text-xs text-green-500 dark:text-green-400">
+                Medicamento actual
+            </div>
+        </div>
+        <div class="text-xs text-gray-500 dark:text-gray-400">
+            {{ formatDate(drug.created_at) }}
+        </div>
+    </div>
+
+    <!-- Tooltip elegante -->
+    <div v-if="showTooltip === drug.id"
+         :ref="el => tooltipRefs[drug.id] = el"
+         :class="{
+            'top-auto bottom-full mb-3': shouldShowAbove(drug.id),
+            'top-full mt-3': !shouldShowAbove(drug.id)
+         }"
+         class="hidden lg:block absolute z-50 w-64 text-sm bg-white/95 dark:bg-gray-800/95 rounded-md border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-sm left-1/2 -translate-x-1/2 overflow-hidden transform origin-top scale-100 transition-all duration-200">
+
+        <!-- Encabezado del tooltip -->
+        <div class="h-1.5 bg-gradient-to-r from-purple-400 to-pink-400 dark:from-purple-500 dark:to-pink-500"></div>
+
+        <div class="px-5 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <h3 class="font-bold text-gray-800 dark:text-gray-200 truncate">
+                {{ drug.name }}
+            </h3>
+            <span class="text-xs text-gray-500 dark:text-gray-400">
+                {{ formatDate(drug.created_at) }}
+            </span>
+        </div>
+
+        <div class="px-5 py-4">
+            <p class="text-gray-700 dark:text-gray-300 text-xs">
+                {{ drug.description || 'Sin descripción disponible.' }}
+            </p>
+        </div>
+
+        <!-- Flecha del tooltip -->
+        <div class="absolute left-1/2 -translate-x-1/2 -top-2.5 w-0 h-0 border-l-6 border-r-6 border-b-6 border-transparent border-b-white dark:border-b-gray-800 filter drop-shadow-sm"></div>
+    </div>
+</div>
+
             </div>
             <div class="flex justify-start mt-4 space-x-2">
                 <button type="button" @click="prevPage" :disabled="!drugs.prev_page_url" class="px-3 py-1 bg-gray-500 text-white rounded shadow hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -106,7 +149,8 @@ import moment from "moment/moment";
 import DialogModal from './DialogModal.vue';
 export default {
     props: {
-        selectedDrugId: Number
+        selectedDrugId: Number,
+        drug: String,
     },
     components: {
         DialogModal,
@@ -120,6 +164,9 @@ export default {
                 prev_page_url: null,
                 next_page_url: null,
             },
+            showTooltip: null,
+            tooltipRefs: {},
+            tooltipTimeout: null,
             selectedDrugLocal: this.selectedDrugId || null,
             filters: {
                 name: '',
@@ -148,9 +195,63 @@ export default {
         this.applyFilters();
     },
     methods: {
+
         openCreateModal() {
             this.isVisible = true;
         },
+        shouldShowAbove(bedId) {
+
+
+            const tooltip = this.tooltipRefs[bedId];
+
+            if (!tooltip) return false;
+
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const bedElement = tooltip.parentElement;
+            const bedRect = bedElement.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const padding = 20; // Espacio de padding para mejor visibilidad
+
+            // Espacio disponible debajo del elemento
+            const spaceBelow = windowHeight - bedRect.bottom;
+            // Altura total del tooltip
+            const tooltipHeight = tooltipRect.height;
+
+            // Solo mostrar arriba si no hay suficiente espacio abajo
+            return spaceBelow < (tooltipHeight + padding);
+        },
+        handleTooltip(bedId) {
+            this.showTooltip == bedId;
+
+
+            if (this.tooltipTimeout) {
+                clearTimeout(this.tooltipTimeout);
+            }
+
+            if (this.showTooltip === bedId) {
+
+                this.showTooltip = null;
+                this.clearTooltipRef(bedId);
+            } else {
+                if (this.showTooltip !== null) {
+                    this.clearTooltipRef(this.showTooltip);
+                }
+                this.showTooltip = bedId;
+            }
+
+        },
+        clearTooltipRef(bedId) {
+            if (this.tooltipRefs[bedId]) {
+                delete this.tooltipRefs[bedId];
+            }
+        },
+        beforeUnmount() {
+
+        this.tooltipRefs = {};
+        if (this.tooltipTimeout) {
+            clearTimeout(this.tooltipTimeout);
+        }
+    },
         submitModal() {
             this.$inertia.post(route('Drugs.store'), this.modalform, {
                 preserveScroll: true

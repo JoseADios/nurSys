@@ -36,6 +36,7 @@ class RoleSeeder extends Seeder
         $role->syncPermissions([
             'admission.view',
             'admission.update',
+            'admission.create',
             'medicalOrder.view',
             'medicalOrder.create',
             'temperatureRecord.view',
@@ -61,6 +62,7 @@ class RoleSeeder extends Seeder
         $role->syncPermissions([
             'admission.view',
             'admission.create',
+            'admission.delete',
             'patient.view',
             'patient.create',
             'patient.update',

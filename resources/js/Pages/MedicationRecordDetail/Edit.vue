@@ -1,9 +1,32 @@
 <template>
 <AppLayout>
     <template #header>
-        <h2 class="font-semibold text-xl text-white leading-tight text-center">
-            Editar Detalle de Ficha de Medicamentos
-        </h2>
+
+        <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
+            <BreadCrumb :items="[
+                    ...(medicationRecordDetail.medication_record_id ? [{
+                        formattedId: { id: medicationRecordDetail.medication_record_id, prefix: 'ING' },
+                        route: route('admissions.show', medicationRecordDetail.medication_record_id)
+                    }] : []),
+                    {
+                        text: 'Fichas de Medicamentos',
+                        route: medicationRecordDetail.medication_record_id
+                            ? route('medicationRecords.show', { id: medicationRecordDetail.medication_record_id })
+                            : route('medicationRecords.show')
+                    },
+
+                    {
+                        formattedId: { id: medicationRecordDetail.medication_record_id, prefix: 'FICH' },
+                        route: medicationRecordDetail.medication_record_id
+                            ? route('medicationRecords.show', { id: medicationRecordDetail.medication_record_id })
+                            : route('medicationRecords.show')
+                    },
+                    {
+                        formattedId: { id: medicationRecordDetail.id, prefix: 'DET' }
+                    }
+                ]" />
+            </h2>
+
     </template>
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
@@ -76,11 +99,12 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import {
     Link
 } from '@inertiajs/vue3';
-
+import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
     components: {
         AppLayout,
-        Link
+        Link,
+        BreadCrumb
     },
     props: {
         medicationRecordDetail: Object,

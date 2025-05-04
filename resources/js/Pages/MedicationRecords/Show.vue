@@ -79,12 +79,12 @@
                         <!-- Doctor -->
                         <div
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermero</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 <!-- Verifica que la relación drug esté definida -->
-                                {{ medicationRecord.admission.doctor.name }} {{
-                                    medicationRecord.admission.doctor.last_name }}
+                                {{ nurse.name }}   {{ nurse.last_name }}
                             </p>
+
                         </div>
 
                         <!-- Diagnostico -->
@@ -92,7 +92,7 @@
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnostico</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ medicationRecord.diagnosis }}
+                                {{ medicationRecord.admission.admission_dx }}
                             </p>
                         </div>
 
@@ -101,9 +101,11 @@
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                Cama {{ medicationRecord.admission.bed.number }} Habitacion {{
-                                    medicationRecord.admission.bed.room }}
+                                Cama {{ medicationRecord?.admission?.bed?.number || "N/A" }}
+                                Habitación {{ medicationRecord?.admission?.bed?.room || "N/A" }}
+
                             </p>
+
                         </div>
 
                         <!-- Dieta -->
@@ -131,8 +133,15 @@
 
                 <div class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
-                    <div>
+                    <div v-if="showCreateDetailForm == false" >
                         <button @click="OpenFormCreateRecord" id="add_detail" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                                hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                                transition-colors duration-300">
+                            Agregar Detalle
+                        </button>
+                    </div>
+                    <div v-else >
+                        <button @click="closeform" id="add_detail" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                 transition-colors duration-300">
                             Agregar Detalle
@@ -188,7 +197,8 @@
                                                             'bg-blue-500 text-white': selectedOrderId === detail.id && !detail.suspended_at,
                                                             'bg-white dark:bg-gray-800': selectedOrderId !== detail.id && !detail.suspended_at,
 
-                                                        }" class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200">
+                                                        }"
+                                                        class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200">
 
                                                         <div class="flex flex-col justify-between items-start">
                                                             <div class="w-full flex flex-col">
@@ -524,6 +534,7 @@
             </template>
         </DialogModal>
 
+
     </AppLayout>
 </template>
 
@@ -550,12 +561,16 @@ import ReportIcon from '@/Components/Icons/ReportIcon.vue';
 import ChevronDown from '@/Components/Icons/ChevronDown.vue';
 import moment from 'moment/moment';
 import 'moment/locale/es';
+import UserSelector from '@/Components/UserSelector.vue';
+import EditIcon from '@/Components/Icons/EditIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import Modal from '@/Components/Modal.vue';
 export default {
 
     props: {
         medicationRecord: Object,
         details: Array,
+        nurse: Object,
         orders: Object,
         drug: Array,
         routeOptions: Array,
@@ -570,6 +585,8 @@ export default {
     components: {
         AppLayout,
         Link,
+        UserSelector,
+        EditIcon,
         ConfirmationModal,
         DangerButton,
         SecondaryButton,
@@ -579,6 +596,7 @@ export default {
         SignaturePad,
         FormatId,
         DrugSelector,
+        Modal,
         InputError,
         ReportIcon,
         ChevronDown,
@@ -598,9 +616,15 @@ export default {
                 selectedOrderId: null,
                 showDeleted: this.filters.show_deleted,
             }),
+            formRecord: {
+                admission_id: this.medicationRecord.admission_id,
+                nurse_id: this.medicationRecord.nurse_id,
+                active: this.medicationRecord.active,
+            },
             showCreateDetailForm: ref(false),
             recordBeingDeleted: ref(null),
             selectedOrderId: null,
+
             errorMessage: "",
 
             isVisible: false,
@@ -624,6 +648,7 @@ export default {
     },
 
     methods: {
+
         formatDate(date) {
             return moment(date).format('DD MMMM YYYY HH:mm');
         },

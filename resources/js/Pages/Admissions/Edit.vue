@@ -126,9 +126,7 @@ import {
     Link,
     useForm
 } from '@inertiajs/vue3';
-import {
-    useGoBack
-} from '@/composables/useGoBack';
+
 import InputError from '@/Components/InputError.vue';
 import BedSelector from '@/Components/BedSelector.vue';
 import {
@@ -169,7 +167,7 @@ export default {
             }),
             admissionBeingDeleted: ref(null),
             isVisible: false,
-            goBack: useGoBack().goBack
+
         }
     },
     methods: {

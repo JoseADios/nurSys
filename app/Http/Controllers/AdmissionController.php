@@ -50,8 +50,8 @@ class AdmissionController extends Controller implements HasMiddleware
         $sortDirection = $request->input('sortDirection', 'asc');
         $beds_available = $request->input('beds_available');
         $days = $request->integer('days');
-
-        $query = Admission::query()->with('patient', 'bed', 'doctor')->select([
+        $myRecords = $request->boolean('myRecords', true);
+        $query = Admission::query()->with('patient', 'bed', 'doctor','receptionist')->select([
             'admissions.id',
             'admissions.patient_id',
             'admissions.bed_id',
@@ -81,6 +81,14 @@ class AdmissionController extends Controller implements HasMiddleware
             $query->whereNull('admissions.bed_id');
 
         }
+        elseif ($beds_available === '3') {
+            $query->whereNotNull('admissions.discharged_date');
+
+        }
+        elseif ($beds_available === '4') {
+            $query->whereNull('admissions.discharged_date');
+
+        }
 
         if ($sortField) {
             $query->orderBy($sortField, $sortDirection);
@@ -92,7 +100,16 @@ class AdmissionController extends Controller implements HasMiddleware
             $query->where('admissions.created_at', '>=', now()->subDays($days));
         }
 
-        $admissions = $query->paginate(10);
+        if ($myRecords ) {
+            if (Auth::user()->hasRole('doctor') ) {
+                $query->where('admissions.doctor_id', Auth::id());
+            }
+            else if (Auth::user()->hasRole('receptionist') || Auth::user()->hasRole('admin')) {
+                $query->where('admissions.receptionist_id', Auth::id());
+            }
+
+        }
+        $admissions = $query->orderByDesc('created_at')->paginate(10);
 
         $admissions->getCollection()->transform(function ($admission) {
             if ($admission->discharged_date) {
@@ -262,6 +279,10 @@ class AdmissionController extends Controller implements HasMiddleware
         $newBedToUpdate = null;
         $anteriorBedToUpdate = null;
 
+        if ($request->has('receptionist_id') && $request->input('receptionist_id')) {
+            $this->authorize('updateReceptionist', $admission);
+            $admission->update($request->only(['receptionist_id']));
+        }
         // si se esta dando de alta
         if ($request->has('discharge') && $request->discharge == true) {
             $firmService = new FirmService;

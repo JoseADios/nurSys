@@ -18,7 +18,7 @@ class MedicationRecordFactory extends Factory
     {
         return [
             'admission_id' => $this->faker->numberBetween(1, 10), // Cambia el rango según los IDs de Admission
-            'diagnosis' => $this->faker->sentence(3),
+
             'diet' => $this->faker->word(),
             'referrals' => $this->faker->sentence(),
             'pending_studies' => $this->faker->sentence(),

@@ -83,6 +83,10 @@ class MedicalOrderPolicy
 
         return Response::allow();
     }
+    public function updateNurse(User $user): Response
+    {
+        return Response::deny('No tienes permiso para actualizar esta información');
+    }
 
     /**
      * Determine whether the user can delete the model.

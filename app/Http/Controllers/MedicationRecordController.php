@@ -84,7 +84,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
 
 
-        $medicationRecords = $query->with('admission.bed', 'admission.patient','admission.doctor', 'admission')->orderByDesc('created_at')->paginate(10);
+        $medicationRecords = $query->with('admission.bed', 'admission.patient', 'admission.doctor', 'admission')->orderByDesc('created_at')->paginate(10);
 
         $medicationRecords->getCollection()->transform(function ($record) {
             if ($record->admission->discharged_date != null) {
@@ -238,6 +238,10 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
         $this->authorize('update', $medicationRecord);
 
+        if ($request->has('nurse_id') && $request->input('nurse_id')) {
+            $this->authorize('updateNurse', $medicationRecord);
+            $medicationRecord->update($request->only(['nurse_id']));
+        }
         if ($request->has('active')) {
             $this->restore($medicationRecord->id);
         } else {

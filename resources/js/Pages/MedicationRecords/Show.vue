@@ -588,7 +588,7 @@ export default {
     props: {
         medicationRecord: Object,
         details: Array,
-        nurse: Array,
+        nurse: Object,
         orders: Object,
         drug: Array,
         routeOptions: Array,
@@ -666,6 +666,13 @@ export default {
     },
 
     methods: {
+        submitAdmission() {
+            this.$inertia.put(route('medicationRecords.update', this.medicationRecord.id), this.formRecord, {
+                preserveScroll: true
+            })
+
+            this.showEditNurse = null
+        },
         formatDate(date) {
             return moment(date).format('DD MMMM YYYY HH:mm');
         },

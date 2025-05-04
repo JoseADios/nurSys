@@ -48,33 +48,16 @@
                 <div class="flex flex-col sm:flex-row w-full gap-3 items-center">
                     <!-- Grupo: Mis Registros + En proceso -->
                     <div class="flex w-full flex-col sm:flex-row xl:w-full gap-2 items-center">
-                        <AccessGate :permission="['temperatureRecord.create']" class="w-full sm:w-fit">
-                            <!-- Filtro Mis Registros con ícono más grande -->
-                            <button
-                                class="w-full sm:w-fit border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 "
-                                :class="{
-                                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.myRecords,
-                                    'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
-                                }" @click="toggleFilterMyRecords" title="Mostrar solo mis registros">
-                                Mis registros
-                                <div class="relative p-2.5 pl-1">
-                                    <UserIcon class="h-5 w-5" />
-                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
-                                        :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
-                                    <div v-if="form.myRecords"
-                                        class="absolute -top-1 -right-1 h-2 w-2 bg-indigo-500 rounded-full">
-                                    </div>
-                                </div>
-                            </button>
-                        </AccessGate>
+
 
 
                         <select @change="submitFilters()"
                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                             name="in_process" id="in_process" v-model="form.in_process">
+                            <option value="">Todos</option>
                             <option value="true">En proceso</option>
                             <option value="false">Dados de alta</option>
-                            <option value="">Todos</option>
+
                         </select>
 
                         <select @change="submitFilters()"
@@ -271,17 +254,14 @@ export default {
                 sortDirection: this.filters.sortDirection || 'asc',
                 days: this.filters.days || '',
                 search: this.filters.search || '',
-                in_process: this.filters.in_process || '',
-                myRecords: this.filters.myRecords || true
+                in_process: this.filters.in_process || "",
+
             },
             timeout: 1000,
         }
     },
     methods: {
-        toggleFilterMyRecords() {
-            this.form.myRecords = !this.form.myRecords;
-            this.submitFilters();
-        },
+
         formatDate(date) {
             return moment(date).format('DD MMMM YYYY HH:mm');
         },

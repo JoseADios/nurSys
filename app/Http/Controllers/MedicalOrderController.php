@@ -41,9 +41,8 @@ class MedicalOrderController extends Controller implements HasMiddleware
         $sortDirection = $request->input('sortDirection', 'asc');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
-        $myRecords = $request->boolean('myRecords', true);
 
-        $in_process = $request->input('in_process', 'true');
+        $in_process = $request->input('in_process', "");
 
         $query = MedicalOrder::with('admission.patient', 'admission.bed', 'admission.doctor')
             ->select([
@@ -84,10 +83,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
             $query->where('admission_id', intval($admissionId));
         }
 
-        if ($myRecords) {
-            $query->where('medical_orders.doctor_id', Auth::id());
 
-        }
         $medicalOrders = $query->paginate(10);
         $medicalOrders->getCollection()->transform(function ($order) {
             if ($order->admission->discharged_date != null) {

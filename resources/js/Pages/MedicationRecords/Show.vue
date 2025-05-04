@@ -84,11 +84,7 @@
                                 <!-- Verifica que la relación drug esté definida -->
                                 {{ nurse.name }}   {{ nurse.last_name }}
                             </p>
-                            <AccessGate :role="['admin']" >
-                                <button @click="showEditDoctor = true" class="text-blue-500 flex">
-                                    <EditIcon class="size-5" />
-                                </button>
-                            </AccessGate>
+
                         </div>
 
                         <!-- Diagnostico -->
@@ -137,8 +133,15 @@
 
                 <div class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
-                    <div>
+                    <div v-if="showCreateDetailForm == false" >
                         <button @click="OpenFormCreateRecord" id="add_detail" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                                hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                                transition-colors duration-300">
+                            Agregar Detalle
+                        </button>
+                    </div>
+                    <div v-else >
+                        <button @click="closeform" id="add_detail" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                 transition-colors duration-300">
                             Agregar Detalle
@@ -530,28 +533,7 @@
                 </button>
             </template>
         </DialogModal>
-        <Modal :closeable="true" :show="showEditDoctor != null" @close="showEditDoctor == null">
-                <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
-                    <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
 
-                        <UserSelector roles="nurse" :selected-user-id="medicationRecord.nurse_id"
-                            @update:user="formRecord.nurse_id = $event" />
-                        <!-- Botones -->
-                        <div class="flex justify-end mt-4 space-x-3">
-                            <button type="button" @click="showEditDoctor = null"
-                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
-                                Cancelar
-                            </button>
-                            <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
-                                :disabled="!formRecord.nurse_id">
-                                Aceptar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-            </Modal>
 
     </AppLayout>
 </template>
@@ -642,7 +624,7 @@ export default {
             showCreateDetailForm: ref(false),
             recordBeingDeleted: ref(null),
             selectedOrderId: null,
-            showEditDoctor: ref(null),
+
             errorMessage: "",
 
             isVisible: false,
@@ -666,13 +648,7 @@ export default {
     },
 
     methods: {
-        submitAdmission() {
-            this.$inertia.put(route('medicationRecords.update', this.medicationRecord.id), this.formRecord, {
-                preserveScroll: true
-            })
 
-            this.showEditNurse = null
-        },
         formatDate(date) {
             return moment(date).format('DD MMMM YYYY HH:mm');
         },

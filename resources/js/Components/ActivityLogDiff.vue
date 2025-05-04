@@ -32,33 +32,33 @@
 
         <!-- Tabla de cambios -->
         <div v-if="hasChanges" class="overflow-x-auto">
-            <table class="w-full border-collapse">
-                <thead>
+            <table class="w-full border-collapse rounded-lg overflow-hidden">
+                <thead class="rounded-t-md bg-gray-100 dark:bg-gray-700">
                     <tr>
                         <th
-                            class="bg-gray-100 dark:bg-gray-700 text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                            class="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-300 border-b border-white dark:border-gray-700">
                             Campo</th>
                         <th
-                            class="bg-gray-100 dark:bg-gray-700 text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                            class="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-300 border-b border-white dark:border-gray-700">
                             Valor anterior</th>
                         <th
-                            class="bg-gray-100 dark:bg-gray-700 text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                            class="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-300 border-b border-white dark:border-gray-700">
                             Nuevo valor</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(change, field) in formattedChanges" :key="field" class="bg-blue-50 dark:bg-blue-900/20">
                         <td
-                            class="py-3 px-4 font-medium text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700">
+                            class="py-3 px-4 font-medium text-gray-800 dark:text-gray-200 border-b border-white dark:border-gray-700">
                             {{ formatFieldName(field) }}</td>
                         <td
-                            class="py-3 px-4 text-gray-400 dark:text-gray-500 line-through bg-red-50 dark:bg-red-900/10 border-b border-gray-200 dark:border-gray-700">
+                            class="py-3 px-4 text-gray-400 dark:text-gray-500 bg-red-50 dark:bg-red-900/10 border-b border-white dark:border-gray-700">
                             <span v-if="change.old !== null && change.old !== undefined">{{ formatValue(change.old,
                                 field) }}</span>
                             <span v-else class="text-gray-400 dark:text-gray-500 italic">No especificado</span>
                         </td>
                         <td
-                            class="py-3 px-4 font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/10 border-b border-gray-200 dark:border-gray-700">
+                            class="py-3 px-4 font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/10 border-b border-white dark:border-gray-700">
                             <span v-if="change.new !== null && change.new !== undefined">{{ formatValue(change.new,
                                 field) }}</span>
                             <span v-else class="text-gray-400 dark:text-gray-500 italic">No especificado</span>

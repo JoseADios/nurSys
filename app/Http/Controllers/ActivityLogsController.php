@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -14,8 +16,7 @@ class ActivityLogsController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:temperatureDetail.create', ['store']),
-            new Middleware('permission:temperatureDetail.update', ['update']),
+            new Middleware('role:admin', ['index'])
         ];
     }
 
@@ -25,25 +26,40 @@ class ActivityLogsController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         // Obtener modelos disponibles para el filtro
-        $availableModels = Activity::distinct()
+        $models = Activity::distinct()
             ->whereNotNull('subject_type')
             ->pluck('subject_type')
             ->toArray();
+
+        $availableModels = $this->setModelsWithLabels($models);
+
+        $causers = Activity::distinct()
+            ->whereNotNull('causer_id')
+            ->pluck('causer_id')
+            ->toArray();
+
+        $availableCausers = User::whereIn('id', $causers)->get();
 
         // Construir la consulta base
         $query = Activity::with('causer')->latest();
 
         // Aplicar filtros si existen
-        if ($request->filled('search')) {
-            $query->where('description', 'like', '%' . $request->search . '%');
+        if ($request->filled('action')) {
+            $query->where('description', $request->action);
         }
 
         if ($request->filled('model')) {
             $query->where('subject_type', $request->model);
         }
 
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', '>=', $request->date);
+        if ($request->filled('causer')) {
+            $query->where('causer_id', $request->causer);
+        }
+
+        if ($request->filled('startDate') && $request->filled('endDate')) {
+            $startDate = $request->startDate;
+            $endDate = Carbon::parse($request->endDate)->endOfDay();
+            $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
         // Obtener resultados paginados
@@ -52,55 +68,24 @@ class ActivityLogsController extends Controller implements HasMiddleware
         return Inertia::render('ActivityLogs/Index', [
             'logs' => $logs,
             'filters' => $request->only(['search', 'model', 'date']),
-            'availableModels' => $availableModels
+            'availableModels' => $availableModels,
+            'availableCausers' => $availableCausers
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    private function setModelsWithLabels($modelNames)
     {
-        //
-    }
+        $modelLabels = config('model_labels');
+        $mapNamesWhitLabels = [];
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        foreach ($modelNames as $key => $name) {
+            $model = [];
+            $model['name'] =  $name;
+            $model['label'] = $modelLabels[$name] ?? $name;
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            array_push($mapNamesWhitLabels, $model);
+        }
+        return $mapNamesWhitLabels;
     }
 }

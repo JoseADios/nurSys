@@ -9,42 +9,61 @@
         <div class="bg-gray-100 dark:bg-gray-900 overflow-hidden sm:rounded-lg mt-4 px-4 lg:px-10">
             <div class="bg-gray-100 dark:bg-gray-900 mt-2 mb-6">
                 <!-- Filtros -->
-                <div class=" rounded-lg shadow-sm  mb-6">
+                <div class="rounded-lg shadow-sm mb-6">
                     <form @submit.prevent="applyFilters">
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <!-- Búsqueda -->
-                            <div class="relative w-full md:w-4/12">
-                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
+                        <div class="flex flex-col lg:flex-row lg:flex-wrap gap-4">
+                            <!-- Filtros -->
+                            <div class="flex flex-col lg:flex-row lg:flex-grow gap-4">
+                                <!-- Selector de acción -->
+                                <div class="relative w-full lg:w-1/5">
+                                    <select
+                                        class="border-gray-300 w-full dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                        name="action" id="action" v-model="localFilters.action">
+                                        <option value="">Todas las acciones</option>
+                                        <option value="created">Creado</option>
+                                        <option value="updated">Actualizado</option>
+                                        <option value="actived">Activado</option>
+                                        <option value="deactived">Desactivado</option>
+                                    </select>
                                 </div>
-                                <TextInput type="text" v-model="localFilters.search" class="pl-10 w-full"
-                                    placeholder="Buscar..." />
-                                <button v-if="localFilters.search" @click="localFilters.search = ''"
-                                    class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
-                                    <XIcon class="h-5 w-5" />
-                                </button>
-                            </div>
 
-                            <!-- Selector de modelo -->
-                            <div class="relative w-full md:w-2/12">
-                                <select
-                                    class="border-gray-300 w-full dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                                    name="model" id="model" v-model="localFilters.model">
-                                    <option value="">Todos los modelos</option>
-                                    <option v-for="model in availableModels" :key="model" :value="model">
-                                        {{ getModelName(model) }}
-                                    </option>
-                                </select>
-                            </div>
+                                <!-- Selector de modelo -->
+                                <div class="relative w-full lg:w-1/5">
+                                    <select
+                                        class="border-gray-300 w-full dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                        name="model" id="model" v-model="localFilters.model">
+                                        <option value="">Todos los modelos</option>
+                                        <option v-for="model in availableModels" :key="model.name" :value="model.name">
+                                            {{ model.label }}
+                                        </option>
+                                    </select>
+                                </div>
 
-                            <!-- Selector de fecha -->
-                            <div class="relative w-full md:w-2/12">
-                                <DateInput id="date" v-model="localFilters.date" />
+                                <!-- Selector de usuario -->
+                                <div class="relative w-full lg:w-1/5">
+                                    <select
+                                        class="border-gray-300 w-full dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                        name="causer" id="causer" v-model="localFilters.causer">
+                                        <option value="">Todos los usuarios</option>
+                                        <option v-for="causer in availableCausers" :key="causer" :value="causer">
+                                            {{ getCauserName(causer) }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Selector de fecha -->
+                                <div class="relative w-full lg:w-2/5">
+                                    <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                                        <DateInput class="w-full" id="startDate" v-model="localFilters.startDate" placeholder="Fecha inicio" />
+                                        <span class="text-gray-500 dark:text-gray-400">a</span>
+                                        <DateInput class="w-full" id="endDate" v-model="localFilters.endDate" placeholder="Fecha fin" />
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Botones -->
-                            <div class="relative w-full md:w-4/12">
-                                <div class="flex justify-end items-center space-x-3">
+                            <div class="relative w-full">
+                                <div class="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-3">
                                     <button type="button" @click="resetFilters"
                                         class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
                                         Limpiar filtros
@@ -67,15 +86,15 @@
                                 <tr>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Descripción
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Usuario
+                                        Acción
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         Modelo
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Usuario
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -90,13 +109,13 @@
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr v-for="log in logs.data" :key="log.id" class="">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                        {{ log.description }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                        {{ log.causer ? log.causer.name + ' ' + log.causer.last_name : 'Sistema' }}
+                                        {{ formatDescription(log.description) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                         {{ getModelName(log.subject_type) }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                        {{ log.causer ? log.causer.name + ' ' + log.causer.last_name : 'Sistema' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                         {{ formatDate(log.created_at) }}
@@ -149,7 +168,7 @@
 
                     <div v-if="selectedLog" class="text-gray-700 dark:text-gray-300 max-h-[80vh] overflow-y-auto">
                         <!-- Para un solo registro de actividad -->
-                        <ActivityLogDiff :activityItem="selectedLog"/>
+                        <ActivityLogDiff :activityItem="selectedLog" />
                     </div>
                 </div>
             </div>
@@ -188,7 +207,8 @@ export default defineComponent({
     props: {
         logs: Object,
         filters: Object,
-        availableModels: Array
+        availableModels: Object,
+        availableCausers: Array
     },
 
     data() {
@@ -196,9 +216,11 @@ export default defineComponent({
             showModal: false,
             selectedLog: null,
             localFilters: {
-                search: this.$props.filters?.search || '',
+                action: this.$props.filters?.action || '',
                 model: this.$props.filters?.model || '',
-                date: this.$props.filters?.date || ''
+                causer: this.$props.filters?.causer || '',
+                startDate: this.$props.filters?.startDate || '',
+                endDate: this.$props.filters?.endDate || ''
             }
         };
     },
@@ -209,11 +231,12 @@ export default defineComponent({
         },
 
         getModelName(subjectType) {
-            if (!subjectType) return 'N/A';
+            const model = this.availableModels.find(model => model.name === subjectType);
+            return model ? model.label : 'Desconocido';
+        },
 
-            // Obtener solo el nombre de la clase del namespace completo
-            const parts = subjectType.split('\\');
-            return parts[parts.length - 1];
+        getCauserName(causer) {
+            return causer.name + ' ' + causer.last_name;
         },
 
         showDetails(log) {
@@ -228,9 +251,11 @@ export default defineComponent({
 
         applyFilters() {
             router.get(route('activityLogs.index'), {
-                search: this.localFilters.search,
+                action: this.localFilters.action,
                 model: this.localFilters.model,
-                date: this.localFilters.date
+                causer: this.localFilters.causer,
+                startDate: this.localFilters.startDate,
+                endDate: this.localFilters.endDate
             }, {
                 preserveState: true,
                 replace: true
@@ -239,15 +264,28 @@ export default defineComponent({
 
         resetFilters() {
             this.localFilters = {
-                search: '',
+                action: '',
                 model: '',
-                date: ''
+                causer: '',
+                startDate: '',
+                endDate: ''
             };
 
             router.get(route('activityLogs.index'), {}, {
                 preserveState: true,
                 replace: true
             });
+        },
+
+        formatDescription(description) {
+            let mappings = {
+                'created': 'Creado',
+                'updated': 'Actualizado',
+                'deactivated': 'Desactivado',
+                'activated': 'Activado'
+            }
+
+            return mappings[description];
         },
 
         formatJSON(jsonData) {

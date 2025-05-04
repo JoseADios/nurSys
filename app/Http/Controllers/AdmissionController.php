@@ -51,7 +51,7 @@ class AdmissionController extends Controller implements HasMiddleware
         $beds_available = $request->input('beds_available');
         $days = $request->integer('days');
         $myRecords = $request->boolean('myRecords', true);
-        $query = Admission::query()->with('patient', 'bed', 'doctor')->select([
+        $query = Admission::query()->with('patient', 'bed', 'doctor','receptionist')->select([
             'admissions.id',
             'admissions.patient_id',
             'admissions.bed_id',
@@ -101,7 +101,12 @@ class AdmissionController extends Controller implements HasMiddleware
         }
 
         if ($myRecords ) {
-            $query->where('admissions.doctor_id', Auth::id());
+            if (Auth::user()->hasRole('doctor') ) {
+                $query->where('admissions.doctor_id', Auth::id());
+            }
+            else if (Auth::user()->hasRole('receptionist') || Auth::user()->hasRole('admin')) {
+                $query->where('admissions.receptionist_id', Auth::id());
+            }
 
         }
         $admissions = $query->orderByDesc('created_at')->paginate(10);
@@ -274,6 +279,10 @@ class AdmissionController extends Controller implements HasMiddleware
         $newBedToUpdate = null;
         $anteriorBedToUpdate = null;
 
+        if ($request->has('receptionist_id') && $request->input('receptionist_id')) {
+            $this->authorize('updateReceptionist', $admission);
+            $admission->update($request->only(['receptionist_id']));
+        }
         // si se esta dando de alta
         if ($request->has('discharge') && $request->discharge == true) {
             $firmService = new FirmService;

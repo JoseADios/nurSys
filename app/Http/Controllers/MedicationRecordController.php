@@ -45,8 +45,9 @@ class MedicationRecordController extends Controller implements HasMiddleware
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
         $days = $request->integer('days');
-        $in_process = $request->input('in_process', 'true');
-        $myRecords = $request->boolean('myRecords', true);
+        $in_process = $request->input('in_process', "");
+
+
         $query = MedicationRecord::query()
             ->select('medication_records.*', 'patients.first_name', 'patients.first_surname', 'patients.second_surname')
             ->join('admissions', 'medication_records.admission_id', '=', 'admissions.id')
@@ -58,7 +59,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
                 $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('diagnosis LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
-                    ->orWhereRaw('admissions.doctor_id LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('nurse_id LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%']);
             });
         }
@@ -77,14 +78,12 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $query->where('medication_records.created_at', '>=', now()->subDays($days));
         }
 
-        if ($myRecords) {
-            $query->where('medication_records.nurse_id', Auth::id());
 
-        }
 
 
 
         $medicationRecords = $query->with('admission.bed', 'admission.patient', 'admission.doctor', 'admission')->orderByDesc('created_at')->paginate(10);
+
 
         $medicationRecords->getCollection()->transform(function ($record) {
             if ($record->admission->discharged_date != null) {
@@ -238,10 +237,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
         $this->authorize('update', $medicationRecord);
 
-        if ($request->has('nurse_id') && $request->input('nurse_id')) {
-            $this->authorize('updateNurse', $medicationRecord);
-            $medicationRecord->update($request->only(['nurse_id']));
-        }
+
         if ($request->has('active')) {
             $this->restore($medicationRecord->id);
         } else {

@@ -24,6 +24,7 @@ import SunIcon from '@/Components/Icons/SunIcon.vue';
 import MoonIcon from '@/Components/Icons/MoonIcon.vue';
 import ChartIcon from '@/Components/Icons/ChartIcon.vue';
 import DynamicAvatar from '@/Components/DynamicAvatar.vue';
+import HistoryIcon from '@/Components/Icons/HistoryIcon.vue';
 
 defineProps({
     title: String,
@@ -239,6 +240,20 @@ const logout = () => {
                             </Link>
                         </Tooltip>
                     </AccessGate>
+
+                    <AccessGate :role="['admin']" class="px-3">
+                        <Tooltip class="w-full" text="Registro de actividades" position="right">
+                            <Link :href="route('activityLogs.index')" :class="[
+                                route().current('activityLogs.index') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700',
+                                'group flex items-center px-3 py-3 text-sm font-medium rounded-md transition-all',
+                                { 'justify-center': !sidebarExpanded }
+                            ]">
+                            <HistoryIcon
+                                class="h-5 w-5 text-gray-500 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300" />
+                            <span v-if="sidebarExpanded" class="truncate ml-3">Registro de actividades</span>
+                            </Link>
+                        </Tooltip>
+                    </AccessGate>
                 </div>
 
             </aside>
@@ -331,6 +346,11 @@ const logout = () => {
                             <ResponsiveNavLink v-if="$page.props.auth.user.roles.includes('admin')"
                                 :href="route('users.index')" :active="route().current('users.index')">
                                 Usuarios
+                            </ResponsiveNavLink>
+
+                            <ResponsiveNavLink v-if="$page.props.auth.user.roles.includes('admin')"
+                                :href="route('activityLogs.index')" :active="route().current('activityLogs.index')">
+                                Registro de actividades
                             </ResponsiveNavLink>
                         </div>
                         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">

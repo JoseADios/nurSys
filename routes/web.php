@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogsController;
 use App\Http\Controllers\AdmissionController;
 use App\Http\Controllers\BedController;
 use App\Http\Controllers\ClinicAreaController;
@@ -19,9 +20,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DrugController;
 use App\Http\Controllers\DietController;
 use App\Http\Controllers\ReportController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -78,6 +77,8 @@ Route::middleware([
     Route::put('/users/{user}/password', [UserController::class, 'updatePassword'])->name('users.update.password');
     Route::get('/users/filter', [UserController::class, 'filterUsers'])->name('users.filter');
     Route::resource('users', UserController::class);
+
+    Route::resource('activityLogs', ActivityLogsController::class);
 
     // parametros
     Route::get('clinicAreas', [ClinicAreaController::class, 'index'])->name('clinicAreas.index');

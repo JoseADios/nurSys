@@ -88,8 +88,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                <tr v-for="log in logs.data" :key="log.id"
-                                    class="">
+                                <tr v-for="log in logs.data" :key="log.id" class="">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                         {{ log.description }}
                                     </td>
@@ -149,36 +148,8 @@
                     </div>
 
                     <div v-if="selectedLog" class="text-gray-700 dark:text-gray-300 max-h-[80vh] overflow-y-auto">
-                        <div class="mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                            <p class="mb-2"><span class="font-semibold">Descripción:</span> {{ selectedLog.description
-                            }}</p>
-                            <p class="mb-2"><span class="font-semibold">Fecha:</span> {{
-                                formatDate(selectedLog.created_at) }}
-                            </p>
-                            <p><span class="font-semibold">Usuario:</span> {{ selectedLog.causer ?
-                                selectedLog.causer.name :
-                                'Sistema' }}</p>
-                        </div>
-
-                        <div v-if="selectedLog.properties && selectedLog.properties.attributes" class="mb-4">
-                            <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Valores actuales:</h4>
-                            <div
-                                class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
-                                <pre
-                                    class="whitespace-pre-wrap text-sm text-gray-600 dark:text-gray-300 overflow-x-auto">{{
-                                        formatJSON(selectedLog.properties.attributes) }}</pre>
-                            </div>
-                        </div>
-
-                        <div v-if="selectedLog.properties && selectedLog.properties.old">
-                            <h4 class="font-medium text-gray-800 dark:text-gray-200 mb-2">Valores anteriores:</h4>
-                            <div
-                                class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
-                                <pre
-                                    class="whitespace-pre-wrap text-sm text-gray-600 dark:text-gray-300 overflow-x-auto">{{
-                                        formatJSON(selectedLog.properties.old) }}</pre>
-                            </div>
-                        </div>
+                        <!-- Para un solo registro de actividad -->
+                        <ActivityLogDiff :activityItem="selectedLog"/>
                     </div>
                 </div>
             </div>
@@ -199,6 +170,7 @@ import SearchIcon from '@/Components/Icons/SearchIcon.vue';
 import TextInput from '@/Components/TextInput.vue';
 import DateInput from '@/Components/DateInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import ActivityLogDiff from '@/Components/ActivityLogDiff.vue';
 
 export default defineComponent({
     components: {
@@ -209,7 +181,8 @@ export default defineComponent({
         SearchIcon,
         TextInput,
         DateInput,
-        InputLabel
+        InputLabel,
+        ActivityLogDiff
     },
 
     props: {

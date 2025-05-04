@@ -23,21 +23,9 @@ class NurseRecordDetail extends Model
     {
         return LogOptions::defaults()
             ->logAll()
-            ->logOnlyDirty()
             ->useLogName('Registro de enfermería - Evento')
             ->dontSubmitEmptyLogs();
     }
-
-    public function tapActivity(Activity $activity, string $eventName)
-    {
-        $properties = $activity->properties->toArray();
-
-        // Agregar nurse_record_id dentro de attributes
-        $properties['attributes']['nurse_record_id'] = $this->nurse_record_id;
-
-        $activity->properties = collect($properties);
-    }
-
 
     // RELATIONS
 

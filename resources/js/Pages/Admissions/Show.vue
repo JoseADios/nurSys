@@ -59,6 +59,14 @@
                 <div class="p-8 space-y-8">
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
+                                    admission.patient.second_surname }}
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             <div v-if="admission.bed">
@@ -70,13 +78,7 @@
                             </p>
                         </div>
 
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
-                                    admission.patient.second_surname }}
-                            </p>
-                        </div>
+
 
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>

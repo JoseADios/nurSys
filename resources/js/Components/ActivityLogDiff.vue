@@ -1,8 +1,8 @@
 <template>
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow pt-4 md:p-6">
         <!-- Nombre del modelo -->
         <div class="mb-6 text-center">
-            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">{{ modelLabel }}</h2>
+            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">{{ modelLabel }} ({{ activityItem.subject_id }})</h2>
         </div>
 
         <!-- Encabezado con información del registro -->
@@ -291,16 +291,6 @@ export default {
             fontAwesomeLoaded: false
         }
     },
-    created() {
-        // Cargar Font Awesome si no está ya cargado
-        if (!document.getElementById('font-awesome-css')) {
-            const link = document.createElement('link');
-            link.id = 'font-awesome-css';
-            link.rel = 'stylesheet';
-            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css';
-            document.head.appendChild(link);
-        }
-    },
     computed: {
         // Detectar el tipo de acción
         isCreateAction() {
@@ -449,13 +439,25 @@ export default {
 
         // Formatea valores específicos basados en el tipo de campo
         formatValue(value, field) {
+            // Si el valor es null o undefined, devolver un texto predeterminado
+            if (value === null || value === undefined) {
+                return 'No especificado';
+            }
+
             // Si el campo es de tipo password, mostrar puntos en lugar del valor real
             if (field.toLowerCase().includes('password')) {
                 return '••••••••';
             }
 
+
+            // Si el campo es de tipo firma (ruta de imagen), mostrar un texto descriptivo
+            if (field.toLowerCase().includes('sign')) {
+                return 'Firma registrada o actualizada';
+            }
+
             // Verificar mapeos personalizados primero
             const fieldKey = `${field}.${value}`;
+
             if (this.valueMappings[fieldKey]) {
                 return this.valueMappings[fieldKey];
             }

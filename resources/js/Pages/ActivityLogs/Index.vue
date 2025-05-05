@@ -53,17 +53,21 @@
 
                                 <!-- Selector de fecha -->
                                 <div class="relative w-full lg:w-2/5">
-                                    <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                                        <DateInput class="w-full" id="startDate" v-model="localFilters.startDate" placeholder="Fecha inicio" />
+                                    <div
+                                        class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                                        <DateInput class="w-full" id="startDate" v-model="localFilters.startDate"
+                                            placeholder="Fecha inicio" />
                                         <span class="text-gray-500 dark:text-gray-400">a</span>
-                                        <DateInput class="w-full" id="endDate" v-model="localFilters.endDate" placeholder="Fecha fin" />
+                                        <DateInput class="w-full" id="endDate" v-model="localFilters.endDate"
+                                            placeholder="Fecha fin" />
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Botones -->
                             <div class="relative w-full">
-                                <div class="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                                <div
+                                    class="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-3">
                                     <button type="button" @click="resetFilters"
                                         class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
                                         Limpiar filtros
@@ -82,7 +86,8 @@
                 <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <thead
+                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-gray-500 dark:text-gray-300 sm:table-cell">
@@ -109,9 +114,11 @@
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr v-for="log in logs.data" :key="log.id" class="">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                        <div :class="getActionBadgeClass(log.description)" class="inline-flex items-center px-3 py-1 rounded-md">
+                                        <div :class="getActionBadgeClass(log.description)"
+                                            class="inline-flex items-center px-3 py-1 rounded-md">
                                             <component :is="getActionIcon(log.description)" class="w-5 h-5 mr-2" />
-                                            <span class="font-semibold text-sm">{{ formatDescription(log.description) }}</span>
+                                            <span class="font-semibold text-sm">{{ formatDescription(log.description)
+                                                }}</span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
@@ -159,7 +166,7 @@
         <!-- Modal de detalles -->
         <Modal :closeable="true" :show="showModal" @close="closeModal">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full">
-                <div class="p-6">
+                <div class="p-4 md:p-6">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Detalles de la actividad</h3>
                         <button @click="closeModal"
@@ -171,7 +178,9 @@
 
                     <div v-if="selectedLog" class="text-gray-700 dark:text-gray-300 max-h-[75vh] overflow-y-auto">
                         <!-- Para un solo registro de actividad -->
-                        <ActivityLogDiff :activityItem="selectedLog" :model-label="getModelName(selectedLog.subject_type)" />
+                        <ActivityLogDiff :activityItem="selectedLog"
+                            :model-label="getModelName(selectedLog.subject_type)"
+                            :field-mappings="fieldMappings" :value-mappings="valueMappings"/>
                     </div>
                 </div>
             </div>
@@ -224,6 +233,8 @@ export default defineComponent({
         filters: Object,
         availableModels: Object,
         availableCausers: Array,
+        fieldMappings: Object,
+        valueMappings: Object,
     },
 
     data() {

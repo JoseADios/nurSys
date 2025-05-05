@@ -25,6 +25,9 @@ class ActivityLogsController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
+        $fieldMappings = config('field_value_mappings.field_mappings');
+        $valueMappings = config('field_value_mappings.value_mappings');
+
         // Obtener modelos disponibles para el filtro
         $models = Activity::distinct()
             ->whereNotNull('subject_type')
@@ -69,7 +72,9 @@ class ActivityLogsController extends Controller implements HasMiddleware
             'logs' => $logs,
             'filters' => $request->only(['search', 'model', 'date']),
             'availableModels' => $availableModels,
-            'availableCausers' => $availableCausers
+            'availableCausers' => $availableCausers,
+            'fieldMappings' => $fieldMappings,
+            'valueMappings' => $valueMappings
         ]);
     }
 

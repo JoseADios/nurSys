@@ -24,38 +24,11 @@ class NurseRecord extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'description', 'active'])
+            ->logAll()
+            ->useLogName('nurseRecords.show, '.$this->id)
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }
-
-    public function tapActivity(Activity $activity, string $eventName)
-    {
-        Log::info('Entre al tap activity');
-
-        $properties = $activity->properties->toArray();
-
-        // Modificar la descripción del evento si es 'updated' y 'active' cambió
-        if ($eventName === 'updated' && $this->isDirty('active')) {
-            $activity->description = $this->active ? 'activated' : 'deactivated';
-        } else {
-            $activity->description = ucfirst($eventName); // Por ejemplo: "Created", "Updated", etc.
-        }
-
-        $activity->properties = collect($properties);
-    }
-
-    public function setDescriptionForEvent(string $eventName): string
-    {
-        Log::info('Entre al set description');
-
-        if ($eventName === 'updated' && $this->isDirty('active')) {
-            return $this->active ? 'activated' : 'deactivated';
-        }
-
-        return ucfirst($eventName); // Por ejemplo: "Created", "Updated", etc.
-    }
-
 
     // RELATIONS
 

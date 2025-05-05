@@ -57,7 +57,7 @@
                                     'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
                                 }" @click="toggleFilterMyRecords" title="Mostrar solo mis registros">
                                 Mis registros
-                                <div class="relative p-2.5 pl-1" >
+                                <div class="relative p-2.5 pl-1">
                                     <UserIcon class="h-5 w-5" />
                                     <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
                                         :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
@@ -125,7 +125,8 @@
         </div>
 
         <!-- Tabla responsive -->
-        <div class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 rounded-lg my-4 mx-4 lg:mx-10">
+        <div
+            class="relative overflow-x-auto border border-gray-200 dark:border-gray-700/60 rounded-lg my-4 mx-4 lg:mx-10">
             <div class="min-w-full overflow-x-auto">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -133,7 +134,7 @@
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap hidden sm:table-cell"
                                 @click="sort('id')">
                                 ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                    }}</span>
+                                }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
                                 @click="sort('admissions.id')">
@@ -209,8 +210,7 @@
                     No hay registros disponibles.
                 </div>
             </div>
-            <Pagination :pagination="temperatureRecords" :filters="form"
-                 />
+            <Pagination :pagination="temperatureRecords" :filters="form" />
         </div>
     </AppLayout>
 </template>

@@ -22,8 +22,8 @@
                                         <option value="">Todas las acciones</option>
                                         <option value="created">Creado</option>
                                         <option value="updated">Actualizado</option>
-                                        <option value="actived">Activado</option>
-                                        <option value="deactived">Desactivado</option>
+                                        <option value="activated">Activado</option>
+                                        <option value="deactivated">Desactivado</option>
                                     </select>
                                 </div>
 
@@ -82,26 +82,26 @@
                 <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-700">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        class="px-6 py-3 text-left text-gray-500 dark:text-gray-300 sm:table-cell">
                                         Acción
                                     </th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        class="px-6 py-3 text-left text-gray-500 dark:text-gray-300 sm:table-cell">
                                         Modelo
                                     </th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        class="px-6 py-3 text-left text-gray-500 dark:text-gray-300 sm:table-cell">
                                         Usuario
                                     </th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        class="px-6 py-3 text-left text-gray-500 dark:text-gray-300 sm:table-cell">
                                         Fecha
                                     </th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        class="px-6 py-3 text-left text-gray-500 dark:text-gray-300 sm:table-cell">
                                         Detalles
                                     </th>
                                 </tr>
@@ -109,7 +109,10 @@
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr v-for="log in logs.data" :key="log.id" class="">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                        {{ formatDescription(log.description) }}
+                                        <div :class="getActionBadgeClass(log.description)" class="inline-flex items-center px-3 py-1 rounded-md">
+                                            <component :is="getActionIcon(log.description)" class="w-5 h-5 mr-2" />
+                                            <span class="font-semibold text-sm">{{ formatDescription(log.description) }}</span>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                         {{ getModelName(log.subject_type) }}
@@ -129,7 +132,7 @@
                                 </tr>
                                 <tr v-if="logs.data.length === 0">
                                     <td colspan="5"
-                                        class="px-6 py-8 text-center text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700">
+                                        class="px-6 py-8 text-center text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800">
                                         <div class="flex flex-col items-center justify-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-400 mb-2"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -157,7 +160,7 @@
         <Modal :closeable="true" :show="showModal" @close="closeModal">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full">
                 <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
+                    <div class="flex justify-between items-center mb-2">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Detalles de la actividad</h3>
                         <button @click="closeModal"
                             class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200">
@@ -166,9 +169,9 @@
                         </button>
                     </div>
 
-                    <div v-if="selectedLog" class="text-gray-700 dark:text-gray-300 max-h-[80vh] overflow-y-auto">
+                    <div v-if="selectedLog" class="text-gray-700 dark:text-gray-300 max-h-[75vh] overflow-y-auto">
                         <!-- Para un solo registro de actividad -->
-                        <ActivityLogDiff :activityItem="selectedLog" />
+                        <ActivityLogDiff :activityItem="selectedLog" :model-label="getModelName(selectedLog.subject_type)" />
                     </div>
                 </div>
             </div>
@@ -190,6 +193,12 @@ import TextInput from '@/Components/TextInput.vue';
 import DateInput from '@/Components/DateInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import ActivityLogDiff from '@/Components/ActivityLogDiff.vue';
+import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
+import EditIcon from '@/Components/Icons/EditIcon.vue';
+import TrashIcon from '@/Components/Icons/TrashIcon.vue';
+import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
+import ToggleLeftIcon from '@/Components/Icons/ToggleLeftIcon.vue';
+import ToggleRigthIcon from '@/Components/Icons/ToggleRigthIcon.vue';
 
 export default defineComponent({
     components: {
@@ -201,14 +210,20 @@ export default defineComponent({
         TextInput,
         DateInput,
         InputLabel,
-        ActivityLogDiff
+        ActivityLogDiff,
+        CirclePlusIcon,
+        EditIcon,
+        TrashIcon,
+        RestoreIcon,
+        ToggleLeftIcon,
+        ToggleRigthIcon
     },
 
     props: {
         logs: Object,
         filters: Object,
         availableModels: Object,
-        availableCausers: Array
+        availableCausers: Array,
     },
 
     data() {
@@ -290,6 +305,32 @@ export default defineComponent({
 
         formatJSON(jsonData) {
             return JSON.stringify(jsonData, null, 2);
+        },
+
+        getActionBadgeClass(description) {
+            const classMap = {
+                'created': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+                'updated': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+                'deleted': 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+                'restored': 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+                'deactivated': 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+                'activated': 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400'
+            };
+
+            return classMap[description] || 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
+        },
+
+        getActionIcon(description) {
+            const iconMap = {
+                'created': 'CirclePlusIcon',
+                'updated': 'EditIcon',
+                'deleted': 'TrashIcon',
+                'restored': 'RestoreIcon',
+                'deactivated': 'ToggleLeftIcon',
+                'activated': 'ToggleRigthIcon'
+            };
+
+            return iconMap[description] || null;
         }
     }
 });

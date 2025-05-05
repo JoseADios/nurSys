@@ -1,14 +1,23 @@
 <template>
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <!-- Nombre del modelo -->
+        <div class="mb-6 text-center">
+            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">{{ modelLabel }}</h2>
+        </div>
+
         <!-- Encabezado con información del registro -->
         <div v-if="activityItem" class="mb-6">
             <!-- Tipo de acción destacada con iconos y colores -->
-            <div class="flex items-center mb-4">
+            <div class="flex items-center justify-between mb-4">
                 <div :class="getActionBadgeClass()" class="flex items-center px-3 py-1 rounded-md mr-2">
-                    <i :class="getActionIcon()" class="mr-2"></i>
+                    <component :is="getActionIcon()" class="w-5 h-5 mr-2" />
                     <span class="font-semibold text-sm">{{ description }}</span>
                 </div>
-                <span class="text-xl font-semibold text-gray-700 dark:text-gray-300">Registro de Actividad</span>
+                <Link v-if="activityItem.log_name"
+                    :href="route(activityItem.log_name.split(',')[0], activityItem.log_name.split(',')[1])"
+                    class="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold px-5 py-2 rounded-full shadow-lg text-sm transition-all duration-300">
+                Ver
+                </Link>
             </div>
 
             <!-- Información del usuario que realizó el cambio y cuándo -->
@@ -178,13 +187,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(change, field) in formattedChanges" :key="field"
-                        class="bg-red-50 dark:bg-red-900/10">
+                    <tr v-for="(change, field) in formattedChanges" :key="field" class="bg-red-50 dark:bg-red-900/10">
                         <td
                             class="py-3 px-4 font-medium text-gray-800 dark:text-gray-200 border-b border-white dark:border-gray-700">
                             {{ formatFieldName(field) }}</td>
-                        <td
-                            class="py-3 px-4 text-red-500 dark:text-red-400 border-b border-white dark:border-gray-700">
+                        <td class="py-3 px-4 text-red-500 dark:text-red-400 border-b border-white dark:border-gray-700">
                             <span v-if="change.old !== null && change.old !== undefined">{{ formatValue(change.old,
                                 field) }}</span>
                             <span v-else class="text-gray-400 dark:text-gray-500 italic">No especificado</span>
@@ -230,22 +237,38 @@
         <!-- Mensaje para cuando no hay cambios en actualización -->
         <div v-else-if="isUpdateAction && !hasChanges"
             class="flex items-center justify-center py-8 text-gray-500 dark:text-gray-400">
-            <i class="fas fa-info-circle mr-2"></i>
             <p>No se detectaron cambios en los datos.</p>
         </div>
 
         <!-- Mensaje para otros casos sin datos -->
         <div v-else class="flex items-center justify-center py-8 text-gray-500 dark:text-gray-400">
-            <i class="fas fa-info-circle mr-2"></i>
             <p>No hay información adicional disponible para esta acción.</p>
         </div>
     </div>
 </template>
 
 <script>
+import { Link } from '@inertiajs/vue3';
+import CirclePlusIcon from './Icons/CirclePlusIcon.vue';
+import EditIcon from './Icons/EditIcon.vue';
+import TrashIcon from './Icons/TrashIcon.vue';
+import RestoreIcon from './Icons/RestoreIcon.vue';
+import ToggleLeftIcon from './Icons/ToggleLeftIcon.vue';
+import ToggleRigthIcon from './Icons/ToggleRigthIcon.vue';
+
 export default {
     name: 'ActivityLogDiff',
+    components: {
+        Link,
+        CirclePlusIcon,
+        EditIcon,
+        TrashIcon,
+        RestoreIcon,
+        ToggleLeftIcon,
+        ToggleRigthIcon,
+    },
     props: {
+        modelLabel: String,
         // El registro de actividad completo
         activityItem: {
             type: Object,
@@ -394,18 +417,18 @@ export default {
             return classMap[this.activityItem.description] || 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
         },
 
-        // Obtiene el icono para el tipo de acción
+        // Obtiene el componente de icono para el tipo de acción
         getActionIcon() {
             const iconMap = {
-                'created': 'fas fa-plus-circle',
-                'updated': 'fas fa-edit',
-                'deleted': 'fas fa-trash',
-                'restored': 'fas fa-trash-restore',
-                'deactivated': 'fas fa-toggle-off',
-                'activated': 'fas fa-toggle-on'
+                'created': CirclePlusIcon,
+                'updated': EditIcon,
+                'deleted': TrashIcon,
+                'restored': RestoreIcon,
+                'deactivated': ToggleLeftIcon,
+                'activated': ToggleRigthIcon
             };
 
-            return iconMap[this.activityItem.description] || 'fas fa-info-circle';
+            return iconMap[this.activityItem.description] || null;
         },
 
         // Formatea los nombres de campos a una versión más legible

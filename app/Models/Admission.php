@@ -8,10 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Admission extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
     protected $fillable = [
         'bed_id',
@@ -83,6 +87,29 @@ class Admission extends Model
 
         return (int) $createdDate->diffInDays($dischargedDate);
     }
+
+    // LOGS
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->useLogName('admissions.show, ' . $this->id)
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    // Modificar la descripción del evento si es 'updated' y 'active' cambió
+    public function tapActivity(Activity $activity, string $eventName)
+    {
+        $properties = $activity->properties->toArray();
+        if ($eventName === 'updated' && $this->isDirty('active')) {
+            $activity->description = $this->active ? 'activated' : 'deactivated';
+        } else {
+            $activity->description = $eventName;
+        }
+        $activity->properties = collect($properties);
+    }
+
 
 
     // RELATIONS \\

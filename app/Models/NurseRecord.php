@@ -20,6 +20,7 @@ class NurseRecord extends Model
         'active'
     ];
 
+    // LOGS
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

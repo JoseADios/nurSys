@@ -124,7 +124,7 @@ class User extends Authenticatable
     {
         return LogOptions::defaults()
             ->logAll()
-            ->useLogName('nurseRecords.show, ' . $this->id)
+            ->useLogName('users.show, ' . $this->id)
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }

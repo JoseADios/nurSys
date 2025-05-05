@@ -13,7 +13,7 @@
                     <component :is="getActionIcon()" class="w-5 h-5 mr-2" />
                     <span class="font-semibold text-sm">{{ description }}</span>
                 </div>
-                <Link v-if="activityItem.log_name"
+                <Link v-if="activityItem.log_name !== 'default'"
                     :href="route(activityItem.log_name.split(',')[0], activityItem.log_name.split(',')[1])"
                     class="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold px-5 py-2 rounded-full shadow-lg text-sm transition-all duration-300">
                 Ver

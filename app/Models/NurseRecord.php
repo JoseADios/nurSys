@@ -12,7 +12,6 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class NurseRecord extends Model
 {
     use LogsActivity;
-    public static $label = 'Nombre Amigable';
 
     protected $fillable = [
         'admission_id',
@@ -25,9 +24,21 @@ class NurseRecord extends Model
     {
         return LogOptions::defaults()
             ->logAll()
-            ->useLogName('nurseRecords.show, '.$this->id)
+            ->useLogName('nurseRecords.show, ' . $this->id)
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
+    }
+
+    // Modificar la descripción del evento si es 'updated' y 'active' cambió
+    public function tapActivity(Activity $activity, string $eventName)
+    {
+        $properties = $activity->properties->toArray();
+        if ($eventName === 'updated' && $this->isDirty('active')) {
+            $activity->description = $this->active ? 'activated' : 'deactivated';
+        } else {
+            $activity->description = $eventName;
+        }
+        $activity->properties = collect($properties);
     }
 
     // RELATIONS

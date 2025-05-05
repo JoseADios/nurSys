@@ -449,6 +449,11 @@ export default {
 
         // Formatea valores específicos basados en el tipo de campo
         formatValue(value, field) {
+            // Si el campo es de tipo password, mostrar puntos en lugar del valor real
+            if (field.toLowerCase().includes('password')) {
+                return '••••••••';
+            }
+
             // Verificar mapeos personalizados primero
             const fieldKey = `${field}.${value}`;
             if (this.valueMappings[fieldKey]) {

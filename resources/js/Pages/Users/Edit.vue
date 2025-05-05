@@ -211,6 +211,7 @@
             <template #content>
                 <form @submit.prevent="submitPassword" class="px-4 space-y-2">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <input type="text" class="hidden" name="username" id="username" :value="user.email" autocomplete="username">
                         <div>
                             <InputLabel for="password" value="Nueva Contraseña"
                                 class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300" />

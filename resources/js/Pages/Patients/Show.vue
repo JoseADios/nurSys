@@ -359,7 +359,7 @@ export default {
             return moment().diff(moment(birthdate), 'years');
         },
         deletePatient() {
-            this.patientBeingDeleted = false
+            this.patientBeingDeleted = null
             this.$inertia.delete(route('patients.destroy', this.patient.id));
         },
         restorePatient() {

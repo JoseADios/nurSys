@@ -186,15 +186,12 @@
 
                             <td class="px-6 py-4 flex items-center space-x-4">
 
-                                <button class="text-blue-500 hover:text-blue-800"
+                                <button class="flex-1 text-blue-500 hover:text-blue-800"
                                     @click="MedicationRecordShow(record.id)">
                                     Ver
                                 </button>
 
-                                <button class="text-yellow-500 ml-2 hover:text-yellow-800"
-                                    @click="MedicationRecordEdit(record.id)">
-                                    Editar
-                                </button>
+
 
                             </td>
 

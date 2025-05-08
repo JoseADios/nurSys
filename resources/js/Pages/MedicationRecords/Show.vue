@@ -110,12 +110,21 @@
 
                         <!-- Dieta -->
                         <div
-                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Dieta</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 flex justify-between items-center">
+                             <div>
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Dieta</h3>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
                                 {{ medicationRecord.diet }}
                             </p>
                         </div>
+                        <AccessGate :permission="['medicationRecord.update']" class="mt-auto">
+                            <button class="text-yellow-500 ml-2 hover:text-yellow-800"
+                                    @click="openCreateModal()">
+                                    <EditIcon class="size-5" />
+                                </button>
+                            </AccessGate>
+                        </div>
+
                         <!-- Fecha Admission -->
                         <div
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
@@ -489,7 +498,7 @@
 
             <!-- Header del modal -->
             <template #title>
-                Crear Medicamentos
+                Editar Dieta
             </template>
             <!-- Contenido del modal -->
             <template #content>
@@ -498,24 +507,17 @@
                         <div class="grid gap-4">
                             <!-- Campo Nombre -->
                             <div>
-                                <label for="name"
+                                <label for="diet"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Nombre
+                                    Dieta
                                 </label>
-                                <input type="text" id="name" v-model="modalform.name" required
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-                                    placeholder="Nombre del Medicamento" />
+                                <select id="diet-select" v-model="modalform.diet" required class="text-sm font-medium w-full text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100  p-2.5 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    <option v-for="diets in diet" :key="diets.id" :value="diets.description">
+                        {{ diets.name }} - {{ diets.description }}
+                    </option>
+                </select>
                             </div>
-                            <!-- Campo Descripción -->
-                            <div>
-                                <label for="description"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Descripción
-                                </label>
-                                <textarea id="description" v-model="modalform.description" required
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-                                    placeholder="Descripción del Medicamento"></textarea>
-                            </div>
+
 
                         </div>
                     </form>
@@ -575,6 +577,7 @@ export default {
         drug: Array,
         routeOptions: Array,
         dose: Array,
+        diet: Array,
         filters: Object,
         selectedDrug: Array,
         errors: {
@@ -631,8 +634,8 @@ export default {
             isVisibleEditSign: ref(null),
             openAccordion: ref(null),
             modalform: {
-                description: '',
-                name: '',
+                diet: this.medicationRecord.diet,
+
             },
 
         }
@@ -668,14 +671,11 @@ export default {
             this.isVisible = true;
         },
         submitModal() {
-            this.$inertia.post(route('Drugs.store'), this.modalform, {
+            this.$inertia.put(route('medicationRecords.update', this.medicationRecord), this.modalform, {
                 preserveScroll: true
             });
             this.isVisible = false;
-            this.modalform = {
-                name: '',
-                description: '',
-            };
+
 
         },
         restoreRecord(record) {
@@ -788,6 +788,7 @@ export default {
             this.showCreateDetailForm = false
 
         },
+
         deleteRecord() {
             this.recordBeingDeleted = null;
             this.$inertia.delete(route('medicationRecords.destroy', this.medicationRecord.id), {

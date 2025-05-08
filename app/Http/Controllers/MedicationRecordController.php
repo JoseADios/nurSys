@@ -179,6 +179,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $dose = DrugDose::all();
             $showDeleted = $request->boolean('showDeleted');
             $nurse = User::where('id', $medicationRecord->nurse_id)->first();
+            $diet = Diet::all();
 
             if ($showDeleted || !$medicationRecord->active) {
 
@@ -205,6 +206,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
                 'drug' => $drug,
                 'dose' => $dose,
                 'routeOptions' => $route,
+                'diet' => $diet,
                 'filters' => [
                     'show_deleted' => $showDeleted,
                 ],

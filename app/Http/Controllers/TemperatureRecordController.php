@@ -235,6 +235,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             ->orderBy('updated_at', 'desc')
             ->first();
 
+
         // verificar si puede actualizar temperatura
         $canUpdateDetail = false;
         if ($lastTemperature) {

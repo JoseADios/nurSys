@@ -159,7 +159,7 @@
                                     placeholder="Temperatura del paciente (°C)" />
 
                                 <div class="pt-8">
-                                    <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
+                                    <button type="submit" :class="{ 'opacity-25': formDetailUpdate.processing }" :disabled="formDetailUpdate.processing" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
                                                                         hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
                                                                         transition-colors duration-300">
                                         Actualizar
@@ -179,13 +179,14 @@
                         }]">
                             <div>
                                 <InputLabel for="temperature" value="Temperatura" :required="true" class="mb-2" />
-                                <input type="number" min="0" step="0.1" id="temperature" v-model="formDetail.temperature"
-                                    required
+                                <input type="number" min="0" step="0.1" id="temperature"
+                                    v-model="formDetail.temperature" required
                                     class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                     placeholder="Temperatura del paciente (°C)" />
 
                                 <div class="pt-8 w-full">
-                                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                                    <button type="submit" :class="{ 'opacity-25': formDetail.processing }"
+                                        :disabled="formDetail.processing" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                             hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                             transition-colors duration-300">
                                         Agregar
@@ -206,20 +207,22 @@
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div>
                                     <InputLabel for="evacuations" value="Evacuaciones" :required="true" class="mb-2" />
-                                    <input type="number" min="0" id="evacuations" v-model="formEliminationsUpdate.evacuations"
-                                        required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                    <input type="number" min="0" id="evacuations"
+                                        v-model="formEliminationsUpdate.evacuations" required
+                                        class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         placeholder="Num. de evacuaciones del paciente" />
                                 </div>
                                 <div>
                                     <InputLabel for="urinations" value="Micciones" :required="true" class="mb-2" />
-                                    <input type="text" id="urinations" maxlength="2" v-model="formEliminationsUpdate.urinations"
-                                        required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                    <input type="text" id="urinations" maxlength="2"
+                                        v-model="formEliminationsUpdate.urinations" required
+                                        class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         placeholder="Num. de micciones del paciente" />
                                 </div>
                             </div>
 
                             <div class="pt-4">
-                                <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
+                                <button type="submit" :class="{ 'opacity-25': formEliminationsUpdate.processing }" :disabled="formEliminationsUpdate.processing" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
                                     hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
                                     transition-colors duration-300">
                                     Actualizar
@@ -238,21 +241,24 @@
                             <form @submit.prevent="submitCreateEliminations" class="space-y-4">
                                 <div class="grid md:grid-cols-2 gap-4">
                                     <div>
-                                        <InputLabel for="evacuations" value="Evacuaciones" :required="true" class="mb-2"/>
-                                        <input type="number" id="evacuations" min="0" v-model="formEliminations.evacuations"
-                                            required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                        <InputLabel for="evacuations" value="Evacuaciones" :required="true"
+                                            class="mb-2" />
+                                        <input type="number" id="evacuations" min="0"
+                                            v-model="formEliminations.evacuations" required
+                                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                             placeholder="Num. de evacuaciones del paciente" />
                                     </div>
                                     <div>
-                                        <InputLabel for="urinations" value="Micciones" :required="true" class="mb-2"/>
+                                        <InputLabel for="urinations" value="Micciones" :required="true" class="mb-2" />
                                         <input type="text" id="urinations" v-model="formEliminations.urinations"
-                                            required  maxlength="2" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                            required maxlength="2"
+                                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                             placeholder="Num. de micciones del paciente" />
                                     </div>
                                 </div>
 
                                 <div class="pt-4">
-                                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                                    <button type="submit" :class="{ 'opacity-25': formEliminations.processing }" :disabled="formEliminations.processing" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                     hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                     transition-colors duration-300">
                                         Guardar
@@ -404,7 +410,7 @@
 <script>
 import TemperatureChart from '@/Components/Charts/TemperatureChart.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue'
 import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
@@ -473,47 +479,40 @@ export default {
             signatureError: false,
             chartKey: 0,
 
-            formDetail: {
+            formDetail: useForm({
                 temperature_record_id: this.temperatureRecord.id,
                 temperature: 37,
-            },
-            formEliminations: {
+            }),
+            formEliminations: useForm({
                 temperature_record_id: this.temperatureRecord.id,
                 evacuations: 1,
                 urinations: 1,
-            },
-            formSignature: {
+            }),
+            formSignature: useForm({
                 nurse_sign: this.temperatureRecord.nurse_sign,
                 signature: true,
-            },
-            formRecord: {
+            }),
+            formRecord: useForm({
                 admission_id: this.temperatureRecord.admission_id,
                 nurse_id: this.temperatureRecord.nurse_id,
                 active: this.temperatureRecord.active
-            },
-        }
-    },
-
-    computed: {
-        formDetailUpdate() {
-            return {
+            }),
+            formDetailUpdate: useForm({
+                _method: 'PUT',
                 temperature_record_id: this.temperatureRecord.id,
                 temperature: this.lastTemperature ? this.lastTemperature.temperature : null,
-            };
-        },
-        formEliminationsUpdate() {
-            return {
+            }),
+            formEliminationsUpdate: useForm({
+                _method: 'PUT',
                 temperature_record_id: this.temperatureRecord.id,
-                evacuations: this.lastEliminations ? this.lastEliminations.evacuations : null,
-                urinations: this.lastEliminations ? this.lastEliminations.urinations : null,
-            };
-        },
-
+                evacuations: this.lastEliminations !== null ? this.lastEliminations.evacuations : null,
+                urinations: this.lastEliminations !== null ? this.lastEliminations.urinations : null,
+            }),
+        }
     },
     methods: {
         submitCreateDetail() {
-            this.$inertia.post(route('temperatureDetails.store'),
-                this.formDetail,
+            this.formDetail.post(route('temperatureDetails.store'),
                 {
                     onSuccess: () => {
                         this.formDetail = {
@@ -523,13 +522,19 @@ export default {
                             urinations: 1,
                         };
                         this.chartKey++;
+
+                        // actualizar formulario de update temperature
+                        this.formDetailUpdate = {
+                            temperature_record_id: this.temperatureRecord.id,
+                            temperature: this.lastTemperature.temperature,
+                        }
                     },
                     preserveScroll: true,
+                    xcroll: true,
                 });
         },
         submitCreateEliminations() {
-            this.$inertia.post(route('eliminationRecords.store'),
-                this.formEliminations,
+            this.formEliminations.post(route('eliminationRecords.store'),
                 {
                     onSuccess: () => {
                         this.formEliminations = {
@@ -537,13 +542,19 @@ export default {
                             evacuations: 1,
                             urinations: 1,
                         };
+                        // actualizar formulario de update eliminations
+                        this.formEliminationsUpdate = {
+                            temperature_record_id: this.temperatureRecord.id,
+                            evacuations: this.lastEliminations.evacuations,
+                            urinations: this.lastEliminations.urinations,
+                        };
                         this.chartKey++;
                     },
                     preserveScroll: true,
                 });
         },
         updateDetail() {
-            this.$inertia.put(route('temperatureDetails.update', this.lastTemperature.id), this.formDetailUpdate, {
+            this.formDetailUpdate.put(route('temperatureDetails.update', this.lastTemperature.id), {
                 onSuccess: () => {
                     this.chartKey++;
                 },
@@ -551,7 +562,7 @@ export default {
             });
         },
         updateEliminations() {
-            this.$inertia.put(route('eliminationRecords.update', this.lastEliminations.id), this.formEliminationsUpdate, {
+            this.formEliminationsUpdate.put(route('eliminationRecords.update', this.lastEliminations.id), {
                 onSuccess: () => {
                     this.chartKey++;
                 },
@@ -561,7 +572,7 @@ export default {
         submitUpdateRecord() {
             this.showEditAdmission = null
             this.showEditUser = null
-            this.$inertia.put(route('temperatureRecords.update', this.temperatureRecord.id), this.formRecord)
+            this.formRecord.put(route('temperatureRecords.update', this.temperatureRecord.id))
             this.isVisibleEditDiagnosis = false
         },
         submitSignature() {
@@ -570,7 +581,7 @@ export default {
                 return;
             }
             this.signatureError = false;
-            this.$inertia.put(route('temperatureRecords.update', this.temperatureRecord.id), this.formSignature, {
+            this.formSignature.put(route('temperatureRecords.update', this.temperatureRecord.id), {
                 preserveScroll: true
             });
             this.isVisibleEditSign = false

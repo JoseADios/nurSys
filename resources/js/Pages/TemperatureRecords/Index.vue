@@ -269,7 +269,7 @@ export default {
                 days: this.filters.days || '',
                 sortField: this.filters.sortField || 'temperature_records.created_at',
                 sortDirection: this.filters.sortDirection || 'asc',
-                myRecords: this.filters.myRecords || true
+                myRecords: this.filters.myRecords !== undefined ? this.filters.myRecords : true
             },
         };
     },

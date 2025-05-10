@@ -150,6 +150,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         $admission_id = $request->input('admission_id');
+        $has_admission_id = $request->boolean('has_admission_id');
 
         if ($admission_id) {
             $this->authorize('create', [TemperatureRecord::class, $admission_id]);
@@ -160,18 +161,13 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             'nurse_id' => Auth::id(),
         ]);
 
-        if ($admission_id) {
-            return Redirect::route(
-                'temperatureRecords.show',
-                [
-                    'temperatureRecord' => $temperatureRecord->id,
-                    'admission_id' => $admission_id
-                ]
-            )->with('flash.toast', 'Registro de temperatura creado correctamente');
-
-        } else {
-            return Redirect::route('temperatureRecords.show', $temperatureRecord->id)->with('flash.toast', 'Registro de temperatura creado correctamente');
-        }
+        return Redirect::route(
+            'temperatureRecords.show',
+            [
+                'temperatureRecord' => $temperatureRecord->id,
+                'admission_id' => $has_admission_id ? $admission_id : null
+            ]
+        )->with('flash.toast', 'Registro de temperatura creado correctamente');
     }
 
     /**

@@ -49,6 +49,10 @@ class MedicationNotificationPolicy
         $record = $detail->medicationRecord;
         $admission = $record->admission;
 
+        if (!$user->hasPermissionTo('medicationNotification.update')) {
+            return Response::deny('El usuario no tiene los permisos necesarios para actualizar notificaciones');
+        }
+
         // validar que el ingreso este en progreso
         if ($admission->discharged_date) {
             return Response::deny('No se pueden actualizar registros de un ingreso dado de alta');
@@ -71,10 +75,6 @@ class MedicationNotificationPolicy
         // validar que el detail no este suspendido
         if ($detail->suspended_at) {
             return Response::deny('No se pueden actualizar registros de una medicación suspendida');
-        }
-
-        if (!$user->hasPermissionTo('medicationNotification.update')) {
-            return Response::deny('El usuario no tiene los permisos necesarios para crear ingresos');
         }
 
         return Response::allow();

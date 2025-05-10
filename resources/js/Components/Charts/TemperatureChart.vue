@@ -48,6 +48,11 @@ export default defineComponent({
                 toolbar: {
                     show: false
                 },
+                redrawOnWindowResize: true,
+                redrawOnParentResize: true,
+                animations: {
+                    enabled: false
+                }
             },
             title: {
                 text: 'Temperaturas Registradas',
@@ -112,13 +117,13 @@ export default defineComponent({
                     {
                         y: 37,
                         borderColor: '#ff0000',
-                        strokeDashArray: 0, // Asegurarse de que la línea no sea discontinua
-                        borderWidth: 2, // Usar borderWidth para aumentar el grosor de la línea roja
+                        strokeDashArray: 0,
+                        borderWidth: 2,
                         label: {
                             borderColor: '#ff0000',
                             style: {
-                                background: isDarkMode.value ? '#374151' : '#ffffff', // Fondo blanco puro
-                                border: '1px solid #e5e7eb' // Borde sutil
+                                background: isDarkMode.value ? '#374151' : '#ffffff',
+                                border: '1px solid #e5e7eb'
                             }
                         }
                     }
@@ -157,10 +162,10 @@ export default defineComponent({
             },
             responsive: [
                 {
-                    breakpoint: 600, // Para pantallas menores a 600px (móviles)
+                    breakpoint: 600,
                     options: {
                         chart: {
-                            height: 200, // Reduce la altura
+                            height: 200,
                         },
                         xaxis: {
                             labels: {
@@ -173,7 +178,6 @@ export default defineComponent({
                     },
                 },
             ],
-
         }));
 
         const chartSeries = ref([
@@ -230,11 +234,10 @@ export default defineComponent({
 
             chartOptions.value.annotations.xaxis = xAxisAnnotations;
         };
+
         watchEffect(() => {
             processTemperatureData();
         });
-
-        // Detectar el modo oscuro/claro
 
         return {
             chart,

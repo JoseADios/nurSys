@@ -41,7 +41,7 @@
         <!-- Lista de usuarios -->
         <div class="space-y-2">
             <h3 class="text-base font-medium text-gray-900 dark:text-white">
-                Seleccionar Usuario ({{ users.total }} resultados)
+                Seleccionar Usuario ({{ users.total }} resultados) <span class="text-red-500">*</span>
             </h3>
             <div
                 class="max-h-[250px] overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800">

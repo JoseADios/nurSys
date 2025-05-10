@@ -27,7 +27,7 @@ class DrugRouteSeeder extends Seeder
 
         DrugRoute::create([
             'name' => 'VO',
-            'description' => 'Vía oral',
+            'description' => 'Oral',
             'active' => true,
         ]);
 

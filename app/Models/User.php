@@ -11,6 +11,9 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 use Storage;
 
@@ -18,6 +21,7 @@ class User extends Authenticatable
 {
     use HasApiTokens;
     use HasRoles;
+    use LogsActivity;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -114,6 +118,30 @@ class User extends Authenticatable
 
         $this->syncRoles([$newRole]);
     }
+
+    // LOGS
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->useLogName('users.show, ' . $this->id)
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    // Modificar la descripción del evento si es 'updated' y 'active' cambió
+    public function tapActivity(Activity $activity, string $eventName)
+    {
+        $properties = $activity->properties->toArray();
+        if ($eventName === 'updated' && $this->isDirty('active')) {
+            $activity->description = $this->active ? 'activated' : 'deactivated';
+        } else {
+            $activity->description = $eventName;
+        }
+        $activity->properties = collect($properties);
+    }
+
+    // RELATIONS
 
     public function medicalOrder(): HasMany
     {

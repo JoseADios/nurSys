@@ -2,15 +2,20 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Admission extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
     protected $fillable = [
         'bed_id',
@@ -25,6 +30,8 @@ class Admission extends Model
         'active',
         'doctor_sign',
     ];
+
+    protected $appends = ['days_admitted'];
 
     protected function casts(): array
     {
@@ -71,6 +78,38 @@ class Admission extends Model
         }
         return $query;
     }
+
+    // Accessor para calcular los días de ingreso
+    public function getDaysAdmittedAttribute()
+    {
+        $dischargedDate = $this->discharged_date ? Carbon::parse($this->discharged_date) : Carbon::now();
+        $createdDate = Carbon::parse($this->created_at);
+
+        return (int) $createdDate->diffInDays($dischargedDate);
+    }
+
+    // LOGS
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->useLogName('admissions.show, ' . $this->id)
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    // Modificar la descripción del evento si es 'updated' y 'active' cambió
+    public function tapActivity(Activity $activity, string $eventName)
+    {
+        $properties = $activity->properties->toArray();
+        if ($eventName === 'updated' && $this->isDirty('active')) {
+            $activity->description = $this->active ? 'activated' : 'deactivated';
+        } else {
+            $activity->description = $eventName;
+        }
+        $activity->properties = collect($properties);
+    }
+
 
 
     // RELATIONS \\

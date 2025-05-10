@@ -23,7 +23,6 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'identification_card' => ['required', 'max:12', 'min:12', Rule::unique('users')->ignore($user->id)],
-            'exequatur' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
             'specialty' => ['required', 'string', 'max:255'],
             'area' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'max:14', 'min:14'],
@@ -32,7 +31,9 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'position' => ['required', 'string', 'max:255'],
             'comment' => ['string'],
             'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
-        ])->validateWithBag('updateProfileInformation');
+        ])->sometimes('exequatur', ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)], function ($input) use ($user) {
+            return in_array($user->getRoleNames()[0], ['doctor', 'nurse']);
+        })->validateWithBag('updateProfileInformation');
 
         if (isset($input['photo'])) {
             $user->updateProfilePhoto($input['photo']);

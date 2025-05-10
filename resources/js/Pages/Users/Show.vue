@@ -24,28 +24,31 @@
                             <div>
                                 <img v-if="user.profile_photo_url" :src="user.profile_photo_url" alt="Foto de Perfil"
                                     class="size-20 rounded-full object-cover">
-                                <DynamicAvatar v-else
-                                    :name="$page.props.auth.user.name" class="md:size-20" />
+                                <DynamicAvatar v-else :name="$page.props.auth.user.name" class="md:size-20" />
                             </div>
                             <div>
-                                <h2 class="text-2xl text-center font-bold text-gray-700 dark:text-white">{{ user.name }} {{ user.last_name }}</h2>
-                                <div class="flex items-center justify-evenly space-x-2 mt-2 xl:mt-0">
-                                    <span class="px-2 py-1 bg-gray-200 dark:bg-white/20 text-gray-700 dark:text-white text-sm rounded-full">
+                                <h2 class="text-2xl text-center font-bold text-gray-700 dark:text-white">{{ user.name }}
+                                    {{
+                                        user.last_name }}</h2>
+                                <div class="flex items-center justify-center sm:justify-start space-x-2 mt-2 xl:mt-0">
+                                    <span
+                                        class="px-2 py-1 bg-gray-200 dark:bg-white/20 text-gray-700 dark:text-white text-sm rounded-full">
                                         <div v-if="user.roles[0]">
                                             <FormatRole :role="user.roles[0].name" />
                                         </div>
                                         <div v-else>N/A</div>
                                     </span>
                                     <span :class="[
-                                        'px-2 py-1 text-white text-sm rounded-full',
-                                        user.active === '1' ? 'bg-green-500' : 'bg-red-500'
+                                        'px-2 py-1 text-sm rounded-full',
+                                        user.active === '1' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
                                     ]">
                                         {{ user.active === '1' ? 'Activo' : 'Inactivo' }}
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex flex-col items-center space-y-2 md:space-y-0 md:space-x-3  md:flex-row lg:space-x-4">
+                        <div
+                            class="flex flex-col items-center space-y-2 md:space-y-0 md:space-x-3  md:flex-row lg:space-x-4">
                             <Link :href="route('users.index')"
                                 class="items-center flex px-4 py-2 bg-gray-200 dark:bg-white/20 text-gray-700 dark:text-white text-sm rounded-lg hover:bg-white/40 transition-all duration-200">
                             <BackIcon class="w-4 h-4 mr-2" />
@@ -76,9 +79,12 @@
                 <!-- Información Personal -->
                 <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                            Información Personal
-                        </h3>
+                        <div class="flex items-center mb-6">
+                            <div class="p-3 border-2 border-[#696CFF] rounded-lg">
+                                <UserIcon class="w-4 h-4 text-[#696CFF]" />
+                            </div>
+                            <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información personal</h3>
+                        </div>
                         <div class="space-y-4">
                             <InfoItem icon="identification" label="Cédula" :value="user.identification_card" />
                             <InfoItem icon="calendar" label="Fecha de Nacimiento" :value="formatDate(user.birthdate)" />
@@ -91,9 +97,13 @@
                 <!-- Información de Contacto -->
                 <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                            Información de Contacto
-                        </h3>
+                        <div class="flex items-center mb-6">
+                            <div class="p-3 border-2 border-[#5FC6FF] rounded-lg ">
+                                <MailIcon class="w-4 h-4 text-[#5FC6FF]" />
+                            </div>
+                            <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información de contacto
+                            </h3>
+                        </div>
                         <div class="space-y-4">
                             <InfoItem icon="mail" label="Correo" :value="user.email" />
                             <InfoItem icon="phone" label="Teléfono" :value="user.phone" />
@@ -105,9 +115,12 @@
                 <div
                     class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 md:col-span-2 lg:col-span-2">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                            Información Profesional
-                        </h3>
+                        <div class="flex items-center mb-6">
+                            <div class="p-3 border-2 border-[#FFB400] rounded-lg">
+                                <BriefCaseIcon class="w-4 h-4 text-[#FFB400]" />
+                            </div>
+                            <h3 class="ml-4 text-xl font-bold text-gray-900 dark:text-white">Información laboral</h3>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <InfoItem icon="award" label="Exequatur" :value="user.exequatur" />
                             <InfoItem icon="briefcase" label="Especialidad" :value="user.specialty" />
@@ -165,6 +178,9 @@ import TrashIcon from '@/Components/Icons/TrashIcon.vue';
 import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import DynamicAvatar from '@/Components/DynamicAvatar.vue';
+import MailIcon from '@/Components/Icons/MailIcon.vue';
+import UserIcon from '@/Components/Icons/UserIcon.vue';
+import BriefCaseIcon from '@/Components/Icons/BriefCaseIcon.vue';
 
 export default {
     components: {
@@ -180,7 +196,10 @@ export default {
         TrashIcon,
         RestoreIcon,
         BreadCrumb,
-        DynamicAvatar
+        DynamicAvatar,
+        MailIcon,
+        UserIcon,
+        BriefCaseIcon
     },
     props: {
         user: {

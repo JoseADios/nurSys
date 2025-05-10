@@ -84,7 +84,6 @@
                                     {{ nationality.name }}
                                 </option>
                             </datalist>
-                            </input>
                             <InputError :message="form.errors.nationality" class="mt-2" />
                         </div>
                     </div>
@@ -164,6 +163,8 @@
                             Desactivar
                         </button>
                         <button type="button" v-else @click="restorePatient"
+                            :class="{ 'opacity-25': isRestoring }"
+                            :disabled="isRestoring"
                             class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-all duration-200">
                             Activar
                         </button>
@@ -172,9 +173,9 @@
                         class="px-4 py-2 text-sm font-medium text-gray-100 bg-slate-600 dark:text-white border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-500 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                     Volver
                     </Link>
-                    <button type="submit"
+                    <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
                         class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Guardar
+                        Actualizar
                     </button>
                 </div>
             </form>
@@ -259,6 +260,7 @@ export default {
     data() {
         return {
             patientBeingDeleted: ref(null),
+            isRestoring: false,
             form: useForm({
                 first_name: this.patient.first_name,
                 first_surname: this.patient.first_surname,
@@ -294,8 +296,7 @@ export default {
                     delete this.form.errors[key];
                 }
             });
-
-            this.$inertia.put(route('patients.update', this.patient.id), this.form, {
+            this.form.put(route('patients.update', this.patient.id), {
                 preserveScroll: true,
                 onError: (errors) => {
                     this.form.errors = errors;
@@ -309,8 +310,12 @@ export default {
             });
         },
         restorePatient() {
+            this.isRestoring = true;
             this.$inertia.put(route('patients.update', this.patient.id), { active: true }, {
-                preserveScroll: true
+                preserveScroll: true,
+                onFinish: () => {
+                    this.isRestoring = false;
+                }
             });
         },
         setCedulaVisibility() {

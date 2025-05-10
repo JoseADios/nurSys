@@ -200,6 +200,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $currentDateRange = $turnService->getDateRangeForTurn($currentTurn);
         $details = [];
 
+        // formatear los datos para mostrarlos con apexCharts
         foreach ($temperatureDetails as $temperature) {
             // Obtener el turno de la fecha de la temperatura
             $temperatureTurn = $turnService->getCurrentTurnForDate($temperature->updated_at);
@@ -228,9 +229,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $responseCreateElimination = Gate::inspect('create', [EliminationRecord::class, $temperatureRecord->id]);
         $canCreateElimination = $responseCreateElimination->allowed();
 
-        // verificar si puede crear detalles
-        $responseCreateDetail = Gate::inspect('create', [TemperatureDetail::class, $temperatureRecord->id]);
-        $canCreateDetail = $responseCreateDetail->allowed();
 
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->orderBy('updated_at', 'desc')

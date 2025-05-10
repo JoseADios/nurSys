@@ -32,7 +32,7 @@ class EliminationRecordPolicy
      */
     public function create(User $user, $temperature_record_id): Response
     {
-        $temperatureRecord = TemperatureRecord::find($temperature_record_id)->first();
+        $temperatureRecord = TemperatureRecord::where('id', $temperature_record_id)->firstOrFail();
 
         $temperatureRecordPolicy = new TemperatureRecordPolicy();
         $responseRecord = $temperatureRecordPolicy->update($user, $temperatureRecord);

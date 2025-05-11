@@ -68,11 +68,11 @@
                             <div class="relative w-full">
                                 <div
                                     class="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                                    <button type="button" @click="resetFilters"
+                                    <button type="button" @click="resetFilters" :class="{ 'opacity-25': localFilters.processing }" :disabled="localFilters.processing"
                                         class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
                                         Limpiar filtros
                                     </button>
-                                    <button type="submit"
+                                    <button type="submit" :class="{ 'opacity-25': localFilters.processing }" :disabled="localFilters.processing"
                                         class="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
                                         Aplicar filtros
                                     </button>
@@ -192,7 +192,7 @@
 import { defineComponent, ref } from 'vue';
 import moment from 'moment/moment';
 import 'moment/locale/es';
-import { router } from '@inertiajs/vue3';
+import { router, useForm } from '@inertiajs/vue3';
 import Pagination from '@/Components/Pagination.vue';
 import Modal from '@/Components/Modal.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
@@ -241,13 +241,13 @@ export default defineComponent({
         return {
             showModal: false,
             selectedLog: null,
-            localFilters: {
+            localFilters: useForm({
                 action: this.$props.filters?.action || '',
                 model: this.$props.filters?.model || '',
                 causer: this.$props.filters?.causer || '',
                 startDate: this.$props.filters?.startDate || '',
                 endDate: this.$props.filters?.endDate || ''
-            }
+            })
         };
     },
 
@@ -276,28 +276,20 @@ export default defineComponent({
         },
 
         applyFilters() {
-            router.get(route('activityLogs.index'), {
-                action: this.localFilters.action,
-                model: this.localFilters.model,
-                causer: this.localFilters.causer,
-                startDate: this.localFilters.startDate,
-                endDate: this.localFilters.endDate
-            }, {
+            this.localFilters.get(route('activityLogs.index'), {
                 preserveState: true,
                 replace: true
             });
         },
 
         resetFilters() {
-            this.localFilters = {
-                action: '',
-                model: '',
-                causer: '',
-                startDate: '',
-                endDate: ''
-            };
+            this.localFilters.action = '';
+            this.localFilters.model = '';
+            this.localFilters.causer = '';
+            this.localFilters.startDate = '';
+            this.localFilters.endDate = '';
 
-            router.get(route('activityLogs.index'), {}, {
+            this.localFilters.get(route('activityLogs.index'), {
                 preserveState: true,
                 replace: true
             });

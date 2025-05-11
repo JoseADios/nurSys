@@ -162,9 +162,8 @@
                             class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-all duration-200">
                             Desactivar
                         </button>
-                        <button type="button" v-else @click="restorePatient"
-                            :class="{ 'opacity-25': isRestoring }"
-                            :disabled="isRestoring"
+                        <button type="button" v-else @click="restorePatient" :class="{ 'opacity-25': isProcessingActive }"
+                            :disabled="isProcessingActive"
                             class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-all duration-200">
                             Activar
                         </button>
@@ -195,7 +194,8 @@
                         Cancelar
                     </SecondaryButton>
 
-                    <DangerButton class="ms-3" @click="deletePatient">
+                    <DangerButton class="ms-3" @click="deletePatient" :class="{ 'opacity-25': isProcessingActive }"
+                        :disabled="isProcessingActive">
                         Desactivar
                     </DangerButton>
                 </template>
@@ -260,7 +260,7 @@ export default {
     data() {
         return {
             patientBeingDeleted: ref(null),
-            isRestoring: false,
+            isProcessingActive: false,
             form: useForm({
                 first_name: this.patient.first_name,
                 first_surname: this.patient.first_surname,
@@ -305,16 +305,20 @@ export default {
         },
         deletePatient() {
             this.patientBeingDeleted = null
+            this.isProcessingActive = true;
             this.$inertia.delete(route('patients.destroy', this.patient.id), {
-                preserveScroll: true
+                preserveScroll: true,
+                onFinish: () => {
+                    this.isProcessingActive = false;
+                }
             });
         },
         restorePatient() {
-            this.isRestoring = true;
+            this.isProcessingActive = true;
             this.$inertia.put(route('patients.update', this.patient.id), { active: true }, {
                 preserveScroll: true,
                 onFinish: () => {
-                    this.isRestoring = false;
+                    this.isProcessingActive = false;
                 }
             });
         },

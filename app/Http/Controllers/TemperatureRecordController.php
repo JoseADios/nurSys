@@ -154,6 +154,8 @@ class TemperatureRecordController extends Controller implements HasMiddleware
 
         if ($admission_id) {
             $this->authorize('create', [TemperatureRecord::class, $admission_id]);
+        } else {
+            return back()->with('flash.toast', 'Debe seleccionar un ingreso')->with('flash.toastStyle', 'danger');
         }
 
         $temperatureRecord = TemperatureRecord::create([
@@ -305,6 +307,14 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $fileName = $firmService
                 ->createImag($request->nurse_sign, $temperatureRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
+        }
+
+        // si se modifica el active
+        if ($request->has('active') && $request->active!== $temperatureRecord->active) {
+            // si se esta activando
+            if ($request->active) {
+                $this->authorize('create', [TemperatureRecord::class, $temperatureRecord->admission_id]);
+            }
         }
 
         $temperatureRecord->update($validated);

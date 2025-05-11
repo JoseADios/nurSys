@@ -84,7 +84,6 @@
                                     {{ nationality.name }}
                                 </option>
                             </datalist>
-                            </input>
                             <InputError :message="form.errors.nationality" class="mt-2" />
                         </div>
                     </div>
@@ -159,11 +158,12 @@
                 <!-- Form Actions -->
                 <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
                     <Link :href="route('patients.index')" as="button"
+                        :class="{ 'pointer-events-none': form.processing }"
                         class="px-4 py-2 text-sm font-medium text-gray-100 bg-slate-600 dark:text-white border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-500 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                     Cancelar
                     </Link>
-                    <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                    <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 ease-in-out">
                         Guardar
                     </button>
                 </div>
@@ -248,13 +248,14 @@ export default {
                 }
             });
 
-            this.$inertia.post(route('patients.store'), this.form, {
+            this.form.post(route('patients.store'), {
                 onError: (errors) => {
                     this.form.errors = errors;
                 },
                 onSuccess: () => {
                     this.form.errors = {};
-                }
+                },
+                preserveScroll: true,
             });
         },
         setCedulaVisibility() {

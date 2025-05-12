@@ -218,7 +218,7 @@ export default {
             const tooltipHeight = tooltipRect.height;
 
             // Solo mostrar arriba si no hay suficiente espacio abajo
-            return spaceBelow < (tooltipHeight + padding + 75);
+            return spaceBelow < (tooltipHeight + padding + 80);
 
         },
         handleTooltip(bedId) {

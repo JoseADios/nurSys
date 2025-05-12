@@ -49,6 +49,7 @@ class AdmissionController extends Controller implements HasMiddleware
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
         $beds_available = $request->input('beds_available');
+        $admissions_discharged = $request->input('admissions_discharged');
         $days = $request->integer('days');
         $myRecords = $request->boolean('myRecords', true);
         $query = Admission::query()->with('patient', 'bed', 'doctor','receptionist')->select([
@@ -74,20 +75,17 @@ class AdmissionController extends Controller implements HasMiddleware
             });
         }
 
-        if ($beds_available === '1') {
-            $query->whereNotNull('admissions.bed_id');
 
-        } elseif ($beds_available === '2') {
-            $query->whereNull('admissions.bed_id');
-
-        }
-        elseif ($beds_available === '3') {
+        if ($admissions_discharged === '1') {
             $query->whereNotNull('admissions.discharged_date');
 
-        }
-        elseif ($beds_available === '4') {
+        } elseif ($admissions_discharged === '2') {
             $query->whereNull('admissions.discharged_date');
 
+        }
+
+        if ($beds_available) {
+            $query->whereNotNull('admissions.bed_id');
         }
 
         if ($sortField) {
@@ -131,6 +129,7 @@ class AdmissionController extends Controller implements HasMiddleware
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
                 'beds_available' => $beds_available,
+                'admissions_discharged' => $admissions_discharged
             ],
         ]);
     }

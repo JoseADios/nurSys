@@ -18,13 +18,14 @@
                 Remover filtro de <FormatId :id="form.admission_id" prefix="ING" class="ml-1"></FormatId>
             </button>
         </div>
+        <div class="px-4 lg:px-10 mt-4">
+                    <div class="mb-4">
 
-        <div
-            class="bg-gray-100 dark:bg-gray-900 p-4 flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-end  overflow-x-auto rounded-lg mx-4 lg:mx-10">
-            <!-- Búsqueda - Ancho completo en móvil -->
-            <div class="relative w-full lg:w-1/3 mb-4 sm:mb-0">
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
+        <div class="flex flex-col sm:flex-row gap-3 mb-3">
+                    <!-- Búsqueda general - siempre visible -->
+                    <div class="relative flex-grow">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                              <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                 </div>
 
                 <input @input="submitFilters()"
@@ -38,13 +39,83 @@
             </div>
 
             <!-- Filtros y botones - Reorganizados para mejor responsividad -->
-            <div class="flex flex-col w-full lg:w-auto xl:flex-row space-y-3 sm:space-y-3 xl:space-y-0 xl:flex-grow">
+           <div class="flex justify-center items-center md:flex-wrap gap-2">
+                <!-- Botón para ver registros eliminados -->
+               <AccessGate :permission="['admission.delete']">
+                        <!-- Filtro para mostrar registros eliminados -->
+                        <button @click="toggleShowDeleted"
+                            class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
+                            :class="{
+                                'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
+                                'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
+                            }">
+                            {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                            <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                        </button>
+                    </AccessGate>
+
+                      <AccessGate :permission="['admission.create']">
+
+                        <Link v-if="!form.admission_id" :href="route('admissions.create')"
+                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
+                        <PlusIcon class="size-5" />
+                        <span class="">Nuevo Ingreso</span>
+                        </Link>
+                        <Link v-else :href="route('admissions.create', { admission_id: form.admission_id })"
+                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
+                        <PlusIcon class="size-5" />
+                        <span class="">Nuevo Ingreso</span>
+                        </Link>
+
+                    </AccessGate>
+
+                       </div>
+                </div>
 
                 <!-- Primera fila en dispositivos medianos -->
                 <div class="flex flex-col sm:flex-row w-full gap-3 items-center">
                     <!-- Grupo: Mis Registros + En proceso -->
                     <div class="flex w-full flex-col sm:flex-row xl:w-full gap-2 items-center">
-                        <AccessGate :permission="['admission.create']" class="w-full sm:w-fit">
+
+
+                        <select @change="submitFilters()"
+                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            name="admissions_discharged" id="admissions_discharged" v-model="form.admissions_discharged">
+                            <option value="">Todos</option>
+                            <option value="1">Dados de Alta</option>
+                            <option value="2">Ingresados</option>
+                        </select>
+
+                        <select @change="submitFilters()"
+                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            name="days" id="days" v-model="form.days">
+                            <option value="">Siempre</option>
+                            <option value="1">Último día</option>
+                            <option value="7">Últimos 7 días</option>
+                            <option value="30">Últimos 30 días</option>
+                            <option value="90">Últimos 90 días</option>
+                            <option value="180">Últimos 180 días</option>
+                            <option value="365">Último año</option>
+                        </select>
+
+                           <button
+                                class="w-full sm:w-fit border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 "
+                                :class="{
+                                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.beds_available,
+                                    'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.beds_available
+                                }" @click="toggleFilterAssignedBeds()" title="Mostrar solo las camas Asignadas">
+                                Camas Asignadas
+                                <div class="relative p-2.5 pl-1">
+                                    <BedIcon class="h-5 w-5" />
+                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
+                                        :class="{ 'text-indigo-600 dark:text-indigo-400': form.beds_available }" />
+                                    <div v-if="form.beds_available"
+                                        class="absolute -top-1 -right-1 h-2 w-2 bg-indigo-500 rounded-full">
+                                    </div>
+                                </div>
+                            </button>
+                         <AccessGate :permission="['admission.create']" class="w-full sm:w-fit">
                             <!-- Filtro Mis Registros con ícono más grande -->
                             <button
                                 class="w-full sm:w-fit border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 "
@@ -62,67 +133,18 @@
                                     </div>
                                 </div>
                             </button>
+
                         </AccessGate>
 
 
-                        <select @change="submitFilters()"
-                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                            name="beds_available" id="beds_available" v-model="form.beds_available">
-                            <option value="">Todos</option>
-                            <option value="1">Con cama Asignada</option>
-                            <option value="2">Sin cama Asignada</option>
-                            <option value="3">Dados de Alta</option>
-                            <option value="4">Ingresados</option>
-                        </select>
-
-                        <select @change="submitFilters()"
-                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                            name="days" id="days" v-model="form.days">
-                            <option value="">Siempre</option>
-                            <option value="1">Último día</option>
-                            <option value="7">Últimos 7 días</option>
-                            <option value="30">Últimos 30 días</option>
-                            <option value="90">Últimos 90 días</option>
-                            <option value="180">Últimos 180 días</option>
-                            <option value="365">Último año</option>
-                        </select>
 
                     </div>
 
                 </div>
 
-                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center xl:w-[80%]">
 
-                    <AccessGate :permission="['admission.delete']">
-                        <!-- Filtro para mostrar registros eliminados -->
-                        <button @click="toggleShowDeleted"
-                            class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
-                            :class="{
-                                'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                                'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                            }">
-                            {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                            <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
-                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                        </button>
-                    </AccessGate>
 
-                    <AccessGate :permission="['admission.create']">
-
-                        <Link v-if="!form.admission_id" :href="route('admissions.create')"
-                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
-                        <PlusIcon class="size-5" />
-                        <span class="">Nuevo Ingreso</span>
-                        </Link>
-                        <Link v-else :href="route('admissions.create', { admission_id: form.admission_id })"
-                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
-                        <PlusIcon class="size-5" />
-                        <span class="">Nuevo Ingreso</span>
-                        </Link>
-
-                    </AccessGate>
-                </div>
-            </div>
+          </div>
         </div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -248,6 +270,7 @@ import moment from 'moment/moment';
 import 'moment/locale/es';
 import FilterIcon from '@/Components/Icons/FilterIcon.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
+import BedIcon from '@/Components/Icons/BedIcon.vue';
 export default {
     props: {
         admissions: Object,
@@ -258,6 +281,7 @@ export default {
         AppLayout,
         Link,
         Pagination,
+        BedIcon,
         FormatId,
         AccessGate,
         BreadCrumb,
@@ -279,6 +303,7 @@ export default {
                 sortDirection: this.filters.sortDirection || 'asc',
                 days: this.filters.days || '',
                 beds_available: this.filters.beds_available || '',
+                admissions_discharged: this.filters.admissions_discharged || '',
                 myRecords: this.filters.myRecords || true
             },
             timeout: 1000,
@@ -286,10 +311,11 @@ export default {
     },
     methods: {
         formatDate(date) {
+
             return moment(date).format('DD MMMM YYYY HH:mm');
         },
         submitFilters() {
-
+            console.log(this.form)
             if (this.timeout) {
                 clearTimeout(this.timeout);
             }
@@ -301,6 +327,12 @@ export default {
         toggleFilterMyRecords() {
 
             this.form.myRecords = !this.form.myRecords;
+            this.submitFilters();
+        },
+          toggleFilterAssignedBeds() {
+
+            this.form.beds_available = !this.form.beds_available;
+
             this.submitFilters();
         },
         sort(field) {

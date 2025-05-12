@@ -89,12 +89,14 @@
                                 APLICADO
                             </div>
                             <div v-if="lastApplied(notification)" class="flex justify-end mt-2">
+                                <AccessGate v-if="canUpdateNotification">
                                 <button
                                     class="font-semibold text-red-500 dark:text-red-400 border border-red-300 px-4 py-1 rounded hover:bg-red-100 dark:hover:bg-gray-700 transition"
                                     @click="revert(notification)">
                                     Revertir
                                     <!-- Poner Icono de volver -->
                                 </button>
+                                </AccessGate>
                             </div>
 
                         </div>
@@ -171,6 +173,7 @@ import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 import BackIcon from '@/Components/Icons/BackIcon.vue';
 import ReportIcon from '@/Components/Icons/ReportIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import AccessGate from '@/Components/Access/AccessGate.vue';
 import {
     ref
 } from 'vue';
@@ -180,9 +183,11 @@ export default {
     props: {
         details: Object,
         notifications: Object,
+        canUpdateNotification: Boolean,
     },
     components: {
         AppLayout,
+        AccessGate,
         Link,
         FormatId,
         ConfirmationModal,
@@ -209,6 +214,7 @@ export default {
     },
     methods: {
         formatDateFromNow(date) {
+
             return moment(date).fromNow();
         },
         formatDate(date) {

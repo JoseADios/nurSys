@@ -158,15 +158,16 @@
                     </div>
 
                     <div v-if="showCreateDetailForm"
-                        class="grid border grid-cols-1 lg:grid-cols-2 shadow-xl rounded-lg gap-4  lg:mx-2 mt-6 "
+                        class="grid border grid-cols-1  lg:grid-cols-2 shadow-xl rounded-lg gap-4  lg:mx-2 mt-6 "
                         id="formcreaterecord">
                         <!-- Tarjeta para información del Medical Order -->
-                        <div class="relative overflow-hidden rounded-lg   bg-white dark:bg-gray-800 mb-5">
+                        <div class="relative overflow-hidden rounded-lg pb-auto   bg-white dark:bg-gray-800 mb-5">
 
                             <div class="max-h-80 overflow-y-auto   shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
-                                <div class="col w-full md:w-[100%] p-4 md:p-8 ">
+                                <div class="col w-full md:w-[100%] p-4 md:p-2 ">
                                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Órdenes médicas
                                     </h3>
+
                                     <!-- Mensaje cuando no hay órdenes -->
                                     <div v-if="!orders || orders.length === 0"
                                         class="text-center text-sm text-gray-500 dark:text-gray-400">

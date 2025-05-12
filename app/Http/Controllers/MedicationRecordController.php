@@ -166,12 +166,14 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $medicationRecord->load(['admission.patient', 'admission.bed', 'admission.doctor', 'medicationRecordDetail', 'admission.medicalOrders']);
             $allMedicalOrders = MedicalOrder::where('active', true)
                 ->where('admission_id', $medicationRecord->admission->id)
-                ->with([
-                    'medicalOrderDetail' => function ($query) {
-                        $query->whereNull('suspended_at')->where('active', true);
-                    }
-                ])
-                ->get();
+                ->with('medicalOrderDetail', function ($query) use ($medicationRecord) {
+
+
+                    $query
+                        ->whereNull('suspended_at')
+                        ->where('active', true);
+                })->get();
+
 
 
             $drug = Drug::all();

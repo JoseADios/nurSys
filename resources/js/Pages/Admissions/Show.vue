@@ -236,7 +236,9 @@
                         </div>
                     </AccessGate>
 
+
                     <div class="flex justify-end space-x-4">
+                        <AccessGate :role="['doctor', 'admin']">
                         <div v-if="can.update">
                             <div v-if="admission.discharged_date == null">
                                 <button type="button" @click="admissionUpdateCharge = true"
@@ -251,7 +253,9 @@
                                 </button>
                             </div>
                         </div>
+                        </AccessGate>
 
+                         <AccessGate :role="['receptionist', 'admin']">
                         <Link v-if="can.update" :href="route('admissions.edit', admission.id)"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -262,6 +266,7 @@
                         </svg>
                         Editar
                         </Link>
+                            </AccessGate>
 
                         <button v-if="can.delete && admission.active" @click="admissionBeingDeleted = true"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold rounded-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">

@@ -13,8 +13,8 @@ class MedicationRecord extends Model
 
     protected $fillable = [
         'admission_id',
+        'nurse_id',
 
-        'diagnosis',
         'diet',
         'referrals',
         'pending_studies',

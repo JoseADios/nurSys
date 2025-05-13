@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
 use App\Models\Admission;
 use App\Models\MedicalOrder;
 use App\Models\MedicalOrderDetail;
@@ -41,9 +41,10 @@ class MedicalOrderController extends Controller implements HasMiddleware
         $sortDirection = $request->input('sortDirection', 'asc');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
-        $in_process = $request->input('in_process', 'true');
 
-        $query = MedicalOrder::with('admission.patient', 'admission.bed', 'doctor')
+        $in_process = $request->input('in_process', "");
+
+        $query = MedicalOrder::with('admission.patient', 'admission.bed', 'admission.doctor')
             ->select([
                 'medical_orders.created_at',
                 'medical_orders.*'
@@ -81,6 +82,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
         if (!empty($admissionId)) {
             $query->where('admission_id', intval($admissionId));
         }
+
 
         $medicalOrders = $query->paginate(10);
         $medicalOrders->getCollection()->transform(function ($order) {
@@ -151,6 +153,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
         $showDeleted = $request->boolean('showDeleted');
         $regimes = Regime::all();
 
+        $doctor = User::where('id', $medicalOrder->doctor_id)->first();
 
         if ($showDeleted || !$medicalOrder->active) {
 
@@ -164,6 +167,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
             'medicalOrder' => $medicalOrder,
             'details' => $details,
             'admissions' => $admissions,
+            'doctor' => $doctor,
             'regimes' => $regimes,
             'previousUrl' => URL::previous(),
             'filters' => [
@@ -217,6 +221,10 @@ class MedicalOrderController extends Controller implements HasMiddleware
 
         if ($request->has('admission_id') && $request->admission_id !== $medicalOrder->admission_id) {
             $this->authorize('updateAdmission', [MedicalOrder::class, $request->admission_id]);
+        }
+        if ($request->has('doctor_id') && $request->input('doctor_id')) {
+            $this->authorize('updateNurse', $medicalOrder);
+            $medicalOrder->update($request->only(['doctor_id']));
         }
 
         if ($request->active === true) {

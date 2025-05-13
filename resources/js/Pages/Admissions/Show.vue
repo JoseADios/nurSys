@@ -59,6 +59,26 @@
                 <div class="p-8 space-y-8">
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
+                                    admission.patient.second_surname }}
+                            </p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Recepsionista</h3>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ admission.receptionist.name }} {{ admission.receptionist.last_name }}
+                            </p>
+                            <AccessGate :role="['admin']">
+                                <button @click="showEditReceptionist = true" class="text-blue-500 flex">
+                                    <EditIcon class="size-5" />
+                                </button>
+                            </AccessGate>
+
+                        </div>
+
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             <div v-if="admission.bed">
@@ -70,13 +90,7 @@
                             </p>
                         </div>
 
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
-                                    admission.patient.second_surname }}
-                            </p>
-                        </div>
+
 
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
@@ -92,12 +106,6 @@
                             </p>
                         </div>
 
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Creado por</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ admission.receptionist.name }} {{ admission.receptionist.last_name }}
-                            </p>
-                        </div>
 
                     </div>
                 </div>
@@ -124,6 +132,14 @@
                             {{ admission.comment || 'No hay observaciones' }}
                         </p>
                     </div>
+
+                    <div v-if="admission.doctor_sign" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Firma del Doctor/a</h3>
+                        <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
+                            <img :src="`/storage/${admission.doctor_sign}`" width="250" alt="Firma">
+                        </p>
+                    </div>
+
                     <AccessGate :except-role="['receptionist']"
                         class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 shadow-md">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Acciones Adicionales</h3>
@@ -220,7 +236,9 @@
                         </div>
                     </AccessGate>
 
+
                     <div class="flex justify-end space-x-4">
+                        <AccessGate :role="['doctor', 'admin']">
                         <div v-if="can.update">
                             <div v-if="admission.discharged_date == null">
                                 <button type="button" @click="admissionUpdateCharge = true"
@@ -235,7 +253,9 @@
                                 </button>
                             </div>
                         </div>
+                        </AccessGate>
 
+                         <AccessGate :role="['receptionist', 'admin']">
                         <Link v-if="can.update" :href="route('admissions.edit', admission.id)"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -246,6 +266,7 @@
                         </svg>
                         Editar
                         </Link>
+                            </AccessGate>
 
                         <button v-if="can.delete && admission.active" @click="admissionBeingDeleted = true"
                             class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold rounded-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
@@ -355,6 +376,29 @@
 
             </template>
         </ConfirmationModal>
+        <Modal :closeable="true" :show="showEditReceptionist != null" @close="showEditReceptionist == null">
+            <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
+
+                    <UserSelector roles="nurse" :selected-user-id="admission.receptionist_id"
+                        @update:user="formRecord.receptionist_id = $event" />
+                    <!-- Botones -->
+                    <div class="flex justify-end mt-4 space-x-3">
+                        <button type="button" @click="showEditReceptionist = null"
+                            class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                            Cancelar
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
+                            :disabled="!formRecord.receptionist_id">
+                            Aceptar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </Modal>
+
     </AppLayout>
 </template>
 
@@ -369,6 +413,10 @@ import FormatId from '@/Components/FormatId.vue';
 import BackIcon from '@/Components/Icons/BackIcon.vue';
 import ReportIcon from '@/Components/Icons/ReportIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import EditIcon from '@/Components/Icons/EditIcon.vue';
+import UserSelector from '@/Components/UserSelector.vue';
+import Modal from '@/Components/Modal.vue';
+
 import {
     Link
 } from '@inertiajs/vue3';
@@ -391,6 +439,9 @@ export default {
     components: {
         AppLayout,
         Link,
+        Modal,
+        EditIcon,
+        UserSelector,
         AccessGate,
         ConfirmationModal,
         DangerButton,
@@ -406,6 +457,7 @@ export default {
         return {
             admissionBeingDeleted: ref(null),
             admissionUpdateCharge: ref(null),
+            showEditReceptionist: ref(null),
             admissionBeingPutInProgress: ref(null),
             signatureError: false,
             signatureError: false,
@@ -426,6 +478,11 @@ export default {
                 final_dx: this.admission.final_dx,
                 discharged_date: this.admission.discharged_date
             },
+            formRecord: {
+                admission_id: this.admission.id,
+                receptionist_id: this.admission.receptionist_id,
+                active: this.admission.active,
+            },
         }
     },
     methods: {
@@ -433,6 +490,12 @@ export default {
             this.$inertia.put(route('admissions.update', this.admission.id), this.form, {
                 preserveScroll: true
             })
+        },
+        submitAdmission() {
+            this.$inertia.put(route('admissions.update', this.admission.id), this.formRecord, {
+                preserveScroll: true
+            })
+            this.showEditReceptionist = null;
         },
         discharge() {
             this.formDischarge.discharged_date = new Date().toISOString()

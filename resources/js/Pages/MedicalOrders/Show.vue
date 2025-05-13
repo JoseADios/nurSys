@@ -44,16 +44,12 @@
                         </button>
                         <button v-if="medicalOrder.active" @click="recordBeingDeleted = true"
                             class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
-                                    clip-rule="evenodd" />
-                            </svg>
+                               <TrashIcon class="size-5" />
                             <span class="font-medium">Eliminar</span>
                         </button>
                         <button v-else @click="restoreRecord"
                             class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                                <RestoreIcon class="size-5" />
                             <span class="font-medium">Restaurar</span>
                         </button>
                     </div>
@@ -173,7 +169,7 @@
                             <div>
                                 <label for="orden"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Órden
+                                    Órden <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" id="order" v-model="formDetail.order" required
                                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
@@ -362,7 +358,7 @@
                             <div>
                                 <label for="orden"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Órden
+                                    Órden <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" id="order" v-model="selectedDetail.order" required
                                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
@@ -492,7 +488,8 @@ import ReportIcon from '@/Components/Icons/ReportIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import moment from 'moment/moment';
 import UserSelector from '@/Components/UserSelector.vue';
-
+import TrashIcon from '@/Components/Icons/TrashIcon.vue';
+import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
 import 'moment/locale/es';
 export default {
     components: {
@@ -511,6 +508,8 @@ export default {
         BackIcon,
         ReportIcon,
         BreadCrumb,
+        TrashIcon,
+        RestoreIcon,
         UserSelector
 
     },

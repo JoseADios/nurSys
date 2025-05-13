@@ -86,6 +86,14 @@
                             <option value="1">Dados de Alta</option>
                             <option value="2">Ingresados</option>
                         </select>
+                         <select @change="submitFilters()"
+                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            name="beds_available" id="beds_available" v-model="form.beds_available">
+                            <option value="">Todos</option>
+                            <option value="1">Con Camas Asignadas</option>
+                            <option value="2">Sin Camas Asignadas</option>
+                        </select>
+
 
                         <select @change="submitFilters()"
                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
@@ -99,22 +107,8 @@
                             <option value="365">Último año</option>
                         </select>
 
-                           <button
-                                class="w-full sm:w-fit border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 "
-                                :class="{
-                                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.beds_available,
-                                    'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.beds_available
-                                }" @click="toggleFilterAssignedBeds()" title="Mostrar solo las camas Asignadas">
-                                Camas Asignadas
-                                <div class="relative p-2.5 pl-1">
-                                    <BedIcon class="h-5 w-5" />
-                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
-                                        :class="{ 'text-indigo-600 dark:text-indigo-400': form.beds_available }" />
-                                    <div v-if="form.beds_available"
-                                        class="absolute -top-1 -right-1 h-2 w-2 bg-indigo-500 rounded-full">
-                                    </div>
-                                </div>
-                            </button>
+
+
                          <AccessGate :permission="['admission.create']" class="w-full sm:w-fit">
                             <!-- Filtro Mis Registros con ícono más grande -->
                             <button
@@ -329,12 +323,7 @@ export default {
             this.form.myRecords = !this.form.myRecords;
             this.submitFilters();
         },
-          toggleFilterAssignedBeds() {
 
-            this.form.beds_available = !this.form.beds_available;
-
-            this.submitFilters();
-        },
         sort(field) {
             this.form.sortField = field;
             this.form.sortDirection = this.form.sortDirection === 'asc' ? 'desc' : 'asc';

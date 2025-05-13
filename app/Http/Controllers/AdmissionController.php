@@ -84,8 +84,10 @@ class AdmissionController extends Controller implements HasMiddleware
 
         }
 
-        if ($beds_available) {
+        if ($beds_available === '1') {
             $query->whereNotNull('admissions.bed_id');
+        }  elseif ($beds_available === '2') {
+            $query->whereNull('admissions.bed_id');
         }
 
         if ($sortField) {

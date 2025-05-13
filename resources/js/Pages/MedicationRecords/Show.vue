@@ -39,17 +39,15 @@
                         </button>
                         <button v-if="medicationRecord.active" @click="recordBeingDeleted = true"
                             class="mr-4 flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h14a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm2 4a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1zm4 0a1 1 0 011 1v7a1 1 0 11-2 0V7a1 1 0 011-1z"
-                                    clip-rule="evenodd" />
-                            </svg>
+
+                            <TrashIcon class="size-5" />
                             <span class="font-medium ">Eliminar</span>
                         </button>
                         <button v-else @click="restoreRecord(medicationRecord)"
                             class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
-                            <span class="font-medium">Restaurar</span>
+
+                            <RestoreIcon class="size-5" />
+                             <span class="font-medium">Restaurar</span>
                         </button>
                     </div>
 
@@ -82,7 +80,7 @@
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermero</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 <!-- Verifica que la relación drug esté definida -->
-                                {{ nurse.name }}   {{ nurse.last_name }}
+                                {{ nurse.name }} {{ nurse.last_name }}
                             </p>
 
                         </div>
@@ -111,15 +109,14 @@
                         <!-- Dieta -->
                         <div
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 flex justify-between items-center">
-                             <div>
+                            <div>
                                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Dieta</h3>
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
-                                {{ medicationRecord.diet }}
-                            </p>
-                        </div>
-                        <AccessGate :permission="['medicationRecord.update']" class="mt-auto">
-                            <button class="text-yellow-500 ml-2 hover:text-yellow-800"
-                                    @click="openCreateModal()">
+                                    {{ medicationRecord.diet }}
+                                </p>
+                            </div>
+                            <AccessGate :permission="['medicationRecord.update']" class="mt-auto">
+                                <button class="text-yellow-500 ml-2 hover:text-yellow-800" @click="openCreateModal()">
                                     <EditIcon class="size-5" />
                                 </button>
                             </AccessGate>
@@ -142,14 +139,14 @@
 
                 <div class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
-                    <div v-if="showCreateDetailForm == false" >
+                    <div v-if="showCreateDetailForm == false">
                         <button @click="OpenFormCreateRecord" id="add_detail" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                 transition-colors duration-300">
                             Agregar Detalle
                         </button>
                     </div>
-                    <div v-else >
+                    <div v-else>
                         <button @click="closeform" id="add_detail" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                 transition-colors duration-300">
@@ -166,6 +163,7 @@
                             <div class="max-h-80 overflow-y-auto   shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
                                 <div class="col w-full md:w-[100%] p-4 md:p-2 ">
                                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Órdenes médicas
+                                        <span class="text-red-500">*</span>
                                     </h3>
 
                                     <!-- Mensaje cuando no hay órdenes -->
@@ -260,7 +258,7 @@
                                 <div class="flex-1">
                                     <label for="route-select"
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        Via
+                                        Via <span class="text-red-500">*</span>
                                     </label>
                                     <select id="route-select" required v-model="form.route"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -276,7 +274,7 @@
                                     <div class="flex-1">
                                         <label for="dose"
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            Dosis
+                                            Dosis <span class="text-red-500">*</span>
                                         </label>
                                         <input id="dose" required type="number" v-model="form.dose"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -286,7 +284,7 @@
                                     <div class="flex-1">
                                         <label for="dose-select"
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            Dosis
+                                            Métrica <span class="text-red-500">*</span>
                                         </label>
                                         <select id="dose-select" required v-model="form.dose_metric"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -301,7 +299,7 @@
                                 <!-- Estudios Pendientes -->
                                 <label for="fc"
                                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                                    Frecuencia
+                                    Frecuencia <span class="text-red-500">*</span>
                                 </label>
                                 <input id="fc" rows="4" required type="number" v-model="form.fc"
                                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -310,7 +308,7 @@
                                 <!-- Firma del Doctor -->
                                 <label for="interval_in_hours"
                                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                                    Intervalo en Horas
+                                    Intervalo en Horas <span class="text-red-500">*</span>
                                 </label>
                                 <input required id="interval_in_hours" type="number" v-model="form.interval_in_hours"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -319,7 +317,7 @@
                                 <!-- Hora de Inicio -->
                                 <label for="start_time"
                                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                                    Hora de Inicio
+                                    Hora de Inicio <span class="text-red-500">*</span>
                                 </label>
                                 <input required id="start_time" type="time" v-model="form.start_time" :min="currentTime"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -417,24 +415,14 @@
                                 <Link v-if="!hasApplied(detail)"
                                     :href="route('medicationRecordDetails.edit', detail.id)"
                                     class="flex items-center space-x-2 text-yellow-600 hover:text-yellow-800 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                        clip-rule="evenodd" />
-                                </svg>
+                                <EditIcon class="size-5" />
                                 <span class="font-medium">Editar</span>
                                 </Link>
                                 <AccessGate :permission="['medicationRecordDetail.view']">
                                     <!-- NOTIF -->
                                     <Link :href="route('medicationNotification.show', detail.id)"
                                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                            clip-rule="evenodd" />
-                                    </svg>
+                                    <NotificationIcon class="size-5 " />
                                     <span class="font-medium">Notificaciones</span>
                                     </Link>
                                 </AccessGate>
@@ -442,12 +430,12 @@
                             <button @click="ToggleActivate(detail)"
                                 :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
                                 class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
-                                <svg xmlns="http:1//www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                        clip-rule="evenodd" />
-                                </svg>
+                                <div v-if="detail.active">
+                                    <TrashIcon class="size-5" />
+                                </div>
+                                <div v-else>
+                                    <RestoreIcon class="size-5" />
+                                </div>
                                 <span>{{ detail.active ? 'Eliminar' : 'Restaurar' }}</span>
                             </button>
 
@@ -456,12 +444,13 @@
                                 <button @click="ToggleSuspend(detail)"
                                     :class="[!detail.suspended_at ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
                                     class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
-                                    <svg xmlns="http:1//www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                            clip-rule="evenodd" />
-                                    </svg>
+
+                                     <div v-if="detail.suspended_at">
+                                     <RestoreIcon class="size-5" />
+                                </div>
+                                <div v-else>
+                                  <SuspendIcon class="size-5" />
+                                </div>
                                     <span>{{ !detail.suspended_at ? 'Suspender' : 'Habilitar' }}</span>
                                 </button>
                             </div>
@@ -510,13 +499,14 @@
                             <div>
                                 <label for="diet"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Dieta
+                                    Dieta <span class="text-red-500">*</span>
                                 </label>
-                                <select id="diet-select" v-model="modalform.diet" required class="text-sm font-medium w-full text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100  p-2.5 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    <option v-for="diets in diet" :key="diets.id" :value="diets.description">
-                        {{ diets.name }} - {{ diets.description }}
-                    </option>
-                </select>
+                                <select id="diet-select" v-model="modalform.diet" required
+                                    class="text-sm font-medium w-full text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100  p-2.5 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                                    <option v-for="diets in diet" :key="diets.id" :value="diets.description">
+                                        {{ diets.name }} - {{ diets.description }}
+                                    </option>
+                                </select>
                             </div>
 
 
@@ -568,6 +558,10 @@ import UserSelector from '@/Components/UserSelector.vue';
 import EditIcon from '@/Components/Icons/EditIcon.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import Modal from '@/Components/Modal.vue';
+import TrashIcon from '@/Components/Icons/TrashIcon.vue';
+import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
+import NotificationIcon from '@/Components/Icons/NotificationIcon.vue';
+import SuspendIcon from '@/Components/Icons/SuspendIcon.vue';
 export default {
 
     props: {
@@ -590,6 +584,9 @@ export default {
         AppLayout,
         Link,
         UserSelector,
+        TrashIcon,
+        RestoreIcon,
+        NotificationIcon,
         EditIcon,
         ConfirmationModal,
         DangerButton,
@@ -604,7 +601,8 @@ export default {
         InputError,
         ReportIcon,
         ChevronDown,
-        BreadCrumb
+        BreadCrumb,
+        SuspendIcon
     },
     data() {
         return {

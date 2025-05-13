@@ -19,26 +19,25 @@
                 Remover filtro de <FormatId :id="form.admission_id" prefix="ING" class="ml-1"></FormatId>
             </button>
         </div>
-        <!-- Filtros y barra de búsqueda - Responsive -->
-        <div
-            class="bg-gray-100 dark:bg-gray-900 p-4 flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-end  overflow-x-auto rounded-lg mx-4 lg:mx-10">
-            <!-- Búsqueda - Ancho completo en móvil -->
-            <div class="relative w-full lg:w-1/3 mb-4 sm:mb-0">
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
-                </div>
+       <!-- Filtros y barra de búsqueda - Responsive -->
+             <div
+                 class="bg-gray-100 dark:bg-gray-900 py-4 flex flex-col gap-4 items-center lg:flex-row lg:justify-between lg:items-end xl:items-center overflow-x-auto rounded-lg mx-4 lg:mx-10">
+                 <!-- Búsqueda - Ancho completo en móvil -->
+                 <div class="relative w-full lg:w-1/3 mb-4 sm:mb-0">
+                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                         <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
+                     </div>
 
 
-                <input @input="submitFilters()"
-                    class="pl-10 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                    type="text" name="search" id="search" v-model="form.search" placeholder="Buscar..." />
+                     <input @input="submitFilters()"
+                         class="pl-10 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                         type="text" name="search" id="search" v-model="form.search" placeholder="Buscar..." />
 
-                <button v-if="form.search" @click="form.search = ''; submitFilters()"
-                    class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
-                    <XIcon class="h-5 w-5" />
-                </button>
-            </div>
-
+                        <button v-if="form.search" @click="form.search = ''; submitFilters()"
+                         class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
+                         <XIcon class="h-5 w-5" />
+                     </button>
+                 </div>
 
 
             <!-- Filtros y botones - Reorganizados para mejor responsividad -->
@@ -48,10 +47,7 @@
                 <div class="flex flex-col sm:flex-row w-full gap-3 items-center">
                     <!-- Grupo: Mis Registros + En proceso -->
                     <div class="flex w-full flex-col sm:flex-row xl:w-full gap-2 items-center">
-
-
-
-                        <select @change="submitFilters()"
+                       <select @change="submitFilters()"
                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                             name="in_process" id="in_process" v-model="form.in_process">
                             <option value="">Todos</option>
@@ -95,12 +91,12 @@
                         <Link v-if="!form.admission_id" :href="route('medicalOrders.create')"
                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
                         <PlusIcon class="size-5" />
-                        <span class="">Nueva Ordén</span>
+                        <span class="">Nuevo Registro</span>
                         </Link>
                         <Link v-else :href="route('medicalOrders.create', { admission_id: form.admission_id })"
                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
                         <PlusIcon class="size-5" />
-                        <span class="">Nueva Ordén</span>
+                        <span class="">Nuevo Registro</span>
                         </Link>
 
                     </AccessGate>

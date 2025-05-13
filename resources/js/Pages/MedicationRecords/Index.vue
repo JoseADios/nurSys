@@ -20,7 +20,7 @@
         </div>
         <!-- Filtros y barra de búsqueda - Responsive -->
         <div
-            class="bg-gray-100 dark:bg-gray-900 p-4 flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-end  overflow-x-auto rounded-lg mx-4 lg:mx-10">
+            class="bg-gray-100 dark:bg-gray-900 py-4 flex flex-col gap-4 items-center lg:flex-row lg:justify-between lg:items-end xl:items-center overflow-x-auto rounded-lg mx-4 lg:mx-10">
             <!-- Búsqueda - Ancho completo en móvil -->
             <div class="relative w-full lg:w-1/3 mb-4 sm:mb-0">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -32,7 +32,7 @@
                     class="pl-10 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                     type="text" name="search" id="search" v-model="form.search" placeholder="Buscar..." />
 
-                <button v-if="form.search" @click="form.search = ''; submitFilters()"
+                   <button v-if="form.search" @click="form.search = ''; submitFilters()"
                     class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
                     <XIcon class="h-5 w-5" />
                 </button>
@@ -40,19 +40,16 @@
 
 
 
-            <!-- Filtros y botones - Reorganizados para mejor responsividad -->
+           <!-- Filtros y botones - Reorganizados para mejor responsividad -->
             <div class="flex flex-col w-full lg:w-auto xl:flex-row space-y-3 sm:space-y-3 xl:space-y-0 xl:flex-grow">
 
                 <!-- Primera fila en dispositivos medianos -->
                 <div class="flex flex-col sm:flex-row w-full gap-3 items-center">
                     <!-- Grupo: Mis Registros + En proceso -->
                     <div class="flex w-full flex-col sm:flex-row xl:w-full gap-2 items-center">
-
-
-
                         <select @change="submitFilters()"
                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                            name="in_process" id="in_process" v-model="form.in_process">
+                           name="in_process" id="in_process" v-model="form.in_process">
                             <option value="">Todos</option>
                             <option value="true">En proceso</option>
                             <option value="false">Dados de alta</option>
@@ -60,8 +57,8 @@
                         </select>
 
                         <select @change="submitFilters()"
-                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                            name="days" id="days" v-model="form.days">
+                            class="w-full h-min  border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                           name="days" id="days" v-model="form.days">
                             <option value="">Siempre</option>
                             <option value="1">Último día</option>
                             <option value="7">Últimos 7 días</option>
@@ -74,8 +71,8 @@
 
                 </div>
 
-                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center xl:w-[80%]">
-                    <AccessGate :permission="['medicationRecords.delete']">
+                 <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center xl:w-[80%]">
+                   <AccessGate :permission="['medicationRecords.delete']">
                         <!-- Filtro para mostrar registros eliminados -->
                         <button @click="toggleShowDeleted"
                             class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
@@ -90,16 +87,15 @@
                     </AccessGate>
 
                     <AccessGate :permission="['medicationRecords.create']">
-
                         <Link v-if="!form.admission_id" :href="route('medicationRecords.create')"
-                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
-                        <PlusIcon class="size-5" />
-                        <span class="">Nueva Ficha</span>
+                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm w-full">
+                       <PlusIcon class="size-5" />
+                        <span class="">Nuevo Registro</span>
                         </Link>
                         <Link v-else :href="route('medicationRecords.create', { admission_id: form.admission_id })"
                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
                         <PlusIcon class="size-5" />
-                        <span class="">Nueva Ficha</span>
+                        <span class="">Nuevo Registro</span>
                         </Link>
 
                     </AccessGate>
@@ -132,8 +128,8 @@
                                 }}</span>
                             </th>
 
-                            <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('nurse_id')">Enfermero
-                                <span v-if="form.sortField === 'nurse_id'">{{ form.sortDirection === 'asc' ?
+                            <th scope="col" class="px-6 py-3 cursor-pointer" @click="sort('admissions.doctor_id')">Doctor
+                                <span v-if="form.sortField === 'admissions.doctor_id'">{{ form.sortDirection === 'asc' ?
                                     '↑' :
                                     '↓'
                                 }}</span>
@@ -174,7 +170,8 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4"> {{ record.admission.patient.first_name }} {{
+                            <td class="px-6 py-4 font-medium  whitespace-nowrap dark:text-white">
+                          {{ record.admission.patient.first_name }} {{
                                 record.admission.patient.first_surname }} {{
 
                                     record.admission.patient.second_surname }}</td>

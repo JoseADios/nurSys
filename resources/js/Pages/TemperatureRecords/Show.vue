@@ -49,7 +49,8 @@
                                 <TrashIcon class="size-5" />
                                 <span class="font-medium">Eliminar</span>
                             </button>
-                            <button v-else @click="restoreRecord"
+                            <button v-else @click="restoreRecord" :class="{ 'opacity-25': recordActiveChanging }"
+                                :disabled="recordActiveChanging"
                                 class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
                                 <RestoreIcon class="size-5" />
                                 <span class="font-medium">Restaurar</span>
@@ -159,7 +160,8 @@
                                     placeholder="Temperatura del paciente (°C)" />
 
                                 <div class="pt-8">
-                                    <button type="submit" :class="{ 'opacity-25': formDetailUpdate.processing }" :disabled="formDetailUpdate.processing" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
+                                    <button type="submit" :class="{ 'opacity-25': formDetailUpdate.processing }"
+                                        :disabled="formDetailUpdate.processing" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
                                                                         hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
                                                                         transition-colors duration-300">
                                         Actualizar
@@ -222,7 +224,8 @@
                             </div>
 
                             <div class="pt-4">
-                                <button type="submit" :class="{ 'opacity-25': formEliminationsUpdate.processing }" :disabled="formEliminationsUpdate.processing" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
+                                <button type="submit" :class="{ 'opacity-25': formEliminationsUpdate.processing }"
+                                    :disabled="formEliminationsUpdate.processing" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
                                     hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
                                     transition-colors duration-300">
                                     Actualizar
@@ -258,7 +261,8 @@
                                 </div>
 
                                 <div class="pt-4">
-                                    <button type="submit" :class="{ 'opacity-25': formEliminations.processing }" :disabled="formEliminations.processing" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                                    <button type="submit" :class="{ 'opacity-25': formEliminations.processing }"
+                                        :disabled="formEliminations.processing" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                     hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                     transition-colors duration-300">
                                         Guardar
@@ -313,7 +317,7 @@
                                     <button type="button"
                                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                                         @click="isVisibleEditSign = false">Cancelar</button>
-                                    <button
+                                    <button :class="{ 'opacity-25': formSignature.processing }" :disabled="formSignature.processing"
                                         class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                                         type="submit">Guardar firma</button>
                                 </div>
@@ -397,7 +401,7 @@
                         Cancelar
                     </SecondaryButton>
 
-                    <DangerButton class="ms-3" @click="deleteRecord">
+                    <DangerButton :class="{ 'opacity-25': recordActiveChanging }" :disabled="recordActiveChanging" class="ms-3" @click="deleteRecord">
                         Eliminar
                     </DangerButton>
                 </template>
@@ -475,6 +479,7 @@ export default {
             showEditAdmission: ref(null),
             showEditUser: ref(null),
             isVisibleEditSign: ref(null),
+            recordActiveChanging: ref(false),
             isVisibleEditDiagnosis: false,
             signatureError: false,
             chartKey: 0,
@@ -572,7 +577,11 @@ export default {
         submitUpdateRecord() {
             this.showEditAdmission = null
             this.showEditUser = null
-            this.formRecord.put(route('temperatureRecords.update', this.temperatureRecord.id))
+            this.formRecord.put(route('temperatureRecords.update', this.temperatureRecord.id), {
+                onFinish: () => {
+                    this.recordActiveChanging = false;
+                }
+            })
             this.isVisibleEditDiagnosis = false
         },
         submitSignature() {
@@ -590,10 +599,17 @@ export default {
             this.isVisibleEditDiagnosis = !this.isVisibleEditDiagnosis
         },
         deleteRecord() {
-            this.recordBeingDeleted = null
-            this.$inertia.delete(route('temperatureRecords.destroy', this.temperatureRecord.id));
+            this.recordActiveChanging = true;
+            this.recordBeingDeleted = null;
+            this.$inertia.delete(route('temperatureRecords.destroy', this.temperatureRecord.id), {
+                onFinish: () => {
+                    this.recordActiveChanging = false
+                }
+            }
+            );
         },
         restoreRecord() {
+            this.recordActiveChanging = true;
             this.formRecord.active = true
             this.submitUpdateRecord()
         },

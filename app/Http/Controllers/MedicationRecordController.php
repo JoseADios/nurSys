@@ -59,7 +59,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
                 $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('diagnosis LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
-                    ->orWhereRaw('nurse_id LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('admissions.doctor_id LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%']);
             });
         }
@@ -251,10 +251,11 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
             ]);
             $medicationRecord->update($validated);
+               return back()->with('flash.toast', 'Registro actualizado correctamente');
         }
 
 
-        return back()->with('flash.toast', 'Registro actualizado correctamente');
+
     }
 
 
@@ -263,6 +264,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
      */
     public function destroy(MedicationRecord $medicationRecord)
     {
+
         $this->authorize('delete', $medicationRecord);
 
         $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
@@ -276,10 +278,12 @@ class MedicationRecordController extends Controller implements HasMiddleware
             ->get();
 
 
-        if ($hasNotifications->isNotEmpty()) {
-            return Redirect::back()->withErrors(['message' => 'No se puede eliminar esta Ficha de Medicamentos porque tiene notificaciones aplicadas.']);
-        }
 
+
+        if ($hasNotifications->isNotEmpty()) {
+            return back()->with('flash.toast', 'No se puede eliminar esta Ficha de Medicamentos porque tiene notificaciones aplicadas.')->with('flash.toastStyle', 'danger');
+        }
+   Log::info($medicationRecord);
 
         $medicationRecord->update(['active' => 0]);
 
@@ -291,7 +295,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         MedicationNotification::whereIn('medication_record_detail_id', $details->pluck('id'))
             ->update(['active' => 0]);
 
-        return redirect()->to(route('medicationRecords.show', $medicationRecord));
+        return back()->with('flash.toast', 'Registro eliminado correctamente');
 
     }
 
@@ -322,7 +326,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         $record->active = true;
         $record->save();
 
-        return redirect()->back()->with('success', 'Registro habilitado con éxito.');
+        return back()->with('flash.toast', 'Registro habilitado con éxito.');
     }
 
 

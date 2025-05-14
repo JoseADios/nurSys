@@ -222,8 +222,6 @@
                                             </div>
                                         </div>
 
-
-
                                         <!-- Icono de cama centrado -->
                                         <div class="flex-1 flex items-center justify-center mt-5">
                                             <BedIcon v-if="bed.admission" class="w-10 h-10 text-white" />
@@ -317,18 +315,16 @@
 
                     <template #footer>
                         <SecondaryButton @click="showEditModal = null">
-                            Cancel
+                            Cancelar
                         </SecondaryButton>
 
-                        <PrimaryButton class="ms-3" @click="submitUpdate">
-                            Save
+                        <PrimaryButton class="ms-3" :class="{ 'opacity-25': selectedBed.processing }" :disabled="selectedBed.processing" @click="submitUpdate">
+                            Guardar
                         </PrimaryButton>
                     </template>
                 </DialogModal>
             </AccessGate>
-
         </div>
-
     </AppLayout>
 </template>
 
@@ -339,7 +335,7 @@ import FormatId from '@/Components/FormatId.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import moment from "moment/moment";
 import 'moment/locale/es';
 
@@ -386,7 +382,12 @@ export default {
     data() {
         return {
             showEditModal: null,
-            selectedBed: null,
+            selectedBed: useForm({
+                _method: 'PUT',
+                id: null,
+                status: null,
+
+            }),
             showTooltip: null,
             showLegend: false,
             isMobile: window.innerWidth < 768,
@@ -472,14 +473,12 @@ export default {
     },
     methods: {
         onBedClick(bed) {
-            this.selectedBed = {
-                ...bed,
-                admission: undefined
-            };
+            this.selectedBed.id = bed.id;
+            this.selectedBed.status = bed.status;
             this.showEditModal = true;
         },
         submitUpdate() {
-            this.$inertia.put(route('beds.update', this.selectedBed.id), this.selectedBed, {
+            this.selectedBed.put(route('beds.update', this.selectedBed.id), {
                 preserveScroll: true
             });
             this.showEditModal = null;

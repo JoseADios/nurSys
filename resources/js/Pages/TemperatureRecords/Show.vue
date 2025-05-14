@@ -528,11 +528,11 @@ export default {
                         };
                         this.chartKey++;
 
-                        // actualizar formulario de update temperature
-                        this.formDetailUpdate = {
+                        // Update temperature form data using form.reset()
+                        this.formDetailUpdate.reset({
                             temperature_record_id: this.temperatureRecord.id,
                             temperature: this.lastTemperature.temperature,
-                        }
+                        });
                     },
                     preserveScroll: true,
                     xcroll: true,

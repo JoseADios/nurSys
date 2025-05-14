@@ -27,7 +27,7 @@
                         class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
                     Cancelar
                     </Link>
-                    <button type="submit"
+                    <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
                         class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
                         >
                         Aceptar
@@ -40,7 +40,7 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 export default {
@@ -60,9 +60,9 @@ export default {
     },
     data() {
         return {
-            form: {
+            form: useForm({
                 admission_id: this.admission_id
-            },
+            }),
             errorMessage: this.error || null,
         }
     },
@@ -73,7 +73,7 @@ export default {
                 return;
             }
             this.errorMessage = null;
-            this.$inertia.post(route('medicalOrders.store'), this.form);
+            this.form.post(route('medicalOrders.store'));
         }
     }
 }

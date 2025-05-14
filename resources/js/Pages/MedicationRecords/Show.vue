@@ -47,7 +47,7 @@
                             class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
 
                             <RestoreIcon class="size-5" />
-                             <span class="font-medium">Restaurar</span>
+                            <span class="font-medium">Restaurar</span>
                         </button>
                     </div>
 
@@ -330,7 +330,8 @@
                                         Cerrar
                                     </button>
 
-                                    <button type="submit"
+                                    <button type="submit" :class="{ 'opacity-25': form.processing }"
+                                        :disabled="form.processing"
                                         class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
                                         Guardar
                                     </button>
@@ -445,12 +446,12 @@
                                     :class="[!detail.suspended_at ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
                                     class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
 
-                                     <div v-if="detail.suspended_at">
-                                     <RestoreIcon class="size-5" />
-                                </div>
-                                <div v-else>
-                                  <SuspendIcon class="size-5" />
-                                </div>
+                                    <div v-if="detail.suspended_at">
+                                        <RestoreIcon class="size-5" />
+                                    </div>
+                                    <div v-else>
+                                        <SuspendIcon class="size-5" />
+                                    </div>
                                     <span>{{ !detail.suspended_at ? 'Suspender' : 'Habilitar' }}</span>
                                 </button>
                             </div>
@@ -725,142 +726,140 @@ export default {
 
             this.errorMessage = "";
 
-            this.$inertia.post(route('medicationRecordDetails.store'), this.form, {
-                preserveScroll: true,
-
-                onSuccess: () => {
-                    this.form = {
-                        medication_record_id: this.medicationRecord.id,
-                        drug: '',
-                        dose: '',
-                        route: '',
-                        dose_metric: '',
-                        fc: '',
-                        interval_in_hours: '',
-                        selectedOrderId: null,
-                    };
-                    this.selectedOrderId = null;
-                    this.showCreateDetailForm = false;
-                },
-                preserveScroll: true,
-            });
-        },
-        toggleAccordion(index) {
-            if (this.openAccordion === index) {
-                this.openAccordion = null // Cierra si ya está abierto
-            } else {
-                this.openAccordion = index // Abre el acordeón seleccionado
+           this.form.post(route('medicationRecordDetails.store'), {
+            onSuccess: () => {
+                this.form = {
+                    medication_record_id: this.medicationRecord.id,
+                    drug: '',
+                    dose: '',
+                    route: '',
+                    dose_metric: '',
+                    fc: '',
+                    interval_in_hours: '',
+                    selectedOrderId: null,
+                };
+                this.selectedOrderId = null;
+                this.showCreateDetailForm = false;
             }
-        },
-        formatDateFromNow(date) {
-            return moment(date).fromNow();
-        },
-        selectOrder(id) {
-            this.selectedOrderId = id;
-            this.form.selectedOrderId = id;
-        },
-        hasApplied(detail) {
-            return detail.medication_notification?.some(item => item.applied === 1) ?? false;
-        },
-        Firstnoapplied(notifications) {
-            for (const detail of this.details) {
-                if (Array.isArray(detail.medication_notification)) {
+        });
 
-                    const firstNotApplied = detail.medication_notification.find(
-                        (n) => n.applied === 0
-                    );
+    },
+    toggleAccordion(index) {
+        if (this.openAccordion === index) {
+            this.openAccordion = null // Cierra si ya está abierto
+        } else {
+            this.openAccordion = index // Abre el acordeón seleccionado
+        }
+    },
+    formatDateFromNow(date) {
+        return moment(date).fromNow();
+    },
+    selectOrder(id) {
+        this.selectedOrderId = id;
+        this.form.selectedOrderId = id;
+    },
+    hasApplied(detail) {
+        return detail.medication_notification?.some(item => item.applied === 1) ?? false;
+    },
+    Firstnoapplied(notifications) {
+        for (const detail of this.details) {
+            if (Array.isArray(detail.medication_notification)) {
 
-                    if (firstNotApplied && firstNotApplied.id === notifications.id) {
-                        return true;
-                    }
+                const firstNotApplied = detail.medication_notification.find(
+                    (n) => n.applied === 0
+                );
+
+                if (firstNotApplied && firstNotApplied.id === notifications.id) {
+                    return true;
                 }
             }
+        }
 
-            return false;
-        },
-        OpenFormCreateRecord() {
-            this.form.start_time = moment().format('HH:mm');
-            this.showCreateDetailForm = true
+        return false;
+    },
+    OpenFormCreateRecord() {
+        this.form.start_time = moment().format('HH:mm');
+        this.showCreateDetailForm = true
 
-        },
-        closeform() {
-            this.showCreateDetailForm = false
+    },
+    closeform() {
+        this.showCreateDetailForm = false
 
-        },
+    },
 
-        deleteRecord() {
-            this.recordBeingDeleted = null;
-            this.$inertia.delete(route('medicationRecords.destroy', this.medicationRecord.id), {
+    deleteRecord() {
+        this.recordBeingDeleted = null;
+        this.$inertia.delete(route('medicationRecords.destroy', this.medicationRecord.id), {
+            onSuccess: (response) => {
+                console.log('eliminado correctamente', response);
+                this.recordBeingDeleted = null;
+            },
+            preserveScroll: true
+        });
+    },
+    ToggleActivate(detail) {
+        if (detail.active) {
+            this.$inertia.delete(route('medicationRecordDetails.destroy', detail.id), {
+                preserveState: true,
+                preserveScroll: true,
                 onSuccess: (response) => {
                     console.log('eliminado correctamente', response);
-                    this.recordBeingDeleted = null;
                 },
-                preserveScroll: true
+                onError: (errors) => {
+                    console.error('Error al habilitar:', errors);
+                },
             });
-        },
-        ToggleActivate(detail) {
-            if (detail.active) {
-                this.$inertia.delete(route('medicationRecordDetails.destroy', detail.id), {
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (response) => {
-                        console.log('eliminado correctamente', response);
-                    },
-                    onError: (errors) => {
-                        console.error('Error al habilitar:', errors);
-                    },
-                });
-            } else {
-                this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
-                    active: true,
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (response) => {
-                        console.log('update', response);
-                    },
-                    onError: (errors) => {
-                        console.error('Error al habilitar:', errors);
-                    },
-                });
-            }
-        },
-        async downloadRecordReport() {
-            window.open(route('reports.medicationRecord', {
-                id: this.medicationRecord.id
-            }), '_blank');
-        },
+        } else {
+            this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
+                active: true,
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: (response) => {
+                    console.log('update', response);
+                },
+                onError: (errors) => {
+                    console.error('Error al habilitar:', errors);
+                },
+            });
+        }
+    },
+    async downloadRecordReport() {
+        window.open(route('reports.medicationRecord', {
+            id: this.medicationRecord.id
+        }), '_blank');
+    },
 
-        ToggleSuspend(detail) {
-            if (detail.suspended_at) {
+    ToggleSuspend(detail) {
+        if (detail.suspended_at) {
 
-                this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
-                    suspended_at: true,
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (response) => {
-                        console.log('update', response);
-                    },
-                    onError: (errors) => {
-                        console.error('Error al habilitar:', errors);
-                    },
-                });
-            } else {
+            this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
+                suspended_at: true,
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: (response) => {
+                    console.log('update', response);
+                },
+                onError: (errors) => {
+                    console.error('Error al habilitar:', errors);
+                },
+            });
+        } else {
 
-                this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
-                    suspended_at: false,
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (response) => {
-                        console.log('update', response);
-                    },
-                    onError: (errors) => {
-                        console.error('Error al habilitar:', errors);
-                    },
-                });
-            }
-        },
+            this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
+                suspended_at: false,
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: (response) => {
+                    console.log('update', response);
+                },
+                onError: (errors) => {
+                    console.error('Error al habilitar:', errors);
+                },
+            });
+        }
+    },
 
-    }
+}
 }
 </script>
 

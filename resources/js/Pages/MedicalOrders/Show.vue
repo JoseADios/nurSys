@@ -191,7 +191,7 @@
                         </div>
 
                         <div class="pt-4">
-                            <button type="submit"
+                            <button type="submit" :class="{ 'opacity-25': formDetail.processing }" :disabled="formDetail.processing"
                                 class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-300">
                                 Agregar Detalle
                             </button>
@@ -469,7 +469,7 @@
 import DialogModal from '@/Components/DialogModal.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {
-    Link
+    Link, useForm
 } from '@inertiajs/vue3';
 import {
     ref
@@ -545,12 +545,12 @@ export default {
                 impression_diagnosis: this.medicalOrder.impression_diagnosis,
                 active: this.medicalOrder.active
             },
-            formDetail: {
+            formDetail: useForm ({
                 medical_order_id: this.medicalOrder.id,
                 order: null,
                 regime: null,
                 active: null,
-            },
+            }),
             formSignature: {
                 doctor_sign: this.medicalOrder.doctor_sign,
                 signature: true,
@@ -596,15 +596,12 @@ export default {
             }), '_blank');
         },
         submit() {
-            this.$inertia.post(route('medicalOrderDetails.store'),
-                this.formDetail, {
+            this.formDetail.post(route('medicalOrderDetails.store'),
+                 {
                 onSuccess: () => {
-                    this.formDetail = {
-                        medical_order_id: this.medicalOrder.id,
-                        medication: '',
-                        comment: '',
-                    };
+                  this.formDetail.reset('medication', 'comment');
                 }
+
             });
         },
         submitCreateRecord() {

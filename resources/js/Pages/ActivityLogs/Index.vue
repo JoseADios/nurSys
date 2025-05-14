@@ -122,7 +122,7 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                        {{ getModelName(log.subject_type) }}
+                                        {{ getModelName(log.subject_type) }} ({{ log.subject_id }})
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                         {{ log.causer ? log.causer.name + ' ' + log.causer.last_name : 'Sistema' }}

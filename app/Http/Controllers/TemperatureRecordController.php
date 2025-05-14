@@ -150,9 +150,12 @@ class TemperatureRecordController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         $admission_id = $request->input('admission_id');
+        $has_admission_id = $request->boolean('has_admission_id');
 
         if ($admission_id) {
             $this->authorize('create', [TemperatureRecord::class, $admission_id]);
+        } else {
+            return back()->with('flash.toast', 'Debe seleccionar un ingreso')->with('flash.toastStyle', 'danger');
         }
 
         $temperatureRecord = TemperatureRecord::create([
@@ -160,18 +163,13 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             'nurse_id' => Auth::id(),
         ]);
 
-        if ($admission_id) {
-            return Redirect::route(
-                'temperatureRecords.show',
-                [
-                    'temperatureRecord' => $temperatureRecord->id,
-                    'admission_id' => $admission_id
-                ]
-            )->with('flash.toast', 'Registro de temperatura creado correctamente');
-
-        } else {
-            return Redirect::route('temperatureRecords.show', $temperatureRecord->id)->with('flash.toast', 'Registro de temperatura creado correctamente');
-        }
+        return Redirect::route(
+            'temperatureRecords.show',
+            [
+                'temperatureRecord' => $temperatureRecord->id,
+                'admission_id' => $has_admission_id ? $admission_id : null
+            ]
+        )->with('flash.toast', 'Registro de temperatura creado correctamente');
     }
 
     /**
@@ -200,6 +198,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $currentDateRange = $turnService->getDateRangeForTurn($currentTurn);
         $details = [];
 
+        // formatear los datos para mostrarlos con apexCharts
         foreach ($temperatureDetails as $temperature) {
             // Obtener el turno de la fecha de la temperatura
             $temperatureTurn = $turnService->getCurrentTurnForDate($temperature->updated_at);
@@ -228,9 +227,6 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $responseCreateElimination = Gate::inspect('create', [EliminationRecord::class, $temperatureRecord->id]);
         $canCreateElimination = $responseCreateElimination->allowed();
 
-        // verificar si puede crear detalles
-        $responseCreateDetail = Gate::inspect('create', [TemperatureDetail::class, $temperatureRecord->id]);
-        $canCreateDetail = $responseCreateDetail->allowed();
 
         $lastTemperature = TemperatureDetail::where('temperature_record_id', $temperatureRecord->id)
             ->orderBy('updated_at', 'desc')
@@ -240,6 +236,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $lastEliminations = EliminationRecord::where('temperature_record_id', $temperatureRecord->id)
             ->orderBy('updated_at', 'desc')
             ->first();
+
 
         // verificar si puede actualizar temperatura
         $canUpdateDetail = false;
@@ -310,6 +307,14 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $fileName = $firmService
                 ->createImag($request->nurse_sign, $temperatureRecord->nurse_sign);
             $validated['nurse_sign'] = $fileName;
+        }
+
+        // si se modifica el active
+        if ($request->has('active') && $request->active!== $temperatureRecord->active) {
+            // si se esta activando
+            if ($request->active) {
+                $this->authorize('create', [TemperatureRecord::class, $temperatureRecord->admission_id]);
+            }
         }
 
         $temperatureRecord->update($validated);

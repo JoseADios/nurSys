@@ -11,15 +11,15 @@ const emit = defineEmits(['confirmed']);
 defineProps({
     title: {
         type: String,
-        default: 'Confirm Password',
+        default: 'Comfirmar contraseña',
     },
     content: {
         type: String,
-        default: 'For your security, please confirm your password to continue.',
+        default: 'Por tu seguridad, por favor confirma tu contraseña para continuar.',
     },
     button: {
         type: String,
-        default: 'Confirm',
+        default: 'Comfirmar',
     },
 });
 

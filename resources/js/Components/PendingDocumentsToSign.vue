@@ -1,6 +1,6 @@
 <template>
     <div
-        class="w-full h-full bg-white dark:bg-gray-800 overflow-hidden rounded-lg border border-gray-200/60 dark:border-gray-700/60 shadow-md">
+        class="w-full h-full bg-white dark:bg-gray-800 overflow-hidden rounded-lg border border-gray-200/60 dark:border-gray-700/60 ">
         <!-- Encabezado fijo -->
         <div
             class="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-blue-500/5 dark:bg-blue-500/5 z-10">
@@ -71,7 +71,7 @@
                             {{ getDocName(document) }}
                         </div>
 
-                        <Link :href="route(document.type + 's.show', document.id)"
+                        <Link :href="route(document.type + 's.show', document.id) + '#bottom'"
                             class="inline-flex items-center px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-colors">
                         <EditIcon class="h-4 w-4 mr-1.5" />
                         Firmar

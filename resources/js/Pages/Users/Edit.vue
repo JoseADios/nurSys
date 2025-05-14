@@ -29,7 +29,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Nombre -->
                         <div>
-                            <InputLabel for="name" value="Nombres" />
+                            <InputLabel for="name" value="Nombres" :required="true" />
                             <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required
                                 autocomplete="name" />
                             <InputError :message="form.errors.name" class="mt-2" />
@@ -37,7 +37,7 @@
 
                         <!-- Apellidos -->
                         <div>
-                            <InputLabel for="last_name" value="Apellidos" />
+                            <InputLabel for="last_name" value="Apellidos" :required="true" />
                             <TextInput id="last_name" v-model="form.last_name" type="text" class="mt-1 block w-full"
                                 required autocomplete="last_name" />
                             <InputError :message="form.errors.last_name" class="mt-2" />
@@ -45,14 +45,14 @@
 
                         <!-- Cédula -->
                         <div>
-                            <InputLabel for="identification_card" value="Cédula" />
+                            <InputLabel for="identification_card" value="Cédula" :required="true" />
                             <CedulaInput v-model="form.identification_card" class="mt-1" />
                             <InputError :message="form.errors.identification_card" class="mt-2" />
                         </div>
 
                         <!-- Fecha de Nacimiento -->
                         <div>
-                            <InputLabel for="birthdate" value="Fecha de Nacimiento" />
+                            <InputLabel for="birthdate" value="Fecha de Nacimiento" :required="true" />
                             <DateInput class="mt-1" v-model="form.birthdate" />
                             <InputError :message="form.errors.birthdate" class="mt-2" />
                         </div>
@@ -69,7 +69,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Correo Electrónico -->
                         <div>
-                            <InputLabel for="email" value="Correo Electrónico" />
+                            <InputLabel for="email" value="Correo Electrónico" :required="true" />
                             <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full" required
                                 autocomplete="email" />
                             <InputError :message="form.errors.email" class="mt-2" />
@@ -77,14 +77,14 @@
 
                         <!-- Teléfono -->
                         <div>
-                            <InputLabel for="phone" value="Teléfono" />
-                            <PhoneInput class="mt-1" v-model="form.phone" />
+                            <InputLabel for="phone" value="Teléfono" :required="true" />
+                            <PhoneInput class="mt-1" v-model="form.phone" required />
                             <InputError :message="form.errors.phone" class="mt-2" />
                         </div>
 
                         <!-- Dirección -->
                         <div class="md:col-span-2">
-                            <InputLabel for="address" value="Dirección" />
+                            <InputLabel for="address" value="Dirección" :required="true" />
                             <TextAreaInput id="address" v-model="form.address" rows="3" class="mt-1 block w-full"
                                 required />
                             <InputError :message="form.errors.address" class="mt-2" />
@@ -102,7 +102,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Rol -->
                         <div>
-                            <InputLabel for="role" value="Rol" />
+                            <InputLabel for="role" value="Rol" :required="true" />
                             <select @change="setExequaturVisibily" required id="role" v-model="form.role"
                                 class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                                 <option v-for="role in roles" :key="role" :value="role.name">
@@ -114,7 +114,7 @@
 
                         <!-- Especialidad -->
                         <div>
-                            <InputLabel for="specialty" value="Especialidad" />
+                            <InputLabel for="specialty" value="Especialidad" :required="true" />
                             <TextInput id="specialty" v-model="form.specialty" type="text" class="mt-1 block w-full"
                                 required autocomplete="specialty" />
                             <InputError :message="form.errors.specialty" class="mt-2" />
@@ -137,9 +137,9 @@
 
                         <!-- Exequatur (Condicional) -->
                         <div v-if="exequaturVisible">
-                            <InputLabel for="exequatur" value="Exequatur" />
-                            <TextInput id="exequatur" v-model="form.exequatur" type="text" class="mt-1 block w-full"
-                                autocomplete="exequatur" />
+                            <InputLabel for="exequatur" value="Exequatur" :required="exequaturVisible" />
+                            <TextInput id="exequatur" v-model="form.exequatur" :required="exequaturVisible" type="text"
+                                class="mt-1 block w-full" autocomplete="exequatur" />
                             <InputError :message="form.errors.exequatur" class="mt-2" />
                         </div>
                     </div>
@@ -161,13 +161,14 @@
 
                 <!-- Form Actions -->
                 <div
-                    class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex flex-col sm:flex-row gap-2 justify-between items-center rounded-b-lg">
+                    class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex flex-col sm:flex-row gap-2 justify-between items-center rounded-b-lg">
                     <div class="space-y-2">
                         <button v-if="user.active == 1" @click="userBeingDeleted = true" type="button"
                             class="mr-2 px-4 py-2 text-sm h-fit font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                             Deshabilitar
                         </button>
-                        <button v-else @click="restoreUser" type="button"
+                        <button v-else @click="restoreUser" type="button" :class="{ 'opacity-25': isProcessingActive }"
+                            :disabled="isProcessingActive"
                             class="mr-2 px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             Habilitar
                         </button>
@@ -181,7 +182,7 @@
                             class="px-4 py-2 text-sm font-medium text-gray-100 bg-slate-600 dark:text-white border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-500 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Volver
                         </Link>
-                        <button type="submit"
+                        <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
                             class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                             Actualizar
                         </button>
@@ -211,6 +212,8 @@
             <template #content>
                 <form @submit.prevent="submitPassword" class="px-4 space-y-2">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <input type="text" class="hidden" name="username" id="username" :value="user.email"
+                            autocomplete="username">
                         <div>
                             <InputLabel for="password" value="Nueva Contraseña"
                                 class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300" />
@@ -241,6 +244,7 @@
                     </SecondaryButton>
 
                     <PrimaryButton type="submit" @click="submitPassword"
+                        :class="{ 'opacity-25': passwordForm.processing }" :disabled="passwordForm.processing"
                         class="bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all duration-200">
                         Cambiar Contraseña
                     </PrimaryButton>
@@ -263,7 +267,8 @@
                     Cancelar
                 </SecondaryButton>
 
-                <DangerButton class="ms-3" @click="deleteUser">
+                <DangerButton class="ms-3" @click="deleteUser" :class="{ 'opacity-25': isProcessingActive }"
+                    :disabled="isProcessingActive">
                     Deshabilitar
                 </DangerButton>
             </template>
@@ -341,6 +346,7 @@ export default {
             userBeingDeleted: ref(null),
             userChangingPass: ref(false),
             exequaturVisible: ref(false),
+            isProcessingActive: ref(false),
             form: useForm({
                 name: this.user.name,
                 last_name: this.user.last_name,
@@ -383,14 +389,22 @@ export default {
             });
         },
         deleteUser() {
+            this.isProcessingActive = true;
             this.userBeingDeleted = null;
             this.$inertia.delete(route('users.destroy', this.user.id), {
-                preserveScroll: true
+                preserveScroll: true,
+                onFinish: () => {
+                    this.isProcessingActive = false;
+                }
             });
         },
         restoreUser() {
-            this.$inertia.put(route('users.update', this.user.id), { active: true },{
-                preserveScroll: true
+            this.isProcessingActive = true;
+            this.$inertia.put(route('users.update', this.user.id), { active: true }, {
+                preserveScroll: true,
+                onFinish: () => {
+                    this.isProcessingActive = false;
+                }
             });
         },
         submitPassword() {

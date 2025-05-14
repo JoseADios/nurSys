@@ -28,7 +28,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Nombre -->
                         <div>
-                            <InputLabel for="name" value="Nombres" />
+                            <InputLabel for="name" value="Nombres" :required="true"/>
                             <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required
                                 autocomplete="name" />
                             <InputError :message="form.errors.name" class="mt-2" />
@@ -36,7 +36,7 @@
 
                         <!-- Apellidos -->
                         <div>
-                            <InputLabel for="last_name" value="Apellidos" />
+                            <InputLabel for="last_name" value="Apellidos" :required="true"/>
                             <TextInput id="last_name" v-model="form.last_name" type="text" class="mt-1 block w-full"
                                 required autocomplete="last_name" />
                             <InputError :message="form.errors.last_name" class="mt-2" />
@@ -44,14 +44,14 @@
 
                         <!-- Cédula -->
                         <div>
-                            <InputLabel for="identification_card" value="Cédula" />
+                            <InputLabel for="identification_card" value="Cédula" :required="true"/>
                             <CedulaInput v-model="form.identification_card" class="mt-1" />
                             <InputError :message="form.errors.identification_card" class="mt-2" />
                         </div>
 
                         <!-- Fecha de Nacimiento -->
                         <div>
-                            <InputLabel for="birthdate" value="Fecha de Nacimiento" />
+                            <InputLabel for="birthdate" value="Fecha de Nacimiento" :required="true"/>
                             <DateInput class="mt-1" v-model="form.birthdate" />
                             <InputError :message="form.errors.birthdate" class="mt-2" />
                         </div>
@@ -68,7 +68,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Correo Electrónico -->
                         <div>
-                            <InputLabel for="email" value="Correo Electrónico" />
+                            <InputLabel for="email" value="Correo Electrónico" :required="true"/>
                             <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full" required
                                 autocomplete="email" />
                             <InputError :message="form.errors.email" class="mt-2" />
@@ -76,14 +76,14 @@
 
                         <!-- Teléfono -->
                         <div>
-                            <InputLabel for="phone" value="Teléfono" />
-                            <PhoneInput class="mt-1" v-model="form.phone" />
+                            <InputLabel for="phone" value="Teléfono" :required="true"/>
+                            <PhoneInput class="mt-1" v-model="form.phone" required/>
                             <InputError :message="form.errors.phone" class="mt-2" />
                         </div>
 
                         <!-- Dirección -->
                         <div class="md:col-span-2">
-                            <InputLabel for="address" value="Dirección" />
+                            <InputLabel for="address" value="Dirección" :required="true"/>
                             <TextAreaInput id="address" v-model="form.address" rows="3" class="mt-1 block w-full"
                                 required />
                             <InputError :message="form.errors.address" class="mt-2" />
@@ -101,7 +101,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Rol -->
                         <div>
-                            <InputLabel for="role" value="Rol" />
+                            <InputLabel for="role" value="Rol" :required="true"/>
                             <select @change="setExequaturVisibily" required id="role" v-model="form.role"
                                 class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                                 <option v-for="role in roles" :key="role" :value="role.name">
@@ -113,7 +113,7 @@
 
                         <!-- Especialidad -->
                         <div>
-                            <InputLabel for="specialty" value="Especialidad" />
+                            <InputLabel for="specialty" value="Especialidad" :required="true"/>
                             <TextInput id="specialty" v-model="form.specialty" type="text" class="mt-1 block w-full"
                                 required autocomplete="specialty" />
                             <InputError :message="form.errors.specialty" class="mt-2" />
@@ -136,8 +136,8 @@
 
                         <!-- Exequatur (Condicional) -->
                         <div v-if="exequaturVisible">
-                            <InputLabel for="exequatur" value="Exequatur" />
-                            <TextInput id="exequatur" v-model="form.exequatur" type="text" class="mt-1 block w-full"
+                            <InputLabel for="exequatur" value="Exequatur" :required="exequaturVisible"/>
+                            <TextInput id="exequatur" v-model="form.exequatur" :required="exequaturVisible" type="text" class="mt-1 block w-full"
                                 autocomplete="exequatur" />
                             <InputError :message="form.errors.exequatur" class="mt-2" />
                         </div>
@@ -154,7 +154,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Contraseña -->
                         <div>
-                            <InputLabel for="password" value="Contraseña" />
+                            <InputLabel for="password" value="Contraseña" :required="true"/>
                             <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full"
                                 required autocomplete="password" />
                             <InputError :message="form.errors.password" class="mt-2" />
@@ -162,7 +162,7 @@
 
                         <!-- Confirmar Contraseña -->
                         <div>
-                            <InputLabel for="password_confirmation" value="Confirmar Contraseña" />
+                            <InputLabel for="password_confirmation" value="Confirmar Contraseña" :required="true"/>
                             <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password"
                                 class="mt-1 block w-full" required autocomplete="password_confirmation" />
                             <InputError :message="form.errors.password_confirmation" class="mt-2" />
@@ -185,8 +185,8 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex flex-col sm:flex-row justify-center items-center sm:justify-end space-y-2 sm:space-y-0 rounded-b-lg">
-                    <button @click="saveAndNew" type="button"
+                <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex flex-col sm:flex-row justify-center items-center sm:justify-end space-y-2 sm:space-y-0 rounded-b-lg">
+                    <button @click="saveAndNew" type="button" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
                         class="px-4 max-w-fit py-2 text-sm sm:mr-2 font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                         Guardar y Crear Otro
                     </button>
@@ -195,7 +195,7 @@
                             class="px-4 py-2 text-sm font-medium text-gray-100 bg-slate-600 dark:text-white border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-500 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         Cancelar
                         </Link>
-                        <button type="submit"
+                        <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
                             class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                             Guardar
                         </button>
@@ -288,7 +288,7 @@ export default {
                 }
             });
 
-            this.$inertia.post(route('users.store'), this.form, {
+            this.form.post(route('users.store'), {
                 onSuccess: () => {
                     this.form.reset();
                     this.form.errors = {};

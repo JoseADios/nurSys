@@ -151,12 +151,12 @@ class PatientController extends Controller implements HasMiddleware
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'first_surname' => 'required|string|max:255',
-            'second_surname' => 'required|string|max:255',
+            'second_surname' => 'nullable|string|max:255',
             'phone' => 'required|string|size:14',
             'nationality' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:patients',
+            'email' => 'nullable|email|max:255|unique:patients',
             'birthdate' => 'required|date',
-            'position' => 'required|string|max:255',
+            'position' => 'nullable|string|max:255',
             'marital_status' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'ars' => 'nullable|string|max:255',
@@ -186,8 +186,17 @@ class PatientController extends Controller implements HasMiddleware
                 ->value('id');
         }
 
+        // obtener los ultimos 5 ingresos
+        $admissions = Admission::where('patient_id', $patient->id)
+        ->with('doctor', 'bed')
+        ->orderByDesc('created_at')
+        ->get();
+
+        // dd($admissions);
+
         return Inertia::render('Patients/Show', [
             'patient' => $patient,
+            'admissions' => $admissions,
             'inProcessAdmssion' => $inProcessAdmssion,
         ]);
     }
@@ -234,13 +243,13 @@ class PatientController extends Controller implements HasMiddleware
             $validated = $request->validate([
                 'first_name' => 'required|string|max:255',
                 'first_surname' => 'required|string|max:255',
-                'second_surname' => 'required|string|max:255',
+                'second_surname' => 'nullable|string|max:255',
                 'phone' => 'required|string|size:14',
                 'identification_card' => 'nullable|string|size:12|unique:patients,identification_card,' . $patient->id,
                 'nationality' => 'required|string|max:255',
-                'email' => 'required|email|max:255|unique:patients,email,' . $patient->id,
+                'email' => 'nullable|email|max:255|unique:patients,email,' . $patient->id,
                 'birthdate' => 'required|date',
-                'position' => 'required|string|max:255',
+                'position' => 'nullable|string|max:255',
                 'marital_status' => 'required|string|max:255',
                 'address' => 'required|string|max:255',
                 'ars' => 'nullable|string|max:255',

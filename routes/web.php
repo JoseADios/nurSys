@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogsController;
 use App\Http\Controllers\AdmissionController;
 use App\Http\Controllers\BedController;
 use App\Http\Controllers\ClinicAreaController;
@@ -19,9 +20,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DrugController;
 use App\Http\Controllers\DietController;
 use App\Http\Controllers\ReportController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -41,26 +40,26 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-])->group(function () {
+    ])->group(function () {
 
-    Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])->middleware(['auth']);
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])->middleware(['auth']);
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/admissions/filter', [AdmissionController::class, 'getFilteredAdmissions'])->name('admissions.filter');
-    Route::resource('admissions', AdmissionController::class);
-    Route::put('/admissions/{admission}/restore', [AdmissionController::class, 'restore'])->name('admissions.restore');
+        Route::get('/admissions/filter', [AdmissionController::class, 'getFilteredAdmissions'])->name('admissions.filter');
+        Route::resource('admissions', AdmissionController::class);
+        Route::put('/admissions/{admission}/restore', [AdmissionController::class, 'restore'])->name('admissions.restore');
 
-    Route::resource('medicationRecords', MedicationRecordController::class);
-    Route::resource('medicationRecordDetails', MedicationRecordDetailController::class);
-    Route::resource('medicationNotification', MedicationNotificationController::class);
+        Route::resource('medicationRecords', MedicationRecordController::class);
+        Route::resource('medicationRecordDetails', MedicationRecordDetailController::class);
+        Route::resource('medicationNotification', MedicationNotificationController::class);
 
-    Route::resource('nurseRecords', NurseRecordController::class);
-    Route::resource('nurseRecordDetails', NurseRecordDetailController::class);
+        Route::resource('nurseRecords', NurseRecordController::class);
+        Route::resource('nurseRecordDetails', NurseRecordDetailController::class);
 
-    Route::get('/medication-record-details/create/{medicationRecordId}', [MedicationRecordDetailController::class, 'create'])
+        Route::get('/medication-record-details/create/{medicationRecordId}', [MedicationRecordDetailController::class, 'create'])
         ->name('medicationRecordDetails.create');
-    Route::resource('medicalOrders', MedicalOrderController::class);
-    Route::resource('medicalOrderDetails', MedicalOrderDetailController::class);
+        Route::resource('medicalOrders', MedicalOrderController::class);
+        Route::resource('medicalOrderDetails', MedicalOrderDetailController::class);
 
     Route::resource('temperatureRecords', TemperatureRecordController::class);
     Route::resource('temperatureDetails', TemperatureDetailController::class);
@@ -79,18 +78,20 @@ Route::middleware([
     Route::get('/users/filter', [UserController::class, 'filterUsers'])->name('users.filter');
     Route::resource('users', UserController::class);
 
+    Route::resource('activityLogs', ActivityLogsController::class);
+
     // parametros
     Route::get('clinicAreas', [ClinicAreaController::class, 'index'])->name('clinicAreas.index');
 
     // REPORTES
     Route::get('/reports/temperatureRecord/{id}', [ReportController::class, 'temperatureRecordReport'])
-        ->name('reports.temperatureRecord');
+    ->name('reports.temperatureRecord');
     Route::get('/reports/nurseRecord/{id}', [ReportController::class, 'nurseRecordReport'])
-        ->name('reports.nurseRecord');
+    ->name('reports.nurseRecord');
     Route::get('/reports/medicationRecord/{id}', [ReportController::class, 'medicationRecordReport'])
-        ->name('reports.medicationRecord');
+    ->name('reports.medicationRecord');
     Route::get('/reports/medicalOrder/{id}', [ReportController::class, 'medicalOrderReport'])
-        ->name('reports.medicalOrder');
+    ->name('reports.medicalOrder');
     Route::get('/reports/admission/{id}', [ReportController::class, 'admissionReport'])
-        ->name('reports.admission');
+    ->name('reports.admission');
 });

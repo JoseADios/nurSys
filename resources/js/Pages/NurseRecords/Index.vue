@@ -26,7 +26,7 @@
         <div
             class="bg-gray-100 dark:bg-gray-900 py-4 flex flex-col gap-4 items-center lg:flex-row lg:justify-between lg:items-end xl:items-center overflow-x-auto rounded-lg mx-4 lg:mx-10">
             <!-- Búsqueda - Ancho completo en móvil -->
-            <div class="relative w-full lg:w-1/3 mb-4 sm:mb-0">
+            <div class="relative w-full lg:w-1/2 xl:w-1/3 mb-4 sm:mb-0">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                 </div>
@@ -43,14 +43,14 @@
 
             <!-- Filtros y botones - Reorganizados para mejor responsividad -->
             <div class="flex flex-col w-full lg:w-auto xl:flex-row space-y-3 sm:space-y-3 xl:space-y-0 xl:flex-grow">
-
                 <!-- Primera fila en dispositivos medianos -->
                 <div class="flex flex-col sm:flex-row w-full gap-3 items-center">
                     <!-- Grupo: Mis Registros + En proceso -->
                     <div class="flex w-full flex-col sm:flex-row xl:w-full gap-2 items-center">
                         <AccessGate :permission="['nurseRecord.create']" class="w-full sm:w-fit">
                             <!-- Filtro Mis Registros con ícono más grande -->
-                            <button class="w-full sm:w-fit border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 "
+                            <button
+                                class="w-full sm:w-fit border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 "
                                 :class="{
                                     'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.myRecords,
                                     'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
@@ -92,7 +92,7 @@
                 </div>
 
                 <!-- Segunda fila en dispositivos medianos -->
-                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center xl:w-[80%]">
+                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 md:items-center xl:w-[80%]">
                     <AccessGate :permission="['nurseRecord.delete']" class="w-full sm:w-1/2">
                         <!-- Filtro para mostrar registros eliminados -->
                         <button @click="toggleShowDeleted"
@@ -272,7 +272,7 @@ export default {
                 days: this.filters.days || '',
                 sortField: this.filters.sortField || 'nurse_records.created_at',
                 sortDirection: this.filters.sortDirection || 'asc',
-                myRecords: this.filters.myRecords || true
+                myRecords: this.filters.myRecords !== undefined ? this.filters.myRecords : true
             },
             timeout: 500,
         }

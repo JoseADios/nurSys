@@ -77,7 +77,7 @@ class TemperatureRecordPolicy
             return Response::allow();
         }
         if (!$temperatureRecord->admission->active) {
-            return Response::deny('No se pueden crear registros en un ingreso desactivado');
+            return Response::deny('No se pueden crear registros en un ingreso desactivado'. ' ' . $temperatureRecord->id);
         }
 
         if ($temperatureRecord->admission->discharged_date !== null) {

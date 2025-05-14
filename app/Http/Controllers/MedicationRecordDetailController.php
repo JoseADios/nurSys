@@ -142,14 +142,13 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
 
         $Applied = $existingnotification->applied;
         if ($Applied == 1) {
-            return redirect()->route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->withErrors([
-                'medication_record_detail_id' => 'Ya Existe una notifiacion con medicamentos administrados.',
-            ])->withInput();
+
+        return back()->with('flash.toast', 'Ya Existe una notifiacion con medicamentos administrados.')->with('flash.toastStyle', 'danger');
+
         }
         if ($medicationRecordDetail->active == 0) {
-            return redirect()->route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->withErrors([
-                'medication_record_detail_id' => 'Ya Existe una notifiacion con medicamentos administrados.',
-            ])->withInput();
+             return back()->with('flash.toast', 'Ya Existe una notifiacion con medicamentos administrados.')->with('flash.toastStyle', 'danger');
+
         }
         return Inertia::render('MedicationRecordDetail/Edit', [
             'medicationRecordDetail' => $medicationRecordDetail,
@@ -323,7 +322,9 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
 
         $hasNotifications = MedicationNotification::where('medication_record_detail_id', $medicationRecordDetail->id)->where('applied', 1)->get();
         if ($hasNotifications->isNotEmpty()) {
-            return Redirect::back()->withErrors(['message' => 'No se puede eliminar este Detalle de Ficha de Medicamentos porque tiene notificaciones aplicadas.']);
+             return back()->with('flash.toast', 'No se puede eliminar este Detalle de Ficha de Medicamentos porque tiene notificaciones aplicadas.')->with('flash.toastStyle', 'danger');
+
+
         }
 
         $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();

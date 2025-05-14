@@ -26,7 +26,7 @@
         <div
             class="bg-gray-100 dark:bg-gray-900 py-4 flex flex-col gap-4 items-center lg:flex-row lg:justify-between lg:items-end xl:items-center overflow-x-auto rounded-lg mx-4 lg:mx-10">
             <!-- Búsqueda - Ancho completo en móvil -->
-            <div class="relative w-full lg:w-1/3 mb-4 sm:mb-0">
+            <div class="relative w-full lg:w-1/2 xl:w-1/3 mb-4 sm:mb-0">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                 </div>
@@ -92,7 +92,7 @@
                 </div>
 
                 <!-- Segunda fila en dispositivos medianos -->
-                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center xl:w-[80%]">
+                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 md:items-center xl:w-[80%]">
                     <AccessGate :permission="['nurseRecord.delete']" class="w-full sm:w-1/2">
                         <!-- Filtro para mostrar registros eliminados -->
                         <button @click="toggleShowDeleted"

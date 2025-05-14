@@ -50,7 +50,7 @@
                         Cancelar
                         </Link>
                     </div>
-                    <button type="submit"
+                    <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
                         class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition">
                         Aceptar
                     </button>
@@ -66,7 +66,7 @@ import BreadCrumb from '@/Components/BreadCrumb.vue';
 import FormatId from '@/Components/FormatId.vue';
 import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 
 export default {
     props: {
@@ -85,10 +85,10 @@ export default {
     },
     data() {
         return {
-            form: {
+            form: useForm({
                 admission_id: this.admission_id || null,
                 has_admission_id: this.admission_id ? true : false
-            },
+            }),
             error: null
         };
     },
@@ -99,7 +99,7 @@ export default {
                 return;
             }
             this.error = null;
-            this.$inertia.post(route('nurseRecords.store'), this.form);
+            this.form.post(route('nurseRecords.store'));
         }
     }
 };

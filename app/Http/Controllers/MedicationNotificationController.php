@@ -122,16 +122,19 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
             //dd('entro al if',$medication_notification);
 
         } elseif ($request->has('revert')) {
-            if ($detail->active == 1 && $detail->suspended_at == null) {
-                // eliminar img de la firma anterior
+            if (Auth::user()->hasRole('admin')) { // Verificar si el usuario es administrador
+                if ($detail->active == 1 && $detail->suspended_at == null) {
+                    // eliminar img de la firma anterior
 
-                $medication_notification->update([
-                    'nurse_id' => null,
-                    'administered_time' => now(),
-                    'applied' => false
-                ]);
-                return redirect()->back()->with('toast.flash.success', 'Medicamento actualizado correctamente.');
-
+                    $medication_notification->update([
+                        'nurse_id' => null,
+                        'administered_time' => now(),
+                        'applied' => false
+                    ]);
+                    return redirect()->back()->with('toast.flash.success', 'Medicamento actualizado correctamente.');
+                }
+            } else {
+                abort(403, 'Solo el administrador puede revertir esta acción.');
             }
         } else {
             $medication_notification->update($request->all());

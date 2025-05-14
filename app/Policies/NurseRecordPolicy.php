@@ -50,8 +50,8 @@ class NurseRecordPolicy
      */
     public function create(User $user, Admission $admission): Response
     {
-        if (!$user->hasPermissionTo('admission.create')) {
-            return Response::deny('El usuario no tiene los permisos necesarios para crear ingresos');
+        if (!$user->hasPermissionTo('nurseRecord.create')) {
+            return Response::deny('El usuario no tiene los permisos necesarios para crear Registros de enfermería');
         }
 
         if (!$admission->active) {

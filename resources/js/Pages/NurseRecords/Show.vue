@@ -56,7 +56,7 @@
                                 <TrashIcon class="size-5" />
                                 <span class="font-medium">Eliminar</span>
                             </button>
-                            <button v-else @click="restoreRecord"
+                            <button v-else @click="restoreRecord" :class="{ 'opacity-25': recordActiveChanging }" :disabled="recordActiveChanging"
                                 class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors w-full sm:w-auto justify-center sm:justify-start sm:mt-0">
                                 <RestoreIcon class="size-5" />
                                 <span class="font-medium">Restaurar</span>
@@ -227,20 +227,16 @@
                                 <form @submit.prevent="submit" class="space-y-4">
                                     <div class="grid grid-cols-1 gap-4">
                                         <div>
-                                            <label for="medication"
-                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                Medicación
-                                            </label>
+                                            <InputLabel for="medication" value="Medicación" :required="true"
+                                                class="mb-2" />
                                             <TextAreaInput maxlength="255" class="w-full h-16 resize-none"
                                                 v-model="formDetail.medication" id="medication" placeholder="Medicación"
                                                 required />
                                         </div>
 
                                         <div>
-                                            <label for="comment"
-                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                Observaciones
-                                            </label>
+                                            <InputLabel for="comment" value="Observaciones" :required="true"
+                                                class="mb-2" />
                                             <TextAreaInput maxlength="255" class="w-full resize-none h-24"
                                                 v-model="formDetail.comment" id="comment"
                                                 placeholder="Comentarios adicionales" required />
@@ -248,7 +244,8 @@
                                     </div>
 
                                     <div class="pt-4">
-                                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                                        <button type="submit" :class="{ 'opacity-25': formDetail.processing }"
+                                            :disabled="formDetail.processing" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
             hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
             transition-colors duration-300">
                                             Agregar Evento
@@ -340,7 +337,7 @@
                 </div>
 
                 <!-- Firma -->
-                <section class=" p-8 space-y-4 ">
+                <section id="bottom" class=" p-8 space-y-4 ">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Firma</h3>
 
                     <!-- mostrar imagen firma -->
@@ -377,7 +374,7 @@
                                     <button type="button"
                                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                                         @click="isVisibleEditSign = false">Cancelar</button>
-                                    <button
+                                    <button :class="{ 'opacity-25': formSignature.processing }" :disabled="formSignature.processing"
                                         class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                                         type="submit">Guardar firma</button>
                                 </div>
@@ -455,14 +452,17 @@
                     <form>
                         <div class="flex flex-col gap-6">
                             <div>
-                                <InputLabel for="medication" value="Medicación" />
+                                <InputLabel for="medication" value="Medicación" :required="true" />
                                 <TextInput id="medication" v-model="selectedDetail.medication" type="text"
                                     class="mt-1 block w-full" required autocomplete="medication" />
+                                <InputError v-if="!selectedDetail.medication" message="Este campo es obligatorio." />
                             </div>
 
                             <div>
-                                <InputLabel for="comment" value="Observaciones" />
-                                <TextAreaInput class="w-full" v-model="selectedDetail.comment" id="comment" />
+                                <InputLabel for="comment" value="Observaciones" :required="true" />
+                                <TextAreaInput class="mt-1 w-full" v-model="selectedDetail.comment" required
+                                    id="comment" />
+                                <InputError v-if="!selectedDetail.comment" message="Este campo es obligatorio." />
                             </div>
 
                         </div>
@@ -477,7 +477,7 @@
                         class="mr-2 focus:outline-none text-white bg-red-800 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
                         Eliminar
                     </button>
-                    <button v-if="!selectedDetail.active" type="button" @click="restoreDetail"
+                    <button v-if="!selectedDetail.active" type="button" @click="restoreDetail(selectedDetail)"
                         class="mr-2 focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
                         Restaurar
                     </button>
@@ -509,7 +509,7 @@
                         Cancelar
                     </SecondaryButton>
 
-                    <DangerButton class="ms-3" @click="deleteRecord">
+                    <DangerButton class="ms-3" @click="deleteRecord" :class="{ 'opacity-25': recordActiveChanging }" :disabled="recordActiveChanging">
                         Eliminar
                     </DangerButton>
                 </template>
@@ -544,7 +544,7 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue'
 import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
@@ -632,6 +632,7 @@ export default {
             showEditNurse: ref(null),
             selectedDetail: ref(null),
             isVisibleDetail: ref(false),
+            recordActiveChanging: ref(false),
             signatureError: false,
             showDeletedLocal: this.showDeleted || false,
 
@@ -641,22 +642,24 @@ export default {
                 active: this.nurseRecord.active,
             },
 
-            formDetail: {
+            formDetail: useForm({
                 nurse_record_id: this.nurseRecord.id,
                 medication: null,
                 comment: null,
-            },
-            formSignature: {
+            }),
+            formSignature: useForm({
                 nurse_sign: this.nurseRecord.nurse_sign,
                 signature: true,
-            },
+            }),
         }
     },
-
     methods: {
         submitAdmission() {
             this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formRecord, {
-                preserveScroll: true
+                preserveScroll: true,
+                onFinish: () => {
+                    this.recordActiveChanging = false
+                }
             })
             this.showEditAdmission = null
             this.showEditNurse = null
@@ -671,9 +674,6 @@ export default {
         selectAdmission(admission) {
             this.formRecord.admission_id = admission.id;
         },
-        debounceSearch() {
-            this.debouncedSearch();
-        },
         applyFilters() {
             this.$inertia.get(
                 route('nurseRecords.show', this.nurseRecord.id),
@@ -683,15 +683,12 @@ export default {
                     bed: this.filters.bed
                 },
                 {
-                    preserveState: true,
                     preserveScroll: true,
-                    only: ['admissions']
                 }
             );
         },
         submit() {
-            this.$inertia.post(route('nurseRecordDetails.store'),
-                this.formDetail,
+            this.formDetail.post(route('nurseRecordDetails.store'),
                 {
                     onSuccess: () => {
                         this.formDetail = {
@@ -720,34 +717,38 @@ export default {
                 return;
             }
             this.signatureError = false;
-            this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formSignature, {
+            this.formSignature.put(route('nurseRecords.update', this.nurseRecord.id), {
                 preserveScroll: true
             });
             this.isVisibleEditSign = false
         },
         submitUpdateDetail() {
+            if (!this.selectedDetail.medication || !this.selectedDetail.comment) {
+                return;
+            }
+
             this.$inertia.put(route('nurseRecordDetails.update', this.selectedDetail.id), this.selectedDetail, {
-                preserveScroll: true, preserveState: true
+                preserveScroll: true
             }),
-                this.isVisibleAdm = false
-            this.isVisibleDetail = false
+                this.isVisibleDetail = false
         },
         openEditDetailModal(detail) {
             this.selectedDetail = { ...detail };
             this.originalSuspendedState = detail.suspended_at;
             this.isVisibleDetail = true;
         },
-        restoreDetail() {
-            this.selectedDetail.active = true
-            this.submitUpdateDetail()
-        },
         deleteRecord() {
-            this.recordBeingDeleted = null
+            this.recordBeingDeleted = null;
+            this.recordActiveChanging = true;
             this.$inertia.delete(route('nurseRecords.destroy', this.nurseRecord.id), {
-                preserveScroll: true
+                preserveScroll: true,
+                onFinish: () => {
+                    this.recordActiveChanging = false;
+                }
             });
         },
         restoreRecord() {
+            this.recordActiveChanging = true;
             this.formRecord.active = true
             this.submitAdmission();
         },
@@ -765,8 +766,10 @@ export default {
                     ...detail,
                     showDeleted: this.showDeletedLocal
                 }, {
-                preserveScroll: true
+                preserveScroll: true,
+                // preserveState: true
             });
+            this.isVisibleDetail = false;
         },
         formatDate(date) {
             return moment(date).format('DD MMMM YYYY HH:mm');

@@ -27,7 +27,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Nombres -->
                         <div>
-                            <InputLabel for="first_name" value="Nombres" />
+                            <InputLabel for="first_name" value="Nombres" :required="true" />
                             <TextInput id="first_name" v-model="form.first_name" class="mt-1 block w-full" required
                                 autocomplete="first_name" />
                             <InputError :message="form.errors.first_name" class="mt-2" />
@@ -35,7 +35,7 @@
 
                         <!-- Primer Apellido -->
                         <div>
-                            <InputLabel for="first_surname" value="Primer Apellido" />
+                            <InputLabel for="first_surname" value="Primer Apellido" :required="true" />
                             <TextInput id="first_surname" v-model="form.first_surname" class="mt-1 block w-full"
                                 required autocomplete="first_surname" />
                             <InputError :message="form.errors.first_surname" class="mt-2" />
@@ -51,7 +51,7 @@
 
                         <!-- Teléfono -->
                         <div>
-                            <InputLabel for="phone" value="Teléfono" />
+                            <InputLabel for="phone" value="Teléfono" :required="true" />
                             <PhoneInput class="mt-1" id="phone" v-model="form.phone" />
                             <InputError :message="form.errors.phone" class="mt-2" />
                         </div>
@@ -68,14 +68,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Cédula -->
                         <div>
-                            <InputLabel for="identification_card" value="Cédula" />
-                            <CedulaInput class="mt-1" id="identification_card" v-model="form.identification_card" />
+                            <InputLabel for="identification_card" value="Cédula" :required="cedulaVisibility" />
+                            <CedulaInput v-model="form.identification_card" class="mt-1" :required="cedulaVisibility" />
                             <InputError :message="form.errors.identification_card" class="mt-2" />
                         </div>
 
                         <!-- Nacionalidad -->
                         <div>
-                            <InputLabel for="nationality" value="Nacionalidad" />
+                            <InputLabel for="nationality" value="Nacionalidad" :required="true" />
                             <input list="options" id="nationality" v-model="form.nationality"
                                 class="w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                 required>
@@ -84,7 +84,6 @@
                                     {{ nationality.name }}
                                 </option>
                             </datalist>
-                            </input>
                             <InputError :message="form.errors.nationality" class="mt-2" />
                         </div>
                     </div>
@@ -101,14 +100,14 @@
                         <!-- Email -->
                         <div>
                             <InputLabel for="email" value="Correo Electrónico" />
-                            <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full" required
+                            <TextInput id="email" v-model="form.email" type="email" class="mt-1 block w-full"
                                 autocomplete="email" />
                             <InputError :message="form.errors.email" class="mt-2" />
                         </div>
 
                         <!-- Dirección -->
                         <div class="md:col-span-2">
-                            <InputLabel for="address" value="Dirección" />
+                            <InputLabel for="address" value="Dirección" :required="true" />
                             <TextAreaInput id="address" v-model="form.address" rows="3" maxlength="255"
                                 class="mt-1 block w-full" required />
                             <InputError :message="form.errors.address" class="mt-2" />
@@ -126,14 +125,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Fecha de nacimiento -->
                         <div>
-                            <InputLabel for="birthdate" value="Fecha de Nacimiento" />
-                            <DateInput class="mt-1" v-model="form.birthdate" />
+                            <InputLabel for="birthdate" value="Fecha de Nacimiento" :required="true" />
+                            <DateInput v-model="form.birthdate" @change="setCedulaVisibility()" required />
                             <InputError :message="form.errors.birthdate" class="mt-2" />
                         </div>
 
                         <!-- Estado Civil -->
                         <div>
-                            <InputLabel for="marital_status" value="Estado Civil" />
+                            <InputLabel for="marital_status" value="Estado Civil" :required="true" />
                             <SelectInput id="marital_status" v-model="form.marital_status" :options="maritalSatuses"
                                 class="mt-1 block w-full" required />
                             <InputError :message="form.errors.marital_status" class="mt-2" />
@@ -142,8 +141,7 @@
                         <!-- Cargo -->
                         <div>
                             <InputLabel for="position" value="Cargo" />
-                            <TextInput id="position" v-model="form.position" type="text" class="mt-1 block w-full"
-                                required />
+                            <TextInput id="position" v-model="form.position" type="text" class="mt-1 block w-full" />
                             <InputError :message="form.errors.position" class="mt-2" />
                         </div>
 
@@ -158,13 +156,14 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="px-6 py-4 bg-gray-200 dark:bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
+                <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
                     <AccessGate :permission="['patient.delete']">
                         <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
                             class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-all duration-200">
                             Desactivar
                         </button>
-                        <button type="button" v-else @click="restorePatient"
+                        <button type="button" v-else @click="restorePatient" :class="{ 'opacity-25': isProcessingActive }"
+                            :disabled="isProcessingActive"
                             class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-all duration-200">
                             Activar
                         </button>
@@ -173,9 +172,9 @@
                         class="px-4 py-2 text-sm font-medium text-gray-100 bg-slate-600 dark:text-white border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-500 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                     Volver
                     </Link>
-                    <button type="submit"
+                    <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
                         class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Guardar
+                        Actualizar
                     </button>
                 </div>
             </form>
@@ -195,7 +194,8 @@
                         Cancelar
                     </SecondaryButton>
 
-                    <DangerButton class="ms-3" @click="deletePatient">
+                    <DangerButton class="ms-3" @click="deletePatient" :class="{ 'opacity-25': isProcessingActive }"
+                        :disabled="isProcessingActive">
                         Desactivar
                     </DangerButton>
                 </template>
@@ -225,6 +225,8 @@ import TextAreaInput from '@/Components/TextAreaInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import FileTexIcon from '@/Components/Icons/FileTexIcon.vue';
+import moment from 'moment/moment';
+import 'moment/locale/es';
 
 export default {
     props: {
@@ -258,6 +260,7 @@ export default {
     data() {
         return {
             patientBeingDeleted: ref(null),
+            isProcessingActive: false,
             form: useForm({
                 first_name: this.patient.first_name,
                 first_surname: this.patient.first_surname,
@@ -274,6 +277,18 @@ export default {
             })
         }
     },
+    setup() {
+        const cedulaVisibility = ref(false)
+        return {
+            cedulaVisibility
+        };
+    },
+    mounted() {
+        if (this.form.birthdate) {
+            let birthdate = moment(this.form.birthdate);
+            this.cedulaVisibility = moment().diff(birthdate, 'years') >= 18;
+        }
+    },
     methods: {
         submit() {
             Object.keys(this.form.errors).forEach((key) => {
@@ -281,8 +296,7 @@ export default {
                     delete this.form.errors[key];
                 }
             });
-
-            this.$inertia.put(route('patients.update', this.patient.id), this.form, {
+            this.form.put(route('patients.update', this.patient.id), {
                 preserveScroll: true,
                 onError: (errors) => {
                     this.form.errors = errors;
@@ -291,14 +305,26 @@ export default {
         },
         deletePatient() {
             this.patientBeingDeleted = null
+            this.isProcessingActive = true;
             this.$inertia.delete(route('patients.destroy', this.patient.id), {
-                preserveScroll: true
+                preserveScroll: true,
+                onFinish: () => {
+                    this.isProcessingActive = false;
+                }
             });
         },
         restorePatient() {
+            this.isProcessingActive = true;
             this.$inertia.put(route('patients.update', this.patient.id), { active: true }, {
-                preserveScroll: true
+                preserveScroll: true,
+                onFinish: () => {
+                    this.isProcessingActive = false;
+                }
             });
+        },
+        setCedulaVisibility() {
+            let birthdate = moment(this.form.birthdate);
+            this.cedulaVisibility = moment().diff(birthdate, 'years') >= 18;
         }
     }
 }

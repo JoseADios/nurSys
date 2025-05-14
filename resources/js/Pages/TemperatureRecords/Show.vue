@@ -49,7 +49,8 @@
                                 <TrashIcon class="size-5" />
                                 <span class="font-medium">Eliminar</span>
                             </button>
-                            <button v-else @click="restoreRecord"
+                            <button v-else @click="restoreRecord" :class="{ 'opacity-25': recordActiveChanging }"
+                                :disabled="recordActiveChanging"
                                 class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
                                 <RestoreIcon class="size-5" />
                                 <span class="font-medium">Restaurar</span>
@@ -152,14 +153,15 @@
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Ultima temperatura</h3>
                         <form @submit.prevent="updateDetail" class="space-y-4">
                             <div>
-                                <InputLabel for="temperature" value="Temperatura" />
+                                <InputLabel for="temperature" value="Temperatura" :required="true" class="mb-2" />
                                 <input type="number" step="0.1" id="temperature" v-model="formDetailUpdate.temperature"
-                                    required
+                                    required min="0"
                                     class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                     placeholder="Temperatura del paciente (°C)" />
 
                                 <div class="pt-8">
-                                    <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
+                                    <button type="submit" :class="{ 'opacity-25': formDetailUpdate.processing }"
+                                        :disabled="formDetailUpdate.processing" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
                                                                         hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
                                                                         transition-colors duration-300">
                                         Actualizar
@@ -178,14 +180,15 @@
                             'md:grid-cols-1 place-items-center': !lastTemperature
                         }]">
                             <div>
-                                <InputLabel for="temperature" value="Temperatura" />
-                                <input type="number" step="0.1" id="temperature" v-model="formDetail.temperature"
-                                    required
+                                <InputLabel for="temperature" value="Temperatura" :required="true" class="mb-2" />
+                                <input type="number" min="0" step="0.1" id="temperature"
+                                    v-model="formDetail.temperature" required
                                     class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                     placeholder="Temperatura del paciente (°C)" />
 
                                 <div class="pt-8 w-full">
-                                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                                    <button type="submit" :class="{ 'opacity-25': formDetail.processing }"
+                                        :disabled="formDetail.processing" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                             hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                             transition-colors duration-300">
                                         Agregar
@@ -205,27 +208,24 @@
                         <form @submit.prevent="updateEliminations" class="space-y-4">
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="evacuations"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Evacuaciones
-                                    </label>
-                                    <input type="number" id="evacuations" v-model="formEliminationsUpdate.evacuations"
-                                        required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                    <InputLabel for="evacuations" value="Evacuaciones" :required="true" class="mb-2" />
+                                    <input type="number" min="0" id="evacuations"
+                                        v-model="formEliminationsUpdate.evacuations" required
+                                        class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         placeholder="Num. de evacuaciones del paciente" />
                                 </div>
                                 <div>
-                                    <label for="urinations"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Micciones
-                                    </label>
-                                    <input type="text" id="urinations" v-model="formEliminationsUpdate.urinations"
-                                        required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                    <InputLabel for="urinations" value="Micciones" :required="true" class="mb-2" />
+                                    <input type="text" id="urinations" maxlength="2"
+                                        v-model="formEliminationsUpdate.urinations" required
+                                        class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         placeholder="Num. de micciones del paciente" />
                                 </div>
                             </div>
 
                             <div class="pt-4">
-                                <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
+                                <button type="submit" :class="{ 'opacity-25': formEliminationsUpdate.processing }"
+                                    :disabled="formEliminationsUpdate.processing" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
                                     hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
                                     transition-colors duration-300">
                                     Actualizar
@@ -244,27 +244,25 @@
                             <form @submit.prevent="submitCreateEliminations" class="space-y-4">
                                 <div class="grid md:grid-cols-2 gap-4">
                                     <div>
-                                        <label for="evacuations"
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Evacuaciones
-                                        </label>
-                                        <input type="number" id="evacuations" v-model="formEliminations.evacuations"
-                                            required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                        <InputLabel for="evacuations" value="Evacuaciones" :required="true"
+                                            class="mb-2" />
+                                        <input type="number" id="evacuations" min="0"
+                                            v-model="formEliminations.evacuations" required
+                                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                             placeholder="Num. de evacuaciones del paciente" />
                                     </div>
                                     <div>
-                                        <label for="urinations"
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Micciones
-                                        </label>
+                                        <InputLabel for="urinations" value="Micciones" :required="true" class="mb-2" />
                                         <input type="text" id="urinations" v-model="formEliminations.urinations"
-                                            required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                            required maxlength="2"
+                                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                             placeholder="Num. de micciones del paciente" />
                                     </div>
                                 </div>
 
                                 <div class="pt-4">
-                                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                                    <button type="submit" :class="{ 'opacity-25': formEliminations.processing }"
+                                        :disabled="formEliminations.processing" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
                                     hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                                     transition-colors duration-300">
                                         Guardar
@@ -284,8 +282,7 @@
 
                 </div>
 
-
-                <section class=" p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
+                <section id="bottom" class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Firma</h3>
 
                     <!-- mostrar imagen firma -->
@@ -309,8 +306,12 @@
                     <AccessGate :permission="['temperatureRecord.update']">
                         <div v-show="isVisibleEditSign" class="my-4">
                             <form @submit.prevent="submitSignature" class="flex items-center flex-col justify-center">
-
-                                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign"
+                                <div v-if="isLoadingMounted" class="h-64 flex items-center justify-center">
+                                    <div
+                                        class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent">
+                                    </div>
+                                </div>
+                                <SignaturePad v-else v-model="formSignature.nurse_sign" input-name="nurse_sign"
                                     class="w-full max-w-lg lg:max-w-md" />
                                 <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.
                                 </div>
@@ -319,7 +320,8 @@
                                     <button type="button"
                                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                                         @click="isVisibleEditSign = false">Cancelar</button>
-                                    <button
+                                    <button :class="{ 'opacity-25': formSignature.processing }"
+                                        :disabled="formSignature.processing"
                                         class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                                         type="submit">Guardar firma</button>
                                 </div>
@@ -403,7 +405,8 @@
                         Cancelar
                     </SecondaryButton>
 
-                    <DangerButton class="ms-3" @click="deleteRecord">
+                    <DangerButton :class="{ 'opacity-25': recordActiveChanging }" :disabled="recordActiveChanging"
+                        class="ms-3" @click="deleteRecord">
                         Eliminar
                     </DangerButton>
                 </template>
@@ -416,7 +419,7 @@
 <script>
 import TemperatureChart from '@/Components/Charts/TemperatureChart.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue'
 import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
@@ -424,7 +427,6 @@ import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import moment from "moment/moment";
-import 'moment/locale/es';
 import 'moment/locale/es';
 import Modal from '@/Components/Modal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
@@ -478,54 +480,52 @@ export default {
     data() {
         return {
             recordBeingDeleted: ref(null),
+            isLoadingMounted: ref(true),
             showEditAdmission: ref(null),
             showEditUser: ref(null),
             isVisibleEditSign: ref(null),
+            recordActiveChanging: ref(false),
             isVisibleEditDiagnosis: false,
             signatureError: false,
             chartKey: 0,
 
-            formDetail: {
+            formDetail: useForm({
                 temperature_record_id: this.temperatureRecord.id,
                 temperature: 37,
-            },
-            formEliminations: {
+            }),
+            formEliminations: useForm({
                 temperature_record_id: this.temperatureRecord.id,
                 evacuations: 1,
                 urinations: 1,
-            },
-            formSignature: {
+            }),
+            formSignature: useForm({
                 nurse_sign: this.temperatureRecord.nurse_sign,
                 signature: true,
-            },
-            formRecord: {
+            }),
+            formRecord: useForm({
                 admission_id: this.temperatureRecord.admission_id,
                 nurse_id: this.temperatureRecord.nurse_id,
                 active: this.temperatureRecord.active
-            },
-        }
-    },
-
-    computed: {
-        formDetailUpdate() {
-            return {
+            }),
+            formDetailUpdate: useForm({
+                _method: 'PUT',
                 temperature_record_id: this.temperatureRecord.id,
                 temperature: this.lastTemperature ? this.lastTemperature.temperature : null,
-            };
-        },
-        formEliminationsUpdate() {
-            return {
+            }),
+            formEliminationsUpdate: useForm({
+                _method: 'PUT',
                 temperature_record_id: this.temperatureRecord.id,
-                evacuations: this.lastEliminations ? this.lastEliminations.evacuations : null,
-                urinations: this.lastEliminations ? this.lastEliminations.urinations : null,
-            };
-        },
-
+                evacuations: this.lastEliminations !== null ? this.lastEliminations.evacuations : null,
+                urinations: this.lastEliminations !== null ? this.lastEliminations.urinations : null,
+            }),
+        }
+    },
+    mounted() {
+        this.isLoadingMounted = false;
     },
     methods: {
         submitCreateDetail() {
-            this.$inertia.post(route('temperatureDetails.store'),
-                this.formDetail,
+            this.formDetail.post(route('temperatureDetails.store'),
                 {
                     onSuccess: () => {
                         this.formDetail = {
@@ -535,13 +535,19 @@ export default {
                             urinations: 1,
                         };
                         this.chartKey++;
+
+                        // Update temperature form data using form.reset()
+                        this.formDetailUpdate.reset({
+                            temperature_record_id: this.temperatureRecord.id,
+                            temperature: this.lastTemperature.temperature,
+                        });
                     },
                     preserveScroll: true,
+                    xcroll: true,
                 });
         },
         submitCreateEliminations() {
-            this.$inertia.post(route('eliminationRecords.store'),
-                this.formEliminations,
+            this.formEliminations.post(route('eliminationRecords.store'),
                 {
                     onSuccess: () => {
                         this.formEliminations = {
@@ -549,13 +555,19 @@ export default {
                             evacuations: 1,
                             urinations: 1,
                         };
+                        // actualizar formulario de update eliminations
+                        this.formEliminationsUpdate = {
+                            temperature_record_id: this.temperatureRecord.id,
+                            evacuations: this.lastEliminations.evacuations,
+                            urinations: this.lastEliminations.urinations,
+                        };
                         this.chartKey++;
                     },
                     preserveScroll: true,
                 });
         },
         updateDetail() {
-            this.$inertia.put(route('temperatureDetails.update', this.lastTemperature.id), this.formDetailUpdate, {
+            this.formDetailUpdate.put(route('temperatureDetails.update', this.lastTemperature.id), {
                 onSuccess: () => {
                     this.chartKey++;
                 },
@@ -563,7 +575,7 @@ export default {
             });
         },
         updateEliminations() {
-            this.$inertia.put(route('eliminationRecords.update', this.lastEliminations.id), this.formEliminationsUpdate, {
+            this.formEliminationsUpdate.put(route('eliminationRecords.update', this.lastEliminations.id), {
                 onSuccess: () => {
                     this.chartKey++;
                 },
@@ -573,7 +585,11 @@ export default {
         submitUpdateRecord() {
             this.showEditAdmission = null
             this.showEditUser = null
-            this.$inertia.put(route('temperatureRecords.update', this.temperatureRecord.id), this.formRecord)
+            this.formRecord.put(route('temperatureRecords.update', this.temperatureRecord.id), {
+                onFinish: () => {
+                    this.recordActiveChanging = false;
+                }
+            })
             this.isVisibleEditDiagnosis = false
         },
         submitSignature() {
@@ -582,7 +598,7 @@ export default {
                 return;
             }
             this.signatureError = false;
-            this.$inertia.put(route('temperatureRecords.update', this.temperatureRecord.id), this.formSignature, {
+            this.formSignature.put(route('temperatureRecords.update', this.temperatureRecord.id), {
                 preserveScroll: true
             });
             this.isVisibleEditSign = false
@@ -591,10 +607,17 @@ export default {
             this.isVisibleEditDiagnosis = !this.isVisibleEditDiagnosis
         },
         deleteRecord() {
-            this.recordBeingDeleted = null
-            this.$inertia.delete(route('temperatureRecords.destroy', this.temperatureRecord.id));
+            this.recordActiveChanging = true;
+            this.recordBeingDeleted = null;
+            this.$inertia.delete(route('temperatureRecords.destroy', this.temperatureRecord.id), {
+                onFinish: () => {
+                    this.recordActiveChanging = false
+                }
+            }
+            );
         },
         restoreRecord() {
+            this.recordActiveChanging = true;
             this.formRecord.active = true
             this.submitUpdateRecord()
         },
@@ -605,9 +628,6 @@ export default {
         async downloadRecordReport() {
             window.open(route('reports.temperatureRecord', { id: this.temperatureRecord.id }), '_blank');
         }
-    },
-    mounted() {
-        moment.locale('es'); // Cambia el idioma a español
     }
 }
 </script>

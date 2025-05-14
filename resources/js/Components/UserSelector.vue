@@ -1,12 +1,45 @@
 <template>
-    <div>
-        <!-- Filtros de búsqueda -->
-        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4">
-            <h3 class="text-base font-medium text-gray-900 dark:text-white mb-3">
-                Buscar Usuario
+    <div
+        class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden">
+        <!-- Encabezado con estilo moderno -->
+        <div class="px-6 py-5 bg-indigo-50 dark:bg-indigo-900/20 border-b border-gray-100 dark:border-gray-800">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+                <span
+                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-800 text-indigo-600 dark:text-indigo-300 mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path
+                            d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                    </svg>
+                </span>
+                Selección de Usuario
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-2">
+        </div>
+
+        <div class="p-6">
+            <!-- Filtros de búsqueda en tarjetas -->
+            <div class="space-y-4 mb-6">
+                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center">
+                            <div
+                                class="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-800/70 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-2">
+                                <span class="text-sm font-medium">1</span>
+                            </div>
+                            <label class="text-sm font-medium text-gray-900 dark:text-white">
+                                Buscar por Nombre
+                            </label>
+                        </div>
+                        <button v-if="filters.name" @click="filters.name = ''; debounceSearch()" type="button"
+                            class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
@@ -16,11 +49,33 @@
                             </svg>
                         </div>
                         <input type="text" v-model="filters.name" @input="debounceSearch"
-                            class="pl-10 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            class="pl-10 w-full rounded-md border-0 py-2.5 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-transparent sm:text-sm sm:leading-6"
                             placeholder="Nombre del usuario...">
                     </div>
                 </div>
-                <div v-if="!fixedRole" class="space-y-2">
+
+                <div v-if="!fixedRole" class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center">
+                            <div
+                                class="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-800/70 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-2">
+                                <span class="text-sm font-medium">2</span>
+                            </div>
+                            <label class="text-sm font-medium text-gray-900 dark:text-white">
+                                Filtrar por Rol
+                            </label>
+                        </div>
+                        <button v-if="filters.role" @click="filters.role = ''; debounceSearch()" type="button"
+                            class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
@@ -31,56 +86,120 @@
                             </svg>
                         </div>
                         <input type="text" v-model="filters.role" @input="debounceSearch"
-                            class="pl-10 w-full rounded-lg border-gray-200 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:bg-gray-800 dark:text-white"
+                            class="pl-10 w-full rounded-md border-0 py-2.5 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-transparent sm:text-sm sm:leading-6"
                             placeholder="Rol del usuario...">
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Lista de usuarios -->
-        <div class="space-y-2">
-            <h3 class="text-base font-medium text-gray-900 dark:text-white">
-                Seleccionar Usuario ({{ users.total }} resultados) <span class="text-red-500">*</span>
-            </h3>
-            <div
-                class="max-h-[250px] overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800">
-                <div v-for="user in users.data" :key="user.id" @click="selectUser(user)"
-                    :class="['p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20', selectedUser === user.id ? 'bg-purple-100 dark:bg-purple-900/30' : '']">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="font-medium text-gray-900 dark:text-white text-sm">
-                                {{ user.name }} {{ user.last_name }}
-                            </span>
-                            <span
-                                class="text-xs ml-2 px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-800 dark:text-gray-300">
-                                <span v-if="user.roles[0]">
-                                   <FormatRole :role="user.roles[0].name" />
-                                </span>
-                                <span v-else>
-                                    Sin rol asignado
-                                </span>
-                            </span>
-                            <div v-if="selectedUserId === user.id" class="text-xs text-green-500 dark:text-green-400">
-                                Usuario actual
-                            </div>
+            <!-- Lista de usuarios con estilo mejorado -->
+            <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 transition-all duration-300">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <div
+                            class="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-800/70 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-2">
+                            <span class="text-sm font-medium">3</span>
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ formatDate(user.created_at) }}
+                        <h3 class="text-sm font-medium text-gray-900 dark:text-white">
+                            Seleccionar Usuario <span class="text-xs text-gray-500 dark:text-gray-400">({{ users.total }} resultados)</span>
+                            <span class="text-red-500">*</span>
+                        </h3>
+                    </div>
+                    <button v-if="selectedUser" @click="clearSelection" type="button"
+                        class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div
+                    class="max-h-[250px] overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 mb-3">
+                    <div v-for="user in users.data" :key="user.id" @click="selectUser(user)"
+                        :class="['p-3 cursor-pointer border-b border-gray-100 dark:border-gray-800 last:border-0 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors duration-200', selectedUser === user.id ? 'bg-indigo-100 dark:bg-indigo-900/30' : '']">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="font-medium text-gray-900 dark:text-white text-sm">
+                                    {{ user.name }} {{ user.last_name }}
+                                </span>
+                                <span
+                                    class="text-xs ml-2 px-2 py-0.5 bg-indigo-100 dark:bg-indigo-800/50 rounded-md text-indigo-700 dark:text-indigo-300">
+                                    <span v-if="user.roles[0]">
+                                        <FormatRole :role="user.roles[0].name" />
+                                    </span>
+                                    <span v-else>
+                                        Sin rol asignado
+                                    </span>
+                                </span>
+                                <div v-if="selectedUserId === user.id" class="text-xs text-green-500 dark:text-green-400 mt-1 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                    Usuario actual
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">
+                                {{ formatDate(user.created_at) }}
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Paginación con estilo mejorado -->
+                <div class="flex justify-between items-center">
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                        Mostrando {{ users.data.length }} de {{ users.total }} usuarios
+                    </div>
+                    <div class="flex space-x-2">
+                        <button type="button" @click="prevPage" :disabled="!users.prev_page_url"
+                            class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors duration-200"
+                            :class="users.prev_page_url ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800/50' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'">
+                            <span class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Anterior
+                            </span>
+                        </button>
+                        <button type="button" @click="nextPage" :disabled="!users.next_page_url"
+                            class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors duration-200"
+                            :class="users.next_page_url ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800/50' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'">
+                            <span class="flex items-center">
+                                Siguiente
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="flex justify-start mt-4 space-x-2">
-                <button type="button" @click="prevPage" :disabled="!users.prev_page_url"
-                    class="px-3 py-1 bg-gray-500 text-white rounded shadow hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
-                    Anterior
-                </button>
-                <button type="button" @click="nextPage" :disabled="!users.next_page_url"
-                    class="px-3 py-1 bg-gray-500 text-white rounded shadow hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
-                    Siguiente
-                </button>
-            </div>
+
+            <!-- Información de selección actual -->
+            <transition name="fade" mode="out-in">
+                <div v-if="selectedUser"
+                    class="mt-6 flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-4 border border-indigo-100 dark:border-indigo-800/50">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 bg-indigo-100 dark:bg-indigo-800 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600 dark:text-indigo-300"
+                                viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">Usuario seleccionado</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                {{ users.data.find(user => user.id === selectedUser)?.name }} {{ users.data.find(user => user.id === selectedUser)?.last_name }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </transition>
         </div>
     </div>
 </template>
@@ -135,6 +254,10 @@ export default {
             this.selectedUser = user.id;
             this.$emit('update:user', user.id);  // Envía el ID al padre
         },
+        clearSelection() {
+            this.selectedUser = null;
+            this.$emit('update:user', null);
+        },
         debounceSearch() {
             this.debouncedSearch();
         },
@@ -173,3 +296,15 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>

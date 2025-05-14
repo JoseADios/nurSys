@@ -282,7 +282,6 @@
 
                 </div>
 
-
                 <section id="bottom" class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Firma</h3>
 
@@ -307,8 +306,12 @@
                     <AccessGate :permission="['temperatureRecord.update']">
                         <div v-show="isVisibleEditSign" class="my-4">
                             <form @submit.prevent="submitSignature" class="flex items-center flex-col justify-center">
-
-                                <SignaturePad v-model="formSignature.nurse_sign" input-name="nurse_sign"
+                                <div v-if="isLoadingMounted" class="h-64 flex items-center justify-center">
+                                    <div
+                                        class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-indigo-500 border-r-transparent">
+                                    </div>
+                                </div>
+                                <SignaturePad v-else v-model="formSignature.nurse_sign" input-name="nurse_sign"
                                     class="w-full max-w-lg lg:max-w-md" />
                                 <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.
                                 </div>
@@ -317,7 +320,8 @@
                                     <button type="button"
                                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                                         @click="isVisibleEditSign = false">Cancelar</button>
-                                    <button :class="{ 'opacity-25': formSignature.processing }" :disabled="formSignature.processing"
+                                    <button :class="{ 'opacity-25': formSignature.processing }"
+                                        :disabled="formSignature.processing"
                                         class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                                         type="submit">Guardar firma</button>
                                 </div>
@@ -401,7 +405,8 @@
                         Cancelar
                     </SecondaryButton>
 
-                    <DangerButton :class="{ 'opacity-25': recordActiveChanging }" :disabled="recordActiveChanging" class="ms-3" @click="deleteRecord">
+                    <DangerButton :class="{ 'opacity-25': recordActiveChanging }" :disabled="recordActiveChanging"
+                        class="ms-3" @click="deleteRecord">
                         Eliminar
                     </DangerButton>
                 </template>
@@ -422,7 +427,6 @@ import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import moment from "moment/moment";
-import 'moment/locale/es';
 import 'moment/locale/es';
 import Modal from '@/Components/Modal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
@@ -476,6 +480,7 @@ export default {
     data() {
         return {
             recordBeingDeleted: ref(null),
+            isLoadingMounted: ref(true),
             showEditAdmission: ref(null),
             showEditUser: ref(null),
             isVisibleEditSign: ref(null),
@@ -514,6 +519,9 @@ export default {
                 urinations: this.lastEliminations !== null ? this.lastEliminations.urinations : null,
             }),
         }
+    },
+    mounted() {
+        this.isLoadingMounted = false;
     },
     methods: {
         submitCreateDetail() {
@@ -620,9 +628,6 @@ export default {
         async downloadRecordReport() {
             window.open(route('reports.temperatureRecord', { id: this.temperatureRecord.id }), '_blank');
         }
-    },
-    mounted() {
-        moment.locale('es'); // Cambia el idioma a español
     }
 }
 </script>

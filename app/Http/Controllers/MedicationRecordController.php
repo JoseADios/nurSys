@@ -6,6 +6,7 @@ use App\Models\Admission;
 use App\Models\MedicationNotification;
 use App\Models\MedicationRecordDetail;
 use App\Models\Diet;
+use App\Models\User;
 use App\Models\Drug;
 use App\Models\DrugRoute;
 use App\Models\DrugDose;
@@ -44,7 +45,9 @@ class MedicationRecordController extends Controller implements HasMiddleware
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
         $days = $request->integer('days');
-        $in_process = $request->input('in_process', 'true');
+        $in_process = $request->input('in_process', "");
+
+
         $query = MedicationRecord::query()
             ->select('medication_records.*', 'patients.first_name', 'patients.first_surname', 'patients.second_surname')
             ->join('admissions', 'medication_records.admission_id', '=', 'admissions.id')
@@ -56,6 +59,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
                 $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('diagnosis LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('diet LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('admissions.doctor_id LIKE ?', ['%' . $search . '%'])
                     ->orWhereRaw('CONCAT(patients.first_name, " ", patients.first_surname, " ", COALESCE(patients.second_surname, "")) LIKE ?', ['%' . $search . '%']);
             });
         }
@@ -75,7 +79,11 @@ class MedicationRecordController extends Controller implements HasMiddleware
         }
 
 
-        $medicationRecords = $query->with('admission.bed', 'admission.patient', 'admission')->orderByDesc('created_at')->paginate(10);
+
+
+
+        $medicationRecords = $query->with('admission.bed', 'admission.patient', 'admission.doctor', 'admission')->orderByDesc('created_at')->paginate(10);
+
 
         $medicationRecords->getCollection()->transform(function ($record) {
             if ($record->admission->discharged_date != null) {
@@ -123,7 +131,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         // Validación de los datos de entrada
         $request->validate([
             'admission_id' => 'required|exists:admissions,id', // Validamos que exista en la tabla admissions
-            'diagnosis' => 'required|string',
+
             'diet' => 'required|string',
         ]);
 
@@ -140,8 +148,8 @@ class MedicationRecordController extends Controller implements HasMiddleware
         // Crear el MedicationRecord usando los datos validados
         $medicationRecord = MedicationRecord::create([
             'admission_id' => $request->admission_id,
+            'nurse_id' => Auth::id(),
 
-            'diagnosis' => $request->diagnosis,
             'diet' => $request->diet,
         ]);
 
@@ -158,18 +166,22 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $medicationRecord->load(['admission.patient', 'admission.bed', 'admission.doctor', 'medicationRecordDetail', 'admission.medicalOrders']);
             $allMedicalOrders = MedicalOrder::where('active', true)
                 ->where('admission_id', $medicationRecord->admission->id)
-                ->with([
-                    'medicalOrderDetail' => function ($query) {
-                        $query->whereNull('suspended_at')->where('active', true);
-                    }
-                ])
-                ->get();
+                ->with('medicalOrderDetail', function ($query) use ($medicationRecord) {
+
+
+                    $query
+                        ->whereNull('suspended_at')
+                        ->where('active', true);
+                })->get();
+
 
 
             $drug = Drug::all();
             $route = DrugRoute::all();
             $dose = DrugDose::all();
             $showDeleted = $request->boolean('showDeleted');
+            $nurse = User::where('id', $medicationRecord->nurse_id)->first();
+            $diet = Diet::all();
 
             if ($showDeleted || !$medicationRecord->active) {
 
@@ -191,10 +203,12 @@ class MedicationRecordController extends Controller implements HasMiddleware
             return Inertia::render('MedicationRecords/Show', [
                 'medicationRecord' => $medicationRecord,
                 'details' => $details,
+                'nurse' => $nurse,
                 'orders' => $allMedicalOrders,
                 'drug' => $drug,
                 'dose' => $dose,
                 'routeOptions' => $route,
+                'diet' => $diet,
                 'filters' => [
                     'show_deleted' => $showDeleted,
                 ],
@@ -227,19 +241,21 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
         $this->authorize('update', $medicationRecord);
 
+
         if ($request->has('active')) {
             $this->restore($medicationRecord->id);
         } else {
             $validated = $request->validate([
-                'diagnosis' => 'required|string|max:255',
+
                 'diet' => 'required|string|max:255',
 
             ]);
             $medicationRecord->update($validated);
+               return back()->with('flash.toast', 'Registro actualizado correctamente');
         }
 
 
-        return back()->with('flash.toast', 'Registro actualizado correctamente');
+
     }
 
 
@@ -248,6 +264,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
      */
     public function destroy(MedicationRecord $medicationRecord)
     {
+
         $this->authorize('delete', $medicationRecord);
 
         $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->get();
@@ -261,10 +278,12 @@ class MedicationRecordController extends Controller implements HasMiddleware
             ->get();
 
 
-        if ($hasNotifications->isNotEmpty()) {
-            return Redirect::back()->withErrors(['message' => 'No se puede eliminar esta Ficha de Medicamentos porque tiene notificaciones aplicadas.']);
-        }
 
+
+        if ($hasNotifications->isNotEmpty()) {
+            return back()->with('flash.toast', 'No se puede eliminar esta Ficha de Medicamentos porque tiene notificaciones aplicadas.')->with('flash.toastStyle', 'danger');
+        }
+   Log::info($medicationRecord);
 
         $medicationRecord->update(['active' => 0]);
 
@@ -276,7 +295,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         MedicationNotification::whereIn('medication_record_detail_id', $details->pluck('id'))
             ->update(['active' => 0]);
 
-        return redirect()->to(route('medicationRecords.show', $medicationRecord));
+        return back()->with('flash.toast', 'Registro eliminado correctamente');
 
     }
 
@@ -307,7 +326,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         $record->active = true;
         $record->save();
 
-        return redirect()->back()->with('success', 'Registro habilitado con éxito.');
+        return back()->with('flash.toast', 'Registro habilitado con éxito.');
     }
 
 

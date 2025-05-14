@@ -27,11 +27,6 @@
             </label>
             <AdmissionSelector :doesnt-have-medication-r=true @update:admission="form.admission_id = $event" :selected-admission-id="admission_id" />
 
-            <!-- Diagnóstico -->
-            <label for="diagnosis" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                Diagnóstico
-            </label>
-            <textarea required id="diagnosis" rows="4" v-model="form.diagnosis" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el diagnóstico..."></textarea>
 
             <!-- Contenedor para la dieta y el selector -->
             <div class="flex items-center space-x-4 mt-6">
@@ -40,7 +35,7 @@
                 <!-- Selector -->
                 <div class="flex-1">
                     <label for="diet-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Dieta
+                        Dieta  <span class="text-red-500">*</span>
                     </label>
                     <select id="diet-select" v-model="form.diet" required class="text-sm font-medium w-full text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100  p-2.5 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                         <option v-for="diets in diet" :key="diets.id" :value="diets.name">
@@ -94,7 +89,7 @@ export default {
             isVisible: false,
             form: {
                 admission_id: this.admission_id,
-                diagnosis: '',
+
                 diet: '',
             },
             modalform: {

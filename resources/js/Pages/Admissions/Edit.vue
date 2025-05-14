@@ -3,18 +3,28 @@
     <template #header>
         <h2 class="font-semibold text-xl text-white leading-tight text-center">
             <BreadCrumb :items="[
-                     {
-                        text: 'Ingresos',
-                        route: route('admissions.index')
+                              ...(admission.id ? [{
+                                  text: 'Ingresos',
+                                  route: admission.id
+                                      ? route('admissions.index', { id: admission.id })
+                                      : route('admissions.index')
+                              }] : []),
 
-                    },
-                ]" />
+
+                              {
+                                  formattedId: { id: admission.id, prefix: 'ING' },
+                                   route: route('admissions.show', admission.id)
+                              },
+                              {
+                                 text: 'Edit',
+                              }
+                          ]" />
         </h2>
     </template>
 
     <div class="ml-10 mt-4 lg:mx-10 flex justify-between">
-        <Link :href="route('admissions.index')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full">
-        Volver
+ <Link >
+
         </Link>
 
         <div class="flex">
@@ -47,7 +57,7 @@
         </div> -->
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
-        <form @submit.prevent="submit" class="max-w-sm mx-auto">
+        <form @submit.prevent="submit" class="max-w-xl mx-auto">
 
             <BedSelector :beds="beds" :errors="form.errors" :initialBedId="form.bed_id" @update:bedId="form.bed_id = $event" />
 
@@ -76,11 +86,14 @@
                 <textarea required id="admission_dx" rows="4" v-model="form.admission_dx" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el diagnóstico de ingreso..."></textarea>
                 <InputError :message="form.errors.admission_dx" class="mt-2" />
 
+                <div v-if="admission.discharged_at">
+
+
                 <label for="final_dx" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico
                     final</label>
                 <textarea id="final_dx" rows="4" v-model="form.final_dx" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe el diagnóstico final..."></textarea>
                 <InputError :message="form.errors.final_dx" class="mt-2" />
-
+</div>
                 <label for="comment" class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Observaciones</label>
                 <textarea id="comment" rows="4" v-model="form.comment" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Escribe las observaciones..."></textarea>
                 <InputError :message="form.errors.comment" class="mt-2" />
@@ -88,7 +101,7 @@
 
             <div class="flex justify-end mt-6 mb-2">
 
-                <Link :href="route('admissions.index')" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                <Link :href="route('admissions.show',admission.id)" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                 Cancelar
                 </Link>
 
@@ -126,9 +139,7 @@ import {
     Link,
     useForm
 } from '@inertiajs/vue3';
-import {
-    useGoBack
-} from '@/composables/useGoBack';
+
 import InputError from '@/Components/InputError.vue';
 import BedSelector from '@/Components/BedSelector.vue';
 import {
@@ -169,7 +180,7 @@ export default {
             }),
             admissionBeingDeleted: ref(null),
             isVisible: false,
-            goBack: useGoBack().goBack
+
         }
     },
     methods: {

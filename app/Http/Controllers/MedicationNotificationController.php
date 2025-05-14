@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MedicationNotification;
 use App\Models\MedicationRecordDetail;
-use DateTime;
+use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -57,7 +57,13 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
     {
         $MedicationRecordDetail = MedicationRecordDetail::find($id);
         $MedicationNotificacion = MedicationNotification::where('medication_record_detail_id', $id)->with('nurse')->get();
+        $responseUpdateNotification = Gate::inspect('updateNurse', $MedicationNotificacion);
 
+        if (Auth::user()->hasRole('admin') ) {
+            $canUpdateNotification  = true;
+        }else{
+            $canUpdateNotification = false;
+        }
         if ($MedicationRecordDetail->active == 0) {
             return redirect()->route('medicationRecords.show', $MedicationRecordDetail->medication_record_id)->withErrors([
                 'medication_record_detail_id' => 'Ya Existe una notifiacion con medicamentos administrados.',
@@ -65,6 +71,7 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
         }
         return Inertia::render('MedicationNotification/show', [
             'details' => $MedicationRecordDetail,
+            'canUpdateNotification' => $canUpdateNotification,
             'notifications' => $MedicationNotificacion,
         ]);
     }

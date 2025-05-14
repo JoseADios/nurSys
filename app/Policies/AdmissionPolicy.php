@@ -64,7 +64,10 @@ class AdmissionPolicy
 
         return Response::allow();
     }
-
+    public function updateReceptionist(User $user): Response
+    {
+        return Response::deny('No tienes permiso para actualizar esta información');
+    }
     public function setBed(User $user, Admission $admission): Response
     {
         if (!$user->hasRole('nurse')) {

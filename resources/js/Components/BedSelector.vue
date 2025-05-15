@@ -17,9 +17,9 @@
 
         <div class="p-4">
             <!-- Selección secuencial en tarjetas -->
-            <div class="space-y-3">
+            <div class="flex flex-col md:flex-row md:space-x-3 space-y-3 md:space-y-0">
                 <!-- Selector de piso -->
-                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 transition-all duration-300"
+                <div class="flex-1 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 transition-all duration-300"
                     :class="{ 'ring-2 ring-indigo-500/70 shadow-md': filtersForm.bed_floor }">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center">

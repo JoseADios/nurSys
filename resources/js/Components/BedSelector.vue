@@ -2,11 +2,11 @@
     <div
         class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden">
         <!-- Encabezado con estilo moderno -->
-        <div class="px-6 py-5 bg-indigo-50 dark:bg-indigo-900/20 border-b border-gray-100 dark:border-gray-800">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+        <div class="px-4 py-3 bg-indigo-50 dark:bg-indigo-900/20 border-b border-gray-100 dark:border-gray-800">
+            <h3 class="text-base font-medium text-gray-900 dark:text-white flex items-center">
                 <span
-                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-800 text-indigo-600 dark:text-indigo-300 mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    class="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-indigo-100 dark:bg-indigo-800 text-indigo-600 dark:text-indigo-300 mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                         <path
                             d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
                     </svg>
@@ -15,17 +15,17 @@
             </h3>
         </div>
 
-        <div class="p-6">
+        <div class="p-4">
             <!-- Selección secuencial en tarjetas -->
-            <div class="space-y-4">
+            <div class="space-y-3">
                 <!-- Selector de piso -->
-                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 transition-all duration-300"
+                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 transition-all duration-300"
                     :class="{ 'ring-2 ring-indigo-500/70 shadow-md': filtersForm.bed_floor }">
-                    <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center">
                             <div
-                                class="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-800/70 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-2">
-                                <span class="text-sm font-medium">1</span>
+                                class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-800/70 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-2">
+                                <span class="text-xs font-medium">1</span>
                             </div>
                             <label for="bed_floor" class="text-sm font-medium text-gray-900 dark:text-white">
                                 Piso
@@ -46,7 +46,7 @@
                         <div class="relative">
                             <select name="bed_floor" id="bed_floor" v-model="filtersForm.bed_floor"
                                 @change="updateRoomsAndBeds"
-                                class="block w-full rounded-md border-0 py-2.5 pl-4 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-transparent sm:text-sm sm:leading-6 appearance-none">
+                                class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-transparent sm:text-sm sm:leading-6 appearance-none">
                                 <option value="" class="bg-white dark:bg-gray-900">Seleccionar piso</option>
                                 <option v-for="floor in uniqueFloors" :key="floor" :value="floor"
                                     class="bg-white dark:bg-gray-900">
@@ -66,15 +66,15 @@
                 </div>
 
                 <!-- Selector de sala -->
-                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 transition-all duration-300" :class="{
+                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 transition-all duration-300" :class="{
                     'ring-2 ring-indigo-500/70 shadow-md': filtersForm.bed_room,
                     'opacity-50': !filtersForm.bed_floor
                 }">
-                    <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center">
                             <div
-                                class="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-800/70 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-2">
-                                <span class="text-sm font-medium">2</span>
+                                class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-800/70 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-2">
+                                <span class="text-xs font-medium">2</span>
                             </div>
                             <label for="bed_room" class="text-sm font-medium text-gray-900 dark:text-white">
                                 Sala
@@ -94,7 +94,7 @@
                     <div class="relative">
                         <div class="relative">
                             <select name="bed_room" id="bed_room" v-model="filtersForm.bed_room" @change="updateBeds"
-                                class="block w-full rounded-md border-0 py-2.5 pl-4 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-transparent sm:text-sm sm:leading-6 appearance-none"
+                                class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-transparent sm:text-sm sm:leading-6 appearance-none"
                                 :disabled="!filtersForm.bed_floor">
                                 <option value="" class="bg-white dark:bg-gray-900">Seleccionar sala</option>
                                 <option v-for="room in filteredRooms" :key="room" :value="room"
@@ -119,15 +119,15 @@
                 </div>
 
                 <!-- Selector de cama -->
-                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 transition-all duration-300" :class="{
+                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 transition-all duration-300" :class="{
                     'ring-2 ring-indigo-500/70 shadow-md': selectedBedId,
                     'opacity-50': !filtersForm.bed_room
                 }">
-                    <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center">
                             <div
-                                class="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-800/70 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-2">
-                                <span class="text-sm font-medium">3</span>
+                                class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-800/70 text-indigo-600 dark:text-indigo-300 flex items-center justify-center mr-2">
+                                <span class="text-xs font-medium">3</span>
                             </div>
                             <label for="bed" class="text-sm font-medium text-gray-900 dark:text-white">
                                 Cama
@@ -147,7 +147,7 @@
                     <div class="relative">
                         <div class="relative">
                             <select id="bed" v-model="selectedBedId" @change="updateSelectedBed(selectedBedId)"
-                                class="block w-full rounded-md border-0 py-2.5 pl-4 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-transparent sm:text-sm sm:leading-6 appearance-none"
+                                class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-transparent sm:text-sm sm:leading-6 appearance-none"
                                 :disabled="!filtersForm.bed_room || filteredBeds.length === 0">
                                 <option value="" class="bg-white dark:bg-gray-900">Seleccionar cama</option>
                                 <option v-for="bed in filteredBeds" :key="bed.id" :value="bed.id"
@@ -176,10 +176,10 @@
             <!-- Información de selección actual -->
             <transition name="fade" mode="out-in">
                 <div v-if="selectedBedId"
-                    class="mt-6 flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-4 border border-indigo-100 dark:border-indigo-800/50">
-                    <div class="flex items-center space-x-3">
-                        <div class="p-2 bg-indigo-100 dark:bg-indigo-800 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600 dark:text-indigo-300"
+                    class="mt-4 flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-2.5 border border-indigo-100 dark:border-indigo-800/50">
+                    <div class="flex items-center space-x-2">
+                        <div class="p-1.5 bg-indigo-100 dark:bg-indigo-800 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600 dark:text-indigo-300"
                                 viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd"
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -187,8 +187,8 @@
                             </svg>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">Cama seleccionada</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                            <p class="text-xs font-medium text-gray-900 dark:text-white">Cama seleccionada</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
                                 Piso {{ filtersForm.bed_floor }}, Sala {{ filtersForm.bed_room }}, Cama {{
                                     filteredBeds.find(bed => bed.id === selectedBedId)?.number}}
                             </p>
@@ -198,10 +198,10 @@
             </transition>
 
             <!-- Botón para limpiar todo -->
-            <div class="mt-6">
+            <div class="mt-4">
                 <button v-if="filtersForm.bed_floor || filtersForm.bed_room || selectedBedId"
                     @click="clearAllSelections" type="button"
-                    class="w-full inline-flex justify-center items-center px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-lg shadow-sm transition-colors duration-200">
+                    class="w-full inline-flex justify-center items-center px-3 py-2 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-lg shadow-sm transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20"
                         fill="currentColor">
                         <path fill-rule="evenodd"

@@ -47,7 +47,7 @@ defineProps({
         :replace="replace"
         :only="only"
         :data="data"
-        class="inline-flex w-full items-center justify-center px-4 py-2 bg-primary-500 dark:bg-primary-500 border border-transparent rounded-md font-semibold text-xs text-white dark:text-white uppercase tracking-widest hover:bg-primary-700 dark:hover:bg-primary-600 focus:bg-primary-700 dark:focus:bg-primary active:bg-primary-900 dark:active:bg-primary-400 disabled:opacity-50 transition ease-in-out duration-150"
+        class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-25 transition ease-in-out duration-150"
     >
         <slot />
     </Link>

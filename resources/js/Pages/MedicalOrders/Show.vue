@@ -306,7 +306,7 @@
                             <button type="button"
                                 class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                                 @click="isVisibleEditSign = false">Cancelar</button>
-                            <button
+                            <button  :class="{ 'opacity-25': formSignature.processing }" :disabled="formSignature.processing"
                                 class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                                 type="submit">Guardar firma</button>
                         </div>
@@ -451,9 +451,9 @@
                             class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
                             Cancelar
                         </button>
-                        <button type="submit"
+                        <button type="submit" :class="{ 'opacity-25': formRecord.processing }" :disabled="formRecord.processing"
                             class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
-                            :disabled="!formRecord.doctor_id">
+                            >
                             Aceptar
                         </button>
                     </div>
@@ -539,22 +539,22 @@ export default {
                 admission_id: this.medicalOrder.admission_id,
                 active: this.medicalOrder.active
             },
-            formRecord: {
+            formRecord: useForm({
                 admission_id: this.medicalOrder.admission_id,
                 doctor_id: this.medicalOrder.doctor_id,
                 impression_diagnosis: this.medicalOrder.impression_diagnosis,
                 active: this.medicalOrder.active
-            },
+            }),
             formDetail: useForm ({
                 medical_order_id: this.medicalOrder.id,
                 order: null,
                 regime: null,
                 active: null,
             }),
-            formSignature: {
+            formSignature: useForm({
                 doctor_sign: this.medicalOrder.doctor_sign,
                 signature: true,
-            },
+            }),
             showDeleted: this.filters.show_deleted,
         }
     },
@@ -576,7 +576,7 @@ export default {
         submitUpdateRecord() {
             this.showEditAdmission = null;
             this.showEditDoctor = null
-            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formRecord)
+            this.formRecord.put(route('medicalOrders.update', this.medicalOrder.id))
             this.isVisibleEditDiagnosis = false
         },
         toggleEditAdmission() {
@@ -584,7 +584,7 @@ export default {
         },
         submitAdmission() {
             this.showEditDoctor = null;
-            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formRecord, {
+            this.formRecord.put(route('medicalOrders.update', this.medicalOrder.id), {
                 preserveScroll: true
             })
             this.isVisibleAdm = false;
@@ -634,7 +634,7 @@ export default {
                 return;
             }
             this.signatureError = false;
-            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formSignature, {
+            this.formSignature.put(route('medicalOrders.update', this.medicalOrder.id), {
                 preserveScroll: true,
                 preserveState: true
             });

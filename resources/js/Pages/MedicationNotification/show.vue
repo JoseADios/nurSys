@@ -39,10 +39,9 @@
                     <BackIcon class="size-5" />Volver
                     </Link>
                     <div class="flex items-center">
-                        <button v-if="details.active" @click="downloadRecordReport"
-                            class=" mr-4 inline-flex   px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
+                        <PersonalizableButton v-if="details.active" @click="downloadRecordReport" color="emerald">
                             <ReportIcon class="size-5 mr-1" /> Crear Reporte
-                        </button>
+                        </PersonalizableButton>
 
                     </div>
                 </div>
@@ -61,7 +60,7 @@
                                         notification.scheduled_time) }}</div>
 
                                 <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Medicamento: {{ details.drug
-                                    }}</div>
+                                }}</div>
                                 <div v-if="notification.administered_time"
                                     class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Medicamento Administrado:
                                     {{ formatDate(
@@ -90,12 +89,12 @@
                             </div>
                             <div v-if="lastApplied(notification)" class="flex justify-end mt-2">
                                 <AccessGate v-if="canUpdateNotification">
-                                <button
-                                    class="font-semibold text-red-500 dark:text-red-400 border border-red-300 px-4 py-1 rounded hover:bg-red-100 dark:hover:bg-gray-700 transition"
-                                    @click="revert(notification)">
+                                    <button
+                                        class="font-semibold text-red-500 dark:text-red-400 border border-red-300 px-4 py-1 rounded hover:bg-red-100 dark:hover:bg-gray-700 transition"
+                                        @click="revert(notification)">
 
-                                    <BackIcon class="h-8 w-8 "/>
-                                </button>
+                                        <BackIcon class="h-8 w-8 " />
+                                    </button>
                                 </AccessGate>
                             </div>
 
@@ -109,7 +108,7 @@
                                 <button
                                     class="font-semibold text-green-500 dark:text-green-400 border border-green-300 px-4 py-1 rounded hover:bg-green-100 dark:hover:bg-gray-700 transition"
                                     @click="openModal(notification)">
-                                     <CheckCircleIcon class="h-8 w-8 " />
+                                    <CheckCircleIcon class="h-8 w-8 " />
                                 </button>
                             </div>
 
@@ -149,7 +148,9 @@
                 </SecondaryButton>
 
                 <div v-if="notificationBeingUpdated.applied != true">
-                    <PrimaryButton  :class="{ 'opacity-25': formSignature.processing }" :disabled="formSignature.processing" class="ms-3" @click="markAsAdministered(notificationBeingUpdated)">
+                    <PrimaryButton :class="{ 'opacity-25': formSignature.processing }"
+                        :disabled="formSignature.processing" class="ms-3"
+                        @click="markAsAdministered(notificationBeingUpdated)">
                         Administrar
                     </PrimaryButton>
                 </div>
@@ -180,6 +181,7 @@ import {
 import moment from "moment/moment";
 import 'moment/locale/es';
 import CheckCircleIcon from '@/Components/Icons/CheckCircleIcon.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 
 export default {
     props: {
@@ -192,6 +194,7 @@ export default {
         AccessGate,
         Link,
         FormatId,
+        PersonalizableButton,
         ConfirmationModal,
         DangerButton,
         SecondaryButton,
@@ -210,7 +213,7 @@ export default {
             notificationBeingUpdated: ref(null),
             signatureError: false,
 
-            formSignature:  useForm({
+            formSignature: useForm({
                 nurse_sign: this.notifications.nurse_sign,
 
             }),

@@ -93,8 +93,8 @@
                                 <button
                                     class="font-semibold text-red-500 dark:text-red-400 border border-red-300 px-4 py-1 rounded hover:bg-red-100 dark:hover:bg-gray-700 transition"
                                     @click="revert(notification)">
-                                    Revertir
-                                    <!-- Poner Icono de volver -->
+
+                                    <BackIcon class="h-8 w-8 "/>
                                 </button>
                                 </AccessGate>
                             </div>
@@ -109,7 +109,7 @@
                                 <button
                                     class="font-semibold text-green-500 dark:text-green-400 border border-green-300 px-4 py-1 rounded hover:bg-green-100 dark:hover:bg-gray-700 transition"
                                     @click="openModal(notification)">
-                                    Administrar
+                                     <CheckCircleIcon class="h-8 w-8 " />
                                 </button>
                             </div>
 
@@ -149,7 +149,7 @@
                 </SecondaryButton>
 
                 <div v-if="notificationBeingUpdated.applied != true">
-                    <PrimaryButton class="ms-3" @click="markAsAdministered(notificationBeingUpdated)">
+                    <PrimaryButton  :class="{ 'opacity-25': formSignature.processing }" :disabled="formSignature.processing" class="ms-3" @click="markAsAdministered(notificationBeingUpdated)">
                         Administrar
                     </PrimaryButton>
                 </div>
@@ -162,7 +162,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {
-    Link
+    Link, useForm
 } from '@inertiajs/vue3';
 import FormatId from '@/Components/FormatId.vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
@@ -179,6 +179,8 @@ import {
 } from 'vue';
 import moment from "moment/moment";
 import 'moment/locale/es';
+import CheckCircleIcon from '@/Components/Icons/CheckCircleIcon.vue';
+
 export default {
     props: {
         details: Object,
@@ -197,6 +199,8 @@ export default {
         SignaturePad,
         BackIcon,
         ReportIcon,
+        CheckCircleIcon,
+
         BreadCrumb
     },
     data() {
@@ -206,10 +210,10 @@ export default {
             notificationBeingUpdated: ref(null),
             signatureError: false,
 
-            formSignature: {
+            formSignature:  useForm({
                 nurse_sign: this.notifications.nurse_sign,
 
-            },
+            }),
         }
     },
     methods: {
@@ -228,7 +232,7 @@ export default {
             }
             this.signatureError = false;
             // console.log('update', this.formSignature.nurse_sign);
-            this.$inertia.put(route('medicationNotification.update', this.notificationBeingUpdated.id), this.formSignature, {
+            this.formSignature.put(route('medicationNotification.update', this.notificationBeingUpdated.id), {
                 preserveScroll: true,
                 onSuccess: (response) => {
 

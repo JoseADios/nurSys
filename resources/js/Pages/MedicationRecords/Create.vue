@@ -27,7 +27,7 @@
             </label>
             <AdmissionSelector :doesnt-have-medication-r=true @update:admission="form.admission_id = $event" :selected-admission-id="admission_id" />
 
-
+     <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
             <!-- Contenedor para la dieta y el selector -->
             <div class="flex items-center space-x-4 mt-6">
                 <!-- Dieta -->
@@ -53,7 +53,7 @@
                 Cancelar
                 </Link>
 
-                <button type="submit" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+                <button type="submit"  :class="{ 'opacity-25': form.processing }" :disabled="form.processing" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
                     Guardar
                 </button>
             </div>
@@ -66,7 +66,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {
-    Link
+    Link, useForm
 } from '@inertiajs/vue3';
 import DialogModal from '@/Components/DialogModal.vue';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
@@ -87,15 +87,12 @@ export default {
     data() {
         return {
             isVisible: false,
-            form: {
-                admission_id: this.admission_id,
+            form:  useForm({
+                admission_id: this.admission_id || null,
 
                 diet: '',
-            },
-            modalform: {
-                description: '',
-                name: '',
-            }
+            }),
+
         };
     },
     methods: {
@@ -105,21 +102,9 @@ export default {
                 return;
             }
             this.error = null;
-            this.$inertia.post(route('medicationRecords.store'), this.form);
+             this.form.post(route('medicationRecords.store'));
         },
-        openCreateModal() {
-            this.isVisible = true;
 
-        },
-        submitModal() {
-
-            this.$inertia.post(route('Diet.store'), this.modalform);
-            this.isVisible = false;
-            this.form = {
-                name: '',
-                description: '',
-            };
-        },
     },
 
 };

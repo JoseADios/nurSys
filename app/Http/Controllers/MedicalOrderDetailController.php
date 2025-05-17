@@ -91,14 +91,16 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
                 $medicationRecordDetail->update(['suspended_at' => null]);
 
             } else {
-                return Redirect::back()->withErrors(['message' => 'No se puede actualizar esta Orden Medica porque tiene registros de ficha de medicamento asociados.']);
+
+                return back()->with('flash.toast', 'No se puede actualizar esta Orden Medica porque tiene registros de ficha de medicamento asociados.')->with('flash.toastStyle', 'danger');
             }
         } else {
             if ($medicationRecordDetail) {
                 $medicationRecordDetail->update(['suspended_at' => now()]);
             } else {
-                return Redirect::back()->withErrors(['message' => 'No se puede actualizar esta Orden Medica porque tiene registros de ficha de medicamento asociados.']);
-           }
+
+                 return back()->with('flash.toast', 'No se puede actualizar esta Orden Medica porque tiene registros de ficha de medicamento asociados.')->with('flash.toastStyle', 'danger');
+          }
         }
         $medicalOrderDetail->update($request->all());
         return back()->with('flash.toast', 'Registro actualizado correctamente');
@@ -112,6 +114,7 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
         $this->authorize('delete', [MedicalOrderDetail::class, $medicalOrderDetail]);
         $medicalOrderDetail->update(['active' => 0]);
 
-        return Redirect::route('medicalOrders.show', $medicalOrderDetail->medical_order_id)->with('flash.toast', 'Registro eliminado correctamente');;
+        return Redirect::route('medicalOrders.show', $medicalOrderDetail->medical_order_id)->with('flash.toast', 'Registro eliminado correctamente');
+        ;
     }
 }

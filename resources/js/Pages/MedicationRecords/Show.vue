@@ -37,17 +37,17 @@
                             class=" mr-4 inline-flex   px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
                             <ReportIcon class="size-5 mr-1" /> Crear Reporte
                         </button>
-                        <button v-if="medicationRecord.active" @click="recordBeingDeleted = true"
-                            class="mr-4 flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                        <DangerButton v-if="medicationRecord.active" @click="recordBeingDeleted = true">
 
                             <TrashIcon class="size-5" />
                             <span class="font-medium ">Eliminar</span>
-                        </button>
-                        <button v-else @click="restoreRecord(medicationRecord)"
+
+                        </DangerButton>
+                        <button v-else @click="restoreRecord(medicationRecord)"   :class="{ 'opacity-25': recordActiveChanging }" :disabled="recordActiveChanging"
                             class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
 
                             <RestoreIcon class="size-5" />
-                             <span class="font-medium">Restaurar</span>
+                            <span class="font-medium">Restaurar</span>
                         </button>
                     </div>
 
@@ -330,7 +330,8 @@
                                         Cerrar
                                     </button>
 
-                                    <button type="submit"
+                                    <button type="submit" :class="{ 'opacity-25': form.processing }"
+                                        :disabled="form.processing"
                                         class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
                                         Guardar
                                     </button>
@@ -409,27 +410,29 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1 ">
                             <div v-if="detail.active && detail.suspended_at == null">
-                                <!-- Editar -->
-                                <Link v-if="!hasApplied(detail)"
-                                    :href="route('medicationRecordDetails.edit', detail.id)"
-                                    class="flex items-center space-x-2 text-yellow-600 hover:text-yellow-800 transition-colors">
-                                <EditIcon class="size-5" />
-                                <span class="font-medium">Editar</span>
-                                </Link>
-                                <AccessGate :permission="['medicationRecordDetail.view']">
+                                 <AccessGate :permission="['medicationRecordDetail.view']">
                                     <!-- NOTIF -->
                                     <Link :href="route('medicationNotification.show', detail.id)"
-                                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                                        class="flex items-center space-x-2 space-y-2 text-blue-600 hover:text-blue-800 transition-colors">
                                     <NotificationIcon class="size-5 " />
                                     <span class="font-medium">Notificaciones</span>
                                     </Link>
                                 </AccessGate>
+                                <!-- Editar -->
+                                <Link v-if="!hasApplied(detail)"
+                                    :href="route('medicationRecordDetails.edit', detail.id)"
+                                    class="flex items-center space-x-2 space-y-2 text-yellow-600 hover:text-yellow-800 transition-colors">
+                                <EditIcon class="size-5" />
+                                <span class="font-medium">Editar</span>
+                                </Link>
+
                             </div>
+                            <form >
                             <button @click="ToggleActivate(detail)"
                                 :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
-                                class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
+                                class="flex items-center space-x-2 space-y-2  transition-colors">
                                 <div v-if="detail.active">
                                     <TrashIcon class="size-5" />
                                 </div>
@@ -438,19 +441,19 @@
                                 </div>
                                 <span>{{ detail.active ? 'Eliminar' : 'Restaurar' }}</span>
                             </button>
-
+                            </form>
                             <div v-if="medicationRecord.active">
                                 <!-- Disable -->
                                 <button @click="ToggleSuspend(detail)"
-                                    :class="[!detail.suspended_at ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
-                                    class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
+                                    :class="[!detail.suspended_at ? 'text-indigo-500 ' : 'text-green-500 hover:text-green-700']"
+                                    class="flex items-center space-x-2 space-y-2  transition-colors">
 
-                                     <div v-if="detail.suspended_at">
-                                     <RestoreIcon class="size-5" />
-                                </div>
-                                <div v-else>
-                                  <SuspendIcon class="size-5" />
-                                </div>
+                                    <div v-if="detail.suspended_at">
+                                        <RestoreIcon class="size-5" />
+                                    </div>
+                                    <div v-else>
+                                        <SuspendIcon class="size-5" />
+                                    </div>
                                     <span>{{ !detail.suspended_at ? 'Suspender' : 'Habilitar' }}</span>
                                 </button>
                             </div>
@@ -469,16 +472,16 @@
 
         <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
             <template #title>
-                Eliminar Ingreso
+                Eliminar Ficha de Medicamentos
             </template>
             <template #content>
-                ¿Estás seguro de que deseas eliminar este ingreso?
+                ¿Estás seguro de que deseas eliminar esta Ficha de Medicamentos?
             </template>
             <template #footer>
                 <SecondaryButton @click="recordBeingDeleted = null">
                     Cancelar
                 </SecondaryButton>
-                <DangerButton class="ms-3" @click="deleteRecord">
+                <DangerButton class="ms-3" @click="deleteRecord" :class="{ 'opacity-25': recordActiveChanging }" :disabled="recordActiveChanging">
                     Eliminar
                 </DangerButton>
             </template>
@@ -516,7 +519,7 @@
             </template>
             <!-- Footer del modal -->
             <template #footer>
-                <button @click="submitModal"
+                <button @click="submitModal" :class="{ 'opacity-25': modalform.processing }" :disabled="modalform.processing"
                     class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
                     Guardar
                 </button>
@@ -618,24 +621,21 @@ export default {
                 selectedOrderId: null,
                 showDeleted: this.filters.show_deleted,
             }),
-            formRecord: {
-                admission_id: this.medicationRecord.admission_id,
-                nurse_id: this.medicationRecord.nurse_id,
-                active: this.medicationRecord.active,
-            },
             showCreateDetailForm: ref(false),
             recordBeingDeleted: ref(null),
             selectedOrderId: null,
-
+            recordActiveChanging: ref(false),
             errorMessage: "",
 
             isVisible: false,
             isVisibleEditSign: ref(null),
             openAccordion: ref(null),
-            modalform: {
-                diet: this.medicationRecord.diet,
+            modalform: useForm({
+            diet: this.medicationRecord.diet,
+            }),
 
-            },
+
+
 
         }
     },
@@ -670,7 +670,7 @@ export default {
             this.isVisible = true;
         },
         submitModal() {
-            this.$inertia.put(route('medicationRecords.update', this.medicationRecord), this.modalform, {
+            this.modalform.put(route('medicationRecords.update', this.medicationRecord),  {
                 preserveScroll: true
             });
             this.isVisible = false;
@@ -678,6 +678,7 @@ export default {
 
         },
         restoreRecord(record) {
+             this.recordActiveChanging = true;
             this.$inertia.put(
                 route('medicationRecords.update', record.id), {
                 active: true,
@@ -692,6 +693,10 @@ export default {
                     console.error('Errores:', errors);
                     alert('Error al intentar habilitar el registro.');
                 },
+                  onFinish: () => {
+
+                      this.recordActiveChanging = false
+                }
             }
             );
         },
@@ -725,142 +730,143 @@ export default {
 
             this.errorMessage = "";
 
-            this.$inertia.post(route('medicationRecordDetails.store'), this.form, {
-                preserveScroll: true,
-
-                onSuccess: () => {
-                    this.form = {
-                        medication_record_id: this.medicationRecord.id,
-                        drug: '',
-                        dose: '',
-                        route: '',
-                        dose_metric: '',
-                        fc: '',
-                        interval_in_hours: '',
-                        selectedOrderId: null,
-                    };
-                    this.selectedOrderId = null;
-                    this.showCreateDetailForm = false;
-                },
-                preserveScroll: true,
-            });
-        },
-        toggleAccordion(index) {
-            if (this.openAccordion === index) {
-                this.openAccordion = null // Cierra si ya está abierto
-            } else {
-                this.openAccordion = index // Abre el acordeón seleccionado
+           this.form.post(route('medicationRecordDetails.store'), {
+            onSuccess: () => {
+                this.form = {
+                    medication_record_id: this.medicationRecord.id,
+                    drug: '',
+                    dose: '',
+                    route: '',
+                    dose_metric: '',
+                    fc: '',
+                    interval_in_hours: '',
+                    selectedOrderId: null,
+                };
+                this.selectedOrderId = null;
+                this.showCreateDetailForm = false;
             }
-        },
-        formatDateFromNow(date) {
-            return moment(date).fromNow();
-        },
-        selectOrder(id) {
-            this.selectedOrderId = id;
-            this.form.selectedOrderId = id;
-        },
-        hasApplied(detail) {
-            return detail.medication_notification?.some(item => item.applied === 1) ?? false;
-        },
-        Firstnoapplied(notifications) {
-            for (const detail of this.details) {
-                if (Array.isArray(detail.medication_notification)) {
+        });
 
-                    const firstNotApplied = detail.medication_notification.find(
-                        (n) => n.applied === 0
-                    );
+    },
+    toggleAccordion(index) {
+        if (this.openAccordion === index) {
+            this.openAccordion = null // Cierra si ya está abierto
+        } else {
+            this.openAccordion = index // Abre el acordeón seleccionado
+        }
+    },
+    formatDateFromNow(date) {
+        return moment(date).fromNow();
+    },
+    selectOrder(id) {
+        this.selectedOrderId = id;
+        this.form.selectedOrderId = id;
+    },
+    hasApplied(detail) {
+        return detail.medication_notification?.some(item => item.applied === 1) ?? false;
+    },
+    Firstnoapplied(notifications) {
+        for (const detail of this.details) {
+            if (Array.isArray(detail.medication_notification)) {
 
-                    if (firstNotApplied && firstNotApplied.id === notifications.id) {
-                        return true;
-                    }
+                const firstNotApplied = detail.medication_notification.find(
+                    (n) => n.applied === 0
+                );
+
+                if (firstNotApplied && firstNotApplied.id === notifications.id) {
+                    return true;
                 }
             }
+        }
 
-            return false;
-        },
-        OpenFormCreateRecord() {
-            this.form.start_time = moment().format('HH:mm');
-            this.showCreateDetailForm = true
+        return false;
+    },
+    OpenFormCreateRecord() {
+        this.form.start_time = moment().format('HH:mm');
+        this.showCreateDetailForm = true
 
-        },
-        closeform() {
-            this.showCreateDetailForm = false
+    },
+    closeform() {
+        this.showCreateDetailForm = false
 
-        },
+    },
 
-        deleteRecord() {
-            this.recordBeingDeleted = null;
-            this.$inertia.delete(route('medicationRecords.destroy', this.medicationRecord.id), {
+    deleteRecord() {
+  this.recordBeingDeleted = null;
+   this.recordActiveChanging = true;
+        this.$inertia.delete(route('medicationRecords.destroy', this.medicationRecord.id), {
+            preserveScroll: true,
+            onFinish: () => {
+
+                      this.recordActiveChanging = false
+                }
+
+        });
+
+    },
+    ToggleActivate(detail) {
+        if (detail.active) {
+            this.$inertia.delete(route('medicationRecordDetails.destroy', detail.id), {
+                preserveState: true,
+                preserveScroll: true,
                 onSuccess: (response) => {
                     console.log('eliminado correctamente', response);
-                    this.recordBeingDeleted = null;
                 },
-                preserveScroll: true
+                onError: (errors) => {
+                    console.error('Error al habilitar:', errors);
+                },
             });
-        },
-        ToggleActivate(detail) {
-            if (detail.active) {
-                this.$inertia.delete(route('medicationRecordDetails.destroy', detail.id), {
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (response) => {
-                        console.log('eliminado correctamente', response);
-                    },
-                    onError: (errors) => {
-                        console.error('Error al habilitar:', errors);
-                    },
-                });
-            } else {
-                this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
-                    active: true,
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (response) => {
-                        console.log('update', response);
-                    },
-                    onError: (errors) => {
-                        console.error('Error al habilitar:', errors);
-                    },
-                });
-            }
-        },
-        async downloadRecordReport() {
-            window.open(route('reports.medicationRecord', {
-                id: this.medicationRecord.id
-            }), '_blank');
-        },
+        } else {
+            this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
+                active: true,
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: (response) => {
+                    console.log('update', response);
+                },
+                onError: (errors) => {
+                    console.error('Error al habilitar:', errors);
+                },
+            });
+        }
+    },
+    async downloadRecordReport() {
+        window.open(route('reports.medicationRecord', {
+            id: this.medicationRecord.id
+        }), '_blank');
+    },
 
-        ToggleSuspend(detail) {
-            if (detail.suspended_at) {
+    ToggleSuspend(detail) {
+        if (detail.suspended_at) {
 
-                this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
-                    suspended_at: true,
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (response) => {
-                        console.log('update', response);
-                    },
-                    onError: (errors) => {
-                        console.error('Error al habilitar:', errors);
-                    },
-                });
-            } else {
+            this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
+                suspended_at: true,
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: (response) => {
+                    console.log('update', response);
+                },
+                onError: (errors) => {
+                    console.error('Error al habilitar:', errors);
+                },
+            });
+        } else {
 
-                this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
-                    suspended_at: false,
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (response) => {
-                        console.log('update', response);
-                    },
-                    onError: (errors) => {
-                        console.error('Error al habilitar:', errors);
-                    },
-                });
-            }
-        },
+            this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
+                suspended_at: false,
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: (response) => {
+                    console.log('update', response);
+                },
+                onError: (errors) => {
+                    console.error('Error al habilitar:', errors);
+                },
+            });
+        }
+    },
 
-    }
+}
 }
 </script>
 

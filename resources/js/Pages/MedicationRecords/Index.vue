@@ -87,16 +87,14 @@
                     </AccessGate>
 
                     <AccessGate :permission="['medicationRecords.create']">
-                        <Link v-if="!form.admission_id" :href="route('medicationRecords.create')"
-                             class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm w-full">
+                        <PrimaryLink v-if="!form.admission_id" :href="route('medicationRecords.create')">
                        <PlusIcon class="size-5" />
                         <span class="">Nuevo Registro</span>
-                        </Link>
-                        <Link v-else :href="route('medicationRecords.create', { admission_id: form.admission_id })"
-                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
+                        </PrimaryLink>
+                        <PrimaryLink v-else :href="route('medicationRecords.create', { admission_id: form.admission_id })">
                         <PlusIcon class="size-5" />
                         <span class="">Nuevo Registro</span>
-                        </Link>
+                        </PrimaryLink>
 
                     </AccessGate>
                 </div>
@@ -225,6 +223,7 @@ import UserIcon from '@/Components/Icons/UserIcon.vue';
 import moment from 'moment/moment';
 import 'moment/locale/es';
 import FilterIcon from '@/Components/Icons/FilterIcon.vue';
+import PrimaryLink from '@/Components/PrimaryLink.vue';
 export default {
     props: {
         medicationRecords: Object,
@@ -240,6 +239,7 @@ export default {
         FormatId,
         BreadCrumb,
         PlusIcon,
+        PrimaryLink,
         SearchIcon,
         XIcon,
         CirclePlusIcon,

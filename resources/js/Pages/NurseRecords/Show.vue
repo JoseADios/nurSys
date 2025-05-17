@@ -42,25 +42,23 @@
                         <span class="font-medium">Volver</span>
                         </Link>
                     </div>
-                    <div class="flex items-center">
-
-                        <button v-if="nurseRecord.active" @click="downloadRecordReport"
-                            class="inline-flex mx-4 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200 sm:w-auto justify-center sm:justify-start">
+                    <div class="flex items-center gap-2">
+                        <PersonalizableButton v-if="nurseRecord.active" @click="downloadRecordReport" color="emerald">
                             <ReportIcon class="size-5" />
                             <span class="hidden md:inline-flex ml-2">Crear Reporte</span>
-                        </button>
+                        </PersonalizableButton>
 
                         <AccessGate :permission="['nurseRecord.delete']" v-if="canUpdateRecord">
-                            <button v-if="nurseRecord.active" @click="recordBeingDeleted = true"
-                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors w-full sm:w-auto justify-center sm:justify-start sm:mt-0">
+                            <DangerButton v-if="nurseRecord.active" @click="recordBeingDeleted = true"
+                                class="space-x-2">
                                 <TrashIcon class="size-5" />
-                                <span class="font-medium">Eliminar</span>
-                            </button>
-                            <button v-else @click="restoreRecord" :class="{ 'opacity-25': recordActiveChanging }" :disabled="recordActiveChanging"
-                                class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors w-full sm:w-auto justify-center sm:justify-start sm:mt-0">
+                                <span class="hidden sm:inline-flex">Eliminar</span>
+                            </DangerButton>
+                            <PersonalizableButton v-else @click="restoreRecord" class="gap-2" color="green"
+                                :loading="recordActiveChanging">
                                 <RestoreIcon class="size-5" />
-                                <span class="font-medium">Restaurar</span>
-                            </button>
+                                <span class="hidden sm:inline-flex">Restaurar</span>
+                            </PersonalizableButton>
                         </AccessGate>
                     </div>
 
@@ -81,7 +79,7 @@
                                 </Link>
                             </div>
                             <AccessGate :role="['admin']" v-if="canUpdateRecord">
-                                <button @click="showEditAdmission = true" class="text-blue-500 flex">
+                                <button @click="showEditAdmission = true" class="text-primary-500 flex">
                                     <EditIcon class="size-5" />
                                 </button>
                             </AccessGate>
@@ -123,7 +121,7 @@
                                 </p>
                             </div>
                             <AccessGate :role="['admin']" v-if="canUpdateRecord">
-                                <button @click="showEditNurse = true" class="text-blue-500 flex">
+                                <button @click="showEditNurse = true" class="text-primary-500 flex">
                                     <EditIcon class="size-5" />
                                 </button>
                             </AccessGate>
@@ -181,7 +179,7 @@
                                             </span>
                                             <span class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
                                                 formatDateFromNow(order.created_at)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <ChevronDown
                                             class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white"
@@ -242,14 +240,11 @@
                                                 placeholder="Comentarios adicionales" required />
                                         </div>
                                     </div>
-
                                     <div class="pt-4">
-                                        <button type="submit" :class="{ 'opacity-25': formDetail.processing }"
-                                            :disabled="formDetail.processing" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
-            hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-            transition-colors duration-300">
+                                        <PersonalizableButton size="large" class="w-full"
+                                            :loading="formDetail.processing">
                                             Agregar Evento
-                                        </button>
+                                        </PersonalizableButton>
                                     </div>
                                 </form>
                             </div>
@@ -302,7 +297,7 @@
                                     <div class="sm:text-right">
                                         <!-- Editar -->
                                         <button @click="openEditDetailModal(detail)"
-                                            class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                                            class="flex items-center space-x-2 text-primary-500 hover:text-primary-600 transition-colors">
                                             <EditIcon class="size-5" />
                                             <span class="font-medium sm:hidden md:inline-flex">Editar</span>
                                         </button>
@@ -353,9 +348,9 @@
                             </div>
 
                             <AccessGate :permission="['nurseRecord.update']" v-if="canUpdateRecord">
-                                <button @click="isVisibleEditSign = true"
-                                    class="mt-4 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                                    Editar</button>
+                                <PrimaryButton @click="isVisibleEditSign = true" class="mt-4">
+                                    Editar
+                                </PrimaryButton>
                             </AccessGate>
                         </div>
                     </div>
@@ -370,13 +365,14 @@
                                 <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.
                                 </div>
 
-                                <div class="my-4">
-                                    <button type="button"
-                                        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                                        @click="isVisibleEditSign = false">Cancelar</button>
-                                    <button :class="{ 'opacity-25': formSignature.processing }" :disabled="formSignature.processing"
-                                        class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
-                                        type="submit">Guardar firma</button>
+                                <div class="my-4 space-x-4">
+                                    <SecondaryButton type="button" @click="isVisibleEditSign = false">
+                                        Cancelar
+                                    </SecondaryButton>
+                                    <PrimaryButton @click="isVisibleEditSign = true"
+                                        :is-loading="formSignature.processing" class="mt-4">
+                                        Guardar firma
+                                    </PrimaryButton>
                                 </div>
                             </form>
                         </div>
@@ -396,15 +392,12 @@
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">
-                            <button type="button" @click="showEditAdmission = null"
-                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                            <SecondaryButton type="button" @click="showEditAdmission = null">
                                 Cancelar
-                            </button>
-                            <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
-                                :disabled="!formRecord.admission_id">
-                                Aceptar
-                            </button>
+                            </SecondaryButton>
+                            <PrimaryButton :disabled="!formRecord.admission_id" :is-loading="formRecord.processing">
+                                Actualizar
+                            </PrimaryButton>
                         </div>
                     </form>
                 </div>
@@ -423,15 +416,12 @@
                             @update:user="formRecord.nurse_id = $event" />
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">
-                            <button type="button" @click="showEditNurse = null"
-                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                            <SecondaryButton type="button" @click="showEditNurse = null">
                                 Cancelar
-                            </button>
-                            <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
-                                :disabled="!formRecord.nurse_id">
-                                Aceptar
-                            </button>
+                            </SecondaryButton>
+                            <PrimaryButton :disabled="!formRecord.nurse_id" :is-loading="formRecord.processing">
+                                Actualizar
+                            </PrimaryButton>
                         </div>
                     </form>
                 </div>
@@ -472,23 +462,20 @@
 
             <!-- Footer del modal -->
             <template #footer>
-                <div class="flex sm:justify-between items-center">
-                    <button v-if="selectedDetail.active" type="button" @click="detailBeingDeleted = true"
-                        class="mr-2 focus:outline-none text-white bg-red-800 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                <div class="flex sm:justify-between items-center gap-3">
+                    <DangerButton v-if="selectedDetail.active" type="button" @click="detailBeingDeleted = true">
                         Eliminar
-                    </button>
-                    <button v-if="!selectedDetail.active" type="button" @click="restoreDetail(selectedDetail)"
-                        class="mr-2 focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+                    </DangerButton>
+                    <PersonalizableButton v-if="!selectedDetail.active" color="green" type="button" @click="restoreDetail(selectedDetail)">
                         Restaurar
-                    </button>
-                    <button type="button" @click="isVisibleDetail = false"
-                        class="mr-2 py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    </PersonalizableButton>
+                    <SecondaryButton type="button" @click="isVisibleDetail = false">
                         Cerrar
-                    </button>
-                    <button type="submit" @click="submitUpdateDetail"
-                        class="focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                    </SecondaryButton>
+                    <PrimaryButton  @click="submitUpdateDetail"
+                        :is-loading="formDetail.processing">
                         Actualizar
-                    </button>
+                    </PrimaryButton>
                 </div>
             </template>
         </DialogModal>
@@ -509,7 +496,8 @@
                         Cancelar
                     </SecondaryButton>
 
-                    <DangerButton class="ms-3" @click="deleteRecord" :class="{ 'opacity-25': recordActiveChanging }" :disabled="recordActiveChanging">
+                    <DangerButton class="ms-3" @click="deleteRecord" :class="{ 'opacity-25': recordActiveChanging }"
+                        :disabled="recordActiveChanging">
                         Eliminar
                     </DangerButton>
                 </template>
@@ -572,6 +560,8 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import ChevronDown from '@/Components/Icons/ChevronDown.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 
 export default {
     props: {
@@ -621,6 +611,8 @@ export default {
         TextInput,
         InputError,
         ChevronDown,
+        PersonalizableButton,
+        PrimaryButton,
     },
     data() {
         return {
@@ -648,7 +640,7 @@ export default {
                 comment: null,
             }),
             formSignature: useForm({
-                nurse_sign: this.nurseRecord.nurse_sign,
+                nurse_sign: '',
                 signature: true,
             }),
         }
@@ -691,11 +683,11 @@ export default {
             this.formDetail.post(route('nurseRecordDetails.store'),
                 {
                     onSuccess: () => {
-                        this.formDetail = {
+                        this.formDetail.reset({
                             nurse_record_id: this.nurseRecord.id,
-                            medication: '',
-                            comment: '',
-                        };
+
+                        }, 'medication',
+                            'comment');
                     },
                     preserveScroll: true,
 
@@ -720,7 +712,9 @@ export default {
             this.formSignature.put(route('nurseRecords.update', this.nurseRecord.id), {
                 preserveScroll: true
             });
-            this.isVisibleEditSign = false
+
+            this.formSignature.reset('nurse_sign');
+            this.isVisibleEditSign = false;
         },
         submitUpdateDetail() {
             if (!this.selectedDetail.medication || !this.selectedDetail.comment) {

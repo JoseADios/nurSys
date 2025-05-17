@@ -49,7 +49,7 @@
                             Cancelar
                         </SecondaryLink>
                     </div>
-                    <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <PrimaryButton :is-loading="form.processing">
                         Aceptar
                     </PrimaryButton>
                 </div>

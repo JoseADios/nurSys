@@ -96,13 +96,6 @@ export default {
                     900: '#992D2F',
                 },
             },
-            boxShadow: {
-                'btn': '0 2px 4px rgba(105, 108, 255, 0.25)',
-                'btn-hover': '0 4px 8px rgba(105, 108, 255, 0.35)',
-            },
-            borderRadius: {
-                'btn': '0.375rem',
-            },
         },
     },
 

@@ -149,7 +149,7 @@
                 </SecondaryButton>
 
                 <div v-if="notificationBeingUpdated.applied != true">
-                    <PrimaryButton class="ms-3" @click="markAsAdministered(notificationBeingUpdated)">
+                    <PrimaryButton  :class="{ 'opacity-25': formSignature.processing }" :disabled="formSignature.processing" class="ms-3" @click="markAsAdministered(notificationBeingUpdated)">
                         Administrar
                     </PrimaryButton>
                 </div>
@@ -162,7 +162,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {
-    Link
+    Link, useForm
 } from '@inertiajs/vue3';
 import FormatId from '@/Components/FormatId.vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
@@ -210,10 +210,10 @@ export default {
             notificationBeingUpdated: ref(null),
             signatureError: false,
 
-            formSignature: {
+            formSignature:  useForm({
                 nurse_sign: this.notifications.nurse_sign,
 
-            },
+            }),
         }
     },
     methods: {
@@ -232,7 +232,7 @@ export default {
             }
             this.signatureError = false;
             // console.log('update', this.formSignature.nurse_sign);
-            this.$inertia.put(route('medicationNotification.update', this.notificationBeingUpdated.id), this.formSignature, {
+            this.formSignature.put(route('medicationNotification.update', this.notificationBeingUpdated.id), {
                 preserveScroll: true,
                 onSuccess: (response) => {
 

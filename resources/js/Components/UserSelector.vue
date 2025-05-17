@@ -1,101 +1,202 @@
 <template>
-    <div>
-        <!-- Filtros de búsqueda -->
-        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4">
-            <h3 class="text-base font-medium text-gray-900 dark:text-white mb-3">
-                Buscar Usuario
+    <div
+        class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden">
+        <!-- Encabezado más compacto -->
+        <div class="px-4 py-3 bg-indigo-50 dark:bg-indigo-900/20 border-b border-gray-100 dark:border-gray-800">
+            <h3 class="text-base font-medium text-gray-900 dark:text-white flex items-center">
+                <span
+                    class="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-indigo-100 dark:bg-indigo-800 text-indigo-600 dark:text-indigo-300 mr-2">
+                    <UserIcon class="h-4 w-4 text-gray-400" />
+                </span>
+                Selección de Usuario
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-2">
+        </div>
+
+        <div class="p-4">
+            <!-- Filtros de búsqueda optimizados -->
+            <div class="space-y-2 mb-3">
+                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <label class="text-xs font-medium text-gray-900 dark:text-white">
+                                Buscar por Nombre
+                            </label>
+                        </div>
+                        <button v-if="filters.name" @click="filters.name = ''; debounceSearch()" type="button"
+                            class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200">
+                            <CircleXIcon class="h-4 w-4 text-gray-400" />
+                        </button>
+                    </div>
+
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                    clip-rule="evenodd" />
-                            </svg>
+                            <SearchIcon class="h-4 w-4 text-gray-400" />
                         </div>
                         <input type="text" v-model="filters.name" @input="debounceSearch"
-                            class="pl-10 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            class="pl-10 w-full rounded-md border-0 py-2 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-transparent sm:text-sm sm:leading-6"
                             placeholder="Nombre del usuario...">
                     </div>
                 </div>
-                <div v-if="!fixedRole" class="space-y-2">
+
+                <div v-if="!fixedRole"
+                    class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <label class="text-xs font-medium text-gray-900 dark:text-white">
+                                Filtrar por Rol
+                            </label>
+                        </div>
+                        <button v-if="filters.role" @click="filters.role = ''; debounceSearch()" type="button"
+                            class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200">
+                            <CircleXIcon class="h-4 w-4 text-gray-400" />
+                        </button>
+                    </div>
+
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                <path fill-rule="evenodd"
-                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 818 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
+                            <EyeIcon class="h-4 w-4 text-gray-400" />
                         </div>
-                        <input type="text" v-model="filters.role" @input="debounceSearch"
-                            class="pl-10 w-full rounded-lg border-gray-200 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:bg-gray-800 dark:text-white"
-                            placeholder="Rol del usuario...">
+                        <select v-model="filters.role" @change="debounceSearch"
+                            class="pl-10 w-full rounded-md border-0 py-2 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-transparent sm:text-sm sm:leading-6 appearance-none">
+                            <option value="">Todos los roles</option>
+                            <option v-for="role in availableRoles" :key="role" :value="role">
+                                <FormatRole :role="role" />
+                            </option>
+                        </select>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Lista de usuarios -->
-        <div class="space-y-2">
-            <h3 class="text-base font-medium text-gray-900 dark:text-white">
-                Seleccionar Usuario ({{ users.total }} resultados) <span class="text-red-500">*</span>
-            </h3>
-            <div
-                class="max-h-[250px] overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800">
-                <div v-for="user in users.data" :key="user.id" @click="selectUser(user)"
-                    :class="['p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20', selectedUser === user.id ? 'bg-purple-100 dark:bg-purple-900/30' : '']">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="font-medium text-gray-900 dark:text-white text-sm">
-                                {{ user.name }} {{ user.last_name }}
-                            </span>
-                            <span
-                                class="text-xs ml-2 px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-800 dark:text-gray-300">
-                                <span v-if="user.roles[0]">
-                                   <FormatRole :role="user.roles[0].name" />
+            <!-- Lista de usuarios optimizada -->
+            <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 transition-all duration-300">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center">
+                        <h3 class="text-xs font-medium text-gray-900 dark:text-white">
+                            Seleccionar Usuario <span class="text-xs text-gray-500 dark:text-gray-400">({{ users.total
+                            }})</span>
+                            <span class="text-red-500">*</span>
+                        </h3>
+                    </div>
+                </div>
+
+                <div
+                    class="max-h-[180px] overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 mb-2">
+                    <div v-for="user in users.data" :key="user.id" @click="selectUser(user)"
+                        :class="['py-2 px-3 cursor-pointer border-b border-gray-100 dark:border-gray-800 last:border-0 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors duration-200', selectedUser === user.id ? 'bg-indigo-100 dark:bg-indigo-900/30' : '']">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="font-medium text-gray-900 dark:text-white text-sm">
+                                    {{ user.name }} {{ user.last_name }}
                                 </span>
-                                <span v-else>
-                                    Sin rol asignado
+                                <span
+                                    class="text-xs ml-2 px-1.5 py-0.5 bg-indigo-100 dark:bg-indigo-800/50 rounded-md text-indigo-700 dark:text-indigo-300">
+                                    <span v-if="user.roles[0]">
+                                        <FormatRole :role="user.roles[0].name" />
+                                    </span>
+                                    <span v-else>
+                                        Sin rol
+                                    </span>
                                 </span>
-                            </span>
-                            <div v-if="selectedUserId === user.id" class="text-xs text-green-500 dark:text-green-400">
-                                Usuario actual
+                                <div v-if="selectedUserId === user.id"
+                                    class="text-xs text-green-500 dark:text-green-400 flex items-center">
+                                    <CheckCircleIcon class="h-3 w-3 text-green-500" />
+                                    Actual
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">
+                                {{ formatDate(user.created_at) }}
                             </div>
                         </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ formatDate(user.created_at) }}
-                        </div>
+                    </div>
+                </div>
+
+                <!-- Paginación optimizada -->
+                <div class="flex justify-between items-center">
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                        {{ users.data.length }}/{{ users.total }}
+                    </div>
+                    <div class="flex space-x-2">
+                        <button type="button" @click="prevPage" :disabled="!users.prev_page_url"
+                            class="px-2 py-1 text-xs font-medium rounded-md transition-colors duration-200"
+                            :class="users.prev_page_url ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800/50' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'">
+                            <span class="flex items-center">
+                                <ChevronLeftIcon class="h-3 w-3 mr-1" />
+                                Anterior
+                            </span>
+                        </button>
+                        <button type="button" @click="nextPage" :disabled="!users.next_page_url"
+                            class="px-2 py-1 text-xs font-medium rounded-md transition-colors duration-200"
+                            :class="users.next_page_url ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800/50' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'">
+                            <span class="flex items-center">
+                                Siguiente
+                                <ChevronRightIcon class="h-3 w-3" />
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="flex justify-start mt-4 space-x-2">
-                <button type="button" @click="prevPage" :disabled="!users.prev_page_url"
-                    class="px-3 py-1 bg-gray-500 text-white rounded shadow hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
-                    Anterior
-                </button>
-                <button type="button" @click="nextPage" :disabled="!users.next_page_url"
-                    class="px-3 py-1 bg-gray-500 text-white rounded shadow hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
-                    Siguiente
-                </button>
-            </div>
+
+            <!-- Información de selección actual optimizada -->
+            <transition name="fade" mode="out-in">
+                <div v-if="selectedUser"
+                    class="mt-3 flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-2 border border-indigo-100 dark:border-indigo-800/50">
+                    <div class="flex items-center space-x-2">
+                        <div class="p-1 bg-indigo-100 dark:bg-indigo-800 rounded-full">
+                            <CheckIcon class="h-4 w-4 text-indigo-600 dark:text-indigo-300" />
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-gray-900 dark:text-white">Usuario seleccionado</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                {{users.data.find(user => user.id === selectedUser)?.name}} {{users.data.find(user =>
+                                    user.id === selectedUser)?.last_name}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </transition>
         </div>
     </div>
 </template>
 
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
 <script>
 import debounce from 'lodash/debounce';
 import axios from 'axios';
 import moment from "moment/moment";
 import 'moment/locale/es';
 import FormatRole from './FormatRole.vue';
+import EyeIcon from './Icons/EyeIcon.vue';
+import UserIcon from './Icons/UserIcon.vue';
+import SearchIcon from './Icons/SearchIcon.vue';
+import CircleXIcon from './Icons/CircleXIcon.vue';
+import CheckCircleIcon from './Icons/CheckCircleIcon.vue';
+import ChevronRightIcon from './Icons/ChevronRightIcon.vue';
+import ChevronLeftIcon from './Icons/ChevronLeftIcon.vue';
+import CheckIcon from './Icons/CheckIcon.vue';
 
 export default {
     components: {
-        FormatRole
-    },
+    FormatRole,
+    EyeIcon,
+    UserIcon,
+    SearchIcon,
+    CircleXIcon,
+    CheckCircleIcon,
+    ChevronRightIcon,
+    ChevronLeftIcon,
+    CheckIcon
+},
     props: {
         selectedUserId: Number,
         // Prop para especificar roles específicos
@@ -121,6 +222,7 @@ export default {
                 name: '',
                 role: this.roles && !Array.isArray(this.roles) ? this.roles : '',
             },
+            availableRoles: ['admin', 'doctor', 'nurse', 'receptionist'],
             debouncedSearch: null,
         };
     },
@@ -146,8 +248,8 @@ export default {
                             ...this.filters,
                             // Añadir soporte para múltiples roles
                             roles: this.fixedRole || this.filters.role ?
-                            (this.fixedRole || [this.filters.role]) :
-                            null
+                                (this.fixedRole || [this.filters.role]) :
+                                null
                         },
                         user_id: this.selectedUserId
                     }

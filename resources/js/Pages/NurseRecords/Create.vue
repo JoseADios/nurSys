@@ -45,15 +45,13 @@
                     </div>
 
                     <div v-else class="self-center">
-                        <Link :href="route('nurseRecords.index')"
-                            class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
-                        Cancelar
-                        </Link>
+                        <SecondaryLink :href="route('nurseRecords.index')">
+                            Cancelar
+                        </SecondaryLink>
                     </div>
-                    <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
-                        class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition">
+                    <PrimaryButton :is-loading="form.processing">
                         Aceptar
-                    </button>
+                    </PrimaryButton>
                 </div>
             </form>
         </div>
@@ -65,6 +63,8 @@ import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import FormatId from '@/Components/FormatId.vue';
 import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryLink from '@/Components/SecondaryLink.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 
@@ -81,7 +81,9 @@ export default {
         AdmissionSelector,
         ChevronRightIcon,
         FormatId,
-        BreadCrumb
+        BreadCrumb,
+        PrimaryButton,
+        SecondaryLink
     },
     data() {
         return {

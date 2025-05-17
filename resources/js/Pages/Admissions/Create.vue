@@ -27,12 +27,12 @@
 
                 <label for="patient"
                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Paciente</label>
-                <PatientSelector @update:patient="form.patient_id = $event" :selectedPatientId="selectedPatient" class=" p-4 border border-gray-600 rounded-lg"/>
+                <PatientSelector @update:patient="form.patient_id = $event" :selectedPatientId="selectedPatient"/>
                 <InputError :message="form.errors.patient_id" class="mt-2" />
 
                 <label for="doctor"
                     class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Doctor</label>
-                <UserSelector @update:user="form.doctor_id = $event" roles="doctor" class=" p-4 border border-gray-600 rounded-lg"/>
+                <UserSelector @update:user="form.doctor_id = $event" roles="doctor" />
                 <InputError :message="form.errors.doctor_id" class="mt-2" />
 
                 <label for="admission_dx"

@@ -104,10 +104,10 @@ class RoleSeeder extends Seeder
         ]);
 
         $user = User::where('name', 'Test User')->first();
-        $user->assignRole('admin');
+        $user->syncRoles('admin');
 
         $user = User::where('name', 'Admin')->first();
-        $user->assignRole('admin');
+        $user->syncRoles('admin');
 
         // a los usuarios que estan creados en la base de datos, excepto test user asigna roles aleatorios
         $users = User::where('name', '!=', 'Test User')->get();

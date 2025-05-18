@@ -32,7 +32,7 @@
 
                 <InputError :message="errorMessage" class="mt-2" />
 
-                <div class="flex justify-end mt-6 mb-2 gap-">
+                <div class="flex justify-end mt-6 mb-2 gap-4">
                     <SecondaryLink v-if="admission_id"
                         :href="route('temperatureRecords.index', { admission_id: admission_id })">
                         Cancelar

@@ -109,11 +109,11 @@
                     </AccessGate>
 
                     <AccessGate :permission="['temperatureRecord.create']" class="w-full sm:w-1/2">
-                        <PrimaryLink  class="py-2.5" v-if="!form.admission_id" :href="route('temperatureRecords.create')">
+                        <PrimaryLink  class="py-2.5 whitespace-nowrap" v-if="!form.admission_id" :href="route('temperatureRecords.create')">
                             <PlusIcon class="size-5 mr-1" />
                             <span class="pt-0.5">Nuevo Registro</span>
                         </PrimaryLink>
-                        <PrimaryLink class="py-2.5" v-else :href="route('temperatureRecords.create', { admission_id: form.admission_id })">
+                        <PrimaryLink class="py-2.5 whitespace-nowrap" v-else :href="route('temperatureRecords.create', { admission_id: form.admission_id })">
                             <PlusIcon class="size-5" />
                             <span class="pt-0.5">Nuevo Registro</span>
                         </PrimaryLink>

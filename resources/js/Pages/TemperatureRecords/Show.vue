@@ -336,15 +336,13 @@
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">
-                            <button type="button" @click="showEditAdmission = null"
-                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                            <SecondaryButton type="button" @click="showEditAdmission = null">
                                 Cancelar
-                            </button>
-                            <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition"
-                                :disabled="!formRecord.admission_id">
+                            </SecondaryButton>
+
+                            <PrimaryButton :is-loading="formRecord.processing" :disabled="!formRecord.admission_id">
                                 Aceptar
-                            </button>
+                            </PrimaryButton>
                         </div>
                     </form>
                 </div>
@@ -364,15 +362,13 @@
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">
-                            <button type="button" @click="showEditUser = null"
-                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                            <SecondaryButton type="button"@click="showEditUser = null">
                                 Cancelar
-                            </button>
-                            <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition"
-                                :disabled="!formRecord.nurse_id">
+                            </SecondaryButton>
+
+                            <PrimaryButton :is-loading="formRecord.processing" :disabled="!formRecord.nurse_id">
                                 Aceptar
-                            </button>
+                            </PrimaryButton>
                         </div>
                     </form>
                 </div>

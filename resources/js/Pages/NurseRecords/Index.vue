@@ -108,15 +108,14 @@
                     </AccessGate>
 
                     <AccessGate :permission="['nurseRecord.create']" class="w-full sm:w-1/2">
-                        <PrimaryLink v-if="!form.admission_id" :href="route('nurseRecords.create')">
+                        <PrimaryLink class="py-2.5" v-if="!form.admission_id" :href="route('nurseRecords.create')">
                             <PlusIcon class="size-5 mr-1" />
                             <span class="pt-0.5">Nuevo Registro</span>
                         </PrimaryLink>
-                        <Link v-else :href="route('nurseRecords.create', { admission_id: form.admission_id })"
-                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm w-full">
-                        <PlusIcon class="size-5" />
-                        <span class="pt-0.5">Nuevo Registro</span>
-                        </Link>
+                        <PrimaryLink class="py-2.5" v-else :href="route('nurseRecords.create', { admission_id: form.admission_id })">
+                            <PlusIcon class="size-5" />
+                            <span class="pt-0.5">Nuevo Registro</span>
+                        </PrimaryLink>
                     </AccessGate>
                 </div>
             </div>

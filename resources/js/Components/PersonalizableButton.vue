@@ -24,12 +24,17 @@ defineProps({
     color: {
         type: String,
         default: 'primary'
+    },
+    // Clases personalizadas
+    customClass: {
+        type: String,
+        default: '',
     }
 });
 </script>
 
 <template>
-        <button :type="type" :disabled="disabled || loading" :class="[
+    <button :type="type" :disabled="disabled || loading" :class="[
         // Clases base compartidas
         'inline-flex items-center justify-center transition-all duration-150 ease-in-out',
         'font-semibold text-xs uppercase tracking-widest',
@@ -41,12 +46,46 @@ defineProps({
             size === 'large' ? 'px-6 py-3 text-sm rounded-md' :
                 'px-4 py-2 text-xs rounded-md',
 
-        // Variantes
-        variant === 'solid' && `bg-${color}-500 text-white border border-transparent hover:bg-${color}-600 active:bg-${color}-700`,
-        variant === 'outline' && `bg-transparent text-${color}-500 border border-${color}-500 hover:bg-${color}-50 active:bg-${color}-100`,
-        variant === 'subtle' && `bg-${color}-50 text-${color}-700 border border-transparent hover:bg-${color}-100 active:bg-${color}-200`,
-        variant === 'text' && `bg-transparent text-${color}-500 border border-transparent hover:bg-${color}-50 active:bg-${color}-100`,
+        // Clases de variante y color
+        variant === 'solid' ? [
+            `bg-${color}-500`,
+            'text-white',
+            'border',
+            'border-transparent',
+            `hover:bg-${color}-600`,
+            `active:bg-${color}-700`,
+            `focus:ring-${color}-500`
+        ] : null,
+        variant === 'outline' ? [
+            'bg-transparent',
+            `text-${color}-500`,
+            'border',
+            `border-${color}-500`,
+            `hover:bg-${color}-50`,
+            `active:bg-${color}-100`,
+            `focus:ring-${color}-500`
+        ] : null,
+        variant === 'subtle' ? [
+            `bg-${color}-50`,
+            `text-${color}-700`,
+            'border',
+            'border-transparent',
+            `hover:bg-${color}-100`,
+            `active:bg-${color}-200`,
+            `focus:ring-${color}-500`
+        ] : null,
+        variant === 'text' ? [
+            'bg-transparent',
+            `text-${color}-500`,
+            'border',
+            'border-transparent',
+            `hover:bg-${color}-50`,
+            `active:bg-${color}-100`,
+            `focus:ring-${color}-500`
+        ] : null,
 
+        // Clases personalizadas
+        customClass,
         // Espacio para el icono de carga
         loading && 'relative'
     ]">

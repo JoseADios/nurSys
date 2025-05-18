@@ -109,7 +109,7 @@
                     <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-center sm:justify-end items-center">
                         <AccessGate :permission="['patient.delete']">
                             <button @click="toggleShowDeleted"
-                                class="flex items-center justify-center space-x-1 px-3 py-2.5 rounded-lg transition-colors text-sm whitespace-nowrap"
+                                class="flex items-center justify-center space-x-1 px-3 py-2 rounded-lg transition-colors text-sm whitespace-nowrap"
                                 :class="{
                                     'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
                                     'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
@@ -121,7 +121,7 @@
                         </AccessGate>
 
                         <AccessGate :permission="['patient.create']">
-                            <PrimaryLink class="py-3 whitespace-nowrap" :href="route('patients.create')">
+                            <PrimaryLink class="py-2.5 whitespace-nowrap" :href="route('patients.create')">
                                 <PlusIcon class="h-4 w-4 mr-1" />
                                 Nuevo paciente
                             </PrimaryLink>

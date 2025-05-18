@@ -181,11 +181,11 @@
                             </div>
                         </div>
                         <div class="flex flex-col lg:flex-row gap-2">
-                            <PersonalizableButton color="blue" @click="showAdmissions = true">
+                            <PersonalizableButton shade="600" color="blue" @click="showAdmissions = true">
                                 <HistoryIcon class="w-5 h-5 mr-2" />
                                 Historial de ingresos
                             </PersonalizableButton>
-                            <PersonalizableLink color="green" :href="route('admissions.show', inProcessAdmssion)">
+                            <PersonalizableLink color="green" shade="600" :href="route('admissions.show', inProcessAdmssion)">
                                 <EyeIcon class="w-5 h-5 mr-2" />
                                 Ir al ingreso
                             </PersonalizableLink>
@@ -205,7 +205,7 @@
                         </div>
                         <AccessGate :permission="['admission.create']" v-if="patient.active == 1">
                             <div class="flex flex-col lg:flex-row gap-2">
-                                <PersonalizableButton color="blue" @click="showAdmissions = true">
+                                <PersonalizableButton shade="600" color="blue" @click="showAdmissions = true">
                                     <HistoryIcon class="w-5 h-5 mr-2" />
                                     Historial de ingresos
                                 </PersonalizableButton>

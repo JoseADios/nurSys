@@ -45,11 +45,10 @@
                         </AccessGate>
 
                         <AccessGate :permission="['user.create']">
-                            <Link :href="route('users.create')"
-                                class="flex items-center text-sm bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-3 rounded-lg whitespace-nowrap">
-                            <PlusIcon class="h-4 w-4 mr-1" />
-                            Nuevo usuario
-                            </Link>
+                            <PrimaryLink class="py-2.5 whitespace-nowrap" :href="route('users.create')">
+                                <PlusIcon class="h-4 w-4 mr-1" />
+                                Nuevo usuario
+                            </PrimaryLink>
                         </AccessGate>
                     </div>
                 </div>
@@ -58,7 +57,7 @@
                 <button @click="showFilters = !showFilters"
                     class="md:hidden w-full flex items-center justify-center space-x-2 bg-gray-100 dark:bg-gray-700 p-2 rounded-lg mb-2">
                     <span class=" text-gray-700 dark:text-white">{{ showFilters ? 'Ocultar filtros' : 'Mostrar filtros'
-                        }}</span>
+                    }}</span>
                     <span v-if="showFilters">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5  text-gray-700 dark:text-white"
                             viewBox="0 0 20 20" fill="currentColor">
@@ -141,20 +140,20 @@
                                 <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap hidden sm:table-cell"
                                     @click="sort('id')">
                                     ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                        }}</span>
+                                    }}</span>
                                 </th>
                                 <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
                                     @click="sort('name')">
                                     Nombre <span v-if="form.sortField === 'name'">{{ form.sortDirection === 'asc' ? '↑'
                                         :
                                         '↓'
-                                        }}</span>
+                                    }}</span>
                                 </th>
                                 <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
                                     @click="sort('role')">
                                     Rol <span v-if="form.sortField === 'role'">{{ form.sortDirection === 'asc' ? '↑' :
                                         '↓'
-                                        }}</span>
+                                    }}</span>
                                 </th>
                                 <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
                                     @click="sort('specialty')">
@@ -168,14 +167,14 @@
                                     Posición <span v-if="form.sortField === 'position'">{{ form.sortDirection === 'asc'
                                         ?
                                         '↑' : '↓'
-                                        }}</span>
+                                    }}</span>
                                 </th>
                                 <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
                                     @click="sort('email')">
                                     Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑'
                                         :
                                         '↓'
-                                        }}</span>
+                                    }}</span>
                                 </th>
                                 <th scope="col" class="px-6 py-3 whitespace-nowrap">Acciones</th>
                             </tr>
@@ -216,12 +215,12 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex space-x-2 justify-center">
-                                        <Link class="text-blue-500 hover:text-blue-800"
+                                        <Link class="text-primary-500 hover:text-primary-800"
                                             :href="route('users.show', user.id)" as="button">
                                         Ver
                                         </Link>
                                         <AccessGate :permission="['user.update']">
-                                            <Link class="text-green-500 hover:text-green-800"
+                                            <Link class="text-blue-500 hover:text-blue-800"
                                                 :href="route('users.edit', user.id)">
                                             Editar
                                             </Link>
@@ -252,6 +251,7 @@ import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import SearchIcon from '@/Components/Icons/SearchIcon.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
 import Pagination from '@/Components/Pagination.vue';
+import PrimaryLink from '@/Components/PrimaryLink.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, router } from '@inertiajs/vue3';
@@ -273,7 +273,8 @@ export default {
         CircleXIcon,
         TextInput,
         SearchIcon,
-        DynamicAvatar
+        DynamicAvatar,
+        PrimaryLink
     },
     data() {
         return {

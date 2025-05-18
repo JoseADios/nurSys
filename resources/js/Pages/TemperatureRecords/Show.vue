@@ -161,7 +161,7 @@
 
                                 <div class="pt-8">
                                     <PersonalizableButton class="w-full" size="large" :loading="formDetail.processing"
-                                        color="green">
+                                        color="green" shade="600">
                                         Actualizar
                                     </PersonalizableButton>
                                 </div>
@@ -219,7 +219,7 @@
                             </div>
 
                             <div class="pt-4">
-                                <PersonalizableButton color="green" class="w-full"
+                                <PersonalizableButton color="green" shade="600" class="w-full"
                                     :loading="formEliminationsUpdate.processing" size="large">
                                     Actualizar
                                 </PersonalizableButton>

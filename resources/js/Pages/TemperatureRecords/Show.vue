@@ -362,7 +362,7 @@
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">
-                            <SecondaryButton type="button"@click="showEditUser = null">
+                            <SecondaryButton type="button" @click="showEditUser = null">
                                 Cancelar
                             </SecondaryButton>
 
@@ -518,19 +518,14 @@ export default {
             this.formDetail.post(route('temperatureDetails.store'),
                 {
                     onSuccess: () => {
-                        this.formDetail = {
-                            temperature_record_id: this.temperatureRecord.id,
-                            temperature: 37,
-                            evacuations: 1,
-                            urinations: 1,
-                        };
+                        this.formDetail.temperature_record_id = this.temperatureRecord.id;
+                        this.formDetail.temperature = 37;
                         this.chartKey++;
 
-                        // Update temperature form data using form.reset()
-                        this.formDetailUpdate.reset({
-                            temperature_record_id: this.temperatureRecord.id,
-                            temperature: this.lastTemperature.temperature,
-                        });
+                        // Update temperature form data
+                        this.formDetailUpdate.temperature_record_id = this.temperatureRecord.id;
+                        this.formDetailUpdate.temperature = this.lastTemperature.temperature;
+
                     },
                     preserveScroll: true,
                     xcroll: true,
@@ -540,17 +535,14 @@ export default {
             this.formEliminations.post(route('eliminationRecords.store'),
                 {
                     onSuccess: () => {
-                        this.formEliminations = {
-                            temperature_record_id: this.temperatureRecord.id,
-                            evacuations: 1,
-                            urinations: 1,
-                        };
+                        this.formEliminations.temperature_record_id = this.temperatureRecord.id;
+                        this.formEliminations.evacuations = 1;
+                        this.formEliminations.urinations = 1;
+
                         // actualizar formulario de update eliminations
-                        this.formEliminationsUpdate = {
-                            temperature_record_id: this.temperatureRecord.id,
-                            evacuations: this.lastEliminations.evacuations,
-                            urinations: this.lastEliminations.urinations,
-                        };
+                        this.formEliminationsUpdate.temperature_record_id = this.temperatureRecord.id;
+                        this.formEliminationsUpdate.evacuations = this.lastEliminations.evacuations;
+                        this.formEliminationsUpdate.urinations = this.lastEliminations.urinations;
                         this.chartKey++;
                     },
                     preserveScroll: true,

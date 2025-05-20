@@ -27,29 +27,6 @@
 
         </Link>
 
-        <div class="flex">
-            <div v-if="admission.discharged_date == null">
-                <button type="button" @click="discharge" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-3 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
-                    Dar de Alta
-                </button>
-            </div>
-            <div v-if="admission.discharged_date != null">
-                <button type="button" @click="charge" class="focus:outline-none text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-900">
-                    Poner en progreso
-                </button>
-            </div>
-            <button type="button" v-if="admission.active" @click="admissionBeingDeleted = true" class="inline-flex ml-2 items-center px-5 py-2.5 font-medium bg-gradient-to-r from-red-500 to-red-700 text-white text-sm rounded-lg hover:from-red-600 hover:to-red-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                    </path>
-                </svg>
-                Eliminar
-            </button>
-            <button v-if="!admission.active" @click="restoreAdmission" class="inline-flex items-center px-6 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                Restaurar
-            </button>
-
-        </div>
     </div>
 
     <!-- <div class="text-white">
@@ -99,13 +76,18 @@
                 <InputError :message="form.errors.comment" class="mt-2" />
             </AccessGate>
 
-            <div class="flex justify-end mt-6 mb-2">
+            <div class="flex justify-end mt-6 mb-2 gap-2">
 
-                <Link :href="route('admissions.show',admission.id)" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                <Link :href="route('admissions.show',admission.id)" >
+
+                 <SecondaryButton class="py-2.5 px-5 " >
                 Cancelar
+            </SecondaryButton>
                 </Link>
 
-                <button type="submit"  :class="{ 'opacity-25': form.processing }" :disabled="form.processing"  class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Guardar</button>
+                 <PrimaryButton type="submit"  :class="{ 'opacity-25': form.processing }" :disabled="form.processing" >
+                    Guardar
+                </PrimaryButton>
             </div>
         </form>
     </div>
@@ -149,6 +131,11 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import CheckCircleIcon from '@/Components/Icons/CheckCircleIcon.vue';
+import TrashIcon from '@/Components/Icons/TrashIcon.vue';
+
 export default {
     props: {
         admission: Object,
@@ -161,11 +148,15 @@ export default {
         AppLayout,
         Link,
         AccessGate,
+        PrimaryButton,
         InputError,
         BedSelector,
         ConfirmationModal,
         DangerButton,
+        CheckCircleIcon,
         SecondaryButton,
+        PersonalizableButton,
+        TrashIcon,
         BreadCrumb
     },
     data() {

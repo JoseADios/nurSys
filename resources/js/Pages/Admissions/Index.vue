@@ -57,16 +57,14 @@
 
                       <AccessGate :permission="['admission.create']">
 
-                        <Link v-if="!form.admission_id" :href="route('admissions.create')"
-                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
+                           <PrimaryLink v-if="!form.admission_id" :href="route('admissions.create')">
+                       <PlusIcon class="size-5" />
+                        <span class="">Nuevo Registro</span>
+                        </PrimaryLink>
+                        <PrimaryLink v-else :href="route('admissions.create', { admission_id: form.admission_id })">
                         <PlusIcon class="size-5" />
-                        <span class="">Nuevo Ingreso</span>
-                        </Link>
-                        <Link v-else :href="route('admissions.create', { admission_id: form.admission_id })"
-                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
-                        <PlusIcon class="size-5" />
-                        <span class="">Nuevo Ingreso</span>
-                        </Link>
+                        <span class="">Nuevo Registro</span>
+                        </PrimaryLink>
 
                     </AccessGate>
 
@@ -265,6 +263,7 @@ import 'moment/locale/es';
 import FilterIcon from '@/Components/Icons/FilterIcon.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
 import BedIcon from '@/Components/Icons/BedIcon.vue';
+import PrimaryLink from '@/Components/PrimaryLink.vue';
 export default {
     props: {
         admissions: Object,
@@ -274,6 +273,7 @@ export default {
     components: {
         AppLayout,
         Link,
+        PrimaryLink,
         Pagination,
         BedIcon,
         FormatId,

@@ -268,7 +268,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
 
         if ($medicationRecordDetails->isNotEmpty()) {
 
-              return back()->with('flash.toast', 'No se puede eliminar esta Orden Medica porque tiene registros de ficha de medicamento asociados.')->with('flash.toastStyle', 'danger');
+              return back()->with('flash.toast', 'No se puede eliminar esta Orden Medica porque tiene registros de Fichas de medicamento asociadas.')->with('flash.toastStyle', 'danger');
 
         }
 

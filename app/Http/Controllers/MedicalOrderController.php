@@ -267,7 +267,9 @@ class MedicalOrderController extends Controller implements HasMiddleware
         $medicationRecordDetails = MedicationRecordDetail::whereIn('medical_order_detail_id', $medicalOrderDetailIds)->get();
 
         if ($medicationRecordDetails->isNotEmpty()) {
-            return Redirect::back()->withErrors(['message' => 'No se puede eliminar esta Orden Medica porque tiene registros de ficha de medicamento asociados.']);
+
+              return back()->with('flash.toast', 'No se puede eliminar esta Orden Medica porque tiene registros de Fichas de medicamento asociadas.')->with('flash.toastStyle', 'danger');
+
         }
 
         $medicalOrder->update(['active' => 0]);

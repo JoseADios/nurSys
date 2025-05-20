@@ -22,7 +22,6 @@
 
         </template>
 
-        <!-- <div class="text-white">Datos {{ adm_id }}</div> -->
 
         <div class="container mx-auto px-4 py-8">
             <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
@@ -37,25 +36,23 @@
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <BackIcon class="size-5" />Volver
                     </Link>
-                    <div class="flex items-center">
-                        <button v-if="medicalOrder.active" @click="downloadRecordReport"
-                            class=" mr-4 inline-flex   px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
-                            <ReportIcon class="size-5 mr-1" /> Crear Reporte
-                        </button>
-                        <button v-if="medicalOrder.active" @click="recordBeingDeleted = true"
-                            class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                               <TrashIcon class="size-5" />
-                            <span class="font-medium">Eliminar</span>
-                        </button>
-                        <button v-else @click="restoreRecord"
-                            class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
-                                <RestoreIcon class="size-5" />
-                            <span class="font-medium">Restaurar</span>
-                        </button>
+                   <div class="flex items-center gap-2">
+                        <PersonalizableButton v-if="medicalOrder.active" @click="downloadRecordReport" color="emerald">
+                        <ReportIcon class="size-5 " />
+                        Crear Reporte
+                        </PersonalizableButton>
+                        <DangerButton v-if="medicalOrder.active" @click="recordBeingDeleted = true">
+
+                            <TrashIcon class="size-5" />
+                            <span class="font-medium ">Eliminar</span>
+
+                        </DangerButton>
+                            <PersonalizableButton v-else @click="restoreRecord" class="gap-2" color="green"
+                            :loading="recordActiveChanging">
+                            <RestoreIcon class="size-5" />
+                            <span class="hidden sm:inline-flex">Restaurar</span>
+                            </PersonalizableButton>
                     </div>
-
-
-
                 </div>
 
                 <!-- Patient and Record Information -->
@@ -191,10 +188,9 @@
                         </div>
 
                         <div class="pt-4">
-                            <button type="submit"
-                                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-300">
-                                Agregar Detalle
-                            </button>
+                             <PersonalizableButton   type="submit"  :class="{ 'opacity-25': formDetail.processing }" :disabled="formDetail.processing"  size="large" class="w-full">
+                            Agregar Detalle
+                        </PersonalizableButton>
                         </div>
                     </form>
                 </div>
@@ -253,12 +249,7 @@
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             <button @click="openEditModal(detail)"
                                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
-                                        clip-rule="evenodd" />
-                                </svg>
+                               <EditIcon class="size-5" />
                                 <span class="font-medium">Editar</span>
                             </button>
                         </div>
@@ -285,9 +276,8 @@
                             </div>
                         </div>
                     </div>
-                    <button @click="isVisibleEditSign = true"
-                        class="mt-4 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                        Editar</button>
+                    <PersonalizableButton @click="isVisibleEditSign = true">
+                        Editar</PersonalizableButton>
                 </div>
 
                 <!-- Campo de firma -->
@@ -306,7 +296,7 @@
                             <button type="button"
                                 class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                                 @click="isVisibleEditSign = false">Cancelar</button>
-                            <button
+                            <button  :class="{ 'opacity-25': formSignature.processing }" :disabled="formSignature.processing"
                                 class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
                                 type="submit">Guardar firma</button>
                         </div>
@@ -394,22 +384,20 @@
 
             <!-- Footer del modal -->
             <template #footer>
-                <button v-if="selectedDetail.active" type="button" @click="detailBeingDeleted = true"
-                    class="mr-6 focus:outline-none text-white bg-red-800 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                    Eliminar
-                </button>
-                <button v-if="!selectedDetail.active" type="button" @click="restoreDetail"
-                    class="mr-6 focus:outline-none text-white bg-green-800 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
-                    Restaurar
-                </button>
-                <button type="button" @click="isVisibleDetail = false"
-                    class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                <div class="flex items-center gap-2">
+                <DangerButton v-if="selectedDetail.active" type="button" @click="detailBeingDeleted = true">
+                     Eliminar
+                </DangerButton>
+                <PersonalizableButton v-if="!selectedDetail.active" type="button" @click="restoreDetail" color="green">
+                     Restaurar
+                </PersonalizableButton>
+                <SecondaryButton type="button" @click="isVisibleDetail = false">
                     Cerrar
-                </button>
-                <button type="submit" @click="submitUpdateDetail"
-                    class="ml-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                </SecondaryButton>
+                <PrimaryButton type="submit" @click="submitUpdateDetail">
                     Actualizar
-                </button>
+                </PrimaryButton>
+                </div>
             </template>
         </DialogModal>
 
@@ -451,9 +439,9 @@
                             class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
                             Cancelar
                         </button>
-                        <button type="submit"
+                        <button type="submit" :class="{ 'opacity-25': formRecord.processing }" :disabled="formRecord.processing"
                             class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
-                            :disabled="!formRecord.doctor_id">
+                            >
                             Aceptar
                         </button>
                     </div>
@@ -469,7 +457,7 @@
 import DialogModal from '@/Components/DialogModal.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {
-    Link
+    Link, useForm
 } from '@inertiajs/vue3';
 import {
     ref
@@ -491,13 +479,17 @@ import UserSelector from '@/Components/UserSelector.vue';
 import TrashIcon from '@/Components/Icons/TrashIcon.vue';
 import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
 import 'moment/locale/es';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 export default {
     components: {
         AppLayout,
         Link,
+        PersonalizableButton,
         DialogModal,
         SignaturePad,
         ConfirmationModal,
+        PrimaryButton,
         DangerButton,
         SecondaryButton,
         FormatId,
@@ -539,22 +531,22 @@ export default {
                 admission_id: this.medicalOrder.admission_id,
                 active: this.medicalOrder.active
             },
-            formRecord: {
+            formRecord: useForm({
                 admission_id: this.medicalOrder.admission_id,
                 doctor_id: this.medicalOrder.doctor_id,
                 impression_diagnosis: this.medicalOrder.impression_diagnosis,
                 active: this.medicalOrder.active
-            },
-            formDetail: {
+            }),
+            formDetail: useForm ({
                 medical_order_id: this.medicalOrder.id,
                 order: null,
                 regime: null,
                 active: null,
-            },
-            formSignature: {
+            }),
+            formSignature: useForm({
                 doctor_sign: this.medicalOrder.doctor_sign,
                 signature: true,
-            },
+            }),
             showDeleted: this.filters.show_deleted,
         }
     },
@@ -576,7 +568,7 @@ export default {
         submitUpdateRecord() {
             this.showEditAdmission = null;
             this.showEditDoctor = null
-            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formRecord)
+            this.formRecord.put(route('medicalOrders.update', this.medicalOrder.id))
             this.isVisibleEditDiagnosis = false
         },
         toggleEditAdmission() {
@@ -584,7 +576,7 @@ export default {
         },
         submitAdmission() {
             this.showEditDoctor = null;
-            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formRecord, {
+            this.formRecord.put(route('medicalOrders.update', this.medicalOrder.id), {
                 preserveScroll: true
             })
             this.isVisibleAdm = false;
@@ -596,15 +588,12 @@ export default {
             }), '_blank');
         },
         submit() {
-            this.$inertia.post(route('medicalOrderDetails.store'),
-                this.formDetail, {
+            this.formDetail.post(route('medicalOrderDetails.store'),
+                 {
                 onSuccess: () => {
-                    this.formDetail = {
-                        medical_order_id: this.medicalOrder.id,
-                        medication: '',
-                        comment: '',
-                    };
+                  this.formDetail.reset('medication', 'comment');
                 }
+
             });
         },
         submitCreateRecord() {
@@ -637,7 +626,7 @@ export default {
                 return;
             }
             this.signatureError = false;
-            this.$inertia.put(route('medicalOrders.update', this.medicalOrder.id), this.formSignature, {
+            this.formSignature.put(route('medicalOrders.update', this.medicalOrder.id), {
                 preserveScroll: true,
                 preserveState: true
             });

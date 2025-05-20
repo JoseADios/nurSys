@@ -32,23 +32,22 @@
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <BackIcon class="size-5" />Volver
                     </Link>
-                    <div class="flex items-center">
-                        <button v-if="medicationRecord.active" @click="downloadRecordReport"
-                            class=" mr-4 inline-flex   px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
-                            <ReportIcon class="size-5 mr-1" /> Crear Reporte
-                        </button>
-                        <button v-if="medicationRecord.active" @click="recordBeingDeleted = true"
-                            class="mr-4 flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                    <div class="flex items-center gap-2">
+                        <PersonalizableButton v-if="medicationRecord.active" @click="downloadRecordReport" color="emerald">
+                        <ReportIcon class="size-5 " />
+                        Crear Reporte
+                        </PersonalizableButton>
+                        <DangerButton v-if="medicationRecord.active" @click="recordBeingDeleted = true">
 
                             <TrashIcon class="size-5" />
                             <span class="font-medium ">Eliminar</span>
-                        </button>
-                        <button v-else @click="restoreRecord(medicationRecord)"
-                            class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
 
+                        </DangerButton>
+                            <PersonalizableButton v-else @click="restoreRecord(medicationRecord)" class="gap-2" color="green"
+                            :loading="recordActiveChanging">
                             <RestoreIcon class="size-5" />
-                             <span class="font-medium">Restaurar</span>
-                        </button>
+                            <span class="hidden sm:inline-flex">Restaurar</span>
+                            </PersonalizableButton>
                     </div>
 
                 </div>
@@ -140,18 +139,14 @@
                 <div class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
                     <div v-if="showCreateDetailForm == false">
-                        <button @click="OpenFormCreateRecord" id="add_detail" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
-                                hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                                transition-colors duration-300">
+                        <PersonalizableButton  @click="OpenFormCreateRecord" id="add_detail"  size="large" class="w-full">
                             Agregar Detalle
-                        </button>
+                        </PersonalizableButton>
                     </div>
                     <div v-else>
-                        <button @click="closeform" id="add_detail" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
-                                hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                                transition-colors duration-300">
+                        <PersonalizableButton @click="closeform" id="add_detail"  size="large" class="w-full">
                             Agregar Detalle
-                        </button>
+                        </PersonalizableButton>
                     </div>
 
                     <div v-if="showCreateDetailForm"
@@ -325,15 +320,16 @@
 
                                 <!-- Botones -->
                                 <div class="flex justify-end mt-6 mb-2">
-                                    <button @click="closeform"
+                                    <SecondaryButton @click="closeform"
                                         class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                                         Cerrar
-                                    </button>
+                                    </SecondaryButton>
 
-                                    <button type="submit"
+                                    <PrimaryButton type="submit" :class="{ 'opacity-25': form.processing }"
+                                        :disabled="form.processing"
                                         class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
                                         Guardar
-                                    </button>
+                                    </PrimaryButton>
                                 </div>
                             </form>
                         </div>
@@ -409,48 +405,50 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1 ">
                             <div v-if="detail.active && detail.suspended_at == null">
-                                <!-- Editar -->
-                                <Link v-if="!hasApplied(detail)"
-                                    :href="route('medicationRecordDetails.edit', detail.id)"
-                                    class="flex items-center space-x-2 text-yellow-600 hover:text-yellow-800 transition-colors">
-                                <EditIcon class="size-5" />
-                                <span class="font-medium">Editar</span>
-                                </Link>
                                 <AccessGate :permission="['medicationRecordDetail.view']">
                                     <!-- NOTIF -->
                                     <Link :href="route('medicationNotification.show', detail.id)"
-                                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                                        class="flex items-center space-x-2 space-y-2 text-blue-600 hover:text-blue-800 transition-colors">
                                     <NotificationIcon class="size-5 " />
                                     <span class="font-medium">Notificaciones</span>
                                     </Link>
                                 </AccessGate>
-                            </div>
-                            <button @click="ToggleActivate(detail)"
-                                :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
-                                class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
-                                <div v-if="detail.active">
-                                    <TrashIcon class="size-5" />
-                                </div>
-                                <div v-else>
-                                    <RestoreIcon class="size-5" />
-                                </div>
-                                <span>{{ detail.active ? 'Eliminar' : 'Restaurar' }}</span>
-                            </button>
+                                <!-- Editar -->
+                                <Link v-if="!hasApplied(detail)"
+                                    :href="route('medicationRecordDetails.edit', detail.id)"
+                                    class="flex items-center space-x-2 space-y-2 text-yellow-600 hover:text-yellow-800 transition-colors">
+                                <EditIcon class="size-5" />
+                                <span class="font-medium">Editar</span>
+                                </Link>
 
+                            </div>
+                            <form>
+                                <button @click="ToggleActivate(detail)"
+                                    :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700'],{ 'opacity-25': recordDetailActiveChange }"
+                                    class="flex items-center space-x-2 space-y-2  transition-colors" :disabled="recordDetailActiveChange" :loading="recordActiveChanging" >
+                                    <div v-if="detail.active">
+                                        <TrashIcon class="size-5" />
+                                    </div>
+                                    <div v-else>
+                                        <RestoreIcon class="size-5" />
+                                    </div>
+                                    <span>{{ detail.active ? 'Eliminar' : 'Restaurar' }}</span>
+                                </button>
+                            </form>
                             <div v-if="medicationRecord.active">
                                 <!-- Disable -->
                                 <button @click="ToggleSuspend(detail)"
-                                    :class="[!detail.suspended_at ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700']"
-                                    class="flex items-center space-x-2 text-white-600 hover:text-white-800 transition-colors">
+                                    :class="[!detail.suspended_at ? 'text-indigo-500 ' : 'text-green-500 hover:text-green-700'],{ 'opacity-25': recordDetailSupendChange }"
+                                    class="flex items-center space-x-2 space-y-2  transition-colors" :disabled="recordDetailSupendChange">
 
-                                     <div v-if="detail.suspended_at">
-                                     <RestoreIcon class="size-5" />
-                                </div>
-                                <div v-else>
-                                  <SuspendIcon class="size-5" />
-                                </div>
+                                    <div v-if="detail.suspended_at">
+                                        <RestoreIcon class="size-5" />
+                                    </div>
+                                    <div v-else>
+                                        <SuspendIcon class="size-5" />
+                                    </div>
                                     <span>{{ !detail.suspended_at ? 'Suspender' : 'Habilitar' }}</span>
                                 </button>
                             </div>
@@ -469,16 +467,17 @@
 
         <ConfirmationModal :show="recordBeingDeleted != null" @close="recordBeingDeleted = null">
             <template #title>
-                Eliminar Ingreso
+                Eliminar Ficha de Medicamentos
             </template>
             <template #content>
-                ¿Estás seguro de que deseas eliminar este ingreso?
+                ¿Estás seguro de que deseas eliminar esta Ficha de Medicamentos?
             </template>
             <template #footer>
                 <SecondaryButton @click="recordBeingDeleted = null">
                     Cancelar
                 </SecondaryButton>
-                <DangerButton class="ms-3" @click="deleteRecord">
+                <DangerButton class="ms-3" @click="deleteRecord" :class="{ 'opacity-25': recordActiveChanging }"
+                    :disabled="recordActiveChanging">
                     Eliminar
                 </DangerButton>
             </template>
@@ -516,14 +515,15 @@
             </template>
             <!-- Footer del modal -->
             <template #footer>
-                <button @click="submitModal"
-                    class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                <PrimaryButton @click="submitModal" :class="{ 'opacity-25': modalform.processing }"
+                    :disabled="modalform.processing"
+                    >
                     Guardar
-                </button>
-                <button @click="isVisible = false"
-                    class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                </PrimaryButton>
+                <SecondaryButton @click="isVisible = false"
+                   >
                     Cerrar
-                </button>
+                </SecondaryButton>
             </template>
         </DialogModal>
 
@@ -562,6 +562,8 @@ import TrashIcon from '@/Components/Icons/TrashIcon.vue';
 import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
 import NotificationIcon from '@/Components/Icons/NotificationIcon.vue';
 import SuspendIcon from '@/Components/Icons/SuspendIcon.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 export default {
 
     props: {
@@ -583,6 +585,8 @@ export default {
     components: {
         AppLayout,
         Link,
+        PrimaryButton,
+        PersonalizableButton,
         UserSelector,
         TrashIcon,
         RestoreIcon,
@@ -618,24 +622,23 @@ export default {
                 selectedOrderId: null,
                 showDeleted: this.filters.show_deleted,
             }),
-            formRecord: {
-                admission_id: this.medicationRecord.admission_id,
-                nurse_id: this.medicationRecord.nurse_id,
-                active: this.medicationRecord.active,
-            },
             showCreateDetailForm: ref(false),
             recordBeingDeleted: ref(null),
             selectedOrderId: null,
-
+            recordActiveChanging: ref(false),
+            recordDetailActiveChange: ref(false),
+            recordDetailSupendChange: ref(false),
             errorMessage: "",
 
             isVisible: false,
             isVisibleEditSign: ref(null),
             openAccordion: ref(null),
-            modalform: {
+            modalform: useForm({
                 diet: this.medicationRecord.diet,
+            }),
 
-            },
+
+
 
         }
     },
@@ -670,7 +673,7 @@ export default {
             this.isVisible = true;
         },
         submitModal() {
-            this.$inertia.put(route('medicationRecords.update', this.medicationRecord), this.modalform, {
+            this.modalform.put(route('medicationRecords.update', this.medicationRecord), {
                 preserveScroll: true
             });
             this.isVisible = false;
@@ -678,6 +681,7 @@ export default {
 
         },
         restoreRecord(record) {
+            this.recordActiveChanging = true;
             this.$inertia.put(
                 route('medicationRecords.update', record.id), {
                 active: true,
@@ -692,6 +696,10 @@ export default {
                     console.error('Errores:', errors);
                     alert('Error al intentar habilitar el registro.');
                 },
+                onFinish: () => {
+
+                    this.recordActiveChanging = false
+                }
             }
             );
         },
@@ -725,9 +733,7 @@ export default {
 
             this.errorMessage = "";
 
-            this.$inertia.post(route('medicationRecordDetails.store'), this.form, {
-                preserveScroll: true,
-
+            this.form.post(route('medicationRecordDetails.store'), {
                 onSuccess: () => {
                     this.form = {
                         medication_record_id: this.medicationRecord.id,
@@ -741,9 +747,9 @@ export default {
                     };
                     this.selectedOrderId = null;
                     this.showCreateDetailForm = false;
-                },
-                preserveScroll: true,
+                }
             });
+
         },
         toggleAccordion(index) {
             if (this.openAccordion === index) {
@@ -790,27 +796,41 @@ export default {
 
         deleteRecord() {
             this.recordBeingDeleted = null;
+            this.recordActiveChanging = true;
             this.$inertia.delete(route('medicationRecords.destroy', this.medicationRecord.id), {
-                onSuccess: (response) => {
-                    console.log('eliminado correctamente', response);
-                    this.recordBeingDeleted = null;
-                },
-                preserveScroll: true
+                preserveScroll: true,
+                onFinish: () => {
+
+                    this.recordActiveChanging = false
+                }
+
             });
+
         },
         ToggleActivate(detail) {
-            if (detail.active) {
+             this.recordDetailActiveChange = true;
+
+            if (detail.active == 1) {
+
                 this.$inertia.delete(route('medicationRecordDetails.destroy', detail.id), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (response) => {
+                        this.recordDetailActiveChange = false;
                         console.log('eliminado correctamente', response);
+
                     },
                     onError: (errors) => {
                         console.error('Error al habilitar:', errors);
                     },
+                    onFinish: () => {
+
+                    this.recordDetailActiveChange = false;
+                }
                 });
             } else {
+
+
                 this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
                     active: true,
                     preserveState: true,
@@ -821,8 +841,14 @@ export default {
                     onError: (errors) => {
                         console.error('Error al habilitar:', errors);
                     },
+                      onFinish: () => {
+
+                    this.recordDetailActiveChange = false;
+                }
                 });
+                   this.recordDetailActiveChange = false;
             }
+
         },
         async downloadRecordReport() {
             window.open(route('reports.medicationRecord', {
@@ -831,6 +857,7 @@ export default {
         },
 
         ToggleSuspend(detail) {
+             this.recordDetailSupendChange = true;
             if (detail.suspended_at) {
 
                 this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
@@ -843,6 +870,10 @@ export default {
                     onError: (errors) => {
                         console.error('Error al habilitar:', errors);
                     },
+                          onFinish: () => {
+
+                    this.recordDetailSupendChange = false;
+                }
                 });
             } else {
 
@@ -856,8 +887,13 @@ export default {
                     onError: (errors) => {
                         console.error('Error al habilitar:', errors);
                     },
+                           onFinish: () => {
+
+                    this.recordDetailSupendChange = false;
+                }
                 });
             }
+             this.recordDetailSupendChange = false;
         },
 
     }

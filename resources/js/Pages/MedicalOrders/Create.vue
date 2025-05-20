@@ -23,15 +23,13 @@
 
                 <!-- Botones -->
                 <div class="flex justify-end mt-4 space-x-3">
-                    <Link :href="route('medicalOrders.index')"
-                        class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
-                    Cancelar
+                    <Link :href="route('medicalOrders.index')">
+                          <SecondaryButton         class="focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 ">
+                                       Cancelar</SecondaryButton>
                     </Link>
-                    <button type="submit"
-                        class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
-                        >
-                        Aceptar
-                    </button>
+                    <PrimaryButton type="submit"  :class="{ 'opacity-25': form.processing }" :disabled="form.processing" >
+                    Guardar
+                </PrimaryButton>
                 </div>
             </form>
         </div>
@@ -40,9 +38,11 @@
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 export default {
     props: {
         admissions: Array,
@@ -56,13 +56,15 @@ export default {
         AppLayout,
         Link,
         AdmissionSelector,
-        BreadCrumb
+        BreadCrumb,
+        SecondaryButton,
+        PrimaryButton
     },
     data() {
         return {
-            form: {
+            form: useForm({
                 admission_id: this.admission_id
-            },
+            }),
             errorMessage: this.error || null,
         }
     },
@@ -73,7 +75,7 @@ export default {
                 return;
             }
             this.errorMessage = null;
-            this.$inertia.post(route('medicalOrders.store'), this.form);
+            this.form.post(route('medicalOrders.store'));
         }
     }
 }

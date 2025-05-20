@@ -140,9 +140,9 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
         if ($existingRecord) {
 
-            return redirect()->back()->withErrors([
-                'admission_id' => 'Ya Existe una ficha de Medicamentos con ese numero de Admision.',
-            ])->withInput();
+
+         return back()->with('flash.toast', 'Ya Existe una ficha de Medicamentos con ese numero de Admision.')->with('flash.toastStyle', 'danger');
+
         }
 
         // Crear el MedicationRecord usando los datos validados

@@ -123,7 +123,7 @@ const paginationLinks = computed(() => {
             <template v-for="(link, index) in paginationLinks" :key="index">
                 <template v-if="link.url">
                     <Link :href="link.url" preserve-scroll :class="{
-                        'bg-blue-500 dark:bg-blue-600 text-white': link.active,
+                        'bg-primary-500 dark:bg-primary-600 text-white': link.active,
                         'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600': !link.active
                     }" class="px-3 py-1 rounded-md text-sm font-medium" v-html="link.label" />
                 </template>

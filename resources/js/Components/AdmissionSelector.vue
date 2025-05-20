@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden">
+        class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
         <!-- Encabezado más compacto -->
         <div class="px-4 py-3 bg-indigo-50 dark:bg-indigo-900/20 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-base font-medium text-gray-900 dark:text-white flex items-center">
@@ -63,7 +63,7 @@
                     </h3>
                 </div>
                 <div
-                    class="max-h-[200px] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+                    class="max-h-[200px] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                     <div v-for="admission in admissions.data" :key="admission.id" @click="selectAdmission(admission)"
                         :class="['py-2 px-3 cursor-pointer border-b last:border-b-0 border-gray-100 dark:border-gray-700 transition-colors duration-150 hover:bg-indigo-50 dark:hover:bg-indigo-900/20', selectedAdmission === admission.id ? 'bg-indigo-100 dark:bg-indigo-900/30' : '']">
                         <div class="flex justify-between items-center">

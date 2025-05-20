@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden">
+        class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
         <!-- Encabezado con estilo moderno -->
         <div class="px-4 py-3 bg-indigo-50 dark:bg-indigo-900/20 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-base font-medium text-gray-900 dark:text-white flex items-center">
@@ -20,7 +20,7 @@
             <div class="flex flex-col md:flex-row md:space-x-3 space-y-3 md:space-y-0">
                 <!-- Selector de piso -->
                 <div class="flex-1 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 transition-all duration-300"
-                    :class="{ 'ring-2 ring-indigo-500/70 shadow-md': filtersForm.bed_floor }">
+                    :class="{ 'ring-2 ring-indigo-500/70': filtersForm.bed_floor }">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center">
                             <div
@@ -53,21 +53,13 @@
                                     Piso {{ floor }}
                                 </option>
                             </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20"
-                                    fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Selector de sala -->
                 <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 transition-all duration-300" :class="{
-                    'ring-2 ring-indigo-500/70 shadow-md': filtersForm.bed_room,
+                    'ring-2 ring-indigo-500/70': filtersForm.bed_room,
                     'opacity-50': !filtersForm.bed_floor
                 }">
                     <div class="flex items-center justify-between mb-2">
@@ -102,14 +94,6 @@
                                     Sala {{ room }}
                                 </option>
                             </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20"
-                                    fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
                         </div>
                         <p v-if="filtersForm.bed_floor && !filtersForm.bed_room && filteredRooms.length === 0"
                             class="mt-2 text-sm text-amber-600 dark:text-amber-400">
@@ -120,7 +104,7 @@
 
                 <!-- Selector de cama -->
                 <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 transition-all duration-300" :class="{
-                    'ring-2 ring-indigo-500/70 shadow-md': selectedBedId,
+                    'ring-2 ring-indigo-500/70': selectedBedId,
                     'opacity-50': !filtersForm.bed_room
                 }">
                     <div class="flex items-center justify-between mb-2">
@@ -155,14 +139,6 @@
                                     Cama {{ bed.number }}
                                 </option>
                             </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" viewBox="0 0 20 20"
-                                    fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
                         </div>
                         <InputError :message="errors.bed_id" class="mt-2" />
                         <p v-if="filtersForm.bed_room && !selectedBedId && filteredBeds.length === 0 && !errors.bed_id"
@@ -201,7 +177,7 @@
             <div class="mt-4">
                 <button v-if="filtersForm.bed_floor || filtersForm.bed_room || selectedBedId"
                     @click="clearAllSelections" type="button"
-                    class="w-full inline-flex justify-center items-center px-3 py-2 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-lg shadow-sm transition-colors duration-200">
+                    class="w-full inline-flex justify-center items-center px-3 py-2 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-lg transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20"
                         fill="currentColor">
                         <path fill-rule="evenodd"

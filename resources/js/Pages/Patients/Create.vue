@@ -157,15 +157,12 @@
 
                 <!-- Form Actions -->
                 <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
-                    <Link :href="route('patients.index')" as="button"
-                        :class="{ 'pointer-events-none': form.processing }"
-                        class="px-4 py-2 text-sm font-medium text-gray-100 bg-slate-600 dark:text-white border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-500 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                    Cancelar
-                    </Link>
-                    <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
-                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 ease-in-out">
-                        Guardar
-                    </button>
+                    <SecondaryLink :href="route('patients.index')" as="a"
+                        :class="{ 'pointer-events-none': form.processing }">
+                        Cancelar
+                    </SecondaryLink>
+                    <PrimaryButton :is-loading="form.processing"> Guardar
+                    </PrimaryButton>
                 </div>
             </form>
         </div>
@@ -191,6 +188,8 @@ import FileTexIcon from '@/Components/Icons/FileTexIcon.vue';
 import moment from 'moment/moment';
 import 'moment/locale/es';
 import { ref } from 'vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryLink from '@/Components/SecondaryLink.vue';
 
 export default {
     props: {
@@ -214,6 +213,8 @@ export default {
         MailIcon,
         UserIcon,
         FileTexIcon,
+        PrimaryButton,
+        SecondaryLink
     },
     data() {
         return {

@@ -20,7 +20,7 @@
                                 </button>
                             </div>
                             <button @click="toggleAdditionalFilters"
-                                class="text-blue-500 hover:text-blue-600 flex items-center justify-center transition-colors">
+                                class="text-primary-500 hover:text-primary-600 flex items-center justify-center transition-colors">
                                 <PlusIcon v-if="!showAdditionalFilters" class="size-5 mr-2" />
                                 <XIcon v-else class="size-5 mr-2" />
                                 {{ showAdditionalFilters ? 'Ocultar filtros' : 'Mostrar filtros' }}
@@ -106,10 +106,10 @@
                         </select>
                     </div>
 
-                    <div class="flex flex-row gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-center sm:justify-end">
+                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-center sm:justify-end items-center">
                         <AccessGate :permission="['patient.delete']">
                             <button @click="toggleShowDeleted"
-                                class="flex items-center justify-center space-x-1 px-3 py-3 rounded-lg transition-colors text-sm whitespace-nowrap"
+                                class="flex items-center justify-center space-x-1 px-3 py-2 rounded-lg transition-colors text-sm whitespace-nowrap"
                                 :class="{
                                     'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
                                     'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
@@ -121,11 +121,10 @@
                         </AccessGate>
 
                         <AccessGate :permission="['patient.create']">
-                            <Link :href="route('patients.create')"
-                                class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm">
-                            <PlusIcon class="h-4 w-4 mr-1" />
-                            Nuevo paciente
-                            </Link>
+                            <PrimaryLink class="py-2.5 whitespace-nowrap" :href="route('patients.create')">
+                                <PlusIcon class="h-4 w-4 mr-1" />
+                                Nuevo paciente
+                            </PrimaryLink>
                         </AccessGate>
                     </div>
                 </div>
@@ -142,7 +141,7 @@
                                 <th scope="col" class="px-4 py-3 cursor-pointer hidden sm:table-cell"
                                     @click="sort('id')">
                                     ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                    }}</span>
+                                        }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3 cursor-pointer" @click="sort('is_hospitalized')">
                                     <span class="hidden md:inline">Ingresado</span>
@@ -160,7 +159,7 @@
                                     @click="sort('phone')">
                                     Teléfono <span v-if="form.sortField === 'phone'">{{ form.sortDirection === 'asc' ?
                                         '↑' : '↓'
-                                    }}</span>
+                                        }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3 cursor-pointer hidden md:table-cell"
                                     @click="sort('identification_card')">
@@ -178,7 +177,7 @@
                                     @click="sort('email')">
                                     Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑'
                                         : '↓'
-                                    }}</span>
+                                        }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3"> Acciones </th>
                             </tr>
@@ -196,8 +195,9 @@
                                 </td>
                                 <th scope="row"
                                     class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                    <Link as="button" :href="route('patients.show', patient.id)" class="hover:text-blue-600">
-                                        {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
+                                    <Link as="button" :href="route('patients.show', patient.id)"
+                                        class="hover:text-blue-600">
+                                    {{ patient.first_name }} {{ patient.first_surname }} {{ patient.second_surname }}
                                     </Link>
                                 </th>
                                 <td class="px-4 py-3 whitespace-nowrap hidden sm:table-cell">
@@ -214,12 +214,12 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex space-x-2 justify-center">
-                                        <Link class="text-blue-500 hover:text-blue-800"
+                                        <Link class="text-primary-500 hover:text-primary-800"
                                             :href="route('patients.show', patient.id)">
                                         Ver
                                         </Link>
                                         <AccessGate :permission="['patient.update']">
-                                            <Link class="text-green-500 hover:text-green-800"
+                                            <Link class="text-blue-500 hover:text-blue-800"
                                                 :href="route('patients.edit', patient.id)">
                                             Editar
                                             </Link>
@@ -233,7 +233,7 @@
                         No hay registros disponibles.
                     </div>
                 </div>
-                <Pagination :pagination="patients" :filters="form"/>
+                <Pagination :pagination="patients" :filters="form" />
             </div>
         </div>
 
@@ -249,6 +249,7 @@ import SearchIcon from '@/Components/Icons/SearchIcon.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Pagination from '@/Components/Pagination.vue';
+import PrimaryLink from '@/Components/PrimaryLink.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
@@ -270,7 +271,8 @@ export default {
         SearchIcon,
         XIcon,
         TextInput,
-        InputLabel
+        InputLabel,
+        PrimaryLink
     },
     data() {
         return {

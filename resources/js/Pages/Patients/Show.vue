@@ -39,7 +39,8 @@
                                         Inactivo
                                     </span>
                                 </div>
-                                <p class="text-gray-500 dark:text-gray-400 mt-1 flex items-center justify-center sm:justify-start">
+                                <p
+                                    class="text-gray-500 dark:text-gray-400 mt-1 flex items-center justify-center sm:justify-start">
                                     <Id2Icon class="w-4 h-4 mr-1 text-gray-400 dark:text-gray-500" />
                                     Cédula: {{ patient.identification_card }}
                                 </p>
@@ -47,31 +48,27 @@
                         </div>
                         <div class="flex flex-wrap gap-3 justify-center w-full md:w-auto">
 
-                            <Link :href="route('patients.index')"
-                                class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 border border-gray-200 dark:border-gray-700">
-                            <BackIcon class="w-4 h-4 mr-2" />
-                            Volver
-                            </Link>
+                            <PersonalizableLink color="gray" :href="route('patients.index')">
+                                <BackIcon class="w-4 h-4 mr-2" />
+                                Volver
+                            </PersonalizableLink>
 
                             <AccessGate :permission="['patient.update']">
-                                <Link :href="route('patients.edit', patient.id)"
-                                    class="inline-flex items-center px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-all duration-200 border border-gray-200 dark:border-gray-700">
-                                <EditIcon class="w-4 h-4 mr-2" />
-                                Editar
-                                </Link>
+                                <PersonalizableLink class="h-full" :href="route('patients.edit', patient.id)">
+                                    <EditIcon class="w-4 h-4 mr-2" />
+                                    Editar
+                                </PersonalizableLink>
                             </AccessGate>
 
                             <AccessGate :permission="['patient.delete']">
-                                <button v-if="patient.active == 1" @click="patientBeingDeleted = true"
-                                    class="inline-flex items-center px-4 py-2 bg-red-500 dark:bg-red-600 text-white rounded-lg hover:bg-red-600 dark:hover:bg-red-700 transition-all duration-200 border border-gray-200 dark:border-gray-700">
+                                <DangerButton v-if="patient.active == 1" @click="patientBeingDeleted = true">
                                     <TrashIcon class="w-4 h-4 mr-2" />
                                     Deshabilitar
-                                </button>
-                                <button v-else @click="restorePatient"
-                                    class="inline-flex items-center px-4 py-2 bg-emerald-500 dark:bg-emerald-600 text-white rounded-lg hover:bg-emerald-600 dark:hover:bg-emerald-700 transition-all duration-200 border border-gray-200 dark:border-gray-700">
+                                </DangerButton>
+                                <PersonalizableButton color="green" v-else @click="restorePatient">
                                     <RestoreIcon class="w-4 h-4 mr-2" />
                                     Habilitar
-                                </button>
+                                </PersonalizableButton>
                             </AccessGate>
 
 
@@ -184,18 +181,14 @@
                             </div>
                         </div>
                         <div class="flex flex-col lg:flex-row gap-2">
-                            <button
-                                class="inline-flex justify-center items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200"
-                                @click="showAdmissions = true">
+                            <PersonalizableButton shade="600" color="blue" @click="showAdmissions = true">
                                 <HistoryIcon class="w-5 h-5 mr-2" />
                                 Historial de ingresos
-                            </button>
-                            <Link
-                                class="inline-flex justify-center items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:from-green-600 hover:to-green-700 transition-all duration-200"
-                                :href="route('admissions.show', inProcessAdmssion)">
-                            <EyeIcon class="w-5 h-5 mr-2" />
-                            Ir al ingreso
-                            </Link>
+                            </PersonalizableButton>
+                            <PersonalizableLink color="green" shade="600" :href="route('admissions.show', inProcessAdmssion)">
+                                <EyeIcon class="w-5 h-5 mr-2" />
+                                Ir al ingreso
+                            </PersonalizableLink>
                         </div>
                     </div>
                     <div v-else class="flex flex-col sm:flex-row items-center justify-between">
@@ -212,18 +205,14 @@
                         </div>
                         <AccessGate :permission="['admission.create']" v-if="patient.active == 1">
                             <div class="flex flex-col lg:flex-row gap-2">
-                                <button
-                                    class="inline-flex justify-center items-center px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200"
-                                    @click="showAdmissions = true">
-                                    <EyeIcon class="w-5 h-5 mr-2" />
+                                <PersonalizableButton shade="600" color="blue" @click="showAdmissions = true">
+                                    <HistoryIcon class="w-5 h-5 mr-2" />
                                     Historial de ingresos
-                                </button>
-                                <Link
-                                    class="inline-flex justify-center items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
-                                    :href="route('admissions.create', { patient_id: patient.id })">
-                                <PlusIcon class="w-5 h-5 mr-2" />
-                                Crear ingreso
-                                </Link>
+                                </PersonalizableButton>
+                                <PersonalizableLink :href="route('admissions.create', { patient_id: patient.id })">
+                                    <PlusIcon class="w-5 h-5 mr-2" />
+                                    Crear ingreso
+                                </PersonalizableLink>
                             </div>
                         </AccessGate>
                     </div>
@@ -307,6 +296,9 @@ import Modal from '@/Components/Modal.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
 import HistoryIcon from '@/Components/Icons/HistoryIcon.vue';
+import PersonalizableLink from '@/Components/PersonalizableLink.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 
 
 export default {
@@ -343,7 +335,10 @@ export default {
         DialogModal,
         XIcon,
         Modal,
-        HistoryIcon
+        HistoryIcon,
+        PersonalizableLink,
+        PrimaryButton,
+        PersonalizableButton
     },
     data() {
         return {

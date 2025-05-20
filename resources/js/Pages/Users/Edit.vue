@@ -162,30 +162,23 @@
                 <!-- Form Actions -->
                 <div
                     class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex flex-col sm:flex-row gap-2 justify-between items-center rounded-b-lg">
-                    <div class="space-y-2">
-                        <button v-if="user.active == 1" @click="userBeingDeleted = true" type="button"
-                            class="mr-2 px-4 py-2 text-sm h-fit font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <div class="space-y-2 flex flex-col sm:block md:space-x-2">
+                        <DangerButton v-if="user.active == 1" @click="userBeingDeleted = true" type="button">
                             Deshabilitar
-                        </button>
-                        <button v-else @click="restoreUser" type="button" :class="{ 'opacity-25': isProcessingActive }"
-                            :disabled="isProcessingActive"
-                            class="mr-2 px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        </DangerButton>
+                        <PersonalizableButton v-else @click="restoreUser" color="green" type="button"
+                            :loading="isProcessingActive">
                             Habilitar
-                        </button>
-                        <button @click="userChangingPass = true" type="button"
-                            class="px-4 py-2 text-sm h-fit font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Cambiar contraseña
-                        </button>
+                        </PersonalizableButton>
+                        <PersonalizableButton @click="userChangingPass = true" color="blue" shade="600" type="button">Cambiar
+                            contraseña
+                        </PersonalizableButton>
                     </div>
                     <div class="flex space-x-4">
-                        <Link :href="route('users.index')" as="button"
-                            class="px-4 py-2 text-sm font-medium text-gray-100 bg-slate-600 dark:text-white border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-500 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                        Volver
-                        </Link>
-                        <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
-                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                            Actualizar
-                        </button>
+                        <PersonalizableLink :href="route('users.index')" color="gray"> Volver
+                        </PersonalizableLink>
+                        <PrimaryButton :is-loading="form.processing"> Actualizar
+                        </PrimaryButton>
                     </div>
                 </div>
             </form>
@@ -243,9 +236,7 @@
                         Cancelar
                     </SecondaryButton>
 
-                    <PrimaryButton type="submit" @click="submitPassword"
-                        :class="{ 'opacity-25': passwordForm.processing }" :disabled="passwordForm.processing"
-                        class="bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all duration-200">
+                    <PrimaryButton type="submit" @click="submitPassword" :is-loading="passwordForm.processing">
                         Cambiar Contraseña
                     </PrimaryButton>
                 </div>
@@ -279,7 +270,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -303,6 +294,9 @@ import XIcon from '@/Components/Icons/XIcon.vue';
 import MailIcon from '@/Components/Icons/MailIcon.vue';
 import BriefCaseIcon from '@/Components/Icons/BriefCaseIcon.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
+import SecondaryLink from '@/Components/SecondaryLink.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
+import PersonalizableLink from '@/Components/PersonalizableLink.vue';
 
 export default {
     props: {
@@ -340,6 +334,9 @@ export default {
         MailIcon,
         BriefCaseIcon,
         UserIcon,
+        SecondaryLink,
+        PersonalizableButton,
+        PersonalizableLink
     },
     data() {
         return {

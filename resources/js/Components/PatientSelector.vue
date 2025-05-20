@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden">
+        class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
         <!-- Encabezado más compacto -->
         <div class="px-4 py-3 bg-indigo-50 dark:bg-indigo-900/20 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-base font-medium text-gray-900 dark:text-white flex items-center">
@@ -91,7 +91,7 @@
                         </button>
                     </div>
                     <Link :href="route('patients.create')"
-                        class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition-colors duration-200 flex items-center text-xs">
+                        class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors duration-200 flex items-center text-xs">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20"
                         fill="currentColor">
                         <path fill-rule="evenodd"

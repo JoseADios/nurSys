@@ -430,7 +430,7 @@
         </AccessGate>
 
         <!-- Edit event -->
-        <DialogModal :show="isVisibleDetail" @close="isVisibleDetail = false">
+        <DialogModal :show="isVisibleDetail" @close="isVisibleDetail = false" class="p-1 sm:p-4">
             <!-- Header del modal -->
             <template #title>
                 Editar evento
@@ -438,7 +438,7 @@
 
             <!-- Contenido del modal -->
             <template #content>
-                <div class="p-4">
+                <div>
                     <form>
                         <div class="flex flex-col gap-6">
                             <div>
@@ -462,7 +462,7 @@
 
             <!-- Footer del modal -->
             <template #footer>
-                <div class="flex sm:justify-between items-center gap-3">
+                <div class="flex flex-col justify-center w-full sm:flex-row sm:justify-between items-center gap-3">
                     <DangerButton v-if="selectedDetail.active" type="button" @click="detailBeingDeleted = true">
                         Eliminar
                     </DangerButton>

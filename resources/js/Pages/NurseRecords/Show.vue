@@ -165,7 +165,7 @@
                         <!-- Acordeón de Órdenes Médicas -->
                         <div v-else class="space-y-4 max-h-72 overflow-y-auto">
                             <div v-for="(order, index) in medicalOrders" :key="order.id">
-                                <div v-if="order.medical_order_detail.length !== 0"
+                                <div
                                     class="accordion-item border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                                     <!-- Cabecera del Acordeón -->
                                     <div @click="toggleAccordion(index)"
@@ -179,7 +179,7 @@
                                             </span>
                                             <span class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
                                                 formatDateFromNow(order.created_at)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <ChevronDown
                                             class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white"
@@ -187,7 +187,7 @@
                                     </div>
 
                                     <!-- Contenido del Acordeón -->
-                                    <div v-if="openAccordion === index"
+                                    <div v-if="openAccordion === index && order.medical_order_detail.length !== 0"
                                         class="accordion-content p-4 bg-white dark:bg-gray-900">
                                         <div v-for="(detail, detailIndex) in order.medical_order_detail"
                                             :key="detailIndex"
@@ -208,6 +208,13 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div v-if="openAccordion === index && order.medical_order_detail.length === 0"
+                                        class="accordion-content p-4 text-xs text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-900">
+
+                                        No hay detalles disponibles para esta orden.
+
                                     </div>
                                 </div>
                             </div>
@@ -462,18 +469,18 @@
 
             <!-- Footer del modal -->
             <template #footer>
-                <div class="flex flex-col justify-center w-full sm:flex-row sm:justify-between items-center gap-3">
+                <div class="flex flex-col justify-center w-full sm:flex-row sm:justify-end items-center gap-3">
                     <DangerButton v-if="selectedDetail.active" type="button" @click="detailBeingDeleted = true">
                         Eliminar
                     </DangerButton>
-                    <PersonalizableButton v-if="!selectedDetail.active" color="green" type="button" @click="restoreDetail(selectedDetail)">
+                    <PersonalizableButton v-if="!selectedDetail.active" color="green" type="button"
+                        @click="restoreDetail(selectedDetail)">
                         Restaurar
                     </PersonalizableButton>
                     <SecondaryButton type="button" @click="isVisibleDetail = false">
                         Cerrar
                     </SecondaryButton>
-                    <PrimaryButton  @click="submitUpdateDetail"
-                        :is-loading="formDetail.processing">
+                    <PrimaryButton @click="submitUpdateDetail" :is-loading="formDetail.processing">
                         Actualizar
                     </PrimaryButton>
                 </div>
@@ -616,7 +623,7 @@ export default {
     },
     data() {
         return {
-            openAccordion: ref(null),
+            openAccordion: ref(0),
             recordBeingDeleted: ref(null),
             detailBeingDeleted: ref(null),
             isVisibleEditSign: ref(null),

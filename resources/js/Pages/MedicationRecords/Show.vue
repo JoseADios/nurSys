@@ -33,9 +33,10 @@
                     <BackIcon class="size-5" />Volver
                     </Link>
                     <div class="flex items-center gap-2">
-                        <PersonalizableButton v-if="medicationRecord.active" @click="downloadRecordReport" color="emerald">
-                        <ReportIcon class="size-5 " />
-                        Crear Reporte
+                        <PersonalizableButton v-if="medicationRecord.active" @click="downloadRecordReport"
+                            color="emerald">
+                            <ReportIcon class="size-5 " />
+                            Crear Reporte
                         </PersonalizableButton>
                         <DangerButton v-if="medicationRecord.active" @click="recordBeingDeleted = true">
 
@@ -43,11 +44,11 @@
                             <span class="font-medium ">Eliminar</span>
 
                         </DangerButton>
-                            <PersonalizableButton v-else @click="restoreRecord(medicationRecord)" class="gap-2" color="green"
-                            :loading="recordActiveChanging">
+                        <PersonalizableButton v-else @click="restoreRecord(medicationRecord)" class="gap-2"
+                            color="green" :loading="recordActiveChanging">
                             <RestoreIcon class="size-5" />
                             <span class="hidden sm:inline-flex">Restaurar</span>
-                            </PersonalizableButton>
+                        </PersonalizableButton>
                     </div>
 
                 </div>
@@ -76,10 +77,11 @@
                         <!-- Doctor -->
                         <div
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Enfermero</h3>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 <!-- Verifica que la relación drug esté definida -->
-                                {{ nurse.name }} {{ nurse.last_name }}
+                                {{ medicationRecord.admission.doctor.name }} {{
+                                    medicationRecord.admission.doctor.last_name }}
                             </p>
 
                         </div>
@@ -115,7 +117,7 @@
                                 </p>
                             </div>
                             <AccessGate :permission="['medicationRecord.update']" class="mt-auto">
-                                <button class="text-yellow-500 ml-2 hover:text-yellow-800" @click="openCreateModal()">
+                                <button class="text-blue-500 ml-2 hover:text-blue-800" @click="openCreateModal()">
                                     <EditIcon class="size-5" />
                                 </button>
                             </AccessGate>
@@ -139,12 +141,12 @@
                 <div class="p-8">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
                     <div v-if="showCreateDetailForm == false">
-                        <PersonalizableButton  @click="OpenFormCreateRecord" id="add_detail"  size="large" class="w-full">
+                        <PersonalizableButton @click="OpenFormCreateRecord" id="add_detail" size="large" class="w-full">
                             Agregar Detalle
                         </PersonalizableButton>
                     </div>
                     <div v-else>
-                        <PersonalizableButton @click="closeform" id="add_detail"  size="large" class="w-full">
+                        <PersonalizableButton @click="closeform" id="add_detail" size="large" class="w-full">
                             Agregar Detalle
                         </PersonalizableButton>
                     </div>
@@ -157,15 +159,17 @@
 
                             <div class="max-h-80 overflow-y-auto   shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
                                 <div class="col w-full md:w-[100%] p-4 md:p-2 ">
-                                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Órdenes médicas
+                                    <h3 class="text-xl font-semibold text-gray-800 pl-2 dark:text-white mb-6">Órdenes
+                                        médicas
                                         <span class="text-red-500">*</span>
                                     </h3>
 
                                     <!-- Mensaje cuando no hay órdenes -->
-                                    <div v-if="!orders || orders.length === 0"
-                                        class="text-center text-sm text-gray-500 dark:text-gray-400">
+                                    <div v-if="!orders || orders.length === 0 || !orders.some(o => o.medical_order_detail && o.medical_order_detail.length > 0)"
+                                        class="text-center pb-4 text-sm text-gray-500 dark:text-gray-400">
                                         No hay órdenes médicas disponibles
                                     </div>
+
 
                                     <!-- Acordeón de Órdenes Médicas -->
                                     <div v-else class="space-y-4 max-h-72 overflow-y-auto">
@@ -319,15 +323,15 @@
                                     placeholder="Hora de Inicio..." />
 
                                 <!-- Botones -->
-                                <div class="flex justify-end mt-6 mb-2">
+                                <div class="flex justify-end mt-6 gap-2 mb-6">
                                     <SecondaryButton @click="closeform"
-                                        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                                       >
                                         Cerrar
                                     </SecondaryButton>
 
                                     <PrimaryButton type="submit" :class="{ 'opacity-25': form.processing }"
                                         :disabled="form.processing"
-                                        class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+                                        >
                                         Guardar
                                     </PrimaryButton>
                                 </div>
@@ -426,8 +430,9 @@
                             </div>
                             <form>
                                 <button @click="ToggleActivate(detail)"
-                                    :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700'],{ 'opacity-25': recordDetailActiveChange }"
-                                    class="flex items-center space-x-2 space-y-2  transition-colors" :disabled="recordDetailActiveChange" :loading="recordActiveChanging" >
+                                    :class="[detail.active ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700'], { 'opacity-25': recordDetailActiveChange }"
+                                    class="flex items-center space-x-2 space-y-2  transition-colors"
+                                    :disabled="recordDetailActiveChange" :loading="recordActiveChanging">
                                     <div v-if="detail.active">
                                         <TrashIcon class="size-5" />
                                     </div>
@@ -440,8 +445,9 @@
                             <div v-if="medicationRecord.active">
                                 <!-- Disable -->
                                 <button @click="ToggleSuspend(detail)"
-                                    :class="[!detail.suspended_at ? 'text-indigo-500 ' : 'text-green-500 hover:text-green-700'],{ 'opacity-25': recordDetailSupendChange }"
-                                    class="flex items-center space-x-2 space-y-2  transition-colors" :disabled="recordDetailSupendChange">
+                                    :class="[!detail.suspended_at ? 'text-indigo-500 ' : 'text-green-500 hover:text-green-700'], { 'opacity-25': recordDetailSupendChange }"
+                                    class="flex items-center space-x-2 space-y-2  transition-colors"
+                                    :disabled="recordDetailSupendChange">
 
                                     <div v-if="detail.suspended_at">
                                         <RestoreIcon class="size-5" />
@@ -515,15 +521,22 @@
             </template>
             <!-- Footer del modal -->
             <template #footer>
-                <PrimaryButton @click="submitModal" :class="{ 'opacity-25': modalform.processing }"
-                    :disabled="modalform.processing"
-                    >
-                    Guardar
-                </PrimaryButton>
-                <SecondaryButton @click="isVisible = false"
-                   >
-                    Cerrar
-                </SecondaryButton>
+                  <div class="flex justify-end  space-x-3">
+
+                        <SecondaryButton  @click="isVisible = false"
+                                        >
+                                        Cerrar
+                                    </SecondaryButton>
+
+                             <PrimaryButton  @click="submitModal":class="{ 'opacity-25': modalform.processing }"
+                                        :disabled="modalform.processing"
+                                       >
+                                       Aceptar
+                                    </PrimaryButton>
+
+                    </div>
+
+
             </template>
         </DialogModal>
 
@@ -569,7 +582,6 @@ export default {
     props: {
         medicationRecord: Object,
         details: Array,
-        nurse: Object,
         orders: Object,
         drug: Array,
         routeOptions: Array,
@@ -808,7 +820,7 @@ export default {
 
         },
         ToggleActivate(detail) {
-             this.recordDetailActiveChange = true;
+            this.recordDetailActiveChange = true;
 
             if (detail.active == 1) {
 
@@ -825,8 +837,8 @@ export default {
                     },
                     onFinish: () => {
 
-                    this.recordDetailActiveChange = false;
-                }
+                        this.recordDetailActiveChange = false;
+                    }
                 });
             } else {
 
@@ -841,12 +853,12 @@ export default {
                     onError: (errors) => {
                         console.error('Error al habilitar:', errors);
                     },
-                      onFinish: () => {
+                    onFinish: () => {
 
-                    this.recordDetailActiveChange = false;
-                }
+                        this.recordDetailActiveChange = false;
+                    }
                 });
-                   this.recordDetailActiveChange = false;
+                this.recordDetailActiveChange = false;
             }
 
         },
@@ -857,7 +869,7 @@ export default {
         },
 
         ToggleSuspend(detail) {
-             this.recordDetailSupendChange = true;
+            this.recordDetailSupendChange = true;
             if (detail.suspended_at) {
 
                 this.$inertia.put(route('medicationRecordDetails.update', detail.id), {
@@ -870,10 +882,10 @@ export default {
                     onError: (errors) => {
                         console.error('Error al habilitar:', errors);
                     },
-                          onFinish: () => {
+                    onFinish: () => {
 
-                    this.recordDetailSupendChange = false;
-                }
+                        this.recordDetailSupendChange = false;
+                    }
                 });
             } else {
 
@@ -887,13 +899,13 @@ export default {
                     onError: (errors) => {
                         console.error('Error al habilitar:', errors);
                     },
-                           onFinish: () => {
+                    onFinish: () => {
 
-                    this.recordDetailSupendChange = false;
-                }
+                        this.recordDetailSupendChange = false;
+                    }
                 });
             }
-             this.recordDetailSupendChange = false;
+            this.recordDetailSupendChange = false;
         },
 
     }

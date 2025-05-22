@@ -88,10 +88,14 @@
             <input required id="start_time" type="time" v-model="form.start_time" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Selecciona la hora de inicio..." />
             <div class="flex justify-end mt-6 mb-2">
                 <Link :href="route('medicationRecords.show', medicationRecordDetail.medication_record_id)" >
-                    <SecondaryButton >    Cancelar</SecondaryButton>
+                  <SecondaryButton class="py-2.5 px-5 me-2 mb-2  ">
+                  Cancelar
+              </SecondaryButton>
                 </Link>
 
-                <PrimaryButton type="submit" >Guardar</PrimaryButton>
+ <PrimaryButton type="submit" class="py-2.5 px-5 me-2 mb-2  "  :class="{ 'opacity-25': form.processing }" :disabled="form.processing" >
+                    Guardar
+                </PrimaryButton>
             </div>
         </form>
     </div>
@@ -101,7 +105,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {
-    Link
+    Link, useForm
 } from '@inertiajs/vue3';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import DrugSelector from '@/Components/DrugSelector.vue';
@@ -128,7 +132,7 @@ export default {
     },
     data() {
         return {
-            form: {
+            form: useForm ({
                 drug: this.medicationRecordDetail.drug,
                 dose: this.medicationRecordDetail.dose,
                 dose_metric: this.medicationRecordDetail.dose_metric,
@@ -136,13 +140,13 @@ export default {
                 fc: this.medicationRecordDetail.fc,
                 interval_in_hours: this.medicationRecordDetail.interval_in_hours,
                 start_time: this.formatStartTime(this.medicationRecordDetail.start_time),
-            }
+            })
         }
     },
 
     methods: {
         submit() {
-            this.$inertia.put(route('medicationRecordDetails.update', this.medicationRecordDetail.id), this.form)
+            this.form.put(route('medicationRecordDetails.update', this.medicationRecordDetail.id))
         },
         formatStartTime(datetime) {
             if (!datetime) return '';

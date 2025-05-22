@@ -73,7 +73,7 @@
 
                             <div v-if="notification.applied"
                                 class="text-sm  flex flex-col items-center text-gray-500 dark:text-gray-400 p-4">
-                                <div class="mb-2 font-medium">Firma de Enfermera</div>
+                                <div class="mb-2 font-medium">Firma</div>
                                 <img :src="`/storage/${notification.nurse_sign}`" width="250" alt="Firma">
                             </div>
 

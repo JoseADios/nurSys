@@ -87,14 +87,14 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
 
         $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)->first();
         if ($request->suspended_at == null) {
-
+            if ($medicationRecordDetail) {
                 $medicationRecordDetail->update(['suspended_at' => null]);
 
-
+            }
         } else {
-
+            if ($medicationRecordDetail) {
                 $medicationRecordDetail->update(['suspended_at' => now()]);
-
+            }
         }
         $medicalOrderDetail->update($request->all());
         return back()->with('flash.toast', 'Registro actualizado correctamente');

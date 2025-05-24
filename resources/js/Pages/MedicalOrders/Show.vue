@@ -24,10 +24,7 @@
 
 
         <div class="container mx-auto px-4 py-8">
-            <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
 
-
-            </div>
             <div
                 class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
                 <!-- Navigation -->

@@ -52,6 +52,9 @@
                     <div class="flex-grow">
                         <div class="flex items-center space-x-20">
                             <div class="font-semibold text-gray-900 dark:text-white mr-20">
+                                <div v-if="notification.nurse" class="mb-2">
+                                   Enfermera: {{ notification.nurse.name }}
+                                </div>
                                 <div class="mb-2">Notificación - #{{ index + 1 }}</div>
                                 <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Fecha: {{
                                     formatDate(notification.created_at) }}</div>

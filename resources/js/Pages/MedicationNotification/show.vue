@@ -151,7 +151,7 @@
                 </SecondaryButton>
 
                 <div v-if="notificationBeingUpdated.applied != true">
-                    <PrimaryButton :class="{ 'opacity-25': formSignature.processing }"
+                    <PrimaryButton :class="{ 'opacity-25': formSignature.processing }":is-loading="formSignature.processing"
                         :disabled="formSignature.processing" class="ms-3"
                         @click="markAsAdministered(notificationBeingUpdated)">
                         Administrar

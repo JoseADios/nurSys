@@ -185,7 +185,7 @@
                         </div>
 
                         <div class="pt-4">
-                             <PersonalizableButton   type="submit"  :class="{ 'opacity-25': formDetail.processing }" :disabled="formDetail.processing"  size="large" class="w-full">
+                             <PersonalizableButton   type="submit"  :class="{ 'opacity-25': formDetail.processing }" :loading="formDetail.processing"  :disabled="formDetail.processing"  size="large" class="w-full">
                             Agregar Detalle
                         </PersonalizableButton>
                         </div>
@@ -295,7 +295,7 @@
                                         Cerrar
                                     </SecondaryButton>
 
-                             <PrimaryButton type="submit" :class="{ 'opacity-25': formSignature.processing }"
+                             <PrimaryButton type="submit" :class="{ 'opacity-25': formSignature.processing }":is-loading="formSignature.processing"
                                         :disabled="formSignature.processing"
                                        >
                                        Aceptar
@@ -328,7 +328,7 @@
                                         Cerrar
                                     </SecondaryButton>
 
-                             <PrimaryButton type="submit" :class="{ 'opacity-25': formRecord.processing }"
+                             <PrimaryButton type="submit" :class="{ 'opacity-25': formRecord.processing }":is-loading="formRecord.processing"
                                         :disabled="formRecord.processing"
                                        >
                                        Aceptar
@@ -390,15 +390,17 @@
             <!-- Footer del modal -->
             <template #footer>
                 <div class="flex items-center gap-2">
-                <DangerButton v-if="selectedDetail.active" type="button" @click="detailBeingDeleted = true">
+                <DangerButton v-if="selectedDetail.active"  type="button" @click="detailBeingDeleted = true">
                       <TrashIcon class="size-5 mr-2" />
                      Eliminar
                 </DangerButton>
-                <PersonalizableButton v-if="!selectedDetail.active" type="button" @click="restoreDetail" color="green">
+                <PersonalizableButton v-if="!selectedDetail.active":class="{ 'opacity-25': modalform.processing }":is-loading="modalform.processing"
+                                        :disabled="modalform.processing" type="button" @click="restoreDetail" color="green">
                      <RestoreIcon class="size-5 mr-2" />
                     Restaurar
                 </PersonalizableButton>
-                 <PrimaryButton type="submit" @click="submitUpdateDetail">
+                 <PrimaryButton type="submit" @click="submitUpdateDetail" :class="{ 'opacity-25': modalform.processing }":is-loading="modalform.processing"
+                                        :disabled="modalform.processing" >
                     Actualizar
                 </PrimaryButton>
                 <SecondaryButton type="button" @click="isVisibleDetail = false">
@@ -451,7 +453,7 @@
                                         Cerrar
                                     </SecondaryButton>
 
-                             <PrimaryButton type="submit" :class="{ 'opacity-25': formRecord.processing }"
+                             <PrimaryButton type="submit" :class="{ 'opacity-25': formRecord.processing }":is-loading="formRecord.processing"
                                         :disabled="formRecord.processing"
                                        >
                                        Aceptar
@@ -533,6 +535,10 @@ export default {
             recordBeingDeleted: ref(null),
             detailBeingDeleted: ref(null),
             selectedDetail: ref(null),
+             modalform: useForm( {
+                selectedDetail: this.selectedDetail,
+
+            }),
             isVisibleDetail: ref(false),
             originalSuspendedState: ref(null),
             isVisibleEditSign: ref(null),
@@ -626,7 +632,7 @@ export default {
         },
 
         submitUpdateDetail() {
-            this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
+            this.modalform.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
                 preserveScroll: true,
                 preserveState: true
             }),

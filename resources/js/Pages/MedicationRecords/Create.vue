@@ -55,7 +55,7 @@
               </SecondaryButton>
                 </Link>
 
-                <PrimaryButton type="submit" class="py-2.5 px-5 me-2 mb-2  "  :class="{ 'opacity-25': form.processing }" :disabled="form.processing" >
+                <PrimaryButton type="submit" class="py-2.5 px-5 me-2 mb-2  "  :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing" >
                     Guardar
                 </PrimaryButton>
             </div>

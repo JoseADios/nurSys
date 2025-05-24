@@ -329,7 +329,7 @@
                                         Cerrar
                                     </SecondaryButton>
 
-                                    <PrimaryButton type="submit" :class="{ 'opacity-25': form.processing }"
+                                    <PrimaryButton type="submit" :class="{ 'opacity-25': form.processing }":is-loading="form.processing"
                                         :disabled="form.processing"
                                         >
                                         Guardar
@@ -529,7 +529,7 @@
                                     </SecondaryButton>
 
                              <PrimaryButton  @click="submitModal":class="{ 'opacity-25': modalform.processing }"
-                                        :disabled="modalform.processing"
+                                        :disabled="modalform.processing"  :is-loading="modalform.processing"
                                        >
                                        Aceptar
                                     </PrimaryButton>

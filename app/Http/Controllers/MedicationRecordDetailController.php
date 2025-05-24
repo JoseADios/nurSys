@@ -321,11 +321,14 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         $this->authorize('delete', $medicationRecordDetail);
 
         $hasNotifications = MedicationNotification::where('medication_record_detail_id', $medicationRecordDetail->id)->where('applied', 1)->get();
+       if (!Auth::user()->hasRole('admin') ) {
         if ($hasNotifications->isNotEmpty()) {
              return back()->with('flash.toast', 'No se puede eliminar este Detalle de Ficha de Medicamentos porque tiene notificaciones aplicadas.')->with('flash.toastStyle', 'danger');
 
 
         }
+       }
+
 
         $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();
         foreach ($medicationNotifications as $notification) {

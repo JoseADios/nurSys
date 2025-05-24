@@ -37,24 +37,24 @@
                     <BackIcon class="size-5" />
                     <span class="font-medium">Volver</span>
                     </Link>
-                    <div class="flex items-center">
-                        <button v-if="temperatureRecord.active" @click="downloadRecordReport"
-                            class="inline-flex mr-8 items-center px-4 py-2 bg-emerald-500 text-white text-sm rounded-lg hover:to-emerald-600 transition-all duration-200">
-                            <ReportIcon class="size-5 mr-1" />
-                            <span class="hidden sm:inline-flex">Crear Reporte</span>
-                        </button>
+                    <div class="flex items-center gap-2">
+                        <PersonalizableButton v-if="temperatureRecord.active" @click="downloadRecordReport"
+                            color="emerald">
+                            <ReportIcon class="size-5" />
+                            <span class="hidden md:inline-flex ml-2">Crear Reporte</span>
+                        </PersonalizableButton>
+
                         <AccessGate :permission="['temperatureRecord.delete']">
-                            <button v-if="temperatureRecord.active" @click="recordBeingDeleted = true"
-                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
+                            <DangerButton v-if="temperatureRecord.active" @click="recordBeingDeleted = true"
+                                class="space-x-2">
                                 <TrashIcon class="size-5" />
-                                <span class="font-medium">Eliminar</span>
-                            </button>
-                            <button v-else @click="restoreRecord" :class="{ 'opacity-25': recordActiveChanging }"
-                                :disabled="recordActiveChanging"
-                                class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
+                                <span class="hidden sm:inline-flex">Eliminar</span>
+                            </DangerButton>
+                            <PersonalizableButton v-else @click="restoreRecord" class="gap-2" color="green"
+                                :loading="recordActiveChanging">
                                 <RestoreIcon class="size-5" />
-                                <span class="font-medium">Restaurar</span>
-                            </button>
+                                <span class="hidden sm:inline-flex">Restaurar</span>
+                            </PersonalizableButton>
                         </AccessGate>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                                 </Link>
                             </div>
                             <AccessGate :permission="['temperatureRecord.delete']">
-                                <button @click="showEditAdmission = true" class="text-blue-500 ml-3">
+                                <button @click="showEditAdmission = true" class="text-primary-500 ml-3">
                                     <EditIcon class="size-5" />
                                 </button>
                             </AccessGate>
@@ -114,7 +114,7 @@
                                 </p>
                             </div>
                             <AccessGate :permission="['temperatureRecord.delete']">
-                                <button @click="showEditUser = true" class="text-blue-500 ml-3">
+                                <button @click="showEditUser = true" class="text-primary-500 ml-3">
                                     <EditIcon class="size-5" />
                                 </button>
                             </AccessGate>
@@ -160,12 +160,10 @@
                                     placeholder="Temperatura del paciente (°C)" />
 
                                 <div class="pt-8">
-                                    <button type="submit" :class="{ 'opacity-25': formDetailUpdate.processing }"
-                                        :disabled="formDetailUpdate.processing" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
-                                                                        hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-                                                                        transition-colors duration-300">
+                                    <PersonalizableButton class="w-full" size="large" :loading="formDetail.processing"
+                                        color="green" shade="600">
                                         Actualizar
-                                    </button>
+                                    </PersonalizableButton>
                                 </div>
                             </div>
                         </form>
@@ -187,12 +185,9 @@
                                     placeholder="Temperatura del paciente (°C)" />
 
                                 <div class="pt-8 w-full">
-                                    <button type="submit" :class="{ 'opacity-25': formDetail.processing }"
-                                        :disabled="formDetail.processing" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
-                                            hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                                            transition-colors duration-300">
+                                    <PersonalizableButton size="large" class="w-full" :loading="formDetail.processing">
                                         Agregar
-                                    </button>
+                                    </PersonalizableButton>
                                 </div>
                             </div>
                         </form>
@@ -224,12 +219,10 @@
                             </div>
 
                             <div class="pt-4">
-                                <button type="submit" :class="{ 'opacity-25': formEliminationsUpdate.processing }"
-                                    :disabled="formEliminationsUpdate.processing" class="w-full bg-green-600 text-white py-2 px-4 rounded-md
-                                    hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-                                    transition-colors duration-300">
+                                <PersonalizableButton color="green" shade="600" class="w-full"
+                                    :loading="formEliminationsUpdate.processing" size="large">
                                     Actualizar
-                                </button>
+                                </PersonalizableButton>
                             </div>
                         </form>
                     </div>
@@ -261,12 +254,10 @@
                                 </div>
 
                                 <div class="pt-4">
-                                    <button type="submit" :class="{ 'opacity-25': formEliminations.processing }"
-                                        :disabled="formEliminations.processing" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
-                                    hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                                    transition-colors duration-300">
+                                    <PersonalizableButton size="large" class="w-full"
+                                        :loading="formEliminations.processing">
                                         Guardar
-                                    </button>
+                                    </PersonalizableButton>
                                 </div>
                             </form>
                         </div>
@@ -296,9 +287,9 @@
                                 </div>
                             </div>
                             <AccessGate :permission="['temperatureRecord.update']" v-if="canUpdateSignature">
-                                <button @click="isVisibleEditSign = true"
-                                    class="mt-4 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                                    Editar</button>
+                                <PrimaryButton @click="isVisibleEditSign = true">
+                                    Editar
+                                </PrimaryButton>
                             </AccessGate>
                         </div>
                     </div>
@@ -316,14 +307,13 @@
                                 <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.
                                 </div>
 
-                                <div class="my-4">
-                                    <button type="button"
-                                        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                                        @click="isVisibleEditSign = false">Cancelar</button>
-                                    <button :class="{ 'opacity-25': formSignature.processing }"
-                                        :disabled="formSignature.processing"
-                                        class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
-                                        type="submit">Guardar firma</button>
+                                <div class="my-4 space-x-4">
+                                    <SecondaryButton @click="isVisibleEditSign = false" type="button">
+                                        Cancelar
+                                    </SecondaryButton>
+                                    <PrimaryButton :is-loading="formSignature.processing">
+                                        Guardar firma
+                                    </PrimaryButton>
                                 </div>
                             </form>
                         </div>
@@ -346,15 +336,13 @@
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">
-                            <button type="button" @click="showEditAdmission = null"
-                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                            <SecondaryButton type="button" @click="showEditAdmission = null">
                                 Cancelar
-                            </button>
-                            <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition"
-                                :disabled="!formRecord.admission_id">
+                            </SecondaryButton>
+
+                            <PrimaryButton :is-loading="formRecord.processing" :disabled="!formRecord.admission_id">
                                 Aceptar
-                            </button>
+                            </PrimaryButton>
                         </div>
                     </form>
                 </div>
@@ -374,15 +362,13 @@
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">
-                            <button type="button" @click="showEditUser = null"
-                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                            <SecondaryButton type="button" @click="showEditUser = null">
                                 Cancelar
-                            </button>
-                            <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition"
-                                :disabled="!formRecord.nurse_id">
+                            </SecondaryButton>
+
+                            <PrimaryButton :is-loading="formRecord.processing" :disabled="!formRecord.nurse_id">
                                 Aceptar
-                            </button>
+                            </PrimaryButton>
                         </div>
                     </form>
                 </div>
@@ -441,6 +427,8 @@ import BreadCrumb from '@/Components/BreadCrumb.vue';
 import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 
 export default {
     props: {
@@ -475,7 +463,9 @@ export default {
         BreadCrumb,
         RestoreIcon,
         TextInput,
-        InputLabel
+        InputLabel,
+        PersonalizableButton,
+        PrimaryButton,
     },
     data() {
         return {
@@ -528,19 +518,14 @@ export default {
             this.formDetail.post(route('temperatureDetails.store'),
                 {
                     onSuccess: () => {
-                        this.formDetail = {
-                            temperature_record_id: this.temperatureRecord.id,
-                            temperature: 37,
-                            evacuations: 1,
-                            urinations: 1,
-                        };
+                        this.formDetail.temperature_record_id = this.temperatureRecord.id;
+                        this.formDetail.temperature = 37;
                         this.chartKey++;
 
-                        // Update temperature form data using form.reset()
-                        this.formDetailUpdate.reset({
-                            temperature_record_id: this.temperatureRecord.id,
-                            temperature: this.lastTemperature.temperature,
-                        });
+                        // Update temperature form data
+                        this.formDetailUpdate.temperature_record_id = this.temperatureRecord.id;
+                        this.formDetailUpdate.temperature = this.lastTemperature.temperature;
+
                     },
                     preserveScroll: true,
                     xcroll: true,
@@ -550,17 +535,14 @@ export default {
             this.formEliminations.post(route('eliminationRecords.store'),
                 {
                     onSuccess: () => {
-                        this.formEliminations = {
-                            temperature_record_id: this.temperatureRecord.id,
-                            evacuations: 1,
-                            urinations: 1,
-                        };
+                        this.formEliminations.temperature_record_id = this.temperatureRecord.id;
+                        this.formEliminations.evacuations = 1;
+                        this.formEliminations.urinations = 1;
+
                         // actualizar formulario de update eliminations
-                        this.formEliminationsUpdate = {
-                            temperature_record_id: this.temperatureRecord.id,
-                            evacuations: this.lastEliminations.evacuations,
-                            urinations: this.lastEliminations.urinations,
-                        };
+                        this.formEliminationsUpdate.temperature_record_id = this.temperatureRecord.id;
+                        this.formEliminationsUpdate.evacuations = this.lastEliminations.evacuations;
+                        this.formEliminationsUpdate.urinations = this.lastEliminations.urinations;
                         this.chartKey++;
                     },
                     preserveScroll: true,

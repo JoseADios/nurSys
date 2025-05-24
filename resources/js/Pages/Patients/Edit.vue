@@ -158,24 +158,18 @@
                 <!-- Form Actions -->
                 <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-end space-x-4 rounded-b-lg">
                     <AccessGate :permission="['patient.delete']">
-                        <button type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true"
-                            class="inline-flex items-center px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-all duration-200">
+                        <DangerButton type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true">
                             Desactivar
-                        </button>
-                        <button type="button" v-else @click="restorePatient" :class="{ 'opacity-25': isProcessingActive }"
-                            :disabled="isProcessingActive"
-                            class="inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600 transition-all duration-200">
+                        </DangerButton>
+                        <PersonalizableButton type="button" v-else @click="restorePatient"
+                            :loading="isProcessingActive">
                             Activar
-                        </button>
+                        </PersonalizableButton>
                     </AccessGate>
-                    <Link :href="route('patients.index')" as="button"
-                        class="px-4 py-2 text-sm font-medium text-gray-100 bg-slate-600 dark:text-white border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-500 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                    Volver
-                    </Link>
-                    <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
-                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Actualizar
-                    </button>
+                    <SecondaryLink :href="route('patients.index')"> Volver
+                    </SecondaryLink>
+                    <PrimaryButton :is-loading="form.processing"> Actualizar
+                    </PrimaryButton>
                 </div>
             </form>
         </div>
@@ -227,6 +221,9 @@ import BreadCrumb from '@/Components/BreadCrumb.vue';
 import FileTexIcon from '@/Components/Icons/FileTexIcon.vue';
 import moment from 'moment/moment';
 import 'moment/locale/es';
+import SecondaryLink from '@/Components/SecondaryLink.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 
 export default {
     props: {
@@ -255,7 +252,10 @@ export default {
         DateInput,
         TextAreaInput,
         TextInput,
-        BreadCrumb
+        BreadCrumb,
+        SecondaryLink,
+        PrimaryButton,
+        PersonalizableButton
     },
     data() {
         return {

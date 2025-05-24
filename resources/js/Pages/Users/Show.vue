@@ -49,26 +49,22 @@
                         </div>
                         <div
                             class="flex flex-col items-center space-y-2 md:space-y-0 md:space-x-3  md:flex-row lg:space-x-4">
-                            <Link :href="route('users.index')"
-                                class="items-center flex px-4 py-2 bg-gray-200 dark:bg-white/20 text-gray-700 dark:text-white text-sm rounded-lg hover:bg-white/40 transition-all duration-200">
-                            <BackIcon class="w-4 h-4 mr-2" />
-                            Volver
-                            </Link>
-                            <Link :href="route('users.edit', user.id)"
-                                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-400 transition-all duration-200 flex items-center space-x-2">
-                            <EditIcon class="h-4 w-4" />
-                            <span>Editar</span>
-                            </Link>
-                            <button v-if="user.active === '1'" @click="userBeingDeleted = true"
-                                class="px-4 flex items-center py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-200">
-                                <TrashIcon class="w-4 h-4 pr-1" />
+                            <PersonalizableLink :href="route('users.index')" color="gray">
+                                <BackIcon class="w-4 h-4 mr-2" />
+                                Volver
+                            </PersonalizableLink>
+                            <PersonalizableLink :href="route('users.edit', user.id)">
+                                <EditIcon class="h-4 w-4 mr-2" />
+                                <span>Editar</span>
+                            </PersonalizableLink>
+                            <DangerButton v-if="user.active === '1'" @click="userBeingDeleted = true">
+                                <TrashIcon class="w-4 h-4 mr-2" />
                                 Deshabilitar
-                            </button>
-                            <button v-else @click="restoreUser"
-                                class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200">
-                                <RestoreIcon class="w-4 h-4" />
+                            </DangerButton>
+                            <PersonalizableButton v-else @click="restoreUser" :loading="userBeingRestored" color="green">
+                                <RestoreIcon class="w-4 h-4 mr-2" />
                                 Habilitar
-                            </button>
+                            </PersonalizableButton>
                         </div>
                     </div>
                 </div>
@@ -181,6 +177,8 @@ import DynamicAvatar from '@/Components/DynamicAvatar.vue';
 import MailIcon from '@/Components/Icons/MailIcon.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
 import BriefCaseIcon from '@/Components/Icons/BriefCaseIcon.vue';
+import PersonalizableLink from '@/Components/PersonalizableLink.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 
 export default {
     components: {
@@ -199,7 +197,9 @@ export default {
         DynamicAvatar,
         MailIcon,
         UserIcon,
-        BriefCaseIcon
+        BriefCaseIcon,
+        PersonalizableLink,
+        PersonalizableButton
     },
     props: {
         user: {
@@ -207,23 +207,31 @@ export default {
             required: true,
         },
     },
-    setup() {
-        const userBeingDeleted = ref(false);
-
+    data() {
         return {
-            userBeingDeleted,
-        };
+            userBeingDeleted: ref(false),
+            userBeingRestored: ref(false),
+        }
     },
     created() {
         moment.locale('es');
     },
     methods: {
         deleteUser() {
-            this.userBeingDeleted = false;
-            this.$inertia.delete(route('users.destroy', this.user.id));
+            this.userBeingDeleted = true;
+            this.$inertia.delete(route('users.destroy', this.user.id), {
+                onFinish: () => {
+                    this.userBeingDeleted = false;
+                }
+            });
         },
         restoreUser() {
-            this.$inertia.put(route('users.update', this.user.id), { active: true });
+            this.userBeingRestored = true;
+            this.$inertia.put(route('users.update', this.user.id), { active: true }, {
+                onFinish: () => {
+                    this.userBeingRestored = false;
+                }
+            });
         },
         formatDate(date) {
             return moment(date).format('DD MMMM YYYY');

@@ -109,16 +109,14 @@
                     </AccessGate>
 
                     <AccessGate :permission="['temperatureRecord.create']" class="w-full sm:w-1/2">
-                        <Link v-if="!form.admission_id" :href="route('temperatureRecords.create')"
-                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm w-full">
-                        <PlusIcon class="size-5" />
-                        <span class="">Nuevo Registro</span>
-                        </Link>
-                        <Link v-else :href="route('temperatureRecords.create', { admission_id: form.admission_id })"
-                            class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-3 rounded-lg whitespace-nowrap text-sm w-full">
-                        <PlusIcon class="size-5" />
-                        <span class="">Nuevo Registro</span>
-                        </Link>
+                        <PrimaryLink  class="py-2.5 whitespace-nowrap" v-if="!form.admission_id" :href="route('temperatureRecords.create')">
+                            <PlusIcon class="size-5 mr-1" />
+                            <span class="pt-0.5">Nuevo Registro</span>
+                        </PrimaryLink>
+                        <PrimaryLink class="py-2.5 whitespace-nowrap" v-else :href="route('temperatureRecords.create', { admission_id: form.admission_id })">
+                            <PlusIcon class="size-5" />
+                            <span class="pt-0.5">Nuevo Registro</span>
+                        </PrimaryLink>
                     </AccessGate>
                 </div>
             </div>
@@ -234,6 +232,7 @@ import BreadCrumb from '@/Components/BreadCrumb.vue';
 import TextInput from '@/Components/TextInput.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
 import FilterIcon from '@/Components/Icons/FilterIcon.vue';
+import PrimaryLink from '@/Components/PrimaryLink.vue';
 
 export default {
     props: {
@@ -257,7 +256,8 @@ export default {
         BreadCrumb,
         TextInput,
         UserIcon,
-        FilterIcon
+        FilterIcon,
+        PrimaryLink
     },
     data() {
         return {

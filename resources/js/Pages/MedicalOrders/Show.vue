@@ -608,9 +608,12 @@ export default {
         },
         submit() {
             this.formDetail.post(route('medicalOrderDetails.store'),
+
                  {
+                      preserveScroll: true,
                 onSuccess: () => {
-                  this.formDetail.reset('medication', 'comment');
+              this.formDetail.reset();
+
                 }
 
             });

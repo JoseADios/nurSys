@@ -32,18 +32,15 @@
 
                 <InputError :message="errorMessage" class="mt-2" />
 
-                <div class="flex justify-end mt-6 mb-2">
-                    <Link v-if="admission_id" :href="route('temperatureRecords.index', {admission_id: admission_id})"
-                        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    Cancelar
-                    </Link>
-                    <Link v-else :href="route('temperatureRecords.index')"
-                        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    Cancelar
-                    </Link>
+                <div class="flex justify-end mt-6 mb-2 gap-4">
+                    <SecondaryLink v-if="admission_id"
+                        :href="route('temperatureRecords.index', { admission_id: admission_id })">
+                        Cancelar
+                    </SecondaryLink>
+                    <SecondaryLink v-else :href="route('temperatureRecords.index')"> Cancelar
+                    </SecondaryLink>
 
-                    <button type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
-                        class="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">Guardar</button>
+                    <PrimaryButton :is-loading="form.processing">Guardar</PrimaryButton>
                 </div>
 
             </form>
@@ -57,6 +54,8 @@ import BreadCrumb from '@/Components/BreadCrumb.vue';
 import FormatId from '@/Components/FormatId.vue';
 import ChevronRightIcon from '@/Components/Icons/ChevronRightIcon.vue';
 import InputError from '@/Components/InputError.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryLink from '@/Components/SecondaryLink.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
@@ -72,7 +71,9 @@ export default {
         FormatId,
         AdmissionSelector,
         BreadCrumb,
-        InputError
+        InputError,
+        PrimaryButton,
+        SecondaryLink
     },
     data() {
         return {

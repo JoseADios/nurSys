@@ -14,6 +14,14 @@ export default {
 
     darkMode: 'class',
 
+    safelist: [
+        // Para variaciones de color generadas dinámicamente
+        // Esto generará todas las combinaciones necesarias para que funcionen los colores dinámicos
+        {
+            pattern: /(bg|text|border|hover:bg|active:bg|focus:ring)-(primary|secondary|red|blue|green|yellow|purple|pink|gray|indigo|teal|orange|amber|emerald|cyan|violet|fuchsia|rose|lime|sky)-(50|100|200|300|400|500|600|700|800|900)/,
+          },
+    ],
+
     theme: {
         extend: {
             fontFamily: {
@@ -98,6 +106,14 @@ export default {
             },
         },
     },
+    variants: {
+        extend: {
+          // Asegúrate de que las variantes hover y active estén habilitadas
+          backgroundColor: ['hover', 'active'],
+          borderColor: ['hover', 'active'],
+          textColor: ['hover', 'active'],
+        }
+      },
 
     plugins: [forms, typography],
 };

@@ -90,7 +90,7 @@ class NurseRecordPolicy
             ->first();
 
         if ($nurseRecordInTurn !== null) {
-            return Response::deny('Este ingreso ya tiene un registro de enfermería creado en el turno actual - Enferemero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
+            return Response::deny('Este ingreso ya tiene un registro de enfermería creado en el turno actual - Enfermero: ' . $nurseRecordInTurn->nurse->name . ' ' . $nurseRecordInTurn->nurse->last_name);
         }
 
         return Response::allow();

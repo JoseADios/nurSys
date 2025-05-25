@@ -3,12 +3,12 @@
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
                 <BreadCrumb :items="[
-                    ...(medicalOrder.id ? [{
-                        formattedId: { id: medicalOrder.admission_id, prefix: 'ING' },
-                        route: route('admissions.show', medicalOrder.id)
+                    ...(admission_id ? [{
+                        formattedId: { id: admission_id, prefix: 'ING' },
+                        route: route('admissions.show', admission_id)
                     }] : []),
                     {
-                        text: 'Ordenes Medicas',
+                        text: 'Órdenes Médicas',
                         route: medicalOrder.id
                             ? route('medicalOrders.index', { id: medicalOrder.id })
                             : route('medicalOrders.index')

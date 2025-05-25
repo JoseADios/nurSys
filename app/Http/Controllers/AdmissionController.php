@@ -218,14 +218,16 @@ class AdmissionController extends Controller implements HasMiddleware
 
         $temperatureRecordId = TemperatureRecord::where('admission_id', $admission->id)
             ->where('active', true)->first('id');
-        $medicationRecord = MedicationRecord::where('admission_id', $admission->id)->first();
+        $medicationRecordId = MedicationRecord::where('admission_id', $admission->id)->where('active', true)->first('id');
+        $medicalOrderId = MedicalOrder::where('admission_id', $admission->id)->where('active', true)->first('id');
 
         $createOrder = Gate::allows('create', [MedicalOrder::class, $admission->id]);
         $createNurseRecord = Gate::allows('create', [NurseRecord::class, $admission]);
 
         return Inertia::render('Admissions/Show', [
             'admission' => $admission,
-            'medicationRecord' => $medicationRecord,
+            'medicationRecordId' => $medicationRecordId,
+             'medicalOrderId' => $medicalOrderId,
             'patient' => $patient,
             'bed' => $bed,
             'daysIngressed' => $daysIngressed,

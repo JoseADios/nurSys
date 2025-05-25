@@ -146,12 +146,14 @@
                         <div class="grid md:grid-cols-2 sm:grid-cols-1 gap-4">
 
                             <div class="flex flex-col space-y-2 items-center">
-                                <Link :href="route('medicalOrders.index', { admission_id: admission.id })"
+                                <Link :href="route('medicalOrders.index', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
+                                    @click="processing = true"
                                     class="flex w-full items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg p-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                 <MedicalOrderIcon class="size-5 mr-1" />
                                 Órdenes Médicas
                                 </Link>
-                                <Link v-if="can.createOrder"
+                                <Link v-if="can.createOrder" :class="{ 'opacity-25 pointer-events-none': processing }"
+                                    @click="processing = true"
                                     :href="route('medicalOrders.create', { admission_id: admission.id })"
                                     class="flex w-24 items-center justify-center bg-blue-400 text-white font-semibold rounded-lg p-2 hover:bg-blue-500 transition duration-300 ease-in-out">
                                 Nuevo +
@@ -159,13 +161,15 @@
                             </div>
 
                             <div class="flex flex-col space-y-2 items-center">
-                                <Link :href="route('nurseRecords.index', { admission_id: admission.id })"
+                                <Link :href="route('nurseRecords.index', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
+                                    @click="processing = true"
                                     class="flex w-full items-center justify-center bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg p-4 hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                 <NurseRecordIcon class="size-5 mr-1" />
                                 Hojas de Enfermería
                                 </Link>
                                 <AccessGate :role="['admin', 'nurse']">
-                                    <Link :href="route('nurseRecords.create', { admission_id: admission.id })"
+                                    <Link :href="route('nurseRecords.create', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
+                                    @click="processing = true"
                                         class="flex w-24 items-center justify-center bg-green-400 text-white font-semibold rounded-lg p-2 hover:bg-green-500 transition duration-300 ease-in-out">
                                     Nuevo +
                                     </Link>
@@ -182,7 +186,8 @@
                                     </Link>
                                 </div>
                                 <div v-else class=" w-full">
-                                    <Link :href="route('temperatureRecords.create', { admission_id: admission.id })"
+                                    <Link :href="route('temperatureRecords.create', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
+                                    @click="processing = true"
                                         class="flex w-full items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                     <ChartIcon class="size-5 mr-1" />
                                     Nueva hoja de Temperatura
@@ -193,14 +198,16 @@
 
                             <div>
                                 <div v-if="medicationRecord">
-                                    <Link :href="route('medicationRecords.show', medicationRecord)"
+                                    <Link :href="route('medicationRecords.show', medicationRecord)" :class="{ 'opacity-25 pointer-events-none': processing }"
+                                    @click="processing = true"
                                         class="flex w-full items-center justify-center bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                     <MedicationIcon class="size-5 mr-1" />
                                     Ficha de Medicamentos
                                     </Link>
                                 </div>
                                 <div v-else>
-                                    <Link :href="route('medicationRecords.create', { admission_id: admission.id })"
+                                    <Link :href="route('medicationRecords.create', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
+                                    @click="processing = true"
                                         class="flex w-full items-center justify-center bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                     <MedicationIcon class="size-5 mr-1" />
                                     Ficha de Medicamentos
@@ -438,6 +445,7 @@ export default {
     data() {
         return {
             admissionBeingDeleted: ref(null),
+            processing: ref(false),
             admissionUpdateCharge: ref(null),
             showEditReceptionist: ref(null),
             admissionBeingPutInProgress: ref(null),

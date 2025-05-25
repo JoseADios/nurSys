@@ -71,11 +71,11 @@
 
                 </div>
 
-                 <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center xl:w-[80%]">
+                 <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 whitespace-nowrap xl:items-center xl:w-[80%]">
                    <AccessGate :permission="['medicationRecords.delete']">
                         <!-- Filtro para mostrar registros eliminados -->
                         <button @click="toggleShowDeleted"
-                            class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
+                            class="flex items-center  min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors w-full sm:w-auto justify-center sm:justify-start"
                             :class="{
                                 'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
                                 'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted

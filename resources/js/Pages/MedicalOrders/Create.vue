@@ -24,10 +24,11 @@
                 <!-- Botones -->
                 <div class="flex justify-end mt-4 space-x-3">
                     <Link :href="route('medicalOrders.index')">
-                          <SecondaryButton         class="focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 ">
-                                       Cancelar</SecondaryButton>
+                          <SecondaryButton class="py-2.5 px-5 me-2 mb-2  ">
+                  Cancelar
+              </SecondaryButton>
                     </Link>
-                    <PrimaryButton type="submit"  :class="{ 'opacity-25': form.processing }" :disabled="form.processing" >
+                   <PrimaryButton type="submit" class="py-2.5 px-5 me-2 mb-2  "  :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing" >
                     Guardar
                 </PrimaryButton>
                 </div>

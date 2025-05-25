@@ -46,7 +46,7 @@
                 <!-- Primera fila en dispositivos medianos -->
                 <div class="flex flex-col sm:flex-row w-full gap-3 items-center">
                     <!-- Grupo: Mis Registros + En proceso -->
-                    <div class="flex w-full flex-col sm:flex-row xl:w-full gap-2 items-center">
+                    <div class="flex w-full flex-col sm:flex-row xl:w-full gap-2 items-center whitespace-nowrap">
                        <select @change="submitFilters()"
                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                             name="in_process" id="in_process" v-model="form.in_process">
@@ -71,7 +71,7 @@
 
                 </div>
 
-                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center xl:w-[80%]">
+                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center whitespace-nowrap xl:w-[80%]">
                     <AccessGate :permission="['medicalOrders.delete']">
                         <!-- Filtro para mostrar registros eliminados -->
                         <button @click="toggleShowDeleted"
@@ -88,7 +88,7 @@
 
                     <AccessGate :permission="['medicalOrders.create']">
 
-                        <PrimaryLink v-if="!form.admission_id" :href="route('medicalOrders.create')">
+                        <PrimaryLink v-if="!form.admission_id" :href="route('medicalOrders.create')  ">
                         <PlusIcon class="size-5" />
                         <span class="">Nuevo Registro</span>
                         </PrimaryLink>

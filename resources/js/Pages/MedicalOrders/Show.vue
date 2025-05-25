@@ -24,10 +24,7 @@
 
 
         <div class="container mx-auto px-4 py-8">
-            <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
 
-
-            </div>
             <div
                 class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
                 <!-- Navigation -->
@@ -43,12 +40,12 @@
                         </PersonalizableButton>
                         <DangerButton v-if="medicalOrder.active" @click="recordBeingDeleted = true">
 
-                            <TrashIcon class="size-5" />
+                            <TrashIcon class="size-5 mr-2" />
                             <span class="font-medium ">Eliminar</span>
 
                         </DangerButton>
                             <PersonalizableButton v-else @click="restoreRecord" class="gap-2" color="green"
-                            :loading="recordActiveChanging">
+                            >
                             <RestoreIcon class="size-5" />
                             <span class="hidden sm:inline-flex">Restaurar</span>
                             </PersonalizableButton>
@@ -188,7 +185,7 @@
                         </div>
 
                         <div class="pt-4">
-                             <PersonalizableButton   type="submit"  :class="{ 'opacity-25': formDetail.processing }" :disabled="formDetail.processing"  size="large" class="w-full">
+                             <PersonalizableButton   type="submit"  :class="{ 'opacity-25': formDetail.processing }" :loading="formDetail.processing"  :disabled="formDetail.processing"  size="large" class="w-full">
                             Agregar Detalle
                         </PersonalizableButton>
                         </div>
@@ -292,13 +289,19 @@
                             input-name="doctor_sign" />
                         <div v-if="signatureError" class="text-red-500 text-sm mt-2">La firma es obligatoria.</div>
 
-                        <div class="my-4">
-                            <button type="button"
-                                class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                                @click="isVisibleEditSign = false">Cancelar</button>
-                            <button  :class="{ 'opacity-25': formSignature.processing }" :disabled="formSignature.processing"
-                                class="mr-6 focus:outline-none text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900"
-                                type="submit">Guardar firma</button>
+                        <div class="my-4 ">
+                             <SecondaryButton class="mr-2"  @click="isVisibleEditSign = false"
+                                        >
+                                        Cerrar
+                                    </SecondaryButton>
+
+                             <PrimaryButton type="submit" :class="{ 'opacity-25': formSignature.processing }":is-loading="formSignature.processing"
+                                        :disabled="formSignature.processing"
+                                       >
+                                       Aceptar
+                                    </PrimaryButton>
+
+
                         </div>
                     </form>
                 </div>
@@ -319,15 +322,17 @@
 
                         <!-- Botones -->
                         <div class="flex justify-end mt-4 space-x-3">
-                            <button type="button" @click="showEditAdmission = null"
-                                class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
-                                Cancelar
-                            </button>
-                            <button type="submit"
-                                class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
-                                :disabled="!formRecord.admission_id">
-                                Aceptar
-                            </button>
+
+                              <SecondaryButton  @click="showEditAdmission = null"
+                                        >
+                                        Cerrar
+                                    </SecondaryButton>
+
+                             <PrimaryButton type="submit" :class="{ 'opacity-25': formRecord.processing }":is-loading="formRecord.processing"
+                                        :disabled="formRecord.processing"
+                                       >
+                                       Aceptar
+                                    </PrimaryButton>
                         </div>
                     </form>
                 </div>
@@ -385,18 +390,23 @@
             <!-- Footer del modal -->
             <template #footer>
                 <div class="flex items-center gap-2">
-                <DangerButton v-if="selectedDetail.active" type="button" @click="detailBeingDeleted = true">
+                <DangerButton v-if="selectedDetail.active"  type="button" @click="detailBeingDeleted = true">
+                      <TrashIcon class="size-5 mr-2" />
                      Eliminar
                 </DangerButton>
-                <PersonalizableButton v-if="!selectedDetail.active" type="button" @click="restoreDetail" color="green">
-                     Restaurar
+                <PersonalizableButton v-if="!selectedDetail.active":class="{ 'opacity-25': modalform.processing }":is-loading="modalform.processing"
+                                        :disabled="modalform.processing" type="button" @click="restoreDetail" color="green">
+                     <RestoreIcon class="size-5 mr-2" />
+                    Restaurar
                 </PersonalizableButton>
+                 <PrimaryButton type="submit" @click="submitUpdateDetail" :class="{ 'opacity-25': modalform.processing }":is-loading="modalform.processing"
+                                        :disabled="modalform.processing" >
+                    Actualizar
+                </PrimaryButton>
                 <SecondaryButton type="button" @click="isVisibleDetail = false">
                     Cerrar
                 </SecondaryButton>
-                <PrimaryButton type="submit" @click="submitUpdateDetail">
-                    Actualizar
-                </PrimaryButton>
+
                 </div>
             </template>
         </DialogModal>
@@ -420,9 +430,11 @@
                 </SecondaryButton>
 
                 <DangerButton v-if="recordBeingDeleted" class="ms-3" @click="deleteRecord">
+                      <TrashIcon class="size-5 mr-2" />
                     Eliminar registro
                 </DangerButton>
                 <DangerButton v-else class="ms-3" @click="deleteDetail(); detailBeingDeleted = null;">
+                      <TrashIcon class="size-5 mr-2" />
                     Eliminar detalle
                 </DangerButton>
             </template>
@@ -435,15 +447,18 @@
                         @update:user="formRecord.doctor_id = $event" />
                     <!-- Botones -->
                     <div class="flex justify-end mt-4 space-x-3">
-                        <button type="button" @click="showEditDoctor = null"
-                            class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
-                            Cancelar
-                        </button>
-                        <button type="submit" :class="{ 'opacity-25': formRecord.processing }" :disabled="formRecord.processing"
-                            class="px-4 py-2 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 transition"
-                            >
-                            Aceptar
-                        </button>
+
+                        <SecondaryButton  @click="showEditDoctor = null"
+                                        >
+                                        Cerrar
+                                    </SecondaryButton>
+
+                             <PrimaryButton type="submit" :class="{ 'opacity-25': formRecord.processing }":is-loading="formRecord.processing"
+                                        :disabled="formRecord.processing"
+                                       >
+                                       Aceptar
+                                    </PrimaryButton>
+
                     </div>
                 </form>
             </div>
@@ -520,6 +535,10 @@ export default {
             recordBeingDeleted: ref(null),
             detailBeingDeleted: ref(null),
             selectedDetail: ref(null),
+             modalform: useForm( {
+                selectedDetail: this.selectedDetail,
+
+            }),
             isVisibleDetail: ref(false),
             originalSuspendedState: ref(null),
             isVisibleEditSign: ref(null),
@@ -589,9 +608,12 @@ export default {
         },
         submit() {
             this.formDetail.post(route('medicalOrderDetails.store'),
+
                  {
+                      preserveScroll: true,
                 onSuccess: () => {
-                  this.formDetail.reset('medication', 'comment');
+              this.formDetail.reset();
+
                 }
 
             });
@@ -613,7 +635,7 @@ export default {
         },
 
         submitUpdateDetail() {
-            this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
+            this.modalform.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
                 preserveScroll: true,
                 preserveState: true
             }),

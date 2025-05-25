@@ -85,7 +85,7 @@
             </SecondaryButton>
                 </Link>
 
-                 <PrimaryButton type="submit"  :class="{ 'opacity-25': form.processing }" :disabled="form.processing" >
+                 <PrimaryButton type="submit"  :class="{ 'opacity-25': form.processing }" :is-loading="form.processing" :disabled="form.processing" >
                     Guardar
                 </PrimaryButton>
             </div>

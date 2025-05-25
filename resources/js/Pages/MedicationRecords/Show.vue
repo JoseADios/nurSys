@@ -4,9 +4,9 @@
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
 
                 <BreadCrumb :items="[
-                    ...(medicationRecord.id ? [{
-                        formattedId: { id: medicationRecord.admission.id, prefix: 'ING' },
-                        route: route('admissions.show', medicationRecord.id)
+                    ...(admission_id ? [{
+                        formattedId: { id: admission_id, prefix: 'ING' },
+                        route: route('admissions.show', admission_id)
                     }] : []),
                     {
                         text: 'Fichas de Medicamentos',
@@ -589,6 +589,7 @@ export default {
         diet: Array,
         filters: Object,
         selectedDrug: Array,
+        admission_id: Number,
         errors: {
             type: Array,
             default: () => []

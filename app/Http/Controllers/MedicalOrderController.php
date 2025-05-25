@@ -144,23 +144,25 @@ class MedicalOrderController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Request $request)
+    public function show(Request $request,MedicalOrder $medicalOrder)
     {
+          $this->authorize('view', $medicalOrder);
+        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord']);
         $admissionId = $request->query('admission_id');
-
         $showDeleted = $request->boolean('showDeleted');
 
-        $query = MedicalOrder::where('admission_id', $admissionId);
+        $query = MedicalOrder::where('admission_id', $medicalOrder->admission_id)->with('admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord');
 
-        if (!$showDeleted) {
+         if ($showDeleted) {
+            $query->where('active', false);
+        } else {
             $query->where('active', true);
         }
 
         $medicalOrder = $query->latest()->firstOrFail();
-
+        Log::info($medicalOrder);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
 
-        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord']);
 
         $doctor = User::find($medicalOrder->doctor_id);
 
@@ -176,6 +178,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
             'details' => $details,
             'admissions' => $admissions,
             'doctor' => $doctor,
+            'admission_id' => $admissionId,
             'regimes' => $regimes,
             'previousUrl' => URL::previous(),
             'filters' => [

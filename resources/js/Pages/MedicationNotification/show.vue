@@ -53,7 +53,7 @@
                         <div class="flex items-center space-x-20">
                             <div class="font-semibold text-gray-900 dark:text-white mr-20">
                                 <div v-if="notification.nurse" class="mb-2">
-                                   Enfermera: {{ notification.nurse.name }}
+                                    Enfermero/a: {{ notification.nurse.name }} {{ notification.nurse.last_name }}
                                 </div>
                                 <div class="mb-2">Notificación - #{{ index + 1 }}</div>
                                 <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Fecha: {{
@@ -63,7 +63,7 @@
                                         notification.scheduled_time) }}</div>
 
                                 <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Medicamento: {{ details.drug
-                                }}</div>
+                                    }}</div>
                                 <div v-if="notification.administered_time"
                                     class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Medicamento Administrado:
                                     {{ formatDate(
@@ -75,9 +75,9 @@
                             </div>
 
                             <div v-if="notification.applied"
-                                class="text-sm  flex flex-col items-center text-gray-500 dark:text-gray-400 p-4">
-                                <div class="mb-2 font-medium">Firma</div>
-                                <img :src="`/storage/${notification.nurse_sign}`" width="250" alt="Firma">
+                                class=" flex flex-col  text-gray-500 dark:text-gray-400 p-6 pt-8 ">
+                                <div class=" font-medium mb-1">Firma</div>
+                                <img class="border rounded p-6" :src="`/storage/${notification.nurse_sign}`" width="250" alt="Firma">
                             </div>
 
                         </div>
@@ -92,12 +92,10 @@
                             </div>
                             <div v-if="lastApplied(notification)" class="flex justify-end mt-2">
                                 <AccessGate v-if="canUpdateNotification">
-                                    <button
-                                        class="font-semibold text-red-500 dark:text-red-400 border border-red-300 px-4 py-1 rounded hover:bg-red-100 dark:hover:bg-gray-700 transition"
-                                        @click="revert(notification)">
-
+                                    <PersonalizableButton color="red" @click="revert(notification)">
+                                        <span class="mr-2">Revertir</span>
                                         <BackIcon class="h-8 w-8 " />
-                                    </button>
+                                    </PersonalizableButton>
                                 </AccessGate>
                             </div>
 
@@ -108,11 +106,12 @@
                                 NO APLICADO
                             </div>
                             <div v-if="Firstnoapplied(notification)" class="flex justify-end mt-1">
-                                <button
-                                    class="font-semibold text-green-500 dark:text-green-400 border border-green-300 px-4 py-1 rounded hover:bg-green-100 dark:hover:bg-gray-700 transition"
-                                    @click="openModal(notification)">
+                                  <AccessGate :permission="['medicationNotification.update']">
+                                <PersonalizableButton color="green" @click="openModal(notification)">
+                                    <span class="mr-2">Aplicar</span>
                                     <CheckCircleIcon class="h-8 w-8 " />
-                                </button>
+                                </PersonalizableButton>
+                                </AccessGate>
                             </div>
 
                         </div>
@@ -151,8 +150,8 @@
                 </SecondaryButton>
 
                 <div v-if="notificationBeingUpdated.applied != true">
-                    <PrimaryButton :class="{ 'opacity-25': formSignature.processing }":is-loading="formSignature.processing"
-                        :disabled="formSignature.processing" class="ms-3"
+                    <PrimaryButton :class="{ 'opacity-25': formSignature.processing }"
+                        :is-loading="formSignature.processing" :disabled="formSignature.processing" class="ms-3"
                         @click="markAsAdministered(notificationBeingUpdated)">
                         Administrar
                     </PrimaryButton>

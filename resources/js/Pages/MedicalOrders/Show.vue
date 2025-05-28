@@ -38,6 +38,7 @@
                         <ReportIcon class="size-5 " />
                         Crear Reporte
                         </PersonalizableButton>
+                          <AccessGate :permission="['medicalOrder.delete']">
                         <DangerButton v-if="medicalOrder.active" @click="recordBeingDeleted = true">
 
                             <TrashIcon class="size-5 mr-2" />
@@ -49,6 +50,7 @@
                             <RestoreIcon class="size-5" />
                             <span class="hidden sm:inline-flex">Restaurar</span>
                             </PersonalizableButton>
+                            </AccessGate>
                     </div>
                 </div>
 
@@ -65,7 +67,7 @@
                                 </Link>
 
                             </div>
-                            <AccessGate :permission="['medicalOrder.delete']">
+                            <AccessGate :role="['admin']">
                                 <button @click="showEditAdmission = true" class="text-blue-500 mt-6  ">
                                     <EditIcon class="size-5" />
                                 </button>
@@ -154,6 +156,7 @@
 
                 <!-- Form -->
                 <!-- Formulario para agregar nuevo detalle -->
+                    <AccessGate :permission="['medicalOrder.delete']">
                 <div class="p-8 ">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Detalles
                     </h3>
@@ -191,6 +194,7 @@
                         </div>
                     </form>
                 </div>
+                </AccessGate>
 
                 <!-- Nurse Record Details -->
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
@@ -198,6 +202,7 @@
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro
                         </h3>
                         <div v-if="medicalOrder.active">
+                            <AccessGate :permission="['medicalOrder.delete']">
                             <button @click="toggleShowDeleted"
                                 class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-auto"
                                 :class="{
@@ -214,6 +219,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </button>
+                            </AccessGate>
                         </div>
                     </div>
                     <div v-for="detail in details" :key="detail.id" :class="[
@@ -244,11 +250,13 @@
                             </div>
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                              <AccessGate :permission="['medicalOrder.update']">
                             <button @click="openEditModal(detail)"
                                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                                <EditIcon class="size-5" />
                                 <span class="font-medium">Editar</span>
                             </button>
+                            </AccessGate>
                         </div>
                     </div>
 
@@ -256,7 +264,7 @@
                         No hay eventos de ordenes disponibles
                     </div>
                 </div>
-
+                    <AccessGate :permission="['medicalOrder.update']">
                 <section id="bottom" class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Firma</h3>
 
@@ -306,6 +314,7 @@
                     </form>
                 </div>
             </section>
+            </AccessGate>
             </div>
 
         </div>
@@ -390,15 +399,18 @@
             <!-- Footer del modal -->
             <template #footer>
                 <div class="flex items-center gap-2">
+                <AccessGate :permission="['medicalOrder.delete']">
                 <DangerButton v-if="selectedDetail.active"  type="button" @click="detailBeingDeleted = true">
                       <TrashIcon class="size-5 mr-2" />
                      Eliminar
                 </DangerButton>
+
                 <PersonalizableButton v-if="!selectedDetail.active":class="{ 'opacity-25': modalform.processing }":is-loading="modalform.processing"
                                         :disabled="modalform.processing" type="button" @click="restoreDetail" color="green">
                      <RestoreIcon class="size-5 mr-2" />
                     Restaurar
                 </PersonalizableButton>
+                 </AccessGate>
                  <PrimaryButton type="submit" @click="submitUpdateDetail" :class="{ 'opacity-25': modalform.processing }":is-loading="modalform.processing"
                                         :disabled="modalform.processing" >
                     Actualizar
@@ -528,6 +540,7 @@ export default {
         regimes: Array,
         filters: Object,
          doctor: Object,
+          admission_id: Number,
 
     },
     data() {

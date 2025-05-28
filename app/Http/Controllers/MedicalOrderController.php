@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 class MedicalOrderController extends Controller implements HasMiddleware
 {
 
@@ -103,6 +104,9 @@ class MedicalOrderController extends Controller implements HasMiddleware
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
                 'in_process' => $in_process,
+            ],
+            'can' => [
+                'create' => Gate::allows('create', Admission::class),
             ],
         ]);
     }

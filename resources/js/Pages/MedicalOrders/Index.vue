@@ -73,7 +73,7 @@
 
                 <div
                     class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center whitespace-nowrap xl:w-[80%]">
-                    <AccessGate :permission="['medicalOrders.delete']">
+                    <AccessGate :permission="['medicalOrder.delete']">
                         <!-- Filtro para mostrar registros eliminados -->
                         <button @click="toggleShowDeleted"
                             class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
@@ -87,7 +87,7 @@
                         </button>
                     </AccessGate>
 
-                    <AccessGate :permission="['medicalOrders.create']">
+                    <AccessGate :permission="['medicalOrder.create']">
 
                         <PrimaryLink v-if="!form.admission_id" :href="route('medicalOrders.create')">
                             <PlusIcon class="size-5" />
@@ -259,8 +259,6 @@ export default {
     },
     methods: {
         medicalOrderShow(id) {
-
-             console.log(this.form.admission_id);
             if (this.form.admission_id) {
                 this.$inertia.get(`${route('medicalOrders.show', id)}?admission_id=${this.form.admission_id}`);
             } else {

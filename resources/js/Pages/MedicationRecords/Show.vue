@@ -711,7 +711,7 @@ export default {
 
                 onSuccess: (response) => {
                     this.form.showDeleted = null;
-                    toggleShowDeleted();
+
                 },
                 onError: (errors) => {
                     console.error('Errores:', errors);
@@ -756,16 +756,7 @@ export default {
 
             this.form.post(route('medicationRecordDetails.store'), {
                 onSuccess: () => {
-                    this.form = {
-                        medication_record_id: this.medicationRecord.id,
-                        drug: '',
-                        dose: '',
-                        route: '',
-                        dose_metric: '',
-                        fc: '',
-                        interval_in_hours: '',
-                        selectedOrderId: null,
-                    };
+                     this.form.reset();
                     this.selectedOrderId = null;
                     this.showCreateDetailForm = false;
                 }
@@ -838,7 +829,6 @@ export default {
                     preserveScroll: true,
                     onSuccess: (response) => {
                         this.recordDetailActiveChange = false;
-                        console.log('eliminado correctamente', response);
 
                     },
                     onError: (errors) => {

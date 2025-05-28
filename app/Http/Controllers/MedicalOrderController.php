@@ -148,7 +148,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Request $request,MedicalOrder $medicalOrder)
+    public function show(MedicalOrder $medicalOrder, Request $request)
     {
           $this->authorize('view', $medicalOrder);
         $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord']);

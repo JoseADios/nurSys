@@ -27,7 +27,7 @@
             </label>
             <AdmissionSelector :doesnt-have-medication-r=true @update:admission="form.admission_id = $event" :selected-admission-id="admission_id" />
 
-     <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
+
             <!-- Contenedor para la dieta y el selector -->
             <div class="flex items-center space-x-4 mt-6">
                 <!-- Dieta -->

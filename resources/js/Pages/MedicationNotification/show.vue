@@ -291,8 +291,9 @@ export default {
             }
         },
         async downloadRecordReport() {
-            window.open(route('reports.medicationNotification', {
-                id: this.notification.id, preserveScroll: true
+
+            window.open(route('reports.medicationRecord', {
+                id: this.details.medication_record_id, preserveScroll: true
             }), '_blank');
         },
 

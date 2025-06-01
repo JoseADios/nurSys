@@ -148,7 +148,7 @@
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
                                 @click="sort('users.name')">
-                                Enfermera <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ?
+                                Enfermero/a <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ?
                                     '↑' :
                                     '↓' }}</span>
                             </th>

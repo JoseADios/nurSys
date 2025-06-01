@@ -182,10 +182,10 @@
                                 {{ formatDate(medicalOrder.created_at) }}
                             </td>
                             <td class="px-6 py-4">
-                                <button class="ml-2 text-green-500 hover:text-green-800"
-                                     @click="medicalOrderShow(medicalOrder.id)">
-                                Abrir
-                                </button>
+                               <Link  class="flex-1 text-primary-500 hover:text-primary-800"
+                                    :href="route('medicalOrders.show', medicalOrder.id)" as="button">
+                                    Ver
+                                </Link >
                             </td>
                         </tr>
                     </tbody>

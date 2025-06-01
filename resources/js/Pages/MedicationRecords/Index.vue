@@ -181,10 +181,10 @@
 
                             <td class="px-6 py-4 flex items-center space-x-4">
 
-                                <button class="flex-1 text-blue-500 hover:text-blue-800"
-                                    @click="MedicationRecordShow(record.id)">
+                                <Link  class="flex-1 text-primary-500 hover:text-primary-800"
+                                    :href="route('medicationRecords.show', record.id)" as="button">
                                     Ver
-                                </button>
+                                </Link >
 
 
 
@@ -295,9 +295,7 @@ export default {
             this.submitFilters();
         },
 
-        MedicationRecordShow(id) {
-            this.$inertia.get(route('medicationRecords.show', id));
-        },
+
         MedicationRecordEdit(id) {
             this.$inertia.get(route('medicationRecords.edit', id));
         },

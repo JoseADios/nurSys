@@ -224,7 +224,7 @@
                             {{ formatDate(admission.created_at) }}
                         </td>
                         <td class="px-6 py-4">
-                            <Link class="ml-2 text-blue-500 hover:text-blue-800"
+                            <Link class="ml-2 text-primary-500 hover:text-primary-800"
                                 :href="route('admissions.show', admission.id)">
                             Ver
                             </Link>

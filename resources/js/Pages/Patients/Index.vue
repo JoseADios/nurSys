@@ -68,9 +68,9 @@
 
         <!-- Barra de búsqueda y acciones -->
         <div class="bg-gray-100 dark:bg-gray-900 px-4 lg:px-10 mt-2">
-            <div class="flex flex-col md:flex-row gap-4 py-2">
+            <div class="flex flex-col xl:flex-row gap-4 py-2">
                 <!-- Búsqueda -->
-                <div class="relative w-full md:w-1/3">
+                <div class="relative w-full xl:w-1/3">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                     </div>
@@ -83,8 +83,8 @@
                 </div>
 
                 <!-- Filtros y acciones -->
-                <div class="flex flex-col sm:flex-row items-center gap-4 w-full">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+                <div class="flex flex-col lg:flex-row items-center gap-4 w-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 w-full">
                         <select @change="submitFilter()"
                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                             name="hospitalized" id="hospitalized" v-model="form.hospitalized">

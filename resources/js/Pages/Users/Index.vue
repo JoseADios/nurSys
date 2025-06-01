@@ -78,7 +78,7 @@
 
                 <!-- Filtros adicionales - colapsables en móvil -->
                 <div :class="{ 'hidden': !showFilters }" class="md:block">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
                         <!-- Filtro por rol -->
                         <div class="relative">
                             <select v-model="form.role" name="role" id="role" @change="applyFilters"

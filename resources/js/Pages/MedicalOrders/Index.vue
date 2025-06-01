@@ -70,7 +70,7 @@
                     </div>
 
                 </div>
-
+  <AccessGate :role="['doctor','admin']" >
                 <div
                     class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center whitespace-nowrap xl:w-[80%]">
                     <AccessGate :permission="['medicalOrder.delete']">
@@ -100,6 +100,7 @@
 
                     </AccessGate>
                 </div>
+                </AccessGate>
             </div>
         </div>
 
@@ -140,7 +141,7 @@
                                     v-if="form.sortField === 'created_at'">{{ form.sortDirection === 'asc' ? '↑' :
                                         '↓'
                                     }}</span>
-                                Fecha
+                                Fecha de Creación
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Acciones
@@ -181,7 +182,7 @@
                             <td class="px-6 py-4">
                                 {{ formatDate(medicalOrder.created_at) }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 flex items-center space-x-4">
                                <Link  class="flex-1 text-primary-500 hover:text-primary-800"
                                     :href="route('medicalOrders.show', medicalOrder.id)" as="button">
                                     Ver

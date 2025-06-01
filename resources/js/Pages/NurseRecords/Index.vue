@@ -203,9 +203,9 @@
                                     as="button">
                                 Ver
                                 </Link>
-                                <Link v-else class="ml-2 text-blue-500 hover:text-blue-800"
+                                <Link v-else class="ml-2 text-primary-500 hover:text-primary-800"
                                     :href="route('nurseRecords.show', nurseRecord.id)" as="button">
-                                Abrir
+                                Ver
                                 </Link>
                             </td>
                         </tr>

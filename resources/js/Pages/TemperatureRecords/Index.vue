@@ -195,9 +195,9 @@
                                 {{ formatDate(temperatureRecord.created_at) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <button class="ml-2 text-blue-500 hover:text-blue-800"
+                                <button class="ml-2 text-primary-500 hover:text-primary-800"
                                     @click="temperatureRecordShow(temperatureRecord.id)">
-                                    Abrir
+                                    Ver
                                 </button>
                             </td>
                         </tr>

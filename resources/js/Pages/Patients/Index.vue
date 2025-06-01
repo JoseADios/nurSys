@@ -219,7 +219,7 @@
                                         Ver
                                         </Link>
                                         <AccessGate :permission="['patient.update']">
-                                            <Link class="text-blue-500 hover:text-blue-800"
+                                            <Link class="text-green-500 hover:text-green-800"
                                                 :href="route('patients.edit', patient.id)">
                                             Editar
                                             </Link>

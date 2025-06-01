@@ -57,7 +57,10 @@ class MedicalOrderPolicy
 
         return Response::allow();
     }
-
+public function updateAdmission(User $user): Response
+    {
+        return Response::allow();
+    }
     /**
      * Determine whether the user can update the model.
      */

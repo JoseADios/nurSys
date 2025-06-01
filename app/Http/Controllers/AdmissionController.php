@@ -49,7 +49,7 @@ class AdmissionController extends Controller implements HasMiddleware
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
         $beds_available = $request->input('beds_available');
-        $admissions_discharged = $request->input('admissions_discharged');
+        $admissions_discharged = $request->input('admissions_discharged','2');
         $days = $request->integer('days');
         $myRecords = $request->boolean('myRecords', true);
         $query = Admission::query()->with('patient', 'bed', 'doctor','receptionist')->select([

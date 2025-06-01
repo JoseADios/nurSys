@@ -148,7 +148,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         // Crear el MedicationRecord usando los datos validados
         $medicationRecord = MedicationRecord::create([
             'admission_id' => $request->admission_id,
-            'nurse_id' => Auth::id(),
+
 
             'diet' => $request->diet,
         ]);
@@ -180,7 +180,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $route = DrugRoute::all();
             $dose = DrugDose::all();
             $showDeleted = $request->boolean('showDeleted');
-            $nurse = User::where('id', $medicationRecord->nurse_id)->first();
+
             $diet = Diet::all();
 
             if ($showDeleted || !$medicationRecord->active) {
@@ -203,7 +203,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             return Inertia::render('MedicationRecords/Show', [
                 'medicationRecord' => $medicationRecord,
                 'details' => $details,
-                'nurse' => $nurse,
+
                 'orders' => $allMedicalOrders,
                 'drug' => $drug,
                 'dose' => $dose,

@@ -39,7 +39,7 @@
             </div>
 
             <!-- Filtros y botones - Reorganizados para mejor responsividad -->
-           <div class="flex justify-center items-center md:flex-wrap gap-2">
+           <div class="flex justify-center items-center whitespace-nowrap md:flex-wrap gap-2">
                 <!-- Botón para ver registros eliminados -->
                <AccessGate :permission="['admission.delete']">
                         <!-- Filtro para mostrar registros eliminados -->
@@ -72,7 +72,7 @@
                 </div>
 
                 <!-- Primera fila en dispositivos medianos -->
-                <div class="flex flex-col sm:flex-row w-full gap-3 items-center">
+                <div class="flex flex-col sm:flex-row w-full gap-3 whitespace-nowrap items-center">
                     <!-- Grupo: Mis Registros + En proceso -->
                     <div class="flex w-full flex-col sm:flex-row xl:w-full gap-2 items-center">
 

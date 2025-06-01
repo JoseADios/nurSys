@@ -83,7 +83,7 @@
                 </div>
 
                 <!-- Filtros y acciones -->
-                <div class="flex flex-col lg:flex-row items-center gap-4 w-full">
+                <div class="flex flex-col lg:flex-row items-center w-full">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 w-full">
                         <select @change="submitFilter()"
                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"

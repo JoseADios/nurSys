@@ -48,27 +48,6 @@
                     class="flex flex-col sm:flex-col sm:columns-2 xl:flex-row w-full gap-3 items-center xl:justify-between xl:flex-1">
                     <!-- Contenedor de filtros básicos - Se distribuye automáticamente -->
                     <div class="flex w-full flex-col sm:flex-row gap-2 items-center xl:gap-4">
-                        <!-- Mis Registros - Solo se muestra si tiene permiso -->
-                        <AccessGate :permission="['nurseRecord.create']" class="w-full sm:w-fit">
-                            <button
-                                class="relative w-full sm:w-auto border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 flex-shrink-0"
-                                :class="{
-                                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.myRecords,
-                                    'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
-                                }" @click="toggleFilterMyRecords" title="Mostrar solo mis registros">
-
-                                Mis registros
-
-                                <div class="p-2.5 pl-1">
-                                    <UserIcon class="h-5 w-5" />
-                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
-                                        :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
-                                    <div v-if="form.myRecords"
-                                        class="absolute -top-1 -right-0 sm:-right-1 h-2 w-2 bg-indigo-500 rounded-full">
-                                    </div>
-                                </div>
-                            </button>
-                        </AccessGate>
 
                         <!-- En proceso - Siempre visible, se expande según el espacio -->
                         <select @change="submitFilters()"
@@ -91,10 +70,33 @@
                             <option value="180">Últimos 180 días</option>
                             <option value="365">Último año</option>
                         </select>
+
+                        <!-- Mis Registros - Solo se muestra si tiene permiso -->
+                        <AccessGate :permission="['nurseRecord.create']" class="w-full sm:w-fit">
+                            <button
+                                class="relative w-full sm:w-auto border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 flex-shrink-0"
+                                :class="{
+                                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.myRecords,
+                                    'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
+                                }" @click="toggleFilterMyRecords" title="Mostrar solo mis registros">
+
+                                Mis registros
+
+                                <div class="p-2.5 pl-1">
+                                    <UserIcon class="h-5 w-5" />
+                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
+                                        :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
+                                    <div v-if="form.myRecords"
+                                        class="absolute -top-1 -right-0 sm:-right-1 h-2 w-2 bg-indigo-500 rounded-full">
+                                    </div>
+                                </div>
+                            </button>
+                        </AccessGate>
                     </div>
 
                     <!-- Contenedor de acciones - Se distribuye automáticamente entre elementos visibles -->
-                    <div class="flex flex-col items-center sm:flex-row w-full sm:justify-end gap-3 xl:gap-4">
+                    <div class="flex flex-col items-center sm:flex-row w-fit sm:justify-end gap-3 xl:gap-4">
+
                         <!-- Ver Eliminados - Solo se muestra si tiene permiso -->
                         <AccessGate :permission="['nurseRecord.delete']" class="sm:w-1/2 xl:w-auto">
                             <button @click="toggleShowDeleted"

@@ -3,10 +3,6 @@
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
                 <BreadCrumb :items="[
-                    ...(details.medication_record_id ? [{
-                        formattedId: { id: details.medication_record_id, prefix: 'ING' },
-                        route: route('admissions.show', details.medication_record_id)
-                    }] : []),
                     {
                         text: 'Fichas de Medicamentos',
                         route: details.medication_record_id
@@ -39,7 +35,7 @@
                     <BackIcon class="size-5" />Volver
                     </Link>
                     <div class="flex items-center">
-                        <PersonalizableButton v-if="details.active" @click="downloadRecordReport" color="emerald">
+                        <PersonalizableButton v-if="details.active" size="medium" @click="downloadRecordReport" color="emerald">
                             <ReportIcon class="size-5 mr-1" /> Crear Reporte
                         </PersonalizableButton>
 
@@ -86,15 +82,14 @@
 
 
 
-                        <div v-if="notification.applied == 1">
-                            <div id="applied" class="text-sm text-green-500 dark:text-green-400 mt-1">
+                        <div v-if="notification.applied">
+                            <div id="applied" class="text-sm text-green-500 dark:text-green-400">
                                 APLICADO
                             </div>
-                            <div v-if="lastApplied(notification)" class="flex justify-end mt-2">
+                            <div v-if="lastApplied(notification)" class="flex justify-end   items-center ">
                                 <AccessGate v-if="canUpdateNotification">
-                                    <PersonalizableButton color="red" @click="revert(notification)">
-                                        <span class="mr-2">Revertir</span>
-                                        <BackIcon class="h-8 w-8 " />
+                                    <PersonalizableButton color="red" size="medium" @click="revert(notification)">
+                                        <BackIcon class="size-5 mr-1" />Revertir
                                     </PersonalizableButton>
                                 </AccessGate>
                             </div>
@@ -102,14 +97,13 @@
                         </div>
 
                         <div v-else>
-                            <div id="no-applied" class="text-sm text-red-500 dark:text-red-400 mt-1">
+                            <div id="no-applied" class="text-sm text-red-500 dark:text-red-400">
                                 NO APLICADO
                             </div>
-                            <div v-if="Firstnoapplied(notification)" class="flex justify-end mt-1">
+                            <div v-if="Firstnoapplied(notification)" class="flex justify-end  items-center">
                                   <AccessGate :permission="['medicationNotification.update']">
-                                <PersonalizableButton color="green" @click="openModal(notification)">
-                                    <span class="mr-2">Aplicar</span>
-                                    <CheckCircleIcon class="h-8 w-8 " />
+                                <PersonalizableButton color="green" size="medium" @click="openModal(notification)">
+                                    <CheckCircleIcon class="size-5 mr-1" /> Aplicar
                                 </PersonalizableButton>
                                 </AccessGate>
                             </div>

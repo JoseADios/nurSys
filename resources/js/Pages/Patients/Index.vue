@@ -107,7 +107,7 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-center sm:justify-end items-center">
-                        <AccessGate :permission="['patient.delete']">
+                        <AccessGate :permission="['patient.delete']" class="ml-4">
                             <button @click="toggleShowDeleted"
                                 class="flex items-center justify-center space-x-1 px-3 py-2 rounded-lg transition-colors text-sm whitespace-nowrap"
                                 :class="{
@@ -120,7 +120,7 @@
                             </button>
                         </AccessGate>
 
-                        <AccessGate :permission="['patient.create']">
+                        <AccessGate :permission="['patient.create']" class="ml-4">
                             <PrimaryLink class="py-2.5 whitespace-nowrap" :href="route('patients.create')">
                                 <PlusIcon class="h-4 w-4 mr-1" />
                                 Nuevo paciente

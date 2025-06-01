@@ -70,7 +70,7 @@
                     </div>
 
                 </div>
-
+                 <AccessGate :role="['nurse','admin']" >
                  <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 whitespace-nowrap xl:items-center xl:w-[80%]">
                    <AccessGate :permission="['medicationRecord.delete']">
                         <!-- Filtro para mostrar registros eliminados -->
@@ -98,6 +98,7 @@
 
                     </AccessGate>
                 </div>
+                </AccessGate>
             </div>
         </div>
 

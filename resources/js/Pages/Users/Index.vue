@@ -10,9 +10,9 @@
         <div class="px-4 lg:px-10 mt-4">
             <div class="mb-4">
                 <!-- Barra de búsqueda principal y botones de acción siempre visibles -->
-                <div class="flex flex-col sm:flex-row gap-3 mb-3">
+                <div class="flex flex-col md:flex-row gap-3 mb-3">
                     <!-- Búsqueda general - siempre visible -->
-                    <div class="relative flex-grow">
+                    <div class="relative h-fit flex-grow">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                         </div>

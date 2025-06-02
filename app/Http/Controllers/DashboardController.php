@@ -307,7 +307,11 @@ class DashboardController extends Controller
         $userRole = Auth::user()->roles[0]->name;
         $pendingOrders = null;
         $pendingNurseR = null;
-        $pendingDocs = [];
+        $pendingDocs = [
+            'nurseRecords' => [],
+            'medicalOrders' => [],
+            'temperatureRecords' => [],
+        ];
 
         if ($userRole === 'doctor' || $userRole === 'admin') {
             $pendingOrders = MedicalOrder::query()

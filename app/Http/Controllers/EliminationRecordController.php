@@ -44,13 +44,17 @@ class EliminationRecordController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         $this->authorize('create', [EliminationRecord::class, $request->temperature_record_id]);
-        EliminationRecord::create([
-            'temperature_record_id' => $request->temperature_record_id,
-            'nurse_id' => Auth::id(),
-            'evacuations' => $request->evacuations,
-            'urinations' => $request->urinations,
-            'created_at' => now(),
+
+        $validated = $request->validate([
+            'temperature_record_id' => 'required|numeric',
+            'evacuations' => 'required|max:99|min:0|numeric',
+            'urinations' => 'required|max_digits:2'
         ]);
+
+        $validated['nurse_id'] = Auth::id();
+        $validated['created_at'] = now();
+
+        EliminationRecord::create($validated);
 
         return back()->with('flash.toast', 'Registros agregados exitosamente');
     }
@@ -77,12 +81,13 @@ class EliminationRecordController extends Controller implements HasMiddleware
     public function update(Request $request, EliminationRecord $eliminationRecord)
     {
         $this->authorize('update', $eliminationRecord);
-        $request->validate([
-            'evacuations' => 'required|integer',
-            'urinations' => 'required|string',
+
+        $validated = $request->validate([
+            'evacuations' => 'required|max:99|min:0|numeric',
+            'urinations' => 'required|max_digits:2',
         ]);
 
-        $eliminationRecord->update($request->all());
+        $eliminationRecord->update($validated);
 
         return back()->with('flash.toast', 'Registro actualizado correctamente');
     }

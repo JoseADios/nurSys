@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 class MedicalOrderController extends Controller implements HasMiddleware
 {
 
@@ -104,6 +105,9 @@ class MedicalOrderController extends Controller implements HasMiddleware
                 'sortDirection' => $sortDirection,
                 'in_process' => $in_process,
             ],
+            'can' => [
+                'create' => Gate::allows('create', Admission::class),
+            ],
         ]);
     }
 
@@ -146,28 +150,39 @@ class MedicalOrderController extends Controller implements HasMiddleware
      */
     public function show(MedicalOrder $medicalOrder, Request $request)
     {
+          $this->authorize('view', $medicalOrder);
+        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord']);
+        $admissionId = $request->query('admission_id');
+        $showDeleted = $request->boolean('showDeleted');
+
+        $query = MedicalOrder::where('admission_id', $medicalOrder->admission_id)->with('admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord');
+
+         if ($showDeleted) {
+            $query->where('active', false);
+        } else {
+            $query->where('active', true);
+        }
+
+        $medicalOrder = $query->latest()->firstOrFail();
+        Log::info($medicalOrder);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
 
-        $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord']);
 
-        $showDeleted = $request->boolean('showDeleted');
+        $doctor = User::find($medicalOrder->doctor_id);
+
+        $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
+            ->where('active', !$showDeleted)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         $regimes = Regime::all();
 
-        $doctor = User::where('id', $medicalOrder->doctor_id)->first();
-
-        if ($showDeleted || !$medicalOrder->active) {
-
-            $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active', false)->orderBy('created_at', 'desc')->get();
-
-        } else {
-            $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)->where('active', true)->orderBy('created_at', 'desc')->get();
-
-        }
         return Inertia::render('MedicalOrders/Show', [
             'medicalOrder' => $medicalOrder,
             'details' => $details,
             'admissions' => $admissions,
             'doctor' => $doctor,
+            'admission_id' => $admissionId,
             'regimes' => $regimes,
             'previousUrl' => URL::previous(),
             'filters' => [
@@ -175,6 +190,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
             ],
         ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -268,7 +284,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
 
         if ($medicationRecordDetails->isNotEmpty()) {
 
-              return back()->with('flash.toast', 'No se puede eliminar esta Orden Medica porque tiene registros de Fichas de medicamento asociadas.')->with('flash.toastStyle', 'danger');
+            return back()->with('flash.toast', 'No se puede eliminar esta Orden Medica porque tiene registros de Fichas de medicamento asociadas.')->with('flash.toastStyle', 'danger');
 
         }
 

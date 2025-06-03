@@ -279,6 +279,8 @@
 
     </div>
 
+@if ($hasnotifications)
+
 
     <div class="container-notifications"></div>
     <div class="header">
@@ -374,7 +376,7 @@
         </table>
 
     </div>
-
+@endif
     </div>
 
 

@@ -70,9 +70,9 @@
                     </div>
 
                 </div>
-
+                 <AccessGate :permission="['medicationRecord.view']" >
                  <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 whitespace-nowrap xl:items-center xl:w-[80%]">
-                   <AccessGate :permission="['medicationRecords.delete']">
+                   <AccessGate :permission="['medicationRecord.delete']">
                         <!-- Filtro para mostrar registros eliminados -->
                         <button @click="toggleShowDeleted"
                             class="flex items-center  min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors w-full sm:w-auto justify-center sm:justify-start"
@@ -86,7 +86,7 @@
                         </button>
                     </AccessGate>
 
-                    <AccessGate :permission="['medicationRecords.create']">
+                    <AccessGate :permission="['medicationRecord.create']">
                         <PrimaryLink v-if="!form.admission_id" :href="route('medicationRecords.create')">
                        <PlusIcon class="size-5" />
                         <span class="">Nuevo Registro</span>
@@ -98,6 +98,7 @@
 
                     </AccessGate>
                 </div>
+                </AccessGate>
             </div>
         </div>
 
@@ -181,10 +182,10 @@
 
                             <td class="px-6 py-4 flex items-center space-x-4">
 
-                                <button class="flex-1 text-blue-500 hover:text-blue-800"
-                                    @click="MedicationRecordShow(record.id)">
+                                <Link  class="flex-1 text-primary-500 hover:text-primary-800"
+                                    :href="route('medicationRecords.show', record.id)" as="button">
                                     Ver
-                                </button>
+                                </Link >
 
 
 
@@ -295,9 +296,7 @@ export default {
             this.submitFilters();
         },
 
-        MedicationRecordShow(id) {
-            this.$inertia.get(route('medicationRecords.show', id));
-        },
+
         MedicationRecordEdit(id) {
             this.$inertia.get(route('medicationRecords.edit', id));
         },

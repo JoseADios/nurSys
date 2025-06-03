@@ -34,7 +34,7 @@ class MedicalOrderPolicy
        if ($user->hasRole('doctor')) {
             return Response::allow();
         }
-        if (!$medicalOrder->active && $medicalOrder->doctor_id !== $user->id) {
+        if ( $medicalOrder->doctor_id !== $user->id) {
             return Response::deny('No tienes permiso para ver este registro');
         }
 

@@ -106,9 +106,11 @@
                         </select>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 lg:mt-0 justify-center sm:justify-end items-center">
+                    <div
+                        class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 lg:mt-0 justify-center sm:justify-end items-center">
                         <AccessGate :permission="['patient.delete']" class="ml-4">
-                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="form.showDeleted ? 'red' : 'gray'">
+                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted"
+                                :color="form.showDeleted ? 'red' : 'gray'">
                                 {{ filters.showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
                                 <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
                                 <CircleXIcon v-else class="ml-1 h-5 w-5" />
@@ -185,8 +187,11 @@
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span v-if="patient.is_hospitalized"
-                                        class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
-                                    <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
+                                        class="relative block size-3 bg-green-500 rounded-full mx-auto ring-4 ring-green-700">
+                                    </span>
+                                    <span v-else
+                                        class="relative block size-3 bg-orange-500 rounded-full mx-auto ring-4 ring-orange-700">
+                                    </span>
                                 </td>
                                 <th scope="row"
                                     class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 dark:text-white">

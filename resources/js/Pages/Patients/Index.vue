@@ -108,16 +108,11 @@
 
                     <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 lg:mt-0 justify-center sm:justify-end items-center">
                         <AccessGate :permission="['patient.delete']" class="ml-4">
-                            <button @click="toggleShowDeleted"
-                                class="flex items-center justify-center space-x-1 px-3 py-2 rounded-lg transition-colors text-sm whitespace-nowrap"
-                                :class="{
-                                    'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                                    'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                                }">
-                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                                <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-4 w-4" />
-                                <CircleXIcon v-else class="ml-1 h-4 w-4" />
-                            </button>
+                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="form.showDeleted ? 'red' : 'gray'">
+                                {{ filters.showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                            </PersonalizableButton>
                         </AccessGate>
 
                         <AccessGate :permission="['patient.create']" class="ml-4">
@@ -249,6 +244,7 @@ import SearchIcon from '@/Components/Icons/SearchIcon.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Pagination from '@/Components/Pagination.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 import PrimaryLink from '@/Components/PrimaryLink.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -272,7 +268,8 @@ export default {
         XIcon,
         TextInput,
         InputLabel,
-        PrimaryLink
+        PrimaryLink,
+        PersonalizableButton
     },
     data() {
         return {

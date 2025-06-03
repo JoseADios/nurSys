@@ -72,25 +72,19 @@
                         </select>
 
                         <!-- Mis Registros - Solo se muestra si tiene permiso -->
-                        <AccessGate :permission="['temperatureRecord.create']" class="w-full sm:w-fit">
-                            <button
-                                class="relative w-full sm:w-auto border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 flex-shrink-0"
-                                :class="{
-                                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.myRecords,
-                                    'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
-                                }" @click="toggleFilterMyRecords" title="Mostrar solo mis registros">
-
+                        <AccessGate :permission="['temperatureRecord.create']" class="sm:w-fit">
+                            <PersonalizableButton @click="toggleFilterMyRecords" title="Mostrar solo mis registros"
+                                variant="outline" custom-class="relative" :color="form.myRecords ? 'indigo' : 'gray'">
                                 Mis registros
-
-                                <div class="p-2.5 pl-1">
+                                <div class="pl-1">
                                     <UserIcon class="h-5 w-5" />
-                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
+                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-2"
                                         :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
                                     <div v-if="form.myRecords"
                                         class="absolute -top-1 -right-0 xl:-right-1 h-2 w-2 bg-indigo-500 rounded-full">
                                     </div>
                                 </div>
-                            </button>
+                            </PersonalizableButton>
                         </AccessGate>
                     </div>
 
@@ -99,16 +93,11 @@
 
                         <!-- Ver Eliminados - Solo se muestra si tiene permiso -->
                         <AccessGate :permission="['temperatureRecord.delete']" class="sm:w-1/2 xl:w-auto">
-                            <button @click="toggleShowDeleted"
-                                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full xl:w-auto justify-center flex-shrink-0"
-                                :class="{
-                                    'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                                    'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                                }">
+                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="form.showDeleted ? 'red' : 'gray'">
                                 {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
                                 <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
                                 <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                            </button>
+                            </PersonalizableButton>
                         </AccessGate>
 
                         <!-- Nuevo Registro - Solo se muestra si tiene permiso -->
@@ -139,7 +128,7 @@
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap hidden sm:table-cell"
                                 @click="sort('id')">
                                 ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                    }}</span>
+                                }}</span>
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
                                 @click="sort('admissions.id')">
@@ -241,6 +230,7 @@ import TextInput from '@/Components/TextInput.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
 import FilterIcon from '@/Components/Icons/FilterIcon.vue';
 import PrimaryLink from '@/Components/PrimaryLink.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 
 export default {
     props: {
@@ -265,7 +255,8 @@ export default {
         TextInput,
         UserIcon,
         FilterIcon,
-        PrimaryLink
+        PrimaryLink,
+        PersonalizableButton
     },
     data() {
         return {

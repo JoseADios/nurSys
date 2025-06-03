@@ -28,20 +28,11 @@
                     <div class="flex justify-center items-center flex-col sm:flex-row md:flex-wrap gap-2">
                         <!-- Botón para ver registros eliminados -->
                         <AccessGate :permission="['user.update']">
-                            <button @click="toggleShowDeleted"
-                                class="flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap text-sm"
-                                :class="{
-                                    'bg-red-500 hover:bg-red-600 text-white': form.show_deleted,
-                                    'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.show_deleted
-                                }">
+                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="form.show_deleted ? 'red' : 'gray'">
                                 {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                                <span v-if="form.show_deleted">
-                                    <CircleXIcon class="h-4 w-4 ml-1" />
-                                </span>
-                                <span v-else>
-                                    <CirclePlusIcon class="h-4 w-4 ml-1" />
-                                </span>
-                            </button>
+                                <CirclePlusIcon v-if="form.show_deleted" class="ml-1 h-5 w-5" />
+                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                            </PersonalizableButton>
                         </AccessGate>
 
                         <AccessGate :permission="['user.create']">
@@ -251,6 +242,7 @@ import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import SearchIcon from '@/Components/Icons/SearchIcon.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
 import Pagination from '@/Components/Pagination.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 import PrimaryLink from '@/Components/PrimaryLink.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -274,7 +266,8 @@ export default {
         TextInput,
         SearchIcon,
         DynamicAvatar,
-        PrimaryLink
+        PrimaryLink,
+        PersonalizableButton
     },
     data() {
         return {

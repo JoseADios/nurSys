@@ -79,7 +79,6 @@
                     </div>
                 </div>
             </div>
-            {{ console.log(pendingDocuments) }}
             <!-- Mensaje cuando no hay documentos -->
             <div v-if="pendingDocuments.nurseRecords.length === 0 && pendingDocuments.temperatureRecords.length === 0 && pendingDocuments.medicalOrders.length === 0"
                 class="py-8 px-4 sm:px-6 text-center">

@@ -87,7 +87,7 @@
                                     <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
                                         :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
                                     <div v-if="form.myRecords"
-                                        class="absolute -top-1 -right-0 sm:-right-1 h-2 w-2 bg-indigo-500 rounded-full">
+                                        class="absolute -top-1 -right-0 xl:-right-1 h-2 w-2 bg-indigo-500 rounded-full">
                                     </div>
                                 </div>
                             </button>
@@ -95,7 +95,7 @@
                     </div>
 
                     <!-- Contenedor de acciones - Se distribuye automáticamente entre elementos visibles -->
-                    <div class="flex flex-col items-center sm:flex-row w-fit sm:justify-end gap-3 xl:gap-4">
+                    <div class="flex flex-col items-center sm:flex-row w-fit lg:place-self-end gap-3 xl:gap-4">
 
                         <!-- Ver Eliminados - Solo se muestra si tiene permiso -->
                         <AccessGate :permission="['nurseRecord.delete']" class="sm:w-1/2 xl:w-auto">

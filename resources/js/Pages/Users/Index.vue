@@ -25,7 +25,7 @@
                     </div>
 
                     <!-- Botones de acción - siempre visibles -->
-                    <div class="flex justify-center items-center md:flex-wrap gap-2">
+                    <div class="flex justify-center items-center flex-col sm:flex-row md:flex-wrap gap-2">
                         <!-- Botón para ver registros eliminados -->
                         <AccessGate :permission="['user.update']">
                             <button @click="toggleShowDeleted"

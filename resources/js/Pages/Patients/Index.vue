@@ -106,7 +106,7 @@
                         </select>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-center sm:justify-end items-center">
+                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 lg:mt-0 justify-center sm:justify-end items-center">
                         <AccessGate :permission="['patient.delete']" class="ml-4">
                             <button @click="toggleShowDeleted"
                                 class="flex items-center justify-center space-x-1 px-3 py-2 rounded-lg transition-colors text-sm whitespace-nowrap"

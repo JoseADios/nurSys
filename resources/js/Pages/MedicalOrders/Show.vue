@@ -210,14 +210,9 @@
                                     'bg-gray-100 hover:bg-gray-100 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-600 dark:text-gray-200': !showDeleted
                                 }">
                                 {{ showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                                <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path v-if="showDeleted" fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                                        clip-rule="evenodd" />
-                                    <path v-else fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                                        clip-rule="evenodd" />
-                                </svg>
+                                 <CirclePlusIcon v-if="showDeleted" class="ml-1 h-5 w-5" />
+                                    <CircleXIcon v-else class="ml-1 h-5 w-5" />
+
                             </button>
                             </AccessGate>
                         </div>
@@ -506,6 +501,8 @@ import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
 import 'moment/locale/es';
 import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
+import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 export default {
     components: {
         AppLayout,
@@ -527,7 +524,9 @@ export default {
         BreadCrumb,
         TrashIcon,
         RestoreIcon,
-        UserSelector
+        UserSelector,
+        CircleXIcon,
+        CirclePlusIcon
 
     },
     props: {

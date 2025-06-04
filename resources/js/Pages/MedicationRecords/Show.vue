@@ -732,8 +732,8 @@ export default {
                 return;
             }
 
-            if (this.form.fc > 25) {
-                this.errorMessage = "Frecuencia debe ser menor de 25 veces";
+            if (this.form.fc > 20) {
+                this.errorMessage = "Frecuencia debe ser menor de 20 veces";
                 return;
             }
             if (this.form.interval_in_hours > 24) {

@@ -92,7 +92,7 @@ const logout = () => {
                 :class="{ 'w-64': sidebarExpanded, 'w-20': !sidebarExpanded }">
                 <!-- Logo -->
                 <div
-                    :class="['flex items-center p-4 border-b border-gray-100 dark:border-gray-700', { 'justify-between': sidebarExpanded, 'justify-center': !sidebarExpanded }]">
+                    :class="['flex items-center p-4 py-5 border-b border-gray-100 dark:border-gray-700', { 'justify-between': sidebarExpanded, 'justify-center': !sidebarExpanded }]">
                     <Link :href="route('dashboard')" class="flex items-center">
                     <ApplicationMark class="h-9 w-auto" />
                     <span v-if="sidebarExpanded"

@@ -111,13 +111,19 @@
                 </div>
 
                 <div class="p-8 space-y-8">
+                    <AccessGate :role="['doctor','admin']">
                     <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de Ingreso
                         </h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
                             {{ admission.admission_dx || 'No se proporcionó diagnóstico de ingreso' }}
                         </p>
+                        <div class="flex justify-end"></div>
+                        <button @click="showEditDiagnosis = true" class="text-blue-500 flex">
+                                    <EditIcon class="size-5" />
+                                </button>
                     </div>
+                    </AccessGate>
 
                     <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico Final</h3>
@@ -230,7 +236,7 @@
                     </AccessGate>
 
 
-                    <div class="flex justify-end space-x-4">
+                    <div class="flex justify-end space-x-2">
                         <AccessGate :role="['doctor', 'admin']">
                             <div v-if="can.update">
                                 <div v-if="admission.discharged_date == null">
@@ -250,15 +256,15 @@
                             </div>
                         </AccessGate>
 
-                        <AccessGate :role="['receptionist', 'admin']">
+                        <AccessGate :role="['admin']">
 
-                            <Link v-if="can.update" :href="route('admissions.edit', admission.id)">
-                            <PersonalizableButton class="gap-2" color="yellow">
+                            <Link v-if="can.update"  :href="route('admissions.edit', admission.id)">
+                            <PersonalizableButton class="gap-2 mr-2" color="yellow">
                                 <EditIcon class="size-5" />
                                 <span class="hidden sm:inline-flex">Editar</span>
                             </PersonalizableButton>
                             </Link>
-                        </AccessGate>
+
 
                         <DangerButton v-if="can.delete && admission.active" @click="admissionBeingDeleted = true"
                             class="gap-2" color="red">
@@ -270,6 +276,7 @@
                             <RestoreIcon class="size-5" />
                             <span class="hidden sm:inline-flex">Restaurar</span>
                         </PersonalizableButton>
+                          </AccessGate>
                     </div>
                 </div>
 
@@ -384,6 +391,30 @@
             </div>
 
         </Modal>
+        <Modal :closeable="true" :show="showEditDiagnosis != null" @close="showEditDiagnosis == null">
+            <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                <form @submit.prevent="updateDiagnosis" class="max-w-3xl mx-auto">
+
+                  <label for="admission_dx"
+                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico de ingreso <span class="text-red-500">*</span></label>
+                <textarea required id="admission_dx" rows="4" v-model="modalform.admission_dx"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Escribe el diagnóstico de ingreso..."></textarea>
+                <InputError :message="modalform.errors.admission_dx" class="mt-2" />
+                    <!-- Botones -->
+                    <div class="flex justify-end mt-4 space-x-3">
+                        <SecondaryButton type="button" @click="showEditDiagnosis = null"
+                            class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                            Cancelar
+                        </SecondaryButton>
+                        <PrimaryButton type="submit" :disabled="!modalform.admission_dx" :loading="modalform.processing">
+                            Aceptar
+                        </PrimaryButton>
+                    </div>
+                </form>
+            </div>
+
+        </Modal>
 
     </AppLayout>
 </template>
@@ -410,14 +441,15 @@ import ChartIcon from '@/Components/Icons/ChartIcon.vue';
 import MedicationIcon from '@/Components/Icons/MedicationIcon.vue';
 import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 import {
-    Link
+    Link,
+    useForm
 } from '@inertiajs/vue3';
 import {
     ref
 } from 'vue';
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 import CheckCircleIcon from '@/Components/Icons/CheckCircleIcon.vue';
-
+import InputError from '@/Components/InputError.vue';
 export default {
     props: {
         admission: Object,
@@ -440,6 +472,7 @@ export default {
         AppLayout,
         Link,
         Modal,
+        InputError,
         EditIcon,
         CheckCircleIcon,
         TrashIcon,
@@ -467,9 +500,13 @@ export default {
             processing: ref(false),
             admissionUpdateCharge: ref(null),
             showEditReceptionist: ref(null),
+            showEditDiagnosis: ref(null),
             admissionBeingPutInProgress: ref(null),
             signatureError: false,
             signatureError: false,
+            modalform: useForm({
+                 admission_dx: this.admission.admission_dx,
+            }),
             form: {
                 charge: false,
                 patient_id: this.admission.patient_id,
@@ -499,6 +536,12 @@ export default {
             this.$inertia.put(route('admissions.update', this.admission.id), this.form, {
                 preserveScroll: true
             })
+        },
+        updateDiagnosis(){
+             this.modalform.put(route('admissions.update', this.admission.id), {
+                preserveScroll: true
+            })
+             this.showEditDiagnosis = null;
         },
         submitAdmission() {
             this.$inertia.put(route('admissions.update', this.admission.id), this.formRecord, {

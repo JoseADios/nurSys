@@ -63,12 +63,12 @@
 
                                 <DangerButton v-if="user.active === '1'" @click="userBeingDeleted = true">
                                     <TrashIcon class="w-4 h-4 mr-2" />
-                                    Deshabilitar
+                                    Desactivar
                                 </DangerButton>
                                 <PersonalizableButton v-else @click="restoreUser" :loading="userBeingRestored"
                                     color="green">
                                     <RestoreIcon class="w-4 h-4 mr-2" />
-                                    Habilitar
+                                    Activar
                                 </PersonalizableButton>
                             </AccessGate>
 

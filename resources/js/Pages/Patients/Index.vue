@@ -9,7 +9,7 @@
         <!-- Filtros avanzados -->
         <div class="bg-gray-100 dark:bg-gray-900 overflow-hidden sm:rounded-lg mt-4 px-4 lg:px-10">
             <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 w-full">
-                <div class="p-4">
+                <div class="p-2 px-4">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300">Filtros Avanzados</h3>
                         <div class="flex items-center justify-center">
@@ -67,8 +67,8 @@
         </div>
 
         <!-- Barra de búsqueda y acciones -->
-        <div class="bg-gray-100 dark:bg-gray-900 px-4 lg:px-10 mt-2">
-            <div class="flex flex-col xl:flex-row gap-4 py-2">
+        <div class="bg-gray-100 dark:bg-gray-900 pt-3 px-4 lg:px-10">
+            <div class="flex flex-col xl:flex-row gap-4">
                 <!-- Búsqueda -->
                 <div class="relative w-full xl:w-1/3">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -111,7 +111,7 @@
                         <AccessGate :permission="['patient.delete']" class="ml-4">
                             <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted"
                                 :color="form.showDeleted ? 'red' : 'gray'">
-                                {{ filters.showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                {{ filters.showDeleted ? 'Ocultar Desactivados' : 'Ver Desactivados' }}
                                 <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
                                 <CircleXIcon v-else class="ml-1 h-5 w-5" />
                             </PersonalizableButton>

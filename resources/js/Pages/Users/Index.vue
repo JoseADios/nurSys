@@ -26,10 +26,10 @@
 
                     <!-- Botones de acción - siempre visibles -->
                     <div class="flex justify-center items-center flex-col sm:flex-row md:flex-wrap gap-2">
-                        <!-- Botón para ver registros eliminados -->
+                        <!-- Botón para ver registros Desactivados -->
                         <AccessGate :permission="['user.update']">
                             <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="form.show_deleted ? 'red' : 'gray'">
-                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                {{ filters.show_deleted ? 'Ocultar Desactivados' : 'Ver Desactivados' }}
                                 <CirclePlusIcon v-if="form.show_deleted" class="ml-1 h-5 w-5" />
                                 <CircleXIcon v-else class="ml-1 h-5 w-5" />
                             </PersonalizableButton>

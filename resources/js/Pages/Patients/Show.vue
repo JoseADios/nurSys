@@ -63,11 +63,11 @@
                             <AccessGate :permission="['patient.delete']">
                                 <DangerButton v-if="patient.active == 1" @click="patientBeingDeleted = true">
                                     <TrashIcon class="w-4 h-4 mr-2" />
-                                    Deshabilitar
+                                    Desactivar
                                 </DangerButton>
                                 <PersonalizableButton color="green" v-else @click="restorePatient">
                                     <RestoreIcon class="w-4 h-4 mr-2" />
-                                    Habilitar
+                                    Activar
                                 </PersonalizableButton>
                             </AccessGate>
 

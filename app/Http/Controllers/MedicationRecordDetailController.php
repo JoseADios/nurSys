@@ -110,7 +110,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             $scheduled_time = $start_time->copy()->addHours($i * $interval_in_hours);
 
             MedicationNotification::create([
-                'medication_record_detail_id' => $detail->id, // Usa el ID del detalle
+                'medication_record_detail_id' => $detail->id,
                 'scheduled_time' => $scheduled_time,
                 "active" => 1,
             ]);

@@ -102,25 +102,23 @@
 
 
 
-                         <AccessGate :permission="['admission.create']" class="w-full sm:w-fit">
-                            <!-- Filtro Mis Registros con ícono más grande -->
-                            <button
-                                class="w-full sm:w-fit border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 "
-                                :class="{
-                                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.myRecords,
-                                    'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
-                                }" @click="toggleFilterMyRecords" title="Mostrar solo mis registros">
+                           <AccessGate :permission="['admission.create']" class="sm:w-fit">
+                            <PersonalizableButton
+                                @click="toggleFilterMyRecords"
+                                title="Mostrar solo mis registros"
+                                variant="outline"
+                                custom-class="relative"
+                                :color="form.myRecords ?  'indigo' : 'gray'">
                                 Mis registros
-                                <div class="relative p-2.5 pl-1">
+                                <div class="pl-1">
                                     <UserIcon class="h-5 w-5" />
-                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
+                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-2"
                                         :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
                                     <div v-if="form.myRecords"
-                                        class="absolute -top-1 -right-1 h-2 w-2 bg-indigo-500 rounded-full">
+                                        class="absolute -top-1 -right-0 xl:-right-1 h-2 w-2 bg-indigo-500 rounded-full">
                                     </div>
                                 </div>
-                            </button>
-
+                            </PersonalizableButton>
                         </AccessGate>
 
 

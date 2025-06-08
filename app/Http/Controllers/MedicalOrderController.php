@@ -186,7 +186,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
             'regimes' => $regimes,
             'previousUrl' => URL::previous(),
             'filters' => [
-                'show_deleted' => $showDeleted,
+                'showDeleted' => $showDeleted,
             ],
         ]);
     }

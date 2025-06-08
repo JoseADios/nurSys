@@ -184,12 +184,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $diet = Diet::all();
 
             if ($showDeleted || !$medicationRecord->active) {
-
                 $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active', false)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
-
-
-
-
             } else {
                 $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active', true)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
 

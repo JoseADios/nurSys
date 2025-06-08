@@ -156,13 +156,6 @@ class MedicalOrderController extends Controller implements HasMiddleware
         $showDeleted = $request->boolean('showDeleted');
 
         $query = MedicalOrder::where('admission_id', $medicalOrder->admission_id)->with('admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord');
-
-         if ($showDeleted) {
-            $query->where('active', false);
-        } else {
-            $query->where('active', true);
-        }
-
         $medicalOrder = $query->latest()->firstOrFail();
         Log::info($medicalOrder);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
@@ -170,10 +163,20 @@ class MedicalOrderController extends Controller implements HasMiddleware
 
         $doctor = User::find($medicalOrder->doctor_id);
 
-        $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
-            ->where('active', !$showDeleted)
+            if ($showDeleted || !$medicalOrder->active) {
+                  $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
+            ->where('active', false)
             ->orderBy('created_at', 'desc')
             ->get();
+
+            }else{
+                   $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
+            ->where('active', true)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+            }
+
 
         $regimes = Regime::all();
 

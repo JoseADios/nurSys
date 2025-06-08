@@ -75,16 +75,11 @@
                     class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 xl:items-center whitespace-nowrap xl:w-[80%]">
                     <AccessGate :permission="['medicalOrder.delete']">
                         <!-- Filtro para mostrar registros eliminados -->
-                        <button @click="toggleShowDeleted"
-                            class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
-                            :class="{
-                                'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                                'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                            }">
-                            {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                            <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
-                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                        </button>
+                       <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="form.showDeleted ? 'red' : 'gray'">
+                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                            </PersonalizableButton>
                     </AccessGate>
 
                     <AccessGate :permission="['medicalOrder.create']">
@@ -220,6 +215,7 @@ import UserIcon from '@/Components/Icons/UserIcon.vue';
 import FilterIcon from '@/Components/Icons/FilterIcon.vue';
 import AccessGate from '@/Components/Access/AccessGate.vue';
 import PrimaryLink from '@/Components/PrimaryLink.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 export default {
     props: {
         medicalOrders: Object,
@@ -240,7 +236,8 @@ export default {
         CircleXIcon,
         UserIcon,
         FilterIcon,
-        AccessGate
+        AccessGate,
+        PersonalizableButton
     },
     data() {
         return {

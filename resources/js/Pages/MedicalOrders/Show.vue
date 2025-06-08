@@ -201,21 +201,13 @@
                     <div class="flex items-center justify-between">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro
                         </h3>
-                        <div v-if="medicalOrder.active">
                             <AccessGate :permission="['medicalOrder.delete']">
-                            <button @click="toggleShowDeleted"
-                                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-auto"
-                                :class="{
-                                    'bg-red-500 hover:bg-red-600 text-white': showDeleted,
-                                    'bg-gray-100 hover:bg-gray-100 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-600 dark:text-gray-200': !showDeleted
-                                }">
-                                {{ showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                                 <CirclePlusIcon v-if="showDeleted" class="ml-1 h-5 w-5" />
-                                    <CircleXIcon v-else class="ml-1 h-5 w-5" />
-
-                            </button>
+                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="showDeleted ? 'red' : 'gray'">
+                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                <CirclePlusIcon v-if="showDeleted" class="ml-1 h-5 w-5" />
+                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                            </PersonalizableButton>
                             </AccessGate>
-                        </div>
                     </div>
                     <div v-for="detail in details" :key="detail.id" :class="[
                         'rounded-lg p-4 shadow-md flex justify-between items-center transition-colors',
@@ -583,7 +575,7 @@ export default {
         toggleShowDeleted() {
             this.showDeleted = !this.showDeleted;
             this.$inertia.get(route('medicalOrders.show', {
-                medicalOrder: this.medicalOrder
+                medicalOrder: this.medicalOrder.id
             }), {
                 showDeleted: this.showDeleted
             }, {

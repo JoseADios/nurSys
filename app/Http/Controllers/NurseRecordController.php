@@ -42,7 +42,7 @@ class NurseRecordController extends Controller implements HasMiddleware
         $days = $request->integer('days');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
-        $myRecords = $request->boolean('myRecords', true);
+        $myRecords = $request->boolean('myRecords', Auth::user()->hasRole(['nurse', 'admin']));
         $in_process = $request->input('in_process', 'true');
 
         // si se filtra por ingreso mostrar los registros aunque esten dados de alta

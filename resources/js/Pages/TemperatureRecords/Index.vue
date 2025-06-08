@@ -26,7 +26,7 @@
         <div
             class="bg-gray-100 dark:bg-gray-900 py-4 flex flex-col gap-4 items-center lg:flex-row lg:justify-between lg:items-end xl:items-center overflow-x-auto rounded-lg mx-4 lg:mx-10">
             <!-- Búsqueda - Ancho completo en móvil -->
-            <div class="relative w-full lg:w-1/2 xl:w-1/3 mb-4 sm:mb-0">
+            <div class="relative self-end w-full sm:mb-0 lg:w-1/2 xl:w-1/3 mb-4">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                 </div>
@@ -41,44 +41,26 @@
                 </button>
             </div>
 
-            <!-- Filtros y botones - Reorganizados para mejor responsividad -->
-            <div class="flex flex-col w-full lg:w-auto xl:flex-row space-y-3 sm:space-y-3 xl:space-y-0 xl:flex-grow">
+            <!-- Filtros y botones - Con distribución automática del espacio -->
+            <div class="flex flex-col w-full sm:space-y-3 lg:w-auto xl:flex-row space-y-3 xl:space-y-0 xl:flex-grow">
+                <!-- Primera fila - Filtros principales con distribución automática -->
+                <div
+                    class="flex flex-col sm:flex-col sm:columns-2 xl:flex-row w-full gap-3 items-center xl:justify-between xl:flex-1">
+                    <!-- Contenedor de filtros básicos - Se distribuye automáticamente -->
+                    <div class="flex w-full flex-col sm:flex-row gap-2 items-center xl:gap-4">
 
-                <!-- Primera fila en dispositivos medianos -->
-                <div class="flex flex-col sm:flex-row w-full gap-3 items-center">
-                    <!-- Grupo: Mis Registros + En proceso -->
-                    <div class="flex w-full flex-col sm:flex-row xl:w-full gap-2 items-center">
-                        <AccessGate :permission="['temperatureRecord.create']" class="w-full sm:w-fit">
-                            <!-- Filtro Mis Registros con ícono más grande -->
-                            <button
-                                class="w-full sm:w-fit border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 "
-                                :class="{
-                                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.myRecords,
-                                    'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
-                                }" @click="toggleFilterMyRecords" title="Mostrar solo mis registros">
-                                Mis registros
-                                <div class="relative p-2.5 pl-1">
-                                    <UserIcon class="h-5 w-5" />
-                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
-                                        :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
-                                    <div v-if="form.myRecords"
-                                        class="absolute -top-1 -right-1 h-2 w-2 bg-indigo-500 rounded-full">
-                                    </div>
-                                </div>
-                            </button>
-                        </AccessGate>
-
+                        <!-- En proceso - Siempre visible, se expande según el espacio -->
                         <select @change="submitFilters()"
-                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            class="flex-1 min-w-0 w-full sm:w-fit border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                             name="in_process" id="in_process" v-model="form.in_process">
                             <option value="true">En proceso</option>
                             <option value="false">Dados de alta</option>
                             <option value="">Todos</option>
                         </select>
 
-                        <!-- Filtro de días -->
+                        <!-- Filtro de días - Siempre visible, se expande según el espacio -->
                         <select @change="submitFilters()"
-                            class="w-full h-min  border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            class="flex-1 min-w-0 w-full sm:w-fit border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                             name="days" id="days" v-model="form.days">
                             <option value="">Siempre</option>
                             <option value="1">Último día</option>
@@ -88,36 +70,50 @@
                             <option value="180">Últimos 180 días</option>
                             <option value="365">Último año</option>
                         </select>
+
+                        <!-- Mis Registros - Solo se muestra si tiene permiso -->
+                        <AccessGate :permission="['temperatureRecord.create']" class="sm:w-fit">
+                            <PersonalizableButton @click="toggleFilterMyRecords" title="Mostrar solo mis registros"
+                                variant="outline" custom-class="relative" :color="form.myRecords ? 'indigo' : 'gray'">
+                                Mis registros
+                                <div class="pl-1">
+                                    <UserIcon class="h-5 w-5" />
+                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-2"
+                                        :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
+                                    <div v-if="form.myRecords"
+                                        class="absolute -top-1 -right-0 xl:-right-1 h-2 w-2 bg-indigo-500 rounded-full">
+                                    </div>
+                                </div>
+                            </PersonalizableButton>
+                        </AccessGate>
                     </div>
 
-                </div>
+                    <!-- Contenedor de acciones - Se distribuye automáticamente entre elementos visibles -->
+                    <div class="flex flex-col items-center sm:flex-row w-fit lg:place-self-end gap-3 xl:gap-4">
 
-                <!-- Segunda fila en dispositivos medianos -->
-                <div class="flex flex-col sm:flex-row w-full gap-3 xl:ml-2 md:items-center xl:w-[80%]">
-                    <AccessGate :permission="['temperatureRecord.delete']" class="w-full sm:w-1/2">
-                        <!-- Filtro para mostrar registros eliminados -->
-                        <button @click="toggleShowDeleted"
-                            class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full justify-center"
-                            :class="{
-                                'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                                'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                            }">
-                            {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                            <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
-                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                        </button>
-                    </AccessGate>
+                        <!-- Ver Eliminados - Solo se muestra si tiene permiso -->
+                        <AccessGate :permission="['temperatureRecord.delete']" class="sm:w-1/2 xl:w-auto">
+                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="form.showDeleted ? 'red' : 'gray'">
+                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                            </PersonalizableButton>
+                        </AccessGate>
 
-                    <AccessGate :permission="['temperatureRecord.create']" class="w-full sm:w-1/2">
-                        <PrimaryLink  class="py-2.5 whitespace-nowrap" v-if="!form.admission_id" :href="route('temperatureRecords.create')">
-                            <PlusIcon class="size-5 mr-1" />
-                            <span class="pt-0.5">Nuevo Registro</span>
-                        </PrimaryLink>
-                        <PrimaryLink class="py-2.5 whitespace-nowrap" v-else :href="route('temperatureRecords.create', { admission_id: form.admission_id })">
-                            <PlusIcon class="size-5" />
-                            <span class="pt-0.5">Nuevo Registro</span>
-                        </PrimaryLink>
-                    </AccessGate>
+                        <!-- Nuevo Registro - Solo se muestra si tiene permiso -->
+                        <AccessGate :permission="['temperatureRecord.create']" class="sm:w-1/2 xl:w-auto">
+                            <PrimaryLink class="py-2.5 whitespace-nowrap flex-shrink-0 text-center"
+                                v-if="!form.admission_id" :href="route('temperatureRecords.create')">
+                                <PlusIcon class="size-5 mr-1 inline" />
+                                <span class="pt-0.5">Nuevo Registro</span>
+                            </PrimaryLink>
+                            <PrimaryLink class="py-2.5 whitespace-nowrap flex-shrink-0 text-center" v-else
+                                :href="route('temperatureRecords.create', { admission_id: form.admission_id })">
+                                <PlusIcon class="size-5 mr-1 inline" />
+                                <span class="pt-0.5">Nuevo Registro</span>
+                            </PrimaryLink>
+                        </AccessGate>
+                    </div>
                 </div>
             </div>
         </div>
@@ -148,7 +144,8 @@
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer whitespace-nowrap"
                                 @click="sort('users.name')">
-                                Enfermera <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc' ?
+                                Enfermero/a <span v-if="form.sortField === 'users.name'">{{ form.sortDirection === 'asc'
+                                    ?
                                     '↑' :
                                     '↓' }}</span>
                             </th>
@@ -195,9 +192,9 @@
                                 {{ formatDate(temperatureRecord.created_at) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <button class="ml-2 text-blue-500 hover:text-blue-800"
+                                <button class="ml-2 text-primary-500 hover:text-primary-800"
                                     @click="temperatureRecordShow(temperatureRecord.id)">
-                                    Abrir
+                                    Ver
                                 </button>
                             </td>
                         </tr>
@@ -233,6 +230,7 @@ import TextInput from '@/Components/TextInput.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
 import FilterIcon from '@/Components/Icons/FilterIcon.vue';
 import PrimaryLink from '@/Components/PrimaryLink.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 
 export default {
     props: {
@@ -257,7 +255,8 @@ export default {
         TextInput,
         UserIcon,
         FilterIcon,
-        PrimaryLink
+        PrimaryLink,
+        PersonalizableButton
     },
     data() {
         return {

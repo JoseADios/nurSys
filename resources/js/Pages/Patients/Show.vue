@@ -63,11 +63,11 @@
                             <AccessGate :permission="['patient.delete']">
                                 <DangerButton v-if="patient.active == 1" @click="patientBeingDeleted = true">
                                     <TrashIcon class="w-4 h-4 mr-2" />
-                                    Deshabilitar
+                                    Desactivar
                                 </DangerButton>
                                 <PersonalizableButton color="green" v-else @click="restorePatient">
                                     <RestoreIcon class="w-4 h-4 mr-2" />
-                                    Habilitar
+                                    Activar
                                 </PersonalizableButton>
                             </AccessGate>
 
@@ -77,7 +77,7 @@
                 </div>
 
                 <!-- Layout de tarjetas informativas -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     <!-- Tarjeta de Información de contacto -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center mb-6">

@@ -9,7 +9,7 @@
         <!-- Filtros avanzados -->
         <div class="bg-gray-100 dark:bg-gray-900 overflow-hidden sm:rounded-lg mt-4 px-4 lg:px-10">
             <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 w-full">
-                <div class="p-4">
+                <div class="p-2 px-4">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300">Filtros Avanzados</h3>
                         <div class="flex items-center justify-center">
@@ -67,10 +67,10 @@
         </div>
 
         <!-- Barra de búsqueda y acciones -->
-        <div class="bg-gray-100 dark:bg-gray-900 px-4 lg:px-10 mt-2">
-            <div class="flex flex-col md:flex-row gap-4 py-2">
+        <div class="bg-gray-100 dark:bg-gray-900 pt-3 px-4 lg:px-10">
+            <div class="flex flex-col xl:flex-row gap-4">
                 <!-- Búsqueda -->
-                <div class="relative w-full md:w-1/3">
+                <div class="relative w-full xl:w-1/3">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                     </div>
@@ -83,8 +83,8 @@
                 </div>
 
                 <!-- Filtros y acciones -->
-                <div class="flex flex-col sm:flex-row items-center gap-4 w-full">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+                <div class="flex flex-col lg:flex-row items-center w-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 w-full">
                         <select @change="submitFilter()"
                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                             name="hospitalized" id="hospitalized" v-model="form.hospitalized">
@@ -106,21 +106,18 @@
                         </select>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-center sm:justify-end items-center">
-                        <AccessGate :permission="['patient.delete']">
-                            <button @click="toggleShowDeleted"
-                                class="flex items-center justify-center space-x-1 px-3 py-2 rounded-lg transition-colors text-sm whitespace-nowrap"
-                                :class="{
-                                    'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                                    'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                                }">
-                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                                <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-4 w-4" />
-                                <CircleXIcon v-else class="ml-1 h-4 w-4" />
-                            </button>
+                    <div
+                        class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 lg:mt-0 justify-center sm:justify-end items-center">
+                        <AccessGate :permission="['patient.delete']" class="ml-4">
+                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted"
+                                :color="form.showDeleted ? 'red' : 'gray'">
+                                {{ filters.showDeleted ? 'Ocultar Desactivados' : 'Ver Desactivados' }}
+                                <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                            </PersonalizableButton>
                         </AccessGate>
 
-                        <AccessGate :permission="['patient.create']">
+                        <AccessGate :permission="['patient.create']" class="ml-4">
                             <PrimaryLink class="py-2.5 whitespace-nowrap" :href="route('patients.create')">
                                 <PlusIcon class="h-4 w-4 mr-1" />
                                 Nuevo paciente
@@ -190,8 +187,11 @@
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span v-if="patient.is_hospitalized"
-                                        class="block w-4 h-4 bg-green-500 rounded-full mx-auto"></span>
-                                    <span v-else class="block w-4 h-4 bg-orange-500 rounded-full mx-auto"></span>
+                                        class="relative block size-3 bg-green-500 rounded-full mx-auto ring-4 ring-green-700">
+                                    </span>
+                                    <span v-else
+                                        class="relative block size-3 bg-orange-500 rounded-full mx-auto ring-4 ring-orange-700">
+                                    </span>
                                 </td>
                                 <th scope="row"
                                     class="px-4 py-3 whitespace-nowrap font-medium text-gray-900 dark:text-white">
@@ -219,7 +219,7 @@
                                         Ver
                                         </Link>
                                         <AccessGate :permission="['patient.update']">
-                                            <Link class="text-blue-500 hover:text-blue-800"
+                                            <Link class="text-green-500 hover:text-green-800"
                                                 :href="route('patients.edit', patient.id)">
                                             Editar
                                             </Link>
@@ -249,6 +249,7 @@ import SearchIcon from '@/Components/Icons/SearchIcon.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Pagination from '@/Components/Pagination.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 import PrimaryLink from '@/Components/PrimaryLink.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -272,7 +273,8 @@ export default {
         XIcon,
         TextInput,
         InputLabel,
-        PrimaryLink
+        PrimaryLink,
+        PersonalizableButton
     },
     data() {
         return {

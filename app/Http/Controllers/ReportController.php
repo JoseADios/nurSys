@@ -3,33 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\Clinic;
-use App\Models\EliminationRecord;
 use App\Models\NurseRecord;
 use App\Models\MedicationRecord;
 use App\Models\MedicationRecordDetail;
 use App\Models\MedicalOrder;
 use App\Models\MedicalOrderDetail;
-use App\Models\Admission;
 use App\Models\NurseRecordDetail;
-use App\Models\Patient;
 use App\Models\TemperatureDetail;
 use App\Models\MedicationNotification;
 use App\Models\TemperatureRecord;
-use App\Services\PDF\TemperatureRecordReport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Redirect;
 
 class ReportController extends Controller
 {
-
+    use AuthorizesRequests;
     // TEMPERATURE RECORD
 
     public function temperatureRecordReport($id)
     {
+
         // Llamar a GraphController para generar el gráfico
         app('App\Http\Controllers\GraphController')->generateGraph($id);
 
         $temperatureRecord = TemperatureRecord::findOrFail($id);
+
+        $this->authorize('view', $temperatureRecord);
         // $nurseSignaturePath = asset('storage/' . $temperatureRecord->nurse_sign);
 
         $nurseSignaturePath = $temperatureRecord->nurse_sign
@@ -69,6 +69,7 @@ class ReportController extends Controller
     public function nurseRecordReport($id)
     {
         $nurseRecord = NurseRecord::findOrFail($id);
+        $this->authorize('view', $nurseRecord);
 
         $nurseSignaturePath = $nurseRecord->nurse_sign
             ? public_path('storage/' . $nurseRecord->nurse_sign)
@@ -106,12 +107,15 @@ class ReportController extends Controller
     {
         $medicationRecord = medicationRecord::findOrFail($id);
 
+        $this->authorize('view', $medicationRecord);
 
         $clinic = Clinic::get()->first();
         $details = medicationRecordDetail::where('medication_record_id', $id)
+
         ->where('active', true)
         ->with('medicationNotification')->get();
 $hasNotifications = false;
+
         foreach ($details as $detail) {
             $notifications = MedicationNotification::where('medication_record_detail_id', $detail->id)->with('medicationRecordDetail')->get();
            $hasNotifications = $notifications->count() > 0;
@@ -121,7 +125,6 @@ $hasNotifications = false;
     }
         }
 
-
         if ($medicationRecord->active != true) {
             return Redirect::route('medicationRecords.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
         }
@@ -130,27 +133,25 @@ $hasNotifications = false;
             'medicationRecord' => $medicationRecord,
             'clinic' => $clinic,
             'details' => $details,
+
             'notification'=>$notifications,
             'hasnotifications' => $hasNotifications,
 
-        ])->setPaper('a4');
 
+        ])->setPaper('a4');
 
         return $pdf->stream('ficha_de_medicamentos.pdf');
 
-
-
     }
+
+
     public function medicalOrderReport($id)
     {
         $MedicalOrder = MedicalOrder::findOrFail($id);
-
+        $this->authorize('view', $MedicalOrder);
 
         $clinic = Clinic::get()->first();
         $details = MedicalOrderDetail::where('medical_order_id', $id)->get();
-
-
-
 
         if ($MedicalOrder->active != true) {
             return Redirect::route('MedicalOrders.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
@@ -164,10 +165,6 @@ $hasNotifications = false;
 
         ])->setPaper('a4');
 
-
         return $pdf->stream('ficha_de_medicamentos.pdf');
-
-
-
     }
 }

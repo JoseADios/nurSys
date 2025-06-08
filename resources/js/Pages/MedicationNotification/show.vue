@@ -52,22 +52,19 @@
                                     Enfermero/a: {{ notification.nurse.name }} {{ notification.nurse.last_name }}
                                 </div>
                                 <div class="mb-2">Notificación - #{{ index + 1 }}</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Fecha: {{
-                                    formatDate(notification.created_at) }}</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Fecha programada:
-                                    {{ formatDateFromNow(
-                                        notification.scheduled_time) }}</div>
-
                                 <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Medicamento: {{ details.drug
                                     }}</div>
-                                <div v-if="notification.administered_time"
-                                    class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Medicamento Administrado:
-                                    {{ formatDate(
-                                        notification.administered_time) }}</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Via: {{ details.route }}
+
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1" v-if="!notification.applied"> Fecha programada:
+                                    {{ formatDateFromNow(
+                                        notification.scheduled_time) }} </div>
+                                        <div v-if="notification.administered_time && notification.applied"
+                                    class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Medicamento administrado:
+                                    {{ formatDateFromNow(
+                                        notification.administered_time) }} </div>
+                                          <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Via: {{ details.route }}
                                 </div>
-
-
+                                       <div class="text-sm text-gray-600 dark:text-gray-300 mt-1"v-if="details.nebulized"> Nebulizado:   <Checkbox :checked="true" disabled></Checkbox></div>
                             </div>
 
                             <div v-if="notification.applied"
@@ -178,6 +175,7 @@ import moment from "moment/moment";
 import 'moment/locale/es';
 import CheckCircleIcon from '@/Components/Icons/CheckCircleIcon.vue';
 import PersonalizableButton from '@/Components/PersonalizableButton.vue';
+import Checkbox from '@/Components/Checkbox.vue';
 
 export default {
     props: {
@@ -193,6 +191,7 @@ export default {
         PersonalizableButton,
         ConfirmationModal,
         DangerButton,
+        Checkbox,
         SecondaryButton,
         PrimaryButton,
         SignaturePad,

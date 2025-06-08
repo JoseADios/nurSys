@@ -342,7 +342,7 @@
             <!-- Contenido del modal -->
             <template #content>
                 <div class="">
-                    <form>
+                    <form @submit.prevent="submitUpdateDetail">
                         <div class="grid md:grid-cols-[2fr_1fr] gap-4">
                             <div>
                                 <label for="orden"
@@ -637,7 +637,7 @@ export default {
         },
 
         submitUpdateDetail() {
-            this.modalform.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
+            this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
                 preserveScroll: true,
                 preserveState: true
             }),

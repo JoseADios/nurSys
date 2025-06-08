@@ -51,7 +51,7 @@ class AdmissionController extends Controller implements HasMiddleware
         $beds_available = $request->input('beds_available');
         $admissions_discharged = $request->input('admissions_discharged','2');
         $days = $request->integer('days');
-        $myRecords = $request->boolean('myRecords', true);
+        $myRecords = $request->boolean('myRecords', Auth::user()->hasRole(['receptionist','admin','doctor']));
         $query = Admission::query()->with('patient', 'bed', 'doctor','receptionist')->select([
             'admissions.id',
             'admissions.patient_id',
@@ -103,6 +103,7 @@ class AdmissionController extends Controller implements HasMiddleware
         if ($myRecords ) {
             if (Auth::user()->hasRole('doctor') ) {
                 $query->where('admissions.doctor_id', Auth::id());
+
             }
             else if (Auth::user()->hasRole('receptionist') || Auth::user()->hasRole('admin')) {
                 $query->where('admissions.receptionist_id', Auth::id());

@@ -14,10 +14,8 @@
                         <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300">Filtros Avanzados</h3>
                         <div class="flex items-center justify-center">
                             <div v-if="showAdditionalFilters" class="mr-4 flex justify-end space-x-3">
-                                <button @click="clearFilters"
-                                    class="px-3 py-1 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
-                                    Limpiar
-                                </button>
+                                <PersonalizableButton size="small" color="gray" @click="clearFilters"> Limpiar
+                                </PersonalizableButton>
                             </div>
                             <button @click="toggleAdditionalFilters"
                                 class="text-primary-500 hover:text-primary-600 flex items-center justify-center transition-colors">
@@ -138,7 +136,7 @@
                                 <th scope="col" class="px-4 py-3 cursor-pointer hidden sm:table-cell"
                                     @click="sort('id')">
                                     ID <span v-if="form.sortField === 'id'">{{ form.sortDirection === 'asc' ? '↑' : '↓'
-                                        }}</span>
+                                    }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3 cursor-pointer" @click="sort('is_hospitalized')">
                                     <span class="hidden md:inline">Ingresado</span>
@@ -156,7 +154,7 @@
                                     @click="sort('phone')">
                                     Teléfono <span v-if="form.sortField === 'phone'">{{ form.sortDirection === 'asc' ?
                                         '↑' : '↓'
-                                        }}</span>
+                                    }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3 cursor-pointer hidden md:table-cell"
                                     @click="sort('identification_card')">
@@ -174,7 +172,7 @@
                                     @click="sort('email')">
                                     Correo <span v-if="form.sortField === 'email'">{{ form.sortDirection === 'asc' ? '↑'
                                         : '↓'
-                                        }}</span>
+                                    }}</span>
                                 </th>
                                 <th scope="col" class="px-4 py-3"> Acciones </th>
                             </tr>
@@ -190,7 +188,7 @@
                                         class="relative block size-3 bg-green-500 rounded-full mx-auto ring-4 ring-green-700">
                                     </span>
                                     <span v-else
-                                        class="relative block size-3 bg-orange-500 rounded-full mx-auto ring-4 ring-orange-700">
+                                        class="relative block size-3 bg-gray-500 rounded-full mx-auto ring-4 ring-gray-700">
                                     </span>
                                 </td>
                                 <th scope="row"

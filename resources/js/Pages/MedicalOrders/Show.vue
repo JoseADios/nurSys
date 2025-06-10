@@ -3,12 +3,12 @@
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
                 <BreadCrumb :items="[
-                    ...(medicalOrder.id ? [{
-                        formattedId: { id: medicalOrder.admission_id, prefix: 'ING' },
-                        route: route('admissions.show', medicalOrder.id)
+                    ...(admission_id ? [{
+                        formattedId: { id: admission_id, prefix: 'ING' },
+                        route: route('admissions.show', admission_id)
                     }] : []),
                     {
-                        text: 'Ordenes Medicas',
+                        text: 'Órdenes Médicas',
                         route: medicalOrder.id
                             ? route('medicalOrders.index', { id: medicalOrder.id })
                             : route('medicalOrders.index')
@@ -38,6 +38,7 @@
                         <ReportIcon class="size-5 " />
                         Crear Reporte
                         </PersonalizableButton>
+                          <AccessGate :permission="['medicalOrder.delete']">
                         <DangerButton v-if="medicalOrder.active" @click="recordBeingDeleted = true">
 
                             <TrashIcon class="size-5 mr-2" />
@@ -49,6 +50,7 @@
                             <RestoreIcon class="size-5" />
                             <span class="hidden sm:inline-flex">Restaurar</span>
                             </PersonalizableButton>
+                            </AccessGate>
                     </div>
                 </div>
 
@@ -65,7 +67,7 @@
                                 </Link>
 
                             </div>
-                            <AccessGate :permission="['medicalOrder.delete']">
+                            <AccessGate :role="['admin']">
                                 <button @click="showEditAdmission = true" class="text-blue-500 mt-6  ">
                                     <EditIcon class="size-5" />
                                 </button>
@@ -154,6 +156,7 @@
 
                 <!-- Form -->
                 <!-- Formulario para agregar nuevo detalle -->
+                    <AccessGate :permission="['medicalOrder.delete']">
                 <div class="p-8 ">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Detalles
                     </h3>
@@ -191,30 +194,20 @@
                         </div>
                     </form>
                 </div>
+                </AccessGate>
 
                 <!-- Nurse Record Details -->
                 <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
                     <div class="flex items-center justify-between">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro
                         </h3>
-                        <div v-if="medicalOrder.active">
-                            <button @click="toggleShowDeleted"
-                                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ml-auto"
-                                :class="{
-                                    'bg-red-500 hover:bg-red-600 text-white': showDeleted,
-                                    'bg-gray-100 hover:bg-gray-100 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-600 dark:text-gray-200': !showDeleted
-                                }">
-                                {{ showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                                <svg class="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path v-if="showDeleted" fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z"
-                                        clip-rule="evenodd" />
-                                    <path v-else fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </div>
+                            <AccessGate :permission="['medicalOrder.delete']">
+                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="showDeleted ? 'red' : 'gray'">
+                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                <CirclePlusIcon v-if="showDeleted" class="ml-1 h-5 w-5" />
+                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                            </PersonalizableButton>
+                            </AccessGate>
                     </div>
                     <div v-for="detail in details" :key="detail.id" :class="[
                         'rounded-lg p-4 shadow-md flex justify-between items-center transition-colors',
@@ -244,11 +237,13 @@
                             </div>
                         </div>
                         <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                              <AccessGate :permission="['medicalOrder.update']">
                             <button @click="openEditModal(detail)"
                                 class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                                <EditIcon class="size-5" />
                                 <span class="font-medium">Editar</span>
                             </button>
+                            </AccessGate>
                         </div>
                     </div>
 
@@ -256,16 +251,14 @@
                         No hay eventos de ordenes disponibles
                     </div>
                 </div>
-
+                    <AccessGate :permission="['medicalOrder.update']">
                 <section id="bottom" class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Firma</h3>
 
                 <!-- mostrar imagen firma -->
                 <div v-show="!isVisibleEditSign" class="my-4 flex items-center flex-col justify-center">
                     <div>
-                        <h2 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Firma
-                        </h2>
+
                         <img v-if="medicalOrder.doctor_sign" :src="`/storage/${medicalOrder.doctor_sign}`" alt="Firma">
                         <div v-else>
                             <div class="text-gray-500 dark:text-gray-400 my-16">
@@ -306,6 +299,7 @@
                     </form>
                 </div>
             </section>
+            </AccessGate>
             </div>
 
         </div>
@@ -348,7 +342,7 @@
             <!-- Contenido del modal -->
             <template #content>
                 <div class="">
-                    <form>
+                    <form @submit.prevent="submitUpdateDetail">
                         <div class="grid md:grid-cols-[2fr_1fr] gap-4">
                             <div>
                                 <label for="orden"
@@ -390,15 +384,18 @@
             <!-- Footer del modal -->
             <template #footer>
                 <div class="flex items-center gap-2">
+                <AccessGate :permission="['medicalOrder.delete']">
                 <DangerButton v-if="selectedDetail.active"  type="button" @click="detailBeingDeleted = true">
                       <TrashIcon class="size-5 mr-2" />
                      Eliminar
                 </DangerButton>
+
                 <PersonalizableButton v-if="!selectedDetail.active":class="{ 'opacity-25': modalform.processing }":is-loading="modalform.processing"
                                         :disabled="modalform.processing" type="button" @click="restoreDetail" color="green">
                      <RestoreIcon class="size-5 mr-2" />
                     Restaurar
                 </PersonalizableButton>
+                 </AccessGate>
                  <PrimaryButton type="submit" @click="submitUpdateDetail" :class="{ 'opacity-25': modalform.processing }":is-loading="modalform.processing"
                                         :disabled="modalform.processing" >
                     Actualizar
@@ -496,6 +493,8 @@ import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
 import 'moment/locale/es';
 import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
+import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 export default {
     components: {
         AppLayout,
@@ -517,7 +516,9 @@ export default {
         BreadCrumb,
         TrashIcon,
         RestoreIcon,
-        UserSelector
+        UserSelector,
+        CircleXIcon,
+        CirclePlusIcon
 
     },
     props: {
@@ -528,6 +529,7 @@ export default {
         regimes: Array,
         filters: Object,
          doctor: Object,
+          admission_id: Number,
 
     },
     data() {
@@ -573,7 +575,7 @@ export default {
         toggleShowDeleted() {
             this.showDeleted = !this.showDeleted;
             this.$inertia.get(route('medicalOrders.show', {
-                medicalOrder: this.medicalOrder
+                medicalOrder: this.medicalOrder.id
             }), {
                 showDeleted: this.showDeleted
             }, {
@@ -635,7 +637,7 @@ export default {
         },
 
         submitUpdateDetail() {
-            this.modalform.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
+            this.$inertia.put(route('medicalOrderDetails.update', this.selectedDetail.id), this.selectedDetail, {
                 preserveScroll: true,
                 preserveState: true
             }),

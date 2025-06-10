@@ -22,16 +22,6 @@
         </h2>
     </template>
 
-    <div class="ml-10 mt-4 lg:mx-10 flex justify-between">
- <Link >
-
-        </Link>
-
-    </div>
-
-    <!-- <div class="text-white">
-            {{ beds }}
-        </div> -->
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
         <form @submit.prevent="submit" class="max-w-xl mx-auto">

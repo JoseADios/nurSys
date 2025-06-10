@@ -43,16 +43,11 @@
                 <!-- Botón para ver registros eliminados -->
                <AccessGate :permission="['admission.delete']">
                         <!-- Filtro para mostrar registros eliminados -->
-                        <button @click="toggleShowDeleted"
-                            class="flex items-center min-w-[40%] space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
-                            :class="{
-                                'bg-red-500 hover:bg-red-600 text-white': form.showDeleted,
-                                'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.showDeleted
-                            }">
-                            {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                            <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
-                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                        </button>
+                        <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="form.showDeleted ? 'red' : 'gray'">
+                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                            </PersonalizableButton>
                     </AccessGate>
 
                       <AccessGate :permission="['admission.create']">
@@ -107,25 +102,23 @@
 
 
 
-                         <AccessGate :permission="['admission.create']" class="w-full sm:w-fit">
-                            <!-- Filtro Mis Registros con ícono más grande -->
-                            <button
-                                class="w-full sm:w-fit border flex whitespace-nowrap items-center justify-center border-gray-300 dark:border-gray-700 px-2.5 pr-1 rounded-md transition-colors duration-200 "
-                                :class="{
-                                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200': form.myRecords,
-                                    'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800': !form.myRecords
-                                }" @click="toggleFilterMyRecords" title="Mostrar solo mis registros">
+                           <AccessGate :permission="['admission.create']" class="sm:w-fit">
+                            <PersonalizableButton
+                                @click="toggleFilterMyRecords"
+                                title="Mostrar solo mis registros"
+                                variant="outline"
+                                custom-class="relative"
+                                :color="form.myRecords ?  'indigo' : 'gray'">
                                 Mis registros
-                                <div class="relative p-2.5 pl-1">
+                                <div class="pl-1">
                                     <UserIcon class="h-5 w-5" />
-                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-1"
+                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-2"
                                         :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
                                     <div v-if="form.myRecords"
-                                        class="absolute -top-1 -right-1 h-2 w-2 bg-indigo-500 rounded-full">
+                                        class="absolute -top-1 -right-0 xl:-right-1 h-2 w-2 bg-indigo-500 rounded-full">
                                     </div>
                                 </div>
-                            </button>
-
+                            </PersonalizableButton>
                         </AccessGate>
 
 
@@ -223,8 +216,8 @@
                         <td class="px-6 py-4">
                             {{ formatDate(admission.created_at) }}
                         </td>
-                        <td class="px-6 py-4">
-                            <Link class="ml-2 text-blue-500 hover:text-blue-800"
+                        <td class="px-6 py-4 flex items-center space-x-4">
+                            <Link class=" text-primary-500 hover:text-primary-800"
                                 :href="route('admissions.show', admission.id)">
                             Ver
                             </Link>
@@ -264,6 +257,7 @@ import FilterIcon from '@/Components/Icons/FilterIcon.vue';
 import UserIcon from '@/Components/Icons/UserIcon.vue';
 import BedIcon from '@/Components/Icons/BedIcon.vue';
 import PrimaryLink from '@/Components/PrimaryLink.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 export default {
     props: {
         admissions: Object,
@@ -273,6 +267,7 @@ export default {
     components: {
         AppLayout,
         Link,
+        PersonalizableButton,
         PrimaryLink,
         Pagination,
         BedIcon,

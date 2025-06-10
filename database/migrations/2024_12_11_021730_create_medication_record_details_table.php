@@ -21,7 +21,9 @@ return new class extends Migration
             $table->string('route');
             $table->integer('fc');
             $table->dateTime('start_time');
-            $table->integer('interval_in_hours');
+            $table->integer('interval_in_hours')->nullable();
+            $table->integer('interval_in_minutes')->nullable();
+            $table->boolean('nebulized')->default(false);
             $table->boolean('active')->default(true);
           $table->timestamp('suspended_at')->nullable()->default(null);
             $table->timestamps();

@@ -180,16 +180,11 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $route = DrugRoute::all();
             $dose = DrugDose::all();
             $showDeleted = $request->boolean('showDeleted');
-
+            $admission_id = $request->integer('admission_id');
             $diet = Diet::all();
 
             if ($showDeleted || !$medicationRecord->active) {
-
                 $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active', false)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
-
-
-
-
             } else {
                 $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active', true)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
 
@@ -203,7 +198,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
             return Inertia::render('MedicationRecords/Show', [
                 'medicationRecord' => $medicationRecord,
                 'details' => $details,
-
+                'admission_id' => $admission_id,
                 'orders' => $allMedicalOrders,
                 'drug' => $drug,
                 'dose' => $dose,

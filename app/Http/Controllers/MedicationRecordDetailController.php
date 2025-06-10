@@ -67,6 +67,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         $this->authorize('create', [MedicationRecordDetail::class, $medicationRecord]);
 
 
+
         $request->validate([
             'medication_record_id' => 'required|exists:medication_records,id',
             'drug' => 'required|string',
@@ -74,7 +75,6 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             'dose_metric' => 'required|string',
             'route' => 'required|string',
             'fc' => 'required|integer|gt:0',
-            'interval_in_hours' => 'required|integer|gt:0',
             'start_time' => 'required',
         ], [
             'dose.gt' => 'La dosis debe ser mayor a 0.',
@@ -94,9 +94,11 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             'route' => $request->route,
             'fc' => $request->fc,
             'interval_in_hours' => $request->interval_in_hours,
+            'interval_in_minutes' => $request->interval_in_minutes,
             'start_time' => $start_time_24,
             'active' => true,
             'created_at' => now(),
+            'nebulized' => $request->nebulized,
             'medical_order_detail_id' => $request->selectedOrderId,
         ]);
 
@@ -105,9 +107,10 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         $start_time = Carbon::parse($request->start_time);
 
         $interval_in_hours = $request->interval_in_hours;
+        $interval_in_minutes = $request->interval_in_minutes;
 
         for ($i = 0; $i < $fc; $i++) {
-            $scheduled_time = $start_time->copy()->addHours($i * $interval_in_hours);
+            $scheduled_time = $start_time->copy()->addHours($i * $interval_in_hours)->addMinutes($i * $interval_in_minutes);
 
             MedicationNotification::create([
                 'medication_record_detail_id' => $detail->id, // Usa el ID del detalle
@@ -116,7 +119,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             ]);
         }
 
-        return  back()->with('flash.toast', 'Detalle de Ficha de Medicamento creada correctamente');
+        return back()->with('flash.toast', 'Detalle de Ficha de Medicamento creada correctamente');
     }
 
     /**
@@ -143,11 +146,11 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         $Applied = $existingnotification->applied;
         if ($Applied == 1) {
 
-        return back()->with('flash.toast', 'Ya Existe una notifiacion con medicamentos administrados.')->with('flash.toastStyle', 'danger');
+            return back()->with('flash.toast', 'Ya Existe una notifiacion con medicamentos administrados.')->with('flash.toastStyle', 'danger');
 
         }
         if ($medicationRecordDetail->active == 0) {
-             return back()->with('flash.toast', 'Ya Existe una notifiacion con medicamentos administrados.')->with('flash.toastStyle', 'danger');
+            return back()->with('flash.toast', 'Ya Existe una notifiacion con medicamentos administrados.')->with('flash.toastStyle', 'danger');
 
         }
         return Inertia::render('MedicationRecordDetail/Edit', [
@@ -191,11 +194,13 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
 
                 'fc' => 'required|integer|gt:0',
                 'interval_in_hours' => 'required|integer|gt:0',
+                'interval_in_minutes' => 'required|integer|gt:0',
                 'dose' => 'required|integer|gt:0',
             ]);
 
             $fc = $request->fc;
             $interval_in_hours = $request->interval_in_hours;
+            $interval_in_minutes = $request->interval_in_minutes;
             $start_time = $request->start_time;
 
             if ($start_time) {
@@ -217,7 +222,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
                 $notifications_add = $fc - $notifications;
 
                 for ($i = 1; $i < $notifications_add; $i++) {
-                    $scheduled_time = $lastNotificationform->copy()->addHours($i * $request->interval_in_hours);
+                    $scheduled_time = $lastNotificationform->copy()->addHours($i * $request->interval_in_hours)->addMinutes($i * $request->interval_in_minutes);
                     try {
                         $medicationRecordDetail->medicationNotification()->create([
                             'medication_record_detail_id' => $medicationRecordDetail->id,
@@ -246,17 +251,18 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             }
 
             // Si intervalo en horas se cambia actualizar hora programada para todas las notificaciones relacionadas.
-            if ($medicationRecordDetail->interval_in_hours != $interval_in_hours || $medicationRecordDetail->start_time != $start_time) {
+            if ($medicationRecordDetail->interval_in_hours != $interval_in_hours || $medicationRecordDetail->interval_in_minutes != $interval_in_minutes || $medicationRecordDetail->start_time != $start_time) {
                 try {
                     $notificationsi = $medicationRecordDetail->medicationNotification()->get();
 
-                    if ($medicationRecordDetail->interval_in_hours != $interval_in_hours && $medicationRecordDetail->start_time == $start_time) {
+                    if ($medicationRecordDetail->interval_in_hours != $interval_in_hours || $medicationRecordDetail->interval_in_minutes != $interval_in_hours && $medicationRecordDetail->start_time == $start_time) {
                         // Actualizar solo en base al intervalo en horas
                         $formatted_start_time = Carbon::parse($start_time);
                         foreach ($notificationsi as $index => $notification) {
                             $scheduled_time = $formatted_start_time
                                 ->copy()
                                 ->addHours($index * $interval_in_hours)
+                                ->addMinutes($index * $interval_in_minutes)
                                 ->toDateTimeString();
 
                             $notification->update(['scheduled_time' => $scheduled_time]);
@@ -268,6 +274,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
                             $scheduled_time = $formatted_start_time
                                 ->copy()
                                 ->addHours($index * $interval_in_hours)
+                                ->addMinutes($index * $interval_in_minutes)
                                 ->toDateTimeString();
 
                             $notification->update(['scheduled_time' => $scheduled_time]);
@@ -279,6 +286,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
                             $scheduled_time = $formatted_start_time
                                 ->copy()
                                 ->addHours($index * $interval_in_hours)
+                                 ->addMinutes($index * $interval_in_minutes)
                                 ->toDateTimeString();
 
                             $notification->update(['scheduled_time' => $scheduled_time]);
@@ -321,13 +329,13 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         $this->authorize('delete', $medicationRecordDetail);
 
         $hasNotifications = MedicationNotification::where('medication_record_detail_id', $medicationRecordDetail->id)->where('applied', 1)->get();
-       if (!Auth::user()->hasRole('admin') ) {
-        if ($hasNotifications->isNotEmpty()) {
-             return back()->with('flash.toast', 'No se puede eliminar este Detalle de Ficha de Medicamentos porque tiene notificaciones aplicadas.')->with('flash.toastStyle', 'danger');
+        if (!Auth::user()->hasRole('admin')) {
+            if ($hasNotifications->isNotEmpty()) {
+                return back()->with('flash.toast', 'No se puede eliminar este Detalle de Ficha de Medicamentos porque tiene notificaciones aplicadas.')->with('flash.toastStyle', 'danger');
 
 
+            }
         }
-       }
 
 
         $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();

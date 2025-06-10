@@ -26,7 +26,7 @@
                 Ingreso
             </label>
             <AdmissionSelector :doesnt-have-medication-r=true @update:admission="form.admission_id = $event" :selected-admission-id="admission_id" />
-
+            <InputError :message="error" class="mt-2" />
 
             <!-- Contenedor para la dieta y el selector -->
             <div class="flex items-center space-x-4 mt-6">
@@ -75,6 +75,8 @@ import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import InputError from '@/Components/InputError.vue';
+import { ref } from 'vue';
 export default {
     props: {
         errors: [Array, Object],
@@ -88,25 +90,28 @@ export default {
         AdmissionSelector,
         BreadCrumb,
         PrimaryButton,
-        SecondaryButton
+        SecondaryButton,
+        InputError
     },
     data() {
         return {
             isVisible: false,
             form:  useForm({
-                admission_id: this.admission_id || null,
+                admission_id: this.admission_id,
 
                 diet: '',
             }),
-
+            error: ref(null)
         };
     },
     methods: {
         submit() {
-            if (!this.form.admission_id) {
+             console.log(this.form);
+            if (!this.form.admission_id ) {
                 this.error = 'Por favor, seleccione un ingreso.';
                 return;
             }
+
             this.error = null;
              this.form.post(route('medicationRecords.store'));
         },

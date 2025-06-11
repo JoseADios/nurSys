@@ -96,7 +96,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         }
 
         if ($days) {
-            $query->where('temperature_records.created_at', '>=', now()->subDays($days));
+            $query->where('temperature_records.created_at', '>=', now()->subDays($days)->startOfDay());
         }
 
         if ($sortField) {

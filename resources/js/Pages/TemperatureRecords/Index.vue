@@ -63,7 +63,7 @@
                             class="flex-1 min-w-0 w-full sm:w-fit border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                             name="days" id="days" v-model="form.days">
                             <option value="">Siempre</option>
-                            <option value="1">Último día</option>
+                            <option value="1">Hoy</option>
                             <option value="7">Últimos 7 días</option>
                             <option value="30">Últimos 30 días</option>
                             <option value="90">Últimos 90 días</option>

@@ -85,7 +85,11 @@ class NurseRecordController extends Controller implements HasMiddleware
         }
 
         if ($days) {
-            $query->where('nurse_records.created_at', '>=', now()->subDays($days));
+            $query->where(
+                'nurse_records.created_at',
+                '>=',
+                now()->subDays($days)->startOfDay()
+            );
         }
 
         if ($sortField) {

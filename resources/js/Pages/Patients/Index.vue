@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AppLayout title="Pacientes">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Pacientes
@@ -95,7 +95,7 @@
                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                             name="days" id="days" v-model="form.days">
                             <option value="">Siempre</option>
-                            <option value="1">Último día</option>
+                            <option value="1">Hoy</option>
                             <option value="7">Últimos 7 días</option>
                             <option value="30">Últimos 30 días</option>
                             <option value="90">Últimos 90 días</option>

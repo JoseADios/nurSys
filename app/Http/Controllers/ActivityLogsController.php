@@ -60,7 +60,7 @@ class ActivityLogsController extends Controller implements HasMiddleware
         }
 
         if ($request->filled('startDate') && $request->filled('endDate')) {
-            $startDate = $request->startDate;
+            $startDate = Carbon::parse($request->startDate)->startOfDay();
             $endDate = Carbon::parse($request->endDate)->endOfDay();
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }

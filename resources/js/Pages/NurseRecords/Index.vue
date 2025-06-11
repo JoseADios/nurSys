@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AppLayout title="Registros de enfermería">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 <BreadCrumb :items="[
@@ -8,7 +8,7 @@
                         route: route('admissions.show', form.admission_id)
                     }] : []),
                     {
-                        text: 'Registros de enfermeria'
+                        text: 'Registros de enfermería'
                     }
                 ]" />
             </h2>

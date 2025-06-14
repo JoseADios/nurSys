@@ -1,6 +1,6 @@
 <template>
     <div
-        class="w-full h-full bg-white dark:bg-gray-800 overflow-hidden rounded-lg border border-gray-200/60 dark:border-gray-700/60 shadow-md">
+        class="w-full h-full bg-white dark:bg-gray-800 overflow-hidden rounded-lg border border-gray-200/60 dark:border-gray-700/60">
         <!-- Encabezado fijo -->
         <div
             class="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-blue-500/5 dark:bg-blue-500/5 z-10">

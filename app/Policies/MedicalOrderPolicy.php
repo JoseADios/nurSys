@@ -29,9 +29,16 @@ class MedicalOrderPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, MedicalOrder $medicalOrder): bool
+    public function view(User $user, MedicalOrder $medicalOrder): Response
     {
-        return false;
+       if ($user->hasRole('doctor')) {
+            return Response::allow();
+        }
+        if ( $medicalOrder->doctor_id !== $user->id) {
+            return Response::deny('No tienes permiso para ver este registro');
+        }
+
+        return Response::allow();
     }
 
     /**

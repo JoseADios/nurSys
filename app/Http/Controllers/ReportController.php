@@ -111,11 +111,18 @@ class ReportController extends Controller
 
         $clinic = Clinic::get()->first();
         $details = medicationRecordDetail::where('medication_record_id', $id)
-            ->where('active', true)
-            ->with('medicationNotification')->get();
+
+        ->where('active', true)
+        ->with('medicationNotification')->get();
+$hasNotifications = false;
 
         foreach ($details as $detail) {
             $notifications = MedicationNotification::where('medication_record_detail_id', $detail->id)->with('medicationRecordDetail')->get();
+           $hasNotifications = $notifications->count() > 0;
+
+    if ($hasNotifications) {
+        break;
+    }
         }
 
         if ($medicationRecord->active != true) {
@@ -126,7 +133,10 @@ class ReportController extends Controller
             'medicationRecord' => $medicationRecord,
             'clinic' => $clinic,
             'details' => $details,
-            'notification' => $notifications
+
+            'notification'=>$notifications,
+            'hasnotifications' => $hasNotifications,
+
 
         ])->setPaper('a4');
 

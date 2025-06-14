@@ -30,9 +30,13 @@ class MedicationRecordPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, MedicationRecord $medicationRecord): bool
+    public function view(User $user, MedicationRecord $medicationRecord): Response
     {
-        return false;
+      if ($user->hasRole('nurse')) {
+            return Response::allow();
+        }
+
+        return Response::allow();
     }
 
     /**

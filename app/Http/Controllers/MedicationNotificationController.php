@@ -59,9 +59,9 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
         $MedicationNotificacion = MedicationNotification::where('medication_record_detail_id', $id)->with('nurse')->get();
         $responseUpdateNotification = Gate::inspect('updateNurse', $MedicationNotificacion);
 
-        if (Auth::user()->hasRole('admin') ) {
-            $canUpdateNotification  = true;
-        }else{
+        if (Auth::user()->hasRole('admin')) {
+            $canUpdateNotification = true;
+        } else {
             $canUpdateNotification = false;
         }
         if ($MedicationRecordDetail->active == 0) {
@@ -109,6 +109,11 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
         if ($request->has('markAsAdministered')) {
 
             if ($detail->active == 1 && $detail->suspended_at == null) {
+                Log::info('Updating medication notification', [
+                    'nurse_id' => Auth::id(),
+                    'administered_time' => now(),
+                    'applied' => true
+                ]);
                 $medication_notification->update([
                     'nurse_id' => Auth::id(),
                     'administered_time' => now(),

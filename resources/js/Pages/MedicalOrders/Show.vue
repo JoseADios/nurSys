@@ -36,13 +36,13 @@
                    <div class="flex items-center gap-2">
                         <PersonalizableButton v-if="medicalOrder.active" @click="downloadRecordReport" color="emerald">
                         <ReportIcon class="size-5 " />
-                        Crear Reporte
+                        <span class="hidden sm:inline-flex">Crear Reporte</span>
                         </PersonalizableButton>
                           <AccessGate :permission="['medicalOrder.delete']">
                         <DangerButton v-if="medicalOrder.active" @click="recordBeingDeleted = true">
 
                             <TrashIcon class="size-5 mr-2" />
-                            <span class="font-medium ">Eliminar</span>
+                            <span class="hidden sm:inline-flex">Eliminar</span>
 
                         </DangerButton>
                             <PersonalizableButton v-else @click="restoreRecord" class="gap-2" color="green"

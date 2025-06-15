@@ -1,5 +1,5 @@
 <template>
-<AppLayout>
+<AppLayout title="Editar Ingresos">
     <template #header>
         <h2 class="font-semibold text-xl text-white leading-tight text-center">
             <BreadCrumb :items="[

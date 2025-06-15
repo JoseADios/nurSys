@@ -1,5 +1,5 @@
 <template>
-<AppLayout>
+<AppLayout title="Editar Ficha Medicamentos ">
     <template #header>
 
 

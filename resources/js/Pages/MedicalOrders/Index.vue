@@ -179,7 +179,7 @@
                                 {{ formatDate(medicalOrder.created_at) }}
                             </td>
                             <td class="px-6 py-4 flex items-center space-x-4">
-                               <Link  class="flex-1 text-primary-500 hover:text-primary-800"
+                               <Link  class="flex-2 text-primary-500 hover:text-primary-800"
                                     :href="route('medicalOrders.show', medicalOrder.id)" as="button">
                                     Ver
                                 </Link >

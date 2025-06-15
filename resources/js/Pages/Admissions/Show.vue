@@ -66,7 +66,7 @@
                             </p>
                         </div>
                         <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Recepsionista</h3>
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Recepcionista</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ admission.receptionist.name }} {{ admission.receptionist.last_name }}
                             </p>
@@ -119,9 +119,6 @@
                             {{ admission.admission_dx || 'No se proporcionó diagnóstico de ingreso' }}
                         </p>
                         <div class="flex justify-end"></div>
-                        <button @click="showEditDiagnosis = true" class="text-blue-500 flex">
-                                    <EditIcon class="size-5" />
-                                </button>
                     </div>
                     </AccessGate>
 
@@ -243,14 +240,14 @@
                                     <PersonalizableButton @click="admissionUpdateCharge = true" class="gap-2 "
                                         color="green">
                                         <CheckCircleIcon class="size-5" />
-                                        <span class="hidden sm:inline-flex">Dar de Alta</span>
+                                        <span class="">Dar de Alta</span>
                                     </PersonalizableButton>
                                 </div>
                                 <div v-if="admission.discharged_date != null">
                                     <PersonalizableButton @click="admissionBeingPutInProgress = true" class="gap-2 "
                                         color="yellow">
                                         <RestoreIcon class="size-5" />
-                                        <span class="hidden sm:inline-flex">Poner en progreso</span>
+                                        <span class="">Poner en progreso</span>
                                     </PersonalizableButton>
                                 </div>
                             </div>
@@ -259,9 +256,9 @@
                         <AccessGate :role="['admin']">
 
                             <Link v-if="can.update"  :href="route('admissions.edit', admission.id)">
-                            <PersonalizableButton class="gap-2 mr-2" color="yellow">
+                            <PersonalizableButton class=" bg-primary-500 mr-2">
                                 <EditIcon class="size-5" />
-                                <span class="hidden sm:inline-flex">Editar</span>
+                                <span class="">Editar</span>
                             </PersonalizableButton>
                             </Link>
 
@@ -269,12 +266,12 @@
                         <DangerButton v-if="can.delete && admission.active" @click="admissionBeingDeleted = true"
                             class="gap-2" color="red">
                             <TrashIcon class="size-5" />
-                            <span class="hidden sm:inline-flex">Eliminar</span>
+                            <span class="">Eliminar</span>
                         </DangerButton>
                         <PersonalizableButton v-if="can.delete && !admission.active" @click="restoreAdmission"
                             class="gap-2" color="green">
                             <RestoreIcon class="size-5" />
-                            <span class="hidden sm:inline-flex">Restaurar</span>
+                            <span class="">Restaurar</span>
                         </PersonalizableButton>
                           </AccessGate>
                     </div>
@@ -384,30 +381,6 @@
                             Cancelar
                         </SecondaryButton>
                         <PrimaryButton type="submit" :disabled="!formRecord.receptionist_id">
-                            Aceptar
-                        </PrimaryButton>
-                    </div>
-                </form>
-            </div>
-
-        </Modal>
-        <Modal :closeable="true" :show="showEditDiagnosis != null" @close="showEditDiagnosis == null">
-            <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
-                <form @submit.prevent="updateDiagnosis" class="max-w-3xl mx-auto">
-
-                  <label for="admission_dx"
-                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico de ingreso <span class="text-red-500">*</span></label>
-                <textarea required id="admission_dx" rows="4" v-model="modalform.admission_dx"
-                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Escribe el diagnóstico de ingreso..."></textarea>
-                <InputError :message="modalform.errors.admission_dx" class="mt-2" />
-                    <!-- Botones -->
-                    <div class="flex justify-end mt-4 space-x-3">
-                        <SecondaryButton type="button" @click="showEditDiagnosis = null"
-                            class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
-                            Cancelar
-                        </SecondaryButton>
-                        <PrimaryButton type="submit" :disabled="!modalform.admission_dx" :loading="modalform.processing">
                             Aceptar
                         </PrimaryButton>
                     </div>

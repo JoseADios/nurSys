@@ -97,7 +97,9 @@ class AdmissionController extends Controller implements HasMiddleware
                 ->latest('admissions.created_at');
         }
         if ($days) {
-            $query->where('admissions.created_at', '>=', now()->subDays($days));
+            $query->where('admissions.created_at',
+            '>=', now()->subDays($days)->startOfDay()
+        );
         }
 
         if ($myRecords ) {

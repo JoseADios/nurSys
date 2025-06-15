@@ -75,7 +75,9 @@ class MedicationRecordController extends Controller implements HasMiddleware
                 ->latest('medication_records.created_at');
         }
         if ($days) {
-            $query->where('medication_records.created_at', '>=', now()->subDays($days));
+            $query->where('medication_records.created_at',
+             '>=', now()->subDays($days)->startOfDay()
+            );
         }
 
 

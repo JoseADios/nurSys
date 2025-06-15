@@ -67,7 +67,9 @@ class MedicalOrderController extends Controller implements HasMiddleware
         }
 
         if ($days) {
-            $query->where('medical_orders.created_at', '>=', now()->subDays($days));
+            $query->where('medical_orders.created_at',
+             '>=', now()->subDays($days)->startOfDay()
+            );
         }
         if ($in_process === 'true') {
             $query->whereNull('admissions.discharged_date');

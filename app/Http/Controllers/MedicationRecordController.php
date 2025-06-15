@@ -45,7 +45,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
         $days = $request->integer('days');
-        $in_process = $request->input('in_process', "");
+         $in_process = $request->input('in_process', 'true');
 
 
         $query = MedicationRecord::query()

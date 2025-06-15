@@ -42,8 +42,8 @@ class MedicalOrderController extends Controller implements HasMiddleware
         $sortDirection = $request->input('sortDirection', 'asc');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
+         $in_process = $request->input('in_process', 'true');
 
-        $in_process = $request->input('in_process', "");
 
         $query = MedicalOrder::with('admission.patient', 'admission.bed', 'admission.doctor')
             ->select([

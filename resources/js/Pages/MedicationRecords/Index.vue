@@ -50,9 +50,10 @@
                         <select @change="submitFilters()"
                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                            name="in_process" id="in_process" v-model="form.in_process">
-                            <option value="">Todos</option>
                             <option value="true">En proceso</option>
                             <option value="false">Dados de alta</option>
+                            <option value="">Todos</option>
+
 
                         </select>
 
@@ -176,14 +177,10 @@
                             <td class="px-6 py-4">{{ formatDate(record.created_at) }}</td>
 
                             <td class="px-6 py-4 flex items-center space-x-4">
-
-                                <Link  class="flex-1 text-primary-500 hover:text-primary-800"
+                                <Link  class="flex-2 text-primary-500 hover:text-primary-800"
                                     :href="route('medicationRecords.show', record.id)" as="button">
                                     Ver
                                 </Link >
-
-
-
                             </td>
 
                         </tr>

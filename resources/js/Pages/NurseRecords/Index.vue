@@ -70,7 +70,8 @@
                             <option value="180">Últimos 180 días</option>
                             <option value="365">Último año</option>
                         </select>
-
+                    </div>
+                </div>
                         <!-- Mis Registros - Solo se muestra si tiene permiso -->
                         <AccessGate :permission="['nurseRecord.create']" class="sm:w-fit">
                             <PersonalizableButton
@@ -90,7 +91,7 @@
                                 </div>
                             </PersonalizableButton>
                         </AccessGate>
-                    </div>
+
 
                     <!-- Contenedor de acciones - Se distribuye automáticamente entre elementos visibles -->
                     <div class="flex flex-col items-center sm:flex-row w-fit lg:place-self-end gap-3 xl:gap-4">
@@ -118,9 +119,8 @@
                             </PrimaryLink>
                         </AccessGate>
                     </div>
-                </div>
+
             </div>
-        </div>
 
         <!-- Tabla con scroll horizontal para móviles -->
         <div

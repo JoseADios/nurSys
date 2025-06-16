@@ -36,13 +36,13 @@
                         <PersonalizableButton v-if="medicationRecord.active" @click="downloadRecordReport"
                             color="emerald">
                             <ReportIcon class="size-5 " />
-                            Crear Reporte
+                           <span class="hidden sm:inline-flex">Crear Reporte</span>
                         </PersonalizableButton>
                         <AccessGate :permission="['medicationRecord.delete']">
                             <DangerButton v-if="medicationRecord.active" @click="recordBeingDeleted = true">
 
                                 <TrashIcon class="size-5" />
-                                <span class="font-medium ">Eliminar</span>
+                                <span class="hidden sm:inline-flex">Eliminar</span>
 
                             </DangerButton>
                             <PersonalizableButton v-else @click="restoreRecord(medicationRecord)" class="gap-2"

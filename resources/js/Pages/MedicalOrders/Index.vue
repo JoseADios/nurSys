@@ -233,8 +233,8 @@
     export default {
         props: {
             medicalOrders: Object,
-            admission_id: Number,
             filters: Object,
+
         },
         components: {
             AppLayout,
@@ -259,6 +259,7 @@
                 form: {
                     search: this.filters.search || '',
                     showDeleted: this.filters.show_deleted,
+                    admission_id: this.filters.admission_id !== 0 ? this.filters.admission_id : null,
                     sortField: this.filters.sortField || 'medical_orders.updated_at',
                     sortDirection: this.filters.sortDirection || 'asc',
                     days: this.filters.days || '',
@@ -266,7 +267,7 @@
                     in_process: this.filters.in_process || "",
 
                 },
-                timeout: 1000,
+                timeout: 500,
             }
         },
         methods: {

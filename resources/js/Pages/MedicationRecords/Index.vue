@@ -259,7 +259,8 @@
 
                 form: {
                     search: this.filters.search || '',
-                    in_process: this.filters.in_process || "",
+                    admission_id: this.filters.admission_id !== 0 ? this.filters.admission_id : null,
+                    in_process: this.filters.in_process || '',
                     showDeleted: this.filters.show_deleted,
                     sortField: this.filters.sortField || 'medication_records.updated_at',
                     sortDirection: this.filters.sortDirection || 'asc',

@@ -149,17 +149,9 @@
                         <div class="grid md:grid-cols-2 sm:grid-cols-1 gap-4">
 
                             <div class="flex flex-col space-y-2 items-center">
-                                <div v-if="medicalOrderId !== null" class=" w-full">
-                                <Link :href="`${route('medicalOrders.show', medicalOrderId)}?admission_id=${admission.id}`"
-                                        :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
-                                    class="flex w-full items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg p-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                <MedicalOrderIcon class="size-5 mr-1" />
-                                Órdenes Médicas
-                                </Link>
-                                </div>
-                                  <div v-else class=" w-full">
-                                    <Link :href="route('medicalOrders.index')" :class="{ 'opacity-25 pointer-events-none': processing }"
+
+                                  <div class=" w-full">
+                                    <Link :href="route('medicalOrders.index', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
                                     @click="processing = true"
                                     class="flex w-full items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg p-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                 <MedicalOrderIcon class="size-5 mr-1" />

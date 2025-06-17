@@ -36,14 +36,18 @@ class MedicalOrderController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        $search = $request->input('search', '');
         $admissionId = $request->integer('admission_id');
+        $search = $request->input('search', '');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
          $in_process = $request->input('in_process', 'true');
 
+          // si se filtra por ingreso mostrar los registros aunque esten dados de alta
+        if ($admissionId && !$request->has('in_process')) {
+            $in_process = false;
+        }
 
         $query = MedicalOrder::with('admission.patient', 'admission.bed', 'admission.doctor')
             ->select([
@@ -99,8 +103,8 @@ class MedicalOrderController extends Controller implements HasMiddleware
 
         return Inertia::render('MedicalOrders/Index', [
             'medicalOrders' => $medicalOrders,
-            'admission_id' => $admissionId,
             'filters' => [
+                'admission_id' => $admissionId,
                 'search' => $search,
                 'show_deleted' => $showDeleted,
                 'sortField' => $sortField,

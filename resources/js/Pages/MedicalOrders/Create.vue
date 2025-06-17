@@ -1,13 +1,24 @@
 <template>
-    <AppLayout title="Crear Ordenes Médicas">
+    <AppLayout title="Crear Órdenes Médicas">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
-
                 <BreadCrumb :items="[
-                     {
-                        text: 'Órdenes Médicas',
-                        route: route('medicalOrders.index')
+                    // Condicionar el primer elemento (solo se muestra si hay admission_id)
+                    ...(admission_id ? [{
+                        formattedId: { id: admission_id, prefix: 'ING' },
+                        route: route('admissions.show', admission_id)
+                    }] : []),
 
+                    // Segundo elemento (depende si hay admission_id o no)
+                    {
+                        text: 'Órdenes Médicas',
+                        route: admission_id
+                            ? route('medicalOrders.index', { admission_id: admission_id })
+                            : route('edicalOrders.index')
+                    },
+
+                    {
+                        text: 'Crear'
                     },
                 ]" />
             </h2>
@@ -64,7 +75,8 @@ export default {
     data() {
         return {
             form: useForm({
-                admission_id: this.admission_id
+                admission_id: this.admission_id || null,
+                has_admission_id: this.admission_id ? true : false
             }),
             errorMessage: this.error || null,
         }

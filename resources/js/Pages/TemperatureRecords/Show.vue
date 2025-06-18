@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AppLayout title="Hoja de temperatura">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 <BreadCrumb :items="[
@@ -158,7 +158,7 @@
                                     required min="0"
                                     class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                     placeholder="Temperatura del paciente (°C)" />
-
+                                <InputError :message="formDetailUpdate.errors.temperature" class="mt-2" />
                                 <div class="pt-8">
                                     <PersonalizableButton class="w-full" size="large" :loading="formDetail.processing"
                                         color="green" shade="600">
@@ -183,7 +183,7 @@
                                     v-model="formDetail.temperature" required
                                     class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                     placeholder="Temperatura del paciente (°C)" />
-
+                                <InputError :message="formDetail.errors.temperature" class="mt-2" />
                                 <div class="pt-8 w-full">
                                     <PersonalizableButton size="large" class="w-full" :loading="formDetail.processing">
                                         Agregar
@@ -208,6 +208,7 @@
                                         v-model="formEliminationsUpdate.evacuations" required
                                         class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         placeholder="Num. de evacuaciones del paciente" />
+                                    <InputError :message="formEliminationsUpdate.errors.evacuations" class="mt-2" />
                                 </div>
                                 <div>
                                     <InputLabel for="urinations" value="Micciones" :required="true" class="mb-2" />
@@ -215,6 +216,7 @@
                                         v-model="formEliminationsUpdate.urinations" required
                                         class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         placeholder="Num. de micciones del paciente" />
+                                    <InputError :message="formEliminationsUpdate.errors.urinations" class="mt-2" />
                                 </div>
                             </div>
 
@@ -243,6 +245,7 @@
                                             v-model="formEliminations.evacuations" required
                                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                             placeholder="Num. de evacuaciones del paciente" />
+                                        <InputError :message="formEliminations.errors.evacuations" class="mt-2" />
                                     </div>
                                     <div>
                                         <InputLabel for="urinations" value="Micciones" :required="true" class="mb-2" />
@@ -250,6 +253,7 @@
                                             required maxlength="2"
                                             class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                             placeholder="Num. de micciones del paciente" />
+                                        <InputError :message="formEliminations.errors.urinations" class="mt-2" />
                                     </div>
                                 </div>
 
@@ -429,6 +433,7 @@ import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import InputError from '@/Components/InputError.vue';
 
 export default {
     props: {
@@ -466,6 +471,7 @@ export default {
         InputLabel,
         PersonalizableButton,
         PrimaryButton,
+        InputError
     },
     data() {
         return {

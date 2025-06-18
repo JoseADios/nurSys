@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AppLayout title="Registro de enfermería">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
                 <BreadCrumb :items="[
@@ -146,14 +146,7 @@
                     </div>
                 </div>
 
-                <!-- Errors -->
-                <div v-if="errors.length > 0" class="bg-red-50 border-l-4 border-red-500 p-4 mx-8 my-4">
-                    <div class="text-red-700" v-for="error in errors" :key="error">
-                        {{ error }}
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row">
+                <AccessGate :permission="['nurseRecord.update']" class="flex flex-col md:flex-row">
                     <div class="col w-full md:w-[50%] p-4 md:p-8">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Órdenes médicas</h3>
                         <!-- Mensaje cuando no hay órdenes -->
@@ -260,7 +253,7 @@
                             <hr class="my-2 border-transparent dark:border-transparent">
                         </div>
                     </AccessGate>
-                </div>
+                </AccessGate>
 
                 <AccessGate :except-permission="['nurseRecordDetail.create']">
                     <hr class="my-2 border-transparent dark:border-transparent">
@@ -273,16 +266,19 @@
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2 sm:mb-0">Eventos del
                             Registro</h3>
 
-                        <button @click="toggleShowDeleted"
-                            class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
-                            :class="{
-                                'bg-red-500 hover:bg-red-600 text-white': showDeletedLocal,
-                                'bg-gray-200 hover:bg-gray-400 text-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200': !showDeletedLocal
-                            }">
-                            {{ showDeletedLocal ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                            <CirclePlusIcon v-if="showDeletedLocal" class="ml-1 h-5 w-5" />
-                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                        </button>
+                        <AccessGate :permission="['nurseRecord.update']">
+                            <button @click="toggleShowDeleted"
+                                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
+                                :class="{
+                                    'bg-red-500 hover:bg-red-600 text-white': showDeletedLocal,
+                                    'bg-gray-200 hover:bg-gray-400 text-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200': !showDeletedLocal
+                                }">
+                                {{ showDeletedLocal ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                <CirclePlusIcon v-if="showDeletedLocal" class="ml-1 h-5 w-5" />
+                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                            </button>
+
+                        </AccessGate>
                     </div>
 
                     <div class="max-h-[50rem] overflow-y-auto space-y-4">

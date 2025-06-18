@@ -1,12 +1,20 @@
 <template>
-<AppLayout>
+<AppLayout title="Crear Ficha de Medicamentos">
     <template #header>
         <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
-            <BreadCrumb :items="[
-                    {
-                        text: 'Fichas de Medicamentos',
-                        route: route('medicationRecords.index')
+             <BreadCrumb :items="[
+                    // Condicionar el primer elemento (solo se muestra si hay admission_id)
+                    ...(admission_id ? [{
+                        formattedId: { id: admission_id, prefix: 'ING' },
+                        route: route('admissions.show', admission_id)
+                    }] : []),
 
+                    // Segundo elemento (depende si hay admission_id o no)
+                    {
+                        text: 'Ficha de  Medicamentos',
+                        route: admission_id
+                            ? route('medicationRecords.index', { admission_id: admission_id })
+                            : route('medciationRecords.index')
                     },
 
                     {
@@ -120,9 +128,9 @@ export default {
         return {
             isVisible: false,
             form:  useForm({
-                admission_id: this.admission_id,
-
+                admission_id: this.admission_id || null,
                 diet: '',
+                has_admission_id: this.admission_id ? true : false
             }),
             recordBeingCreated: ref(null),
             error: ref(null)

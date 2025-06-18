@@ -46,7 +46,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
         $admissionId = $request->integer('admission_id');
-        $myRecords = $request->boolean('myRecords', true);
+        $myRecords = $request->boolean('myRecords', Auth::user()->hasRole(['nurse', 'admin']));
         $days = $request->integer('days');
         $in_process = $request->input('in_process', 'true');
         $sortField = $request->input('sortField');
@@ -96,7 +96,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         }
 
         if ($days) {
-            $query->where('temperature_records.created_at', '>=', now()->subDays($days));
+            $query->where('temperature_records.created_at', '>=', now()->subDays($days)->startOfDay());
         }
 
         if ($sortField) {

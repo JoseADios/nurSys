@@ -75,7 +75,7 @@ class PatientController extends Controller implements HasMiddleware
         }
 
         if ($days) {
-            $query->where('patients.created_at', '>=', now()->subDays($days));
+            $query->where('patients.created_at', '>=', now()->subDays($days)->startOfDay());
         }
         if ($hospitalized === 'true') {
             $query->havingRaw('hospitalized > 0');

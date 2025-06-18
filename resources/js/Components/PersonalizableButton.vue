@@ -75,7 +75,7 @@ const variantClasses = computed(() => {
                 `text-${getColorClass(props.color, 'outline', 'text', '500')}`,
                 'border',
                 `border-${getColorClass(props.color, 'outline', 'border', '500')}`,
-                `hover:bg-${getColorClass(props.color, 'outline', 'hover', '50')}`,
+                `hover:bg-${getColorClass(props.color, 'outline', 'hover', '0')}`,
                 `active:bg-${getColorClass(props.color, 'outline', 'active', '100')}`,
                 `focus:ring-${getColorClass(props.color, 'outline', 'focus', '500')}`
             ];

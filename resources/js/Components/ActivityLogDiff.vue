@@ -2,7 +2,8 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow pt-4 md:p-6">
         <!-- Nombre del modelo -->
         <div class="mb-6 text-center">
-            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">{{ modelLabel }} ({{ activityItem.subject_id }})</h2>
+            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200">{{ modelLabel }} ({{ activityItem.subject_id
+                }})</h2>
         </div>
 
         <!-- Encabezado con información del registro -->
@@ -13,11 +14,10 @@
                     <component :is="getActionIcon()" class="w-5 h-5 mr-2" />
                     <span class="font-semibold text-sm">{{ description }}</span>
                 </div>
-                <Link v-if="activityItem.log_name !== 'default'"
-                    :href="route(activityItem.log_name.split(',')[0], activityItem.log_name.split(',')[1])"
-                    class="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold px-5 py-2 rounded-full shadow-lg text-sm transition-all duration-300">
-                Ver
-                </Link>
+                <PrimaryLink v-if="activityItem.log_name !== 'default'" class="!w-fit"
+                    :href="route(activityItem.log_name.split(',')[0], activityItem.log_name.split(',')[1])">
+                    Ver
+                </PrimaryLink>
             </div>
 
             <!-- Información del usuario que realizó el cambio y cuándo -->
@@ -248,24 +248,24 @@
 </template>
 
 <script>
-import { Link } from '@inertiajs/vue3';
 import CirclePlusIcon from './Icons/CirclePlusIcon.vue';
 import EditIcon from './Icons/EditIcon.vue';
 import TrashIcon from './Icons/TrashIcon.vue';
 import RestoreIcon from './Icons/RestoreIcon.vue';
 import ToggleLeftIcon from './Icons/ToggleLeftIcon.vue';
 import ToggleRigthIcon from './Icons/ToggleRigthIcon.vue';
+import PrimaryLink from './PrimaryLink.vue';
 
 export default {
     name: 'ActivityLogDiff',
     components: {
-        Link,
         CirclePlusIcon,
         EditIcon,
         TrashIcon,
         RestoreIcon,
         ToggleLeftIcon,
         ToggleRigthIcon,
+        PrimaryLink
     },
     props: {
         modelLabel: String,
@@ -445,7 +445,7 @@ export default {
             }
 
             // Si el campo es de tipo password, mostrar puntos en lugar del valor real
-            if (field.toLowerCase().includes('password')) {
+            if (field.toLowerCase().includes('password') || field.toLowerCase().includes('remember_token') || field.toLowerCase().includes('two_factor')) {
                 return '••••••••';
             }
 

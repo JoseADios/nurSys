@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AppLayout title="Editar Usuario">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 <BreadCrumb :items="[
@@ -164,11 +164,11 @@
                     class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex flex-col sm:flex-row gap-2 justify-between items-center rounded-b-lg">
                     <div class="space-y-2 flex flex-col sm:block md:space-x-2">
                         <DangerButton v-if="user.active == 1" @click="userBeingDeleted = true" type="button">
-                            Deshabilitar
+                            Desactivar
                         </DangerButton>
                         <PersonalizableButton v-else @click="restoreUser" color="green" type="button"
                             :loading="isProcessingActive">
-                            Habilitar
+                            Activar
                         </PersonalizableButton>
                         <PersonalizableButton @click="userChangingPass = true" color="blue" shade="600" type="button">Cambiar
                             contraseña

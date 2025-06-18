@@ -47,11 +47,14 @@ class TemperatureDetailController extends Controller implements HasMiddleware
     {
         $this->authorize('create', [TemperatureDetail::class, $request->temperature_record_id]);
 
-        TemperatureDetail::create([
-            'temperature_record_id' => $request->temperature_record_id,
-            'temperature' => $request->temperature,
-            'nurse_id' => Auth::id(),
+        $validated = $request->validate([
+            'temperature_record_id' => 'required|numeric',
+            'temperature' => 'required|max:40|min:35|numeric'
         ]);
+
+        $validated['nurse_id'] = Auth::id();
+
+        TemperatureDetail::create($validated);
 
         return back()->with('flash.toast', 'Temperatura agregada exitosamente');
     }
@@ -79,10 +82,12 @@ class TemperatureDetailController extends Controller implements HasMiddleware
     {
         $this->authorize('update', $temperatureDetail);
 
-        $request->validate([
-            'temperature' => 'required|numeric',
+        $validated = $request->validate([
+            'temperature_record_id' => 'required|numeric',
+            'temperature' => 'required|max:40|min:35|numeric'
         ]);
-        $temperatureDetail->update($request->all());
+
+        $temperatureDetail->update($validated);
 
         return back()->with('flash.toast', 'Registro actualizado correctamente');
     }

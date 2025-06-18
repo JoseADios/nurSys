@@ -1,8 +1,8 @@
 <template>
-    <AppLayout>
+    <AppLayout title="Registros de Actividades">
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                Registro de Actividades
+                Registros de Actividades
             </h2>
         </template>
 
@@ -15,7 +15,7 @@
                             <!-- Filtros -->
                             <div class="flex flex-col lg:flex-row lg:flex-grow gap-4">
                                 <!-- Selector de acción -->
-                                <div class="relative w-full lg:w-1/5">
+                                <div class="relative w-full">
                                     <select
                                         class="border-gray-300 w-full dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         name="action" id="action" v-model="localFilters.action">
@@ -28,7 +28,7 @@
                                 </div>
 
                                 <!-- Selector de modelo -->
-                                <div class="relative w-full lg:w-1/5">
+                                <div class="relative w-full">
                                     <select
                                         class="border-gray-300 w-full dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         name="model" id="model" v-model="localFilters.model">
@@ -40,7 +40,7 @@
                                 </div>
 
                                 <!-- Selector de usuario -->
-                                <div class="relative w-full lg:w-1/5">
+                                <div class="relative w-full">
                                     <select
                                         class="border-gray-300 w-full dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                                         name="causer" id="causer" v-model="localFilters.causer">
@@ -52,15 +52,13 @@
                                 </div>
 
                                 <!-- Selector de fecha -->
-                                <div class="relative w-full lg:w-2/5">
-                                    <div
-                                        class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                                        <DateInput class="w-full" id="startDate" v-model="localFilters.startDate"
-                                            placeholder="Fecha inicio" />
-                                        <span class="text-gray-500 dark:text-gray-400">a</span>
-                                        <DateInput class="w-full" id="endDate" v-model="localFilters.endDate"
-                                            placeholder="Fecha fin" />
-                                    </div>
+                                <div
+                                    class="relative w-full  flex flex-col sm:flex-row items-center gap-2">
+                                    <DateInput class="w-full" id="startDate" v-model="localFilters.startDate"
+                                        placeholder="Fecha inicio" />
+                                    <span class="text-gray-500 dark:text-gray-400">a</span>
+                                    <DateInput class="w-full" id="endDate" v-model="localFilters.endDate"
+                                        placeholder="Fecha fin" />
                                 </div>
                             </div>
 
@@ -68,14 +66,12 @@
                             <div class="relative w-full">
                                 <div
                                     class="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                                    <button type="button" @click="resetFilters" :class="{ 'opacity-25': localFilters.processing }" :disabled="localFilters.processing"
-                                        class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
+                                    <SecondaryButton type="button" @click="resetFilters">
                                         Limpiar filtros
-                                    </button>
-                                    <button type="submit" :class="{ 'opacity-25': localFilters.processing }" :disabled="localFilters.processing"
-                                        class="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
+                                    </SecondaryButton>
+                                    <PrimaryButton :is-loading="localFilters.processing">
                                         Aplicar filtros
-                                    </button>
+                                    </PrimaryButton>
                                 </div>
                             </div>
                         </div>
@@ -118,7 +114,7 @@
                                             class="inline-flex items-center px-3 py-1 rounded-md">
                                             <component :is="getActionIcon(log.description)" class="w-5 h-5 mr-2" />
                                             <span class="font-semibold text-sm">{{ formatDescription(log.description)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
@@ -132,7 +128,7 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <button @click="showDetails(log)"
-                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
+                                            class=" text-primary-500 hover:text-primary-800">
                                             Ver cambios
                                         </button>
                                     </td>
@@ -179,8 +175,8 @@
                     <div v-if="selectedLog" class="text-gray-700 dark:text-gray-300 max-h-[75vh] overflow-y-auto">
                         <!-- Para un solo registro de actividad -->
                         <ActivityLogDiff :activityItem="selectedLog"
-                            :model-label="getModelName(selectedLog.subject_type)"
-                            :field-mappings="fieldMappings" :value-mappings="valueMappings"/>
+                            :model-label="getModelName(selectedLog.subject_type)" :field-mappings="fieldMappings"
+                            :value-mappings="valueMappings" />
                     </div>
                 </div>
             </div>
@@ -208,6 +204,9 @@ import TrashIcon from '@/Components/Icons/TrashIcon.vue';
 import RestoreIcon from '@/Components/Icons/RestoreIcon.vue';
 import ToggleLeftIcon from '@/Components/Icons/ToggleLeftIcon.vue';
 import ToggleRigthIcon from '@/Components/Icons/ToggleRigthIcon.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 
 export default defineComponent({
     components: {
@@ -225,7 +224,10 @@ export default defineComponent({
         TrashIcon,
         RestoreIcon,
         ToggleLeftIcon,
-        ToggleRigthIcon
+        ToggleRigthIcon,
+        PrimaryButton,
+        SecondaryButton,
+        PersonalizableButton
     },
 
     props: {

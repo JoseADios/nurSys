@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AppLayout title="Usuario">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 <BreadCrumb :items="[
@@ -53,18 +53,25 @@
                                 <BackIcon class="w-4 h-4 mr-2" />
                                 Volver
                             </PersonalizableLink>
-                            <PersonalizableLink :href="route('users.edit', user.id)">
-                                <EditIcon class="h-4 w-4 mr-2" />
-                                <span>Editar</span>
-                            </PersonalizableLink>
-                            <DangerButton v-if="user.active === '1'" @click="userBeingDeleted = true">
-                                <TrashIcon class="w-4 h-4 mr-2" />
-                                Deshabilitar
-                            </DangerButton>
-                            <PersonalizableButton v-else @click="restoreUser" :loading="userBeingRestored" color="green">
-                                <RestoreIcon class="w-4 h-4 mr-2" />
-                                Habilitar
-                            </PersonalizableButton>
+                            <AccessGate :permission="['user.edit']">
+                                <PersonalizableLink :href="route('users.edit', user.id)">
+                                    <EditIcon class="h-4 w-4 mr-2" />
+                                    <span>Editar</span>
+                                </PersonalizableLink>
+                            </AccessGate>
+                            <AccessGate :permission="['user.delete']">
+
+                                <DangerButton v-if="user.active === '1'" @click="userBeingDeleted = true">
+                                    <TrashIcon class="w-4 h-4 mr-2" />
+                                    Desactivar
+                                </DangerButton>
+                                <PersonalizableButton v-else @click="restoreUser" :loading="userBeingRestored"
+                                    color="green">
+                                    <RestoreIcon class="w-4 h-4 mr-2" />
+                                    Activar
+                                </PersonalizableButton>
+                            </AccessGate>
+
                         </div>
                     </div>
                 </div>
@@ -179,6 +186,7 @@ import UserIcon from '@/Components/Icons/UserIcon.vue';
 import BriefCaseIcon from '@/Components/Icons/BriefCaseIcon.vue';
 import PersonalizableLink from '@/Components/PersonalizableLink.vue';
 import PersonalizableButton from '@/Components/PersonalizableButton.vue';
+import AccessGate from '@/Components/Access/AccessGate.vue';
 
 export default {
     components: {
@@ -199,7 +207,8 @@ export default {
         UserIcon,
         BriefCaseIcon,
         PersonalizableLink,
-        PersonalizableButton
+        PersonalizableButton,
+        AccessGate
     },
     props: {
         user: {

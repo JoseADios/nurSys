@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AppLayout title="Usuarios">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Usuarios
@@ -10,9 +10,9 @@
         <div class="px-4 lg:px-10 mt-4">
             <div class="mb-4">
                 <!-- Barra de búsqueda principal y botones de acción siempre visibles -->
-                <div class="flex flex-col sm:flex-row gap-3 mb-3">
+                <div class="flex flex-col md:flex-row gap-3 mb-3">
                     <!-- Búsqueda general - siempre visible -->
-                    <div class="relative flex-grow">
+                    <div class="relative h-fit flex-grow">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                         </div>
@@ -25,23 +25,14 @@
                     </div>
 
                     <!-- Botones de acción - siempre visibles -->
-                    <div class="flex justify-center items-center md:flex-wrap gap-2">
-                        <!-- Botón para ver registros eliminados -->
+                    <div class="flex justify-center items-center flex-col sm:flex-row md:flex-wrap gap-2">
+                        <!-- Botón para ver registros Desactivados -->
                         <AccessGate :permission="['user.update']">
-                            <button @click="toggleShowDeleted"
-                                class="flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors whitespace-nowrap text-sm"
-                                :class="{
-                                    'bg-red-500 hover:bg-red-600 text-white': form.show_deleted,
-                                    'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200': !form.show_deleted
-                                }">
-                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                                <span v-if="form.show_deleted">
-                                    <CircleXIcon class="h-4 w-4 ml-1" />
-                                </span>
-                                <span v-else>
-                                    <CirclePlusIcon class="h-4 w-4 ml-1" />
-                                </span>
-                            </button>
+                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="form.show_deleted ? 'red' : 'gray'">
+                                {{ filters.show_deleted ? 'Ocultar Desactivados' : 'Ver Desactivados' }}
+                                <CirclePlusIcon v-if="form.show_deleted" class="ml-1 h-5 w-5" />
+                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                            </PersonalizableButton>
                         </AccessGate>
 
                         <AccessGate :permission="['user.create']">
@@ -78,7 +69,7 @@
 
                 <!-- Filtros adicionales - colapsables en móvil -->
                 <div :class="{ 'hidden': !showFilters }" class="md:block">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
                         <!-- Filtro por rol -->
                         <div class="relative">
                             <select v-model="form.role" name="role" id="role" @change="applyFilters"
@@ -220,7 +211,7 @@
                                         Ver
                                         </Link>
                                         <AccessGate :permission="['user.update']">
-                                            <Link class="text-blue-500 hover:text-blue-800"
+                                            <Link class="text-green-500 hover:text-green-800"
                                                 :href="route('users.edit', user.id)">
                                             Editar
                                             </Link>
@@ -251,6 +242,7 @@ import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import SearchIcon from '@/Components/Icons/SearchIcon.vue';
 import XIcon from '@/Components/Icons/XIcon.vue';
 import Pagination from '@/Components/Pagination.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 import PrimaryLink from '@/Components/PrimaryLink.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -274,7 +266,8 @@ export default {
         TextInput,
         SearchIcon,
         DynamicAvatar,
-        PrimaryLink
+        PrimaryLink,
+        PersonalizableButton
     },
     data() {
         return {

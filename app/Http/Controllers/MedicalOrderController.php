@@ -36,14 +36,18 @@ class MedicalOrderController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        $search = $request->input('search', '');
         $admissionId = $request->integer('admission_id');
+        $search = $request->input('search', '');
         $sortField = $request->input('sortField');
         $sortDirection = $request->input('sortDirection', 'asc');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
+         $in_process = $request->input('in_process', 'true');
 
-        $in_process = $request->input('in_process', "");
+          // si se filtra por ingreso mostrar los registros aunque esten dados de alta
+        if ($admissionId && !$request->has('in_process')) {
+            $in_process = false;
+        }
 
         $query = MedicalOrder::with('admission.patient', 'admission.bed', 'admission.doctor')
             ->select([
@@ -67,7 +71,9 @@ class MedicalOrderController extends Controller implements HasMiddleware
         }
 
         if ($days) {
-            $query->where('medical_orders.created_at', '>=', now()->subDays($days));
+            $query->where('medical_orders.created_at',
+             '>=', now()->subDays($days)->startOfDay()
+            );
         }
         if ($in_process === 'true') {
             $query->whereNull('admissions.discharged_date');
@@ -97,8 +103,8 @@ class MedicalOrderController extends Controller implements HasMiddleware
 
         return Inertia::render('MedicalOrders/Index', [
             'medicalOrders' => $medicalOrders,
-            'admission_id' => $admissionId,
             'filters' => [
+                'admission_id' => $admissionId,
                 'search' => $search,
                 'show_deleted' => $showDeleted,
                 'sortField' => $sortField,
@@ -152,7 +158,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
     {
           $this->authorize('view', $medicalOrder);
         $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord']);
-        $admissionId = $request->query('admission_id');
+        $admissionId = $request->integer('admission_id');
         $showDeleted = $request->boolean('showDeleted');
 
         $query = MedicalOrder::where('admission_id', $medicalOrder->admission_id)->with('admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord');

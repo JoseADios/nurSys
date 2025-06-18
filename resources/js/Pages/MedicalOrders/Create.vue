@@ -18,22 +18,40 @@
 
                 <AdmissionSelector @update:admission="form.admission_id = $event" :selected-admission-id="admission_id" />
 
-                <!-- Mostrar mensaje de error si no se selecciona ninguna admisión -->
-                <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
-
+               <InputError :message="form.errors.admission_id" class="mt-2" />
+                 </form>
                 <!-- Botones -->
-                <div class="flex justify-end mt-4 space-x-3">
+                <div class="flex justify-end mt-4 space-x-3 max-w-3xl mx-auto">
                     <Link :href="route('medicalOrders.index')">
                           <SecondaryButton class="py-2.5 px-5 me-2 mb-2  ">
                   Cancelar
               </SecondaryButton>
                     </Link>
-                   <PrimaryButton type="submit" class="py-2.5 px-5 me-2 mb-2  "  :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing" >
+                   <PrimaryButton @click="orderBeingCreated = true" class="py-2.5 px-5 me-2 mb-2  "  :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing" >
                     Guardar
                 </PrimaryButton>
                 </div>
-            </form>
+
         </div>
+         <ConfirmationModal :show="orderBeingCreated != null" @close="orderBeingCreated = null">
+            <template #title>
+                Crear Órden Médica
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas crear esta órden?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="orderBeingCreated = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <PrimaryButton class="ms-3" @click="submit()">
+                    Crear
+                </PrimaryButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
 </template>
 
@@ -44,11 +62,14 @@ import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import InputError from '@/Components/InputError.vue';
+import { ref } from 'vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 export default {
     props: {
         admissions: Array,
         admission_id: Number,
-        error: {
+        errors: {
             type: Object,
             default: null
         }
@@ -59,24 +80,29 @@ export default {
         AdmissionSelector,
         BreadCrumb,
         SecondaryButton,
-        PrimaryButton
+        ConfirmationModal,
+        PrimaryButton,
+        InputError
     },
     data() {
         return {
             form: useForm({
-                admission_id: this.admission_id
+                admission_id: null,
             }),
-            errorMessage: this.error || null,
+            orderBeingCreated: ref(null),
+            error: ref(null)
         }
     },
     methods: {
         submit() {
-            if (!this.form.admission_id) {
-                this.errorMessage = 'Por favor, seleccione un ingreso.';
-                return;
-            }
-            this.errorMessage = null;
-            this.form.post(route('medicalOrders.store'));
+
+            this.orderBeingCreated =null;
+            this.error = null;
+            this.form.post(route('medicalOrders.store'),{
+                onError: (errors) =>{
+                    this.form.errors = errors;
+                }
+            });
         }
     }
 }

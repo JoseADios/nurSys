@@ -161,7 +161,7 @@
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Detalles
                     </h3>
 
-                    <form @submit.prevent="submit" class="space-y-4">
+                    <form @submit.prevent="submit"  class="space-y-4">
                         <div class="grid md:grid-cols-[2fr_1fr] gap-4">
                             <div>
                                 <label for="orden"
@@ -186,13 +186,13 @@
                                 </select>
                             </div>
                         </div>
-
+</form>
                         <div class="pt-4">
-                             <PersonalizableButton   type="submit"  :class="{ 'opacity-25': formDetail.processing }" :loading="formDetail.processing"  :disabled="formDetail.processing"  size="large" class="w-full">
+                             <PersonalizableButton type=""   @click="medicalOrderDetailBeingCreated = true"  :class="{ 'opacity-25': formDetail.processing }" :loading="formDetail.processing"  :disabled="formDetail.processing"  size="large" class="w-full">
                             Agregar Detalle
                         </PersonalizableButton>
                         </div>
-                    </form>
+
                 </div>
                 </AccessGate>
 
@@ -407,6 +407,26 @@
                 </div>
             </template>
         </DialogModal>
+         <!-- modal para crear -->
+        <ConfirmationModal :show="medicalOrderDetailBeingCreated != null" @close="medicalOrderDetailBeingCreated = null">
+            <template #title>
+                Crear Ingreso
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas crear este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="medicalOrderDetailBeingCreated = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <PrimaryButton class="ms-3" @click="submit">
+                    Crear
+                </PrimaryButton>
+            </template>
+        </ConfirmationModal>
 
         <ConfirmationModal :show="recordBeingDeleted != null || detailBeingDeleted != null"
             @close="recordBeingDeleted = null; detailBeingDeleted = null">
@@ -541,6 +561,7 @@ export default {
                 selectedDetail: this.selectedDetail,
 
             }),
+            medicalOrderDetailBeingCreated: ref(null),
             isVisibleDetail: ref(false),
             originalSuspendedState: ref(null),
             isVisibleEditSign: ref(null),
@@ -609,6 +630,7 @@ export default {
             }), '_blank');
         },
         submit() {
+            this.medicalOrderDetailBeingCreated = false;
             this.formDetail.post(route('medicalOrderDetails.store'),
 
                  {

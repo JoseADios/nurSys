@@ -18,7 +18,7 @@
 
     <!-- Formulario -->
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <form @submit.prevent="submit" class="max-w-xl mx-auto">
+        <form class="max-w-xl mx-auto">
             <!-- Diagnóstico -->
             <!-- Selector -->
 
@@ -26,7 +26,7 @@
                 Ingreso
             </label>
             <AdmissionSelector :doesnt-have-medication-r=true @update:admission="form.admission_id = $event" :selected-admission-id="admission_id" />
-            <InputError :message="error" class="mt-2" />
+            <InputError :message="form.errors.admission_id" class="mt-2" />
 
             <!-- Contenedor para la dieta y el selector -->
             <div class="flex items-center space-x-4 mt-6">
@@ -42,25 +42,46 @@
                             {{ diets.name }} - {{ diets.description }}
                         </option>
                     </select>
+                      <InputError :message="form.errors.diet" class="mt-2" />
 
                 </div>
 
             </div>
-
+ </form>
             <!-- Botones -->
-            <div class="flex justify-end mt-6 mb-2">
+            <div class="flex justify-end mt-6 mb-2 max-w-xl  mx-auto">
                 <Link :href="route('medicationRecords.index')" >
               <SecondaryButton class="py-2.5 px-5 me-2 mb-2  ">
                   Cancelar
               </SecondaryButton>
                 </Link>
 
-                <PrimaryButton type="submit" class="py-2.5 px-5 me-2 mb-2  "  :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing" >
+                <PrimaryButton @click="recordBeingCreated = true" class="py-2.5 px-5 me-2 mb-2  "  :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing" >
                     Guardar
                 </PrimaryButton>
             </div>
-        </form>
+
     </div>
+     <!-- modal para crear -->
+        <ConfirmationModal :show="recordBeingCreated != null" @close="recordBeingCreated = null">
+            <template #title>
+                Crear Ficha de Medicamentos
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas crear esta ficha?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="recordBeingCreated = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <PrimaryButton class="ms-3" @click="submit()">
+                    Crear
+                </PrimaryButton>
+            </template>
+        </ConfirmationModal>
 
 </AppLayout>
 </template>
@@ -77,6 +98,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import InputError from '@/Components/InputError.vue';
 import { ref } from 'vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 export default {
     props: {
         errors: [Array, Object],
@@ -91,7 +113,8 @@ export default {
         BreadCrumb,
         PrimaryButton,
         SecondaryButton,
-        InputError
+        InputError,
+        ConfirmationModal
     },
     data() {
         return {
@@ -101,20 +124,21 @@ export default {
 
                 diet: '',
             }),
+            recordBeingCreated: ref(null),
             error: ref(null)
         };
     },
     methods: {
         submit() {
-             console.log(this.form);
-            if (!this.form.admission_id ) {
-                this.error = 'Por favor, seleccione un ingreso.';
-                return;
-            }
-
+            this.recordBeingCreated = null;
             this.error = null;
-             this.form.post(route('medicationRecords.store'));
+            this.form.post(route('medicationRecords.store'),{
+                onError: (errors) =>{
+                    this.form.errors = errors;
+                }
+            });
         },
+
 
     },
 

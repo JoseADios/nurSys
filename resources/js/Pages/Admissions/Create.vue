@@ -20,7 +20,7 @@
         </div>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
-            <form @submit.prevent="submit" class="max-w-xl mx-auto">
+            <form class="max-w-xl mx-auto">
 
                 <BedSelector :beds="beds" :errors="form.errors" :initialBedId="form.bed_id"
                     @update:bedId="updateBedId" />
@@ -48,19 +48,40 @@
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Escribe las observaciones..."></textarea>
                 <InputError :message="form.errors.comment" class="mt-2" />
-
-                <div class="flex justify-end mt-6 mb-2 gap-2">
+  </form>
+                <div class="flex justify-end mt-6 mb-2 gap-2  max-w-xl mx-auto">
                     <Link :href="route('admissions.index')" >
                      <SecondaryButton         >
                 Cancelar</SecondaryButton>
                     </Link>
 
-                    <PrimaryButton type="submit"  :class="{ 'opacity-25': form.processing }"  :is-loading="form.processing" :disabled="form.processing"
+                    <PrimaryButton @click="admissionBeingCreated = true"
                         >Guardar</PrimaryButton>
                 </div>
-            </form>
+
         </div>
+        <!-- modal para crear -->
+        <ConfirmationModal :show="admissionBeingCreated != null" @close="admissionBeingCreated = null">
+            <template #title>
+                Crear Ingreso
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas crear este ingreso?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="admissionBeingCreated = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <PrimaryButton class="ms-3" @click="submit">
+                    Crear
+                </PrimaryButton>
+            </template>
+        </ConfirmationModal>
     </AppLayout>
+
 </template>
 
 <script>
@@ -74,6 +95,8 @@ import PatientSelector from '@/Components/PatientSelector.vue';
 import BreadCrumb from '@/Components/BreadCrumb.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import { ref } from 'vue';
 export default {
     components: {
         AppLayout,
@@ -83,6 +106,7 @@ export default {
         UserSelector,
         PatientSelector,
         BreadCrumb,
+        ConfirmationModal,
         PrimaryButton,
         SecondaryButton
     },
@@ -102,7 +126,8 @@ export default {
                 doctor_id: null,
                 admission_dx: null,
                 comment: null,
-            })
+            }),
+            admissionBeingCreated: ref(null)
         }
     },
     methods: {
@@ -110,12 +135,14 @@ export default {
             this.form.bed_id = bedId;
         },
         submit() {
+            this.admissionBeingCreated = null;
             this.form.post(route('admissions.store'), {
                 onError: (errors) => {
                     this.form.errors = errors;
                 }
             })
-        }
+        },
+
     }
 }
 </script>

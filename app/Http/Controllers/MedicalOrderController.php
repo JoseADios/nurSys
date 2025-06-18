@@ -158,7 +158,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
     {
           $this->authorize('view', $medicalOrder);
         $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord']);
-        $admissionId = $request->query('admission_id');
+        $admissionId = $request->integer('admission_id');
         $showDeleted = $request->boolean('showDeleted');
 
         $query = MedicalOrder::where('admission_id', $medicalOrder->admission_id)->with('admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord');

@@ -191,7 +191,12 @@
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <Link class="text-primary-500 hover:text-primary-800"
+                                 <Link v-if="form.admission_id" class="ml-2 text-blue-500 hover:text-blue-800"
+                                    :href="`${route('medicalOrders.show', medicalOrder.id)}?admission_id=${form.admission_id}`"
+                                    as="button">
+                                Ver
+                                </Link>
+                                 <Link v-else class="ml-2 text-primary-500 hover:text-primary-800"
                                     :href="route('medicalOrders.show', medicalOrder.id)" as="button">
                                 Ver
                                 </Link>
@@ -267,7 +272,7 @@
                     in_process: this.filters.in_process || "",
 
                 },
-                timeout: 500,
+                timeout: 500 ,
             }
         },
         methods: {
@@ -298,10 +303,8 @@
             },
             toggleShowDeleted() {
                 this.form.showDeleted = !this.form.showDeleted;
-                this.$inertia.get(route('medicalOrders.index', {
-                    search: this.form.search,
-                    showDeleted: this.form.showDeleted
-                }));
+                this.$inertia.get(route('medicalOrders.index', this.form));
+
             },
         },
 

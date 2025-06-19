@@ -181,8 +181,8 @@
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Órden <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="order" v-model="formDetail.order" required
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                                <TextInput type="text" id="order" maxlength="255" v-model="formDetail.order" required
+                                    class="w-full px-3 py-2 border  border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
                                     placeholder="Orden médica" />
                             </div>
 
@@ -192,7 +192,7 @@
                                     Régimen
                                 </label>
                                 <select id="regime" v-model="formDetail.regime"
-                                    class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     <option :value="regime.name" v-for="regime in regimes" :key="regime.id">
                                         {{ regime.name }}
                                     </option>
@@ -426,11 +426,11 @@
          <!-- modal para crear -->
         <ConfirmationModal :show="medicalOrderDetailBeingCreated != null" @close="medicalOrderDetailBeingCreated = null">
             <template #title>
-                Crear Ingreso
+                Crear Detalle de Órden Médica
             </template>
 
             <template #content>
-                ¿Estás seguro de que deseas crear este ingreso?
+                ¿Estás seguro de que deseas crear este detalle de órden médica?
             </template>
 
             <template #footer>
@@ -530,10 +530,12 @@ import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
+import TextInput from '@/Components/TextInput.vue'
 export default {
     components: {
         AppLayout,
         Link,
+        TextInput,
         PersonalizableButton,
         DialogModal,
         SignaturePad,
@@ -645,7 +647,7 @@ export default {
             }), '_blank');
         },
         submit() {
-            this.medicalOrderDetailBeingCreated = false;
+            this.medicalOrderDetailBeingCreated = null;
             this.formDetail.post(route('medicalOrderDetails.store'),
 
                  {

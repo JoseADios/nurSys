@@ -70,11 +70,7 @@
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ admission.receptionist.name }} {{ admission.receptionist.last_name }}
                             </p>
-                            <AccessGate :role="['admin']">
-                                <button @click="showEditReceptionist = true" class="text-blue-500 flex">
-                                    <EditIcon class="size-5" />
-                                </button>
-                            </AccessGate>
+
 
                         </div>
 
@@ -229,14 +225,14 @@
                         <AccessGate :role="['doctor', 'admin']">
                             <div v-if="can.update">
                                 <div v-if="admission.discharged_date == null">
-                                    <PersonalizableButton @click="admissionUpdateCharge = true" class="gap-2 "
+                                    <PersonalizableButton @click="admissionUpdateCharge = true" class="gap-2 "  :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing"
                                         color="green">
                                         <CheckCircleIcon class="size-5" />
-                                        <span class="">Dar de Alta</span>
+                                        <span class="">Dar de Alta </span>
                                     </PersonalizableButton>
                                 </div>
                                 <div v-if="admission.discharged_date != null">
-                                    <PersonalizableButton @click="admissionBeingPutInProgress = true" class="gap-2 "
+                                    <PersonalizableButton @click="admissionBeingPutInProgress = true" class="gap-2  " :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing"
                                         color="yellow">
                                         <RestoreIcon class="size-5" />
                                         <span class="">Poner en progreso</span>
@@ -248,14 +244,14 @@
                         <AccessGate :role="['admin']">
 
                             <Link v-if="can.update"  :href="route('admissions.edit', admission.id)">
-                            <PersonalizableButton class=" bg-primary-500 mr-2">
+                            <PersonalizableButton class=" bg-primary-500 mr-2" :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing">
                                 <EditIcon class="size-5" />
                                 <span class="">Editar</span>
                             </PersonalizableButton>
                             </Link>
 
 
-                        <DangerButton v-if="can.delete && admission.active" @click="admissionBeingDeleted = true"
+                        <DangerButton v-if="can.delete && admission.active" @click="admissionBeingDeleted = true" :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing"
                             class="gap-2" color="red">
                             <TrashIcon class="size-5" />
                             <span class="">Eliminar</span>
@@ -308,7 +304,7 @@
                     Cancelar
                 </SecondaryButton>
 
-                <PrimaryButton class="ms-3" @click="charge">
+                <PrimaryButton class="ms-3" @click="charge" :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing">
                     Aceptar
                 </PrimaryButton>
             </template>
@@ -324,8 +320,9 @@
                         class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico
                         final</label>
                     <textarea required id="final_dx" rows="4" v-model="formDischarge.final_dx"
-                        class="block p-2.5 mb-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="block p-2.5 mb-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Escribe el diagnóstico final..."></textarea>
+                        <InputError :message="formDischarge.errors.final_dx" class="mb-4"/>
 
                     <SignaturePad class="w-full max-w-lg lg:max-w-md" v-model="formDischarge.doctor_sign"
                         input-name="doctor_sign" />
@@ -347,12 +344,12 @@
                     Cancelar
                 </SecondaryButton>
 
-                <div v-if="admission.discharged_date == null">
+                <div v-if="admission.discharged_date == null"  :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing">
                     <PrimaryButton class="ms-3" @click="discharge">
                         Dar de alta
                     </PrimaryButton>
                 </div>
-                <div v-if="admission.discharged_date != null">
+                <div v-if="admission.discharged_date != null" :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing">
                     <PrimaryButton class="ms-3" @click="charge">
                         Poner en progreso
                     </PrimaryButton>
@@ -467,12 +464,12 @@ export default {
             showEditReceptionist: ref(null),
             showEditDiagnosis: ref(null),
             admissionBeingPutInProgress: ref(null),
-            signatureError: false,
+
             signatureError: false,
             modalform: useForm({
                  admission_dx: this.admission.admission_dx,
             }),
-            form: {
+            form: useForm ({
                 charge: false,
                 patient_id: this.admission.patient_id,
                 bed_id: this.admission.bed_id,
@@ -482,13 +479,13 @@ export default {
                 final_dx: this.admission.final_dx,
                 comment: this.admission.comment,
                 discharged_date: this.admission.discharged_date
-            },
-            formDischarge: {
+            }),
+            formDischarge: useForm ({
                 discharge: true,
                 doctor_sign: this.admission.doctor_sign,
                 final_dx: this.admission.final_dx,
                 discharged_date: this.admission.discharged_date
-            },
+           }),
             formRecord: {
                 admission_id: this.admission.id,
                 receptionist_id: this.admission.receptionist_id,
@@ -498,7 +495,7 @@ export default {
     },
     methods: {
         submit() {
-            this.$inertia.put(route('admissions.update', this.admission.id), this.form, {
+            this.form.put(route('admissions.update', this.admission.id), {
                 preserveScroll: true
             })
         },
@@ -519,13 +516,23 @@ export default {
             this.submitDischarge();
         },
         submitDischarge() {
+                if (!this.formDischarge.final_dx) {
+                this.formDischarge.errors.final_dx = "Debe Ingresar un diagnóstico final."
+                return false
+            }
             if (!this.formDischarge.doctor_sign) {
                 this.signatureError = true;
                 return false
             }
+
             this.signatureError = false;
-            this.$inertia.put(route('admissions.update', this.admission.id), this.formDischarge, {
-                preserveScroll: true
+            this.formDischarge.put(route('admissions.update', this.admission.id), {
+                preserveScroll: true,
+                  onSuccess: () => {
+
+                        this.formDischarge.reset();
+                        this.formDischarge.errors = '';
+                    },
             });
             this.admissionUpdateCharge = null
         },

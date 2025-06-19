@@ -1,5 +1,5 @@
 <template>
-    <AppLayout title="Ficha de Medicamentos">
+    <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
 
@@ -36,13 +36,13 @@
                         <PersonalizableButton v-if="medicationRecord.active" @click="downloadRecordReport"
                             color="emerald">
                             <ReportIcon class="size-5 " />
-                           <span class="hidden sm:inline-flex">Crear Reporte</span>
+                            Crear Reporte
                         </PersonalizableButton>
                         <AccessGate :permission="['medicationRecord.delete']">
                             <DangerButton v-if="medicationRecord.active" @click="recordBeingDeleted = true">
 
                                 <TrashIcon class="size-5" />
-                                <span class="hidden sm:inline-flex">Eliminar</span>
+                                <span class="font-medium ">Eliminar</span>
 
                             </DangerButton>
                             <PersonalizableButton v-else @click="restoreRecord(medicationRecord)" class="gap-2"
@@ -151,7 +151,7 @@
                         </div>
                         <div v-else>
                             <PersonalizableButton @click="closeform" id="add_detail" size="large" class="w-full">
-                                Agregar Detalle
+                                Cerrar
                             </PersonalizableButton>
                         </div>
                     </AccessGate>
@@ -162,7 +162,7 @@
                         <!-- Tarjeta para información del Medical Order -->
                         <div class="relative overflow-hidden rounded-lg pb-auto   bg-white dark:bg-gray-800 mb-5">
 
-                            <div class="max-h-80 overflow-y-auto   shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
+                            <div class="h-full overflow-y-auto    sm:rounded-lg mt-10 space-y-2 lg:mx-10">
                                 <div class="col w-full md:w-[100%] p-4 md:p-2 ">
                                     <h3 class="text-xl font-semibold text-gray-800 pl-2 dark:text-white mb-6">Órdenes
                                         médicas
@@ -177,7 +177,7 @@
 
 
                                     <!-- Acordeón de Órdenes Médicas -->
-                                    <div v-else class="space-y-4 max-h-72 overflow-y-auto">
+                                    <div v-else class="space-y-4 h-full overflow-y-auto">
                                         <div v-for="(order, index) in orders" :key="order.id">
                                             <div v-if="order.medical_order_detail.length !== 0"
                                                 class="accordion-item border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
@@ -206,11 +206,11 @@
                                                     class="accordion-content p-4 bg-white dark:bg-gray-900">
                                                     <div v-for="(detail, detailIndex) in order.medical_order_detail"
                                                         :key="detailIndex" @click="selectOrder(detail.id)" :class="{
-                                                            'bg-blue-500 text-white': selectedOrderId === detail.id && !detail.suspended_at,
+                                                            'bg-indigo-600 text-white': selectedOrderId === detail.id && !detail.suspended_at,
                                                             'bg-white dark:bg-gray-800': selectedOrderId !== detail.id && !detail.suspended_at,
 
                                                         }"
-                                                        class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200">
+                                                        class="border mb-2 rounded-lg p-4 m-2  shadow-md cursor-pointer transition duration-200">
 
                                                         <div class="flex flex-col justify-between items-start">
                                                             <div class="w-full flex flex-col">
@@ -255,6 +255,7 @@
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Medicamento
                                         </label>
                                         <DrugSelector v-model:drug="form.drug" />
+                                        <InputError :message="form.errors.drug" class="mt-2" />
                                     </div>
                                 </div>
                                 <label for="drug"
@@ -278,6 +279,7 @@
                                             {{ routes.name }} - {{ routes.description }}
                                         </option>
                                     </select>
+                                    <InputError :message="form.errors.route" class="mt-2" />
                                 </div>
 
                                 <!-- Contenedor para la Dosis y el selector -->
@@ -291,6 +293,7 @@
                                         <input id="dose" required type="number" v-model="form.dose"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             placeholder="Escribe la Dosis asignada..." />
+                                        <InputError :message="form.errors.dose" class="mt-2" />
                                     </div>
                                     <!-- Selector -->
                                     <div class="flex-1">
@@ -304,6 +307,7 @@
                                                 {{ doses.name }} - {{ doses.description }}
                                             </option>
                                         </select>
+                                        <InputError :message="form.errors.dose_metric" class="mt-2" />
 
                                     </div>
                                 </div>
@@ -316,7 +320,7 @@
                                 <input id="fc" rows="4" required type="number" v-model="form.fc"
                                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="Escribe los estudios pendientes..."></input>
-
+                                <InputError :message="form.errors.fc" class="mt-2" />
                                 <!-- Contenedor para la Intervalo en horas y minutos -->
                                 <div class="flex items-center space-x-4 mt-6">
                                     <!-- Dosis -->
@@ -330,19 +334,20 @@
                                             v-model="form.interval_in_hours"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             placeholder="Intervalo en Horas..." />
+                                        <InputError :message="form.errors.interval_in_hours" class="mt-2" />
                                     </div>
                                     <!-- Selector -->
                                     <div class="flex-1" v-if="form.nebulized">
                                         <!-- Intervalo en Horas -->
-                                        <label for="interval_in_minutes"
+                                        <label for="nebulization_time"
                                             class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                                            Intervalo en Minutos <span class="text-red-500">*</span>
+                                            Tiempo de Nebulización (min) <span class="text-red-500">*</span>
                                         </label>
-                                        <input required id="interval_in_minutes" type="number"
-                                            v-model="form.interval_in_minutes"
+                                        <input required id="nebulization_time" type="number"
+                                            v-model="form.nebulization_time"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                            placeholder="Intervalo en Minutos..." />
-
+                                            placeholder=" Tiempo de Nebulización..." />
+                                        <InputError :message="form.errors.nebulization_time" class="mt-2" />
                                     </div>
                                 </div>
 
@@ -354,19 +359,23 @@
                                 <input required id="start_time" type="time" v-model="form.start_time" :min="currentTime"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="Hora de Inicio..." />
+                                <InputError :message="form.errors.start_time" class="mt-2" />
 
-                                <!-- Botones -->
-                                <div class="flex justify-end mt-6 gap-2 mb-6">
-                                    <SecondaryButton @click="closeform">
-                                        Cerrar
-                                    </SecondaryButton>
 
-                                    <PrimaryButton type="submit" :class="{ 'opacity-25': form.processing }"
-                                        :is-loading="form.processing" :disabled="form.processing">
-                                        Guardar
-                                    </PrimaryButton>
-                                </div>
                             </form>
+                            <!-- Botones -->
+                            <div class="flex justify-end mt-6 gap-2 mb-6">
+                                <SecondaryButton @click="closeform">
+                                    Cerrar
+                                </SecondaryButton>
+
+                                <PrimaryButton @click="recordDetailBeingCreated = true"
+                                    :class="{ 'opacity-25': form.processing }" :is-loading="form.processing"
+                                    :disabled="form.processing">
+                                    Guardar
+                                </PrimaryButton>
+
+                            </div>
                         </div>
 
                     </div>
@@ -405,9 +414,8 @@
                             <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                 Fecha de Creación: {{ formatDate(detail.created_at) }}
                             </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1"
-                                v-if="detail.interval_in_minutes">
-                                Intervalo de cada: {{ detail.interval_in_minutes }} minutos
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1" v-if="detail.nebulization_time">
+                                Intervalo de cada: {{ detail.nebulization_time }} minutos
                             </div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mt-1" v-if="detail.interval_in_hours">
                                 Intervalo de cada: {{ detail.interval_in_hours }} horas
@@ -517,6 +525,26 @@
                 </DangerButton>
             </template>
         </ConfirmationModal>
+        <!-- modal para crear -->
+        <ConfirmationModal :show="recordDetailBeingCreated != null" @close="recordDetailBeingCreated = null">
+            <template #title>
+                Crear Detalle Ficha de Medicamentos
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas crear este detalle ficha?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="recordDetailBeingCreated = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <PrimaryButton class="ms-3" @click="submit()">
+                    Crear
+                </PrimaryButton>
+            </template>
+        </ConfirmationModal>
 
         <DialogModal :show="isVisible" @close="isVisible = false" class="">
 
@@ -607,6 +635,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import Checkbox from '@/Components/Checkbox.vue';
+import FormatRole from '@/Components/FormatRole.vue';
 export default {
 
     props: {
@@ -654,6 +683,11 @@ export default {
         CirclePlusIcon,
         CircleXIcon,
     },
+    watch: {
+        'form.nebulized'(newVal) {
+            this.form.fc = newVal ? 1 : '';
+        },
+    },
     data() {
         return {
             form: useForm({
@@ -663,7 +697,7 @@ export default {
                 route: '',
                 fc: '',
                 interval_in_hours: '',
-                interval_in_minutes: '',
+                nebulization_time: '',
                 start_time: '',
                 dose_metric: '',
                 selectedOrderId: null,
@@ -676,6 +710,7 @@ export default {
             recordActiveChanging: ref(false),
             recordDetailActiveChange: ref(false),
             recordDetailSupendChange: ref(false),
+            recordDetailBeingCreated: ref(null),
             selectedDetail: ref(null),
             errorMessage: "",
             detailBeingDeleted: ref(null),
@@ -761,37 +796,55 @@ export default {
             );
         },
         submit() {
+            this.recordDetailBeingCreated = null;
+            this.errorMessage = "";
             if (!this.form.selectedOrderId) {
                 this.errorMessage = "Debe seleccionar una orden antes de guardar.";
                 return;
             }
+            if (!this.form.drug) {
+                this.form.errors.drug = "Debe seleccionar un medicamennto.";
+                return;
+            }
+            if (!this.form.route) {
+                this.form.errors.route = "Debe seleccionar una vía.";
+                return;
+            }
             if (this.form.dose <= 0) {
-                this.errorMessage = "La Dosis debe ser mayor a 0";
+                this.form.errors.dose = "La Dosis debe ser mayor a 0";
                 return;
             }
-
+            if (!this.form.dose_metric) {
+                this.form.errors.dose_metric = "Debe seleccionar una métrica para la dosis.";
+                return;
+            }
             if (this.form.fc > 20) {
-                this.errorMessage = "Frecuencia debe ser menor de 20 veces";
-                return;
-            }
-            if (this.form.interval_in_hours > 24) {
-                this.errorMessage = "El Intervalo en horas debe ser menor de 24 horas (1 día)";
-                return;
-            }
-            if (this.form.interval_in_minutes > 59) {
-                this.errorMessage = "El Intervalo en horas debe ser menor a 60(1 hora)";
+                this.form.errors.fc = "Frecuencia debe ser menor de 20 veces";
                 return;
             }
             if (this.form.fc <= 0) {
-                this.errorMessage = "Frecuencia debe  ser mayor a 0";
+                this.form.errors.fc = "La frecuencia debe  ser mayor a 0";
                 return;
             }
-            if (this.form.interval_in_hours <= 0 && this.form.interval_in_minutes <= 0) {
-                this.errorMessage = "El Intervalo debe ser mayor a 0";
-                return;
+            if (this.form.fc > 1) {
+                if (this.form.interval_in_hours <= 0 && this.form.nebulization_time <= 0 ) {
+                    this.form.errors.interval_in_hours = "El Intervalo debe ser mayor a 0";
+                    return;
+                }
+                if (this.form.interval_in_hours > 24) {
+                    this.form.errors.interval_in_hours = "El Intervalo en horas debe ser menor de 24 horas (1 día)";
+                    return;
+                }
+                if (this.form.nebulization_time > 59) {
+                    this.form.errors.nebulization_time = "El Intervalo en horas debe ser menor a 60(1 hora)";
+                    return;
+                }
+            }
+            if (this.form.fc = 1) {
+                this.form.interval_in_hours = 0;
             }
 
-            this.errorMessage = "";
+
 
             this.form.post(route('medicationRecordDetails.store'), {
                 onSuccess: () => {

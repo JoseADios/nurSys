@@ -47,7 +47,7 @@
                             Cancelar
                         </SecondaryLink>
                     </div>
-                    <PrimaryButton type="submit" class="py-2.5 px-5 me-2 mb-2  "
+                    <PrimaryButton @click="orderBeingCreated = true" class="py-2.5 px-5 me-2 mb-2  "
                         :class="{ 'opacity-25': form.processing }":is-loading="form.processing"
                         :disabled="form.processing">
                         Guardar
@@ -87,10 +87,19 @@
     import BreadCrumb from '@/Components/BreadCrumb.vue';
     import PrimaryButton from '@/Components/PrimaryButton.vue';
     import SecondaryButton from '@/Components/SecondaryButton.vue';
+   import {
+    ref
+} from "vue";
+import InputError from '@/Components/InputError.vue';
+import SecondaryLink from '@/Components/SecondaryLink.vue';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue'
     export default {
         props: {
             admissions: Array,
-            admission_id: Number,
+            admission_id: {
+            type: Number,
+            default: null
+        },
             error: {
                 type: Object,
                 default: null
@@ -102,7 +111,10 @@
             AdmissionSelector,
             BreadCrumb,
             SecondaryButton,
-            PrimaryButton
+            PrimaryButton,
+            InputError,
+            SecondaryLink,
+            ConfirmationModal
         },
         data() {
             return {
@@ -111,15 +123,16 @@
                     has_admission_id: this.admission_id ? true : false
                 }),
                 errorMessage: this.error || null,
+                orderBeingCreated: ref(null)
             }
         },
         methods: {
             submit() {
+                this.orderBeingCreated =null;
                 if (!this.form.admission_id) {
-                    this.errorMessage = 'Por favor, seleccione un ingreso.';
+                    this.form.errors.admission_id = 'Por favor, seleccione un ingreso.';
                     return;
                 }
-                this.errorMessage = null;
                 this.form.post(route('medicalOrders.store'));
             }
         }

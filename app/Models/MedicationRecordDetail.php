@@ -20,7 +20,7 @@ class MedicationRecordDetail extends Model
         'route',
         'fc',
         'interval_in_hours',
-        'interval_in_minutes',
+        'nebulization_time',
         'nebulized',
         'active',
         'start_time',

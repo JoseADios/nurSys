@@ -654,7 +654,6 @@ export default {
                 preserveScroll: true,
                 onFinish: () => {
                     this.recordActiveChanging = false;
-                    console.log('Se cambio el ingreso a: ', this.nurseRecord.admission_id);
                 }
             })
             this.showEditAdmission = null
@@ -701,7 +700,8 @@ export default {
                     showDeleted: this.showDeletedLocal,
                     admission_id: this.admission_id !== 0 ? this.nurseRecord.admission_id : null
                 }, {
-                preserveScroll: true
+                preserveScroll: true,
+                preserveState: true
             });
         },
         submitSignature() {

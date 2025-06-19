@@ -14,7 +14,7 @@
                         text: 'Ficha de  Medicamentos',
                         route: admission_id
                             ? route('medicationRecords.index', { admission_id: admission_id })
-                            : route('medciationRecords.index')
+                            : route('medicationRecords.index')
                     },
 
                     {

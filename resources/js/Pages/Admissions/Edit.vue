@@ -55,6 +55,12 @@
                     </select>
                     <InputError :message="form.errors.doctor_id" class="mt-2" />
 
+                       <AccessGate :role="['admin']">
+
+                                <div @click="showEditReceptionist = true" class=" mt-4 cursor-pointer text-white  flex">
+                                  Recepcionista {{receptionist.name }} {{receptionist.last_name}}  <EditIcon class=" text-blue-500 ml-2 size-5" />
+                                </div>
+                            </AccessGate>
                     <label for="admission_dx"
                         class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico
                         de
@@ -63,6 +69,7 @@
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Escribe el diagnóstico de ingreso..."></textarea>
                     <InputError :message="form.errors.admission_dx" class="mt-2" />
+
 
                     <div v-if="admission.discharged_at">
 
@@ -85,6 +92,7 @@
 
                 <div class="flex justify-end mt-6 mb-2 gap-2">
 
+
                     <Link :href="route('admissions.show', admission.id)">
 
                     <SecondaryButton class="py-2.5 px-5 ">
@@ -98,7 +106,28 @@
                     </PrimaryButton>
                 </div>
             </form>
+
         </div>
+            <Modal :closeable="true" :show="showEditReceptionist != null" @close="showEditReceptionist == null">
+            <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
+
+                    <UserSelector roles="receptionist" :selected-user-id="admission.receptionist_id"
+                        @update:user="formRecord.receptionist_id = $event" />
+                    <!-- Botones -->
+                    <div class="flex justify-end mt-4 space-x-3">
+                        <SecondaryButton type="button" @click="showEditReceptionist = null"
+                            class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
+                            Cancelar
+                        </SecondaryButton>
+                        <PrimaryButton type="submit" :disabled="!formRecord.receptionist_id">
+                            Aceptar
+                        </PrimaryButton>
+                    </div>
+                </form>
+            </div>
+
+        </Modal>
         <!-- modal para eliminar -->
         <ConfirmationModal :show="admissionBeingDeleted != null" @close="admissionBeingDeleted = null">
             <template #title>
@@ -143,10 +172,13 @@
     import PrimaryButton from '@/Components/PrimaryButton.vue';
     import CheckCircleIcon from '@/Components/Icons/CheckCircleIcon.vue';
     import TrashIcon from '@/Components/Icons/TrashIcon.vue';
-
+    import EditIcon from '@/Components/Icons/EditIcon.vue';
+    import UserSelector from '@/Components/UserSelector.vue';
+    import Modal from '@/Components/Modal.vue';
     export default {
         props: {
-            admission: Object,
+            admission: [ Object],
+            receptionist: Object,
             patients: [Array, Object],
             doctors: [Array, Object],
             beds: Array,
@@ -165,7 +197,10 @@
             SecondaryButton,
             PersonalizableButton,
             TrashIcon,
-            BreadCrumb
+            EditIcon,
+            BreadCrumb,
+            UserSelector,
+            Modal
         },
         data() {
             return {
@@ -177,8 +212,14 @@
                     final_dx: this.admission.final_dx,
                     comment: this.admission.comment,
                 }),
+                   formRecord: useForm ({
+                admission_id: this.admission.id,
+                receptionist_id: this.admission.receptionist_id,
+                active: this.admission.active,
+            }),
                 admissionBeingDeleted: ref(null),
                 isVisible: false,
+                showEditReceptionist: ref(null),
 
             }
         },
@@ -190,6 +231,12 @@
                     }
                 })
             },
+             submitAdmission() {
+            this.formRecord.put(route('admissions.update', this.admission.id),  {
+                preserveScroll: true
+            })
+            this.showEditReceptionist = null;
+        },
 
             submitProcess(value) {
                 this.$inertia.put(route('admissions.update', this.admission.id), {

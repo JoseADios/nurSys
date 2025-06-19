@@ -185,10 +185,10 @@
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <span v-if="patient.is_hospitalized"
-                                        class="relative block size-3 bg-green-500 rounded-full mx-auto ring-4 ring-green-700">
+                                        class="relative block size-3 bg-green-500 dark:bg-green-500 rounded-full mx-auto ring-4 ring-green-300 dark:ring-green-700">
                                     </span>
                                     <span v-else
-                                        class="relative block size-3 bg-gray-500 rounded-full mx-auto ring-4 ring-gray-700">
+                                        class="relative block size-3 bg-gray-500 dark:bg-gray-500 rounded-full mx-auto ring-4 ring-gray-300 dark:ring-gray-700">
                                     </span>
                                 </td>
                                 <th scope="row"

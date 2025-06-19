@@ -493,6 +493,8 @@ class AdmissionController extends Controller implements HasMiddleware
             });
         }
 
+        $query->orderByDesc('id');
+
         $admissions = $query->paginate(15);
 
         if ($selectedAdm) {

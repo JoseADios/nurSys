@@ -5,15 +5,15 @@
                 <BreadCrumb :items="[
                     // Condicionar el primer elemento (solo se muestra si hay admission_id)
                     ...(admission_id ? [{
-                        formattedId: { id: admission_id, prefix: 'ING' },
-                        route: route('admissions.show', admission_id)
+                        formattedId: { id: nurseRecord.admission_id, prefix: 'ING' },
+                        route: route('admissions.show', nurseRecord.admission_id)
                     }] : []),
 
-                    // Segundo elemento (depende si hay admission_id o no)
+                    // Segundo elemento (depende si hay nurseRecord.admission_id o no)
                     {
                         text: 'Registros de enfermería',
                         route: admission_id
-                            ? route('nurseRecords.index', { admission_id: admission_id })
+                            ? route('nurseRecords.index', { admission_id: nurseRecord.admission_id })
                             : route('nurseRecords.index')
                     },
 
@@ -28,7 +28,7 @@
                 class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 rounded-2xl overflow-hidden">
                 <!-- Navigation: Mejorar responsividad -->
                 <div class="p-4 dark:bg-gray-900 flex flex-row justify-between items-center sm:space-y-0">
-                    <div v-if="admission_id">
+                    <div v-if="nurseRecord.admission_id">
                         <Link :href="route('nurseRecords.index', { admission_id: admission_id })"
                             class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                         <BackIcon class="size-5" />
@@ -172,7 +172,7 @@
                                             </span>
                                             <span class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
                                                 formatDateFromNow(order.created_at)
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <ChevronDown
                                             class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white"
@@ -653,7 +653,7 @@ export default {
             this.$inertia.put(route('nurseRecords.update', this.nurseRecord.id), this.formRecord, {
                 preserveScroll: true,
                 onFinish: () => {
-                    this.recordActiveChanging = false
+                    this.recordActiveChanging = false;
                 }
             })
             this.showEditAdmission = null
@@ -665,9 +665,6 @@ export default {
             } else {
                 this.openAccordion = index // Abre el acordeón seleccionado
             }
-        },
-        selectAdmission(admission) {
-            this.formRecord.admission_id = admission.id;
         },
         applyFilters() {
             this.$inertia.get(
@@ -701,9 +698,10 @@ export default {
             this.$inertia.get(route('nurseRecords.show', this.nurseRecord.id),
                 {
                     showDeleted: this.showDeletedLocal,
-                    admission_id: this.admission_id !== 0 ? this.admission_id : null
+                    admission_id: this.admission_id !== 0 ? this.nurseRecord.admission_id : null
                 }, {
-                preserveScroll: true
+                preserveScroll: true,
+                preserveState: true
             });
         },
         submitSignature() {

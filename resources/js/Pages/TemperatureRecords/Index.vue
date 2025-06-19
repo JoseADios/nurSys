@@ -92,7 +92,7 @@
                     <div class="flex flex-col items-center sm:flex-row w-fit lg:place-self-end gap-3 xl:gap-4">
 
                         <!-- Ver Eliminados - Solo se muestra si tiene permiso -->
-                        <AccessGate :permission="['temperatureRecord.delete']" class="sm:w-1/2 xl:w-auto">
+                        <AccessGate :permission="['temperatureRecord.delete']" class="sm:w-full xl:w-auto">
                             <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="form.showDeleted ? 'red' : 'gray'">
                                 {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
                                 <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
@@ -101,7 +101,7 @@
                         </AccessGate>
 
                         <!-- Nuevo Registro - Solo se muestra si tiene permiso -->
-                        <AccessGate :permission="['temperatureRecord.create']" class="sm:w-1/2 xl:w-auto">
+                        <AccessGate :permission="['temperatureRecord.create']" class="sm:w-full xl:w-auto">
                             <PrimaryLink class="py-2.5 whitespace-nowrap flex-shrink-0 text-center"
                                 v-if="!form.admission_id" :href="route('temperatureRecords.create')">
                                 <PlusIcon class="size-5 mr-1 inline" />

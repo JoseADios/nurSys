@@ -292,10 +292,15 @@ class UserController extends Controller implements HasMiddleware
                 $q->whereIn('name', (array) $roles);
             });
         }
+
         $query->with('roles');
 
         if ($user_id) {
             $selectedUser = User::with('roles')->find($user_id);
+        }
+
+        if (Auth::user()->hasRole('admin')) {
+            $query->orWhere('id', Auth::id());
         }
 
         $users = $query->paginate(10);

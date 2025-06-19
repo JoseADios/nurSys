@@ -42,9 +42,10 @@ class MedicalOrderController extends Controller implements HasMiddleware
         $sortDirection = $request->input('sortDirection', 'asc');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
-         $in_process = $request->input('in_process', 'true');
+        $myRecords = $request->boolean('myRecords', Auth::user()->hasRole(['nurse', 'admin']));
+        $in_process = $request->input('in_process', 'true');
 
-          // si se filtra por ingreso mostrar los registros aunque esten dados de alta
+        // si se filtra por ingreso mostrar los registros aunque esten dados de alta
         if ($admissionId && !$request->has('in_process')) {
             $in_process = false;
         }
@@ -71,8 +72,10 @@ class MedicalOrderController extends Controller implements HasMiddleware
         }
 
         if ($days) {
-            $query->where('medical_orders.created_at',
-             '>=', now()->subDays($days)->startOfDay()
+            $query->where(
+                'medical_orders.created_at',
+                '>=',
+                now()->subDays($days)->startOfDay()
             );
         }
         if ($in_process === 'true') {
@@ -88,6 +91,9 @@ class MedicalOrderController extends Controller implements HasMiddleware
         }
         if (!empty($admissionId)) {
             $query->where('admission_id', intval($admissionId));
+        }
+        if ($myRecords) {
+            $query->where('medical_orders.doctor_id', Auth::id());
         }
 
 
@@ -110,6 +116,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
                 'sortField' => $sortField,
                 'sortDirection' => $sortDirection,
                 'in_process' => $in_process,
+                'myRecords' => $myRecords,
             ],
             'can' => [
                 'create' => Gate::allows('create', Admission::class),
@@ -156,7 +163,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
      */
     public function show(MedicalOrder $medicalOrder, Request $request)
     {
-          $this->authorize('view', $medicalOrder);
+        $this->authorize('view', $medicalOrder);
         $medicalOrder->load(['admission.patient', 'admission.bed', 'admission.doctor', 'admission.medicationRecord']);
         $admissionId = $request->integer('admission_id');
         $showDeleted = $request->boolean('showDeleted');
@@ -169,19 +176,19 @@ class MedicalOrderController extends Controller implements HasMiddleware
 
         $doctor = User::find($medicalOrder->doctor_id);
 
-            if ($showDeleted || !$medicalOrder->active) {
-                  $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
-            ->where('active', false)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        if ($showDeleted || !$medicalOrder->active) {
+            $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
+                ->where('active', false)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-            }else{
-                   $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
-            ->where('active', true)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        } else {
+            $details = MedicalOrderDetail::where('medical_order_id', $medicalOrder->id)
+                ->where('active', true)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-            }
+        }
 
 
         $regimes = Regime::all();

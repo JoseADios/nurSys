@@ -69,6 +69,25 @@
                             <option value="365">Último año</option>
                         </select>
 
+                         <AccessGate :permission="['admission.create']" class="sm:w-fit">
+                            <PersonalizableButton
+                                @click="toggleFilterMyRecords"
+                                title="Mostrar solo mis registros"
+                                variant="outline"
+                                custom-class="relative"
+                                :color="form.myRecords ?  'indigo' : 'gray'">
+                                Mis registros
+                                <div class="pl-1">
+                                    <UserIcon class="h-5 w-5" />
+                                    <FilterIcon class="h-3 w-3 absolute bottom-1 right-2"
+                                        :class="{ 'text-indigo-600 dark:text-indigo-400': form.myRecords }" />
+                                    <div v-if="form.myRecords"
+                                        class="absolute -top-1 -right-0 xl:-right-1 h-2 w-2 bg-indigo-500 rounded-full">
+                                    </div>
+                                </div>
+                            </PersonalizableButton>
+                        </AccessGate>
+
                     </div>
                 </div>
                 <!-- Bloque de distribución de filtros y botones -->
@@ -270,7 +289,7 @@
                     days: this.filters.days || '',
                     search: this.filters.search || '',
                     in_process: this.filters.in_process || "",
-
+                     myRecords: this.filters.myRecords || true
                 },
                 timeout: 500 ,
             }
@@ -306,6 +325,11 @@
                 this.$inertia.get(route('medicalOrders.index', this.form));
 
             },
+             toggleFilterMyRecords() {
+
+            this.form.myRecords = !this.form.myRecords;
+            this.submitFilters();
+        },
         },
 
     }

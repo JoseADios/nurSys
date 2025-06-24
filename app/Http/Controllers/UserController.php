@@ -287,7 +287,7 @@ class UserController extends Controller implements HasMiddleware
 
         $roles = $request->input('filters.roles');
 
-        if ($roles) {
+        if ($roles && !Auth::user()->hasRole('admin')) {
             $query->whereHas('roles', function ($q) use ($roles) {
                 $q->whereIn('name', (array) $roles);
             });
@@ -297,10 +297,6 @@ class UserController extends Controller implements HasMiddleware
 
         if ($user_id) {
             $selectedUser = User::with('roles')->find($user_id);
-        }
-
-        if (Auth::user()->hasRole('admin')) {
-            $query->orWhere('id', Auth::id());
         }
 
         $users = $query->paginate(10);

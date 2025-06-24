@@ -299,15 +299,7 @@ class PatientController extends Controller implements HasMiddleware
             );
         }
 
-        $patients = $query->get()->filter->isAvailable();
-        $paginatedPatients = new \Illuminate\Pagination\LengthAwarePaginator(
-            $patients->forPage($request->page, 10),
-            $patients->count(),
-            10,
-            $request->page,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
-
-        return $paginatedPatients;
+        // Usar el scope
+        return $query->Available()->paginate(10);
     }
 }

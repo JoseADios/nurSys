@@ -69,4 +69,14 @@ class Patient extends Model
             ->where('active', true)
             ->exists();
     }
+
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('active', true)
+            ->whereDoesntHave('admission', function ($q) {
+                $q->whereNull('discharged_date')
+                    ->where('active', true);
+            });
+    }
 }

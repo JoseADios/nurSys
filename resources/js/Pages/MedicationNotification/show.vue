@@ -3,16 +3,18 @@
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
                 <BreadCrumb :items="[
-                    ...(admission_id ? [{
-                        formattedId: { id: admission_id, prefix: 'ING' },
-                        route: route('admissions.show', admission_id)
-                    }] : []),
                     {
                         text: 'Fichas de Medicamentos',
+                        route: details.medication_record_id
+                            ? route('medicationRecords.show', { id: details.medication_record_id })
+                            : route('medicationRecords.show')
                     },
 
                     {
                         formattedId: { id: details.medication_record_id, prefix: 'FICH' },
+                        route: details.medication_record_id
+                            ? route('medicationRecords.show', { id: details.medication_record_id })
+                            : route('medicationRecords.show')
                     },
                     {
                         formattedId: { id: details.id, prefix: 'DET' }
@@ -28,13 +30,12 @@
                 class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
 
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link  :href="route('medicationRecords.show', { medicationRecord: details.id, admission_id: admission_id })"
+                    <Link :href="route('medicationRecords.show', details.medication_record_id)"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <BackIcon class="size-5" />Volver
                     </Link>
                     <div class="flex items-center">
-                        <PersonalizableButton v-if="details.active" size="medium" @click="downloadRecordReport"
-                            color="emerald">
+                        <PersonalizableButton v-if="details.active" size="medium" @click="downloadRecordReport" color="emerald">
                             <ReportIcon class="size-5 mr-1" /> Crear Reporte
                         </PersonalizableButton>
 
@@ -52,30 +53,24 @@
                                 </div>
                                 <div class="mb-2">Notificación - #{{ index + 1 }}</div>
                                 <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Medicamento: {{ details.drug
-                                }}</div>
+                                    }}</div>
 
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1" v-if="!notification.applied">
-                                    Fecha
-                                    programada:
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1" v-if="!notification.applied"> Fecha programada:
                                     {{ formatDateFromNow(
                                         notification.scheduled_time) }} </div>
-                                <div v-if="notification.administered_time && notification.applied"
+                                        <div v-if="notification.administered_time && notification.applied"
                                     class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Medicamento administrado:
                                     {{ formatDateFromNow(
                                         notification.administered_time) }} </div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Via: {{ details.route }}
+                                          <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Via: {{ details.route }}
                                 </div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1" v-if="details.nebulized">
-                                    Nebulizado:
-                                    <Checkbox :checked="true" disabled></Checkbox>
-                                </div>
+                                       <div class="text-sm text-gray-600 dark:text-gray-300 mt-1"v-if="details.nebulized"> Nebulizado:   <Checkbox :checked="true" disabled></Checkbox></div>
                             </div>
 
                             <div v-if="notification.applied"
                                 class=" flex flex-col  text-gray-500 dark:text-gray-400 p-6 pt-8 ">
                                 <div class=" font-medium mb-1">Firma</div>
-                                <img class="border rounded p-6" :src="`/storage/${notification.nurse_sign}`" width="250"
-                                    alt="Firma">
+                                <img class="border rounded p-6" :src="`/storage/${notification.nurse_sign}`" width="250" alt="Firma">
                             </div>
 
                         </div>
@@ -103,10 +98,10 @@
                                 NO APLICADO
                             </div>
                             <div v-if="Firstnoapplied(notification)" class="flex justify-end  items-center">
-                                <AccessGate :permission="['medicationNotification.update']">
-                                    <PersonalizableButton color="green" size="medium" @click="openModal(notification)">
-                                        <CheckCircleIcon class="size-5 mr-1" /> Aplicar
-                                    </PersonalizableButton>
+                                  <AccessGate :permission="['medicationNotification.update']">
+                                <PersonalizableButton color="green" size="medium" @click="openModal(notification)">
+                                    <CheckCircleIcon class="size-5 mr-1" /> Aplicar
+                                </PersonalizableButton>
                                 </AccessGate>
                             </div>
 
@@ -187,7 +182,6 @@ export default {
         details: Object,
         notifications: Object,
         canUpdateNotification: Boolean,
-        admission_id: Number,
     },
     components: {
         AppLayout,
@@ -219,17 +213,6 @@ export default {
 
             }),
         }
-    },
-    computed:{
-          cancelUrl() {
-            console.log(this.admission_id);
-            return this.admission_id ?
-                route('medicationRecords.show', {
-                    medicationRecord: this.details.medication_record_id,admission: this.admission_id
-                }) :
-                route('medicationRecords.index');
-        }
-
     },
     methods: {
         formatDateFromNow(date) {

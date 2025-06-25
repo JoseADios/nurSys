@@ -1,6 +1,5 @@
 <template>
-    <div
-        class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
         <!-- Encabezado más compacto -->
         <div class="px-4 py-3 bg-indigo-50 dark:bg-indigo-900/20 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-base font-medium text-gray-900 dark:text-white flex items-center">
@@ -119,9 +118,16 @@
                             <div>
                                 <p class="text-xs font-medium text-gray-900 dark:text-white">Paciente seleccionado</p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    {{patients.data.find(patient => patient.id === selectedPatient)?.first_name}}
-                                    {{patients.data.find(patient => patient.id === selectedPatient)?.first_surname}}
-                                    {{patients.data.find(patient => patient.id === selectedPatient)?.second_surname}}
+                                    <template v-if="patients.data && Array.isArray(patients.data)">
+                                        {{patients.data.find(patient => patient.id === selectedPatient)?.first_name}}
+                                        {{patients.data.find(patient => patient.id === selectedPatient)?.first_surname
+                                        }}
+                                        {{patients.data.find(patient => patient.id === selectedPatient)?.second_surname
+                                        }}
+                                    </template>
+                                    <template v-else>
+                                        Cargando...
+                                    </template>
                                 </p>
                             </div>
                         </div>
@@ -158,11 +164,7 @@ export default {
         selectedPatientId: Number
     },
     components: {
-
-        Link,
-
-
-
+        Link
     },
     data() {
         return {

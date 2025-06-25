@@ -175,8 +175,8 @@
                         </PersonalizableButton>
                     </div>
                     <div class="flex space-x-4">
-                        <PersonalizableLink :href="route('users.index')" color="gray"> Volver
-                        </PersonalizableLink>
+                        <SecondaryLink :href="route('users.index')"> Volver
+                        </SecondaryLink>
                         <PrimaryButton :is-loading="form.processing"> Actualizar
                         </PrimaryButton>
                     </div>

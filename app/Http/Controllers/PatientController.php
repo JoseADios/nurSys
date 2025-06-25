@@ -154,6 +154,7 @@ class PatientController extends Controller implements HasMiddleware
             'second_surname' => 'nullable|string|max:255',
             'phone' => 'required|string|size:14',
             'nationality' => 'required|string|max:255',
+            'identification_card' => 'nullable|string|size:12|unique:patients,identification_card,',
             'email' => 'nullable|email|max:255|unique:patients',
             'birthdate' => 'required|date',
             'position' => 'nullable|string|max:255',
@@ -188,9 +189,9 @@ class PatientController extends Controller implements HasMiddleware
 
         // obtener los ultimos 5 ingresos
         $admissions = Admission::where('patient_id', $patient->id)
-        ->with('doctor', 'bed')
-        ->orderByDesc('created_at')
-        ->get();
+            ->with('doctor', 'bed')
+            ->orderByDesc('created_at')
+            ->get();
 
         // dd($admissions);
 
@@ -298,15 +299,7 @@ class PatientController extends Controller implements HasMiddleware
             );
         }
 
-        $patients = $query->get()->filter->isAvailable();
-        $paginatedPatients = new \Illuminate\Pagination\LengthAwarePaginator(
-            $patients->forPage($request->page, 10),
-            $patients->count(),
-            10,
-            $request->page,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
-
-        return $paginatedPatients;
+        // Usar el scope
+        return $query->Available()->paginate(10);
     }
 }

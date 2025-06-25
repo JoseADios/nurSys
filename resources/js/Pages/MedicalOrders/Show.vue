@@ -277,7 +277,7 @@
                 <div v-show="!isVisibleEditSign" class="my-4 flex items-center flex-col justify-center">
                     <div>
 
-                        <img v-if="medicalOrder.doctor_sign" :src="`/storage/${medicalOrder.doctor_sign}`" alt="Firma">
+                        <img v-if="medicalOrder.doctor_sign" :src="`/storage/${medicalOrder.doctor_sign}`"class="w-full max-w-md" alt="Firma">
                         <div v-else>
                             <div class="text-gray-500 dark:text-gray-400 my-16">
                                 No hay firma disponible
@@ -720,7 +720,7 @@ export default {
             this.submitUpdateDetail()
         },
         restoreRecord() {
-            this.formAdmission.active = true
+            this.formRecord.active = true
             this.submitAdmission()
         }
     }

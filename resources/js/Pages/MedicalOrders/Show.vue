@@ -5,8 +5,8 @@
                 <BreadCrumb :items="[
                     // Condicionar el primer elemento (solo se muestra si hay admission_id)
                     ...(admission_id ? [{
-                        formattedId: { id: admission_id, prefix: 'ING' },
-                        route: route('admissions.show', admission_id)
+                        formattedId: { id: medicalOrder.admission_id, prefix: 'ING' },
+                        route: route('admissions.show', medicalOrder.admission_id)
                     }] : []),
 
                     // Segundo elemento (depende si hay admission_id o no)

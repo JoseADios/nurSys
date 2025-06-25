@@ -9,11 +9,13 @@
                     }] : []),
                     {
                         text: 'Fichas de Medicamentos',
+                        route: route('medicationRecords.index', {  admission_id: admission_id })
 
                     },
 
                     {
                         formattedId: { id: details.medication_record_id, prefix: 'FICH' },
+                        route: route('medicationRecords.show', { medicationRecord: details.medication_record_id, admission_id: admission_id })
 
                     },
                     {

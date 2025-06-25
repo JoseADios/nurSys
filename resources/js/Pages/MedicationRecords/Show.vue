@@ -445,7 +445,7 @@
                                 <AccessGate :permission="['medicationRecordDetail.update']">
                                     <!-- Editar -->
                                     <Link v-if="!hasApplied(detail)"
-                                        :href="route('medicationRecordDetails.edit', detail.id)"
+                                        :href="route('medicationRecordDetails.edit',{ medicationRecordDetail: detail.id, admission_id: admission_id })"
                                         class="flex items-center space-x-2 space-y-2 text-yellow-600 hover:text-yellow-800 transition-colors">
                                     <EditIcon class="size-5" />
                                     <span class="font-medium">Editar</span>
@@ -773,7 +773,7 @@ export default {
             this.isVisibleDetail = false;
 
             this.$inertia.delete(
-                route('medicationRecordDetails.destroy', this.selectedDetail.id),
+                route('medicationRecordDetails.destroy', this.selectedDetail.id),{admission_id: this.admission_id},
                 {
                     preserveScroll: true,
                     preserveState: true,

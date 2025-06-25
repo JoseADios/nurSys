@@ -134,14 +134,14 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MedicationRecordDetail $medicationRecordDetail)
+    public function edit(MedicationRecordDetail $medicationRecordDetail,Request $request)
     {
 
         // Verificar si Ya Existe una notifiacion con medicamentos administrados
         $existingnotification = MedicationNotification::where('medication_record_detail_id', $medicationRecordDetail->id)->first();
         $dose = DrugDose::all();
         $route = DrugRoute::all();
-
+   $admission_id = $request->integer('admission_id');
 
         $Applied = $existingnotification->applied;
         if ($Applied == 1) {
@@ -156,7 +156,8 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         return Inertia::render('MedicationRecordDetail/Edit', [
             'medicationRecordDetail' => $medicationRecordDetail,
             'dose' => $dose,
-            'routes' => $route
+            'routes' => $route,
+            'admission_id' => $admission_id,
         ]);
 
 
@@ -194,7 +195,6 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
 
                 'fc' => 'required|integer|gt:0',
                 'interval_in_hours' => 'required|integer|gt:0',
-                'nebulization_time' => 'required|integer|gt:0',
                 'dose' => 'required|integer|gt:0',
             ]);
 
@@ -298,7 +298,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             } else {
                 Log::error('no hubo cambios');
             }
-            // Si se cambia hora de inicio actualizar hora programada para todas las notificaciones relacionadas.
+
             $medicationRecordDetail->update($request->all());
             return Redirect::route('medicationRecords.show', [
             'medicationRecord' => $medicationRecordDetail->medication_record_id,
@@ -327,16 +327,14 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MedicationRecordDetail $medicationRecordDetail)
+    public function destroy(MedicationRecordDetail $medicationRecordDetail,Request $request)
     {
         $this->authorize('delete', $medicationRecordDetail);
-
+  $admission_id = $request->input('admission_id');
         $hasNotifications = MedicationNotification::where('medication_record_detail_id', $medicationRecordDetail->id)->where('applied', 1)->get();
         if (!Auth::user()->hasRole('admin')) {
             if ($hasNotifications->isNotEmpty()) {
                 return back()->with('flash.toast', 'No se puede eliminar este Detalle de Ficha de Medicamentos porque tiene notificaciones aplicadas.')->with('flash.toastStyle', 'danger');
-
-
             }
         }
 
@@ -351,7 +349,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         $medicationRecordDetail->update(['active' => 0]);
        return Redirect::route('medicationRecords.show', [
             'medicationRecord' => $medicationRecordDetail->medication_record_id,
-            'admission_id'     => $medicationRecordDetail->medicationRecord->admission_id,
+            'admission_id'     => $admission_id,
         ])->with('flash.toast', 'Detalle Ficha de Medicamento eliminada correctamente');
     }
 }

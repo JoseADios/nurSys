@@ -147,6 +147,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
     {
         $this->authorize('create', [MedicalOrder::class, $request->admission_id]);
 
+        $has_admission_id = $request->boolean('has_admission_id');
         $medicalOrder = MedicalOrder::create([
             'admission_id' => $request->admission_id,
             'doctor_id' => Auth::id(),
@@ -154,7 +155,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
         ]);
 
 
-        return redirect()->route('medicalOrders.show', $medicalOrder->id)->with('flash.toast', 'Registro guardado correctamente');
+        return redirect()->route('medicalOrders.show', ['medicalOrder' => $medicalOrder->id, 'admission_id' => $has_admission_id])->with('flash.toast', 'Registro guardado correctamente');
 
     }
 
@@ -278,6 +279,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
 
             return back()->with('flash.toast', 'Registro actualizado correctamente');
         }
+
         $validated = $request->validate([
             'admission_id' => 'numeric',
             'doctor_sign' => 'string',
@@ -309,6 +311,6 @@ class MedicalOrderController extends Controller implements HasMiddleware
         foreach ($medicationRecordDetails as $medicationRecordDetail) {
             $medicationRecordDetail->update(['suspended_at' => now()]);
         }
-        return Redirect::route('medicalOrders.index')->with('flash.toast', 'Registro eliminado correctamente');
+        return Redirect::route('medicalOrders.index', ['admission_id' => $medicalOrder->admission_id])->with('flash.toast', 'Registro eliminado correctamente');
     }
 }

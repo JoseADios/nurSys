@@ -53,9 +53,9 @@ class MedicationRecordController extends Controller implements HasMiddleware
             ->join('patients', 'admissions.patient_id', '=', 'patients.id')
             ->where('medication_records.active', !$showDeleted);
 
-            if ($admissionId) {
+        if ($admissionId) {
             $query->where('medication_records.admission_id', $admissionId);
-            }
+        }
 
         if ($search) {
             $query->where(function (Builder $q) use ($search) {
@@ -121,35 +121,36 @@ class MedicationRecordController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-   public function store(Request $request)
-{
-    $this->authorize('create', [MedicationRecord::class, $request->admission_id]);
+    public function store(Request $request)
+    {
+        $this->authorize('create', [MedicationRecord::class, $request->admission_id]);
+        $admission_id = $request->input('admission_id');
+        $has_admission_id = $request->boolean('has_admission_id');
+        $request->validate([
+            'admission_id' => 'required|exists:admissions,id',
+            'diet' => 'required|string',
+        ]);
 
-    $request->validate([
-        'admission_id' => 'required|exists:admissions,id',
-        'diet' => 'required|string',
-    ]);
+        $existingRecord = MedicationRecord::where('admission_id', $request->admission_id)
+            ->where('active', true)
+            ->first();
 
-    $existingRecord = MedicationRecord::where('admission_id', $request->admission_id)
-        ->where('active', true)
-        ->first();
+        if ($existingRecord) {
+            return back()
+                ->with('flash.toast', 'Ya Existe una ficha de Medicamentos con ese numero de Admision.')
+                ->with('flash.toastStyle', 'danger');
+        }
 
-    if ($existingRecord) {
-        return back()
-            ->with('flash.toast', 'Ya Existe una ficha de Medicamentos con ese numero de Admision.')
-            ->with('flash.toastStyle', 'danger');
+        $medicationRecord = MedicationRecord::create([
+            'admission_id' => $request->admission_id,
+            'diet' => $request->diet,
+        ]);
+
+        return redirect()->route('medicationRecords.show', [
+            'medicationRecord' => $medicationRecord->id,
+            'admission_id' => $has_admission_id ? $admission_id : null,
+        ])->with('flash.toast', 'Registro guardado correctamente');
     }
-
-    $medicationRecord = MedicationRecord::create([
-        'admission_id' => $request->admission_id,
-        'diet' => $request->diet,
-    ]);
-
-    return redirect()->route('medicationRecords.show', [
-        'medicationRecord' => $medicationRecord->id,
-        'admission_id' => $medicationRecord->admission_id,
-    ])->with('flash.toast', 'Registro guardado correctamente');
-}
     /**
      * Display the specified resource.
      */

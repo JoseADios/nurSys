@@ -436,7 +436,7 @@
                             <div v-if="detail.active && detail.suspended_at == null">
                                 <AccessGate :permission="['medicationNotification.view']">
                                     <!-- NOTIF -->
-                                    <Link :href="route('medicationNotification.show', detail.id)"
+                                    <Link :href="route('medicationNotification.show',{ medicationNotification: detail.id, admission_id: admission_id })"
                                         class="flex items-center space-x-2 space-y-2 text-blue-600 hover:text-blue-800 transition-colors">
                                     <NotificationIcon class="size-5 " />
                                     <span class="font-medium">Notificaciones</span>

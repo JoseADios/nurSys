@@ -221,18 +221,18 @@
                     </AccessGate>
 
 
-                    <div class="flex justify-end space-x-2">
+                    <div class="flex flex-wrap justify-end gap-2 sm:flex-row flex-col text-center">
                         <AccessGate :role="['doctor', 'admin']">
                             <div v-if="can.update">
                                 <div v-if="admission.discharged_date == null">
-                                    <PersonalizableButton @click="admissionUpdateCharge = true" class="gap-2 "  :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing"
+                                    <PersonalizableButton @click="admissionUpdateCharge = true"  :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing"
                                         color="green">
                                         <CheckCircleIcon class="size-5" />
                                         <span class="">Dar de Alta </span>
                                     </PersonalizableButton>
                                 </div>
                                 <div v-if="admission.discharged_date != null">
-                                    <PersonalizableButton @click="admissionBeingPutInProgress = true" class="gap-2  " :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing"
+                                    <PersonalizableButton @click="admissionBeingPutInProgress = true"  :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing"
                                         color="yellow">
                                         <RestoreIcon class="size-5" />
                                         <span class="">Poner en progreso</span>

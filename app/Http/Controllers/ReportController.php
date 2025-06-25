@@ -111,19 +111,26 @@ class ReportController extends Controller
 
         $clinic = Clinic::get()->first();
         $details = medicationRecordDetail::where('medication_record_id', $id)
-
-        ->where('active', true)
-        ->with('medicationNotification')->get();
-$hasNotifications = false;
-
+            ->where('active', true)
+            ->with('medicationNotification')->get();
+        if (!$details) {
+            return Redirect::route('medicationRecords.index')->with('flash.toast', 'Esta Ficha de Medicamentos no tiene detalles')->with('flash.toastStyle', 'danger');
+        }
+        $hasNotifications = false;
+        $notifications = collect();
         foreach ($details as $detail) {
             $notifications = MedicationNotification::where('medication_record_detail_id', $detail->id)->with('medicationRecordDetail')->get();
-           $hasNotifications = $notifications->count() > 0;
+            if ($notifications->isEmpty()) {
+                return Redirect::route('medicationRecords.index')->with('flash.toast', 'Esta Ficha de Medicamentos  no tiene notificaciones')->with('flash.toastStyle', 'danger');
+            }
 
-    if ($hasNotifications) {
-        break;
-    }
+            $hasNotifications = $notifications->count() > 0;
+
+            if ($hasNotifications) {
+                break;
+            }
         }
+
 
         if ($medicationRecord->active != true) {
             return Redirect::route('medicationRecords.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
@@ -134,7 +141,7 @@ $hasNotifications = false;
             'clinic' => $clinic,
             'details' => $details,
 
-            'notification'=>$notifications,
+            'notification' => $notifications,
             'hasnotifications' => $hasNotifications,
 
 
@@ -151,8 +158,12 @@ $hasNotifications = false;
         $this->authorize('view', $MedicalOrder);
 
         $clinic = Clinic::get()->first();
+
         $details = MedicalOrderDetail::where('medical_order_id', $id)->get();
 
+        if ($details) {
+            return Redirect::route('MedicalOrders.index')->with('flash.toast', 'Esta Orden Medica no tiene detalles')->with('flash.toastStyle', 'danger');
+        }
         if ($MedicalOrder->active != true) {
             return Redirect::route('MedicalOrders.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
         }

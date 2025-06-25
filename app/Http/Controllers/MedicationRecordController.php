@@ -53,6 +53,10 @@ class MedicationRecordController extends Controller implements HasMiddleware
             ->join('patients', 'admissions.patient_id', '=', 'patients.id')
             ->where('medication_records.active', !$showDeleted);
 
+            if ($admissionId) {
+            $query->where('medication_records.admission_id', $admissionId);
+            }
+
         if ($search) {
             $query->where(function (Builder $q) use ($search) {
                 $q->WhereRaw('admissions.id LIKE ?', ['%' . $search . '%'])
@@ -117,35 +121,35 @@ class MedicationRecordController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $this->authorize('create', [MedicationRecord::class, $request->admission_id]);
+   public function store(Request $request)
+{
+    $this->authorize('create', [MedicationRecord::class, $request->admission_id]);
 
-        // Validación de los datos de entrada
-        $request->validate([
-            'admission_id' => 'required|exists:admissions,id', // Validamos que exista en la tabla admissions
+    $request->validate([
+        'admission_id' => 'required|exists:admissions,id',
+        'diet' => 'required|string',
+    ]);
 
-            'diet' => 'required|string',
-        ]);
+    $existingRecord = MedicationRecord::where('admission_id', $request->admission_id)
+        ->where('active', true)
+        ->first();
 
-        // Verificar si ya existe un MedicationRecord para la admisión especificada
-        $existingRecord = MedicationRecord::where('admission_id', $request->admission_id)->where('active', true)->first();
-
-        if ($existingRecord) {
-            return back()->with('flash.toast', 'Ya Existe una ficha de Medicamentos con ese numero de Admision.')->with('flash.toastStyle', 'danger');
-        }
-
-        // Crear el MedicationRecord usando los datos validados
-        $medicationRecord = MedicationRecord::create([
-            'admission_id' => $request->admission_id,
-
-            'diet' => $request->diet,
-        ]);
-
-        // Redirigir o retornar una respuesta exitosa
-        return redirect()->route('medicationRecords.show', $medicationRecord->id)->with('flash.toast', 'Registro guardado correctamente');
+    if ($existingRecord) {
+        return back()
+            ->with('flash.toast', 'Ya Existe una ficha de Medicamentos con ese numero de Admision.')
+            ->with('flash.toastStyle', 'danger');
     }
 
+    $medicationRecord = MedicationRecord::create([
+        'admission_id' => $request->admission_id,
+        'diet' => $request->diet,
+    ]);
+
+    return redirect()->route('medicationRecords.show', [
+        'medicationRecord' => $medicationRecord->id,
+        'admission_id' => $medicationRecord->admission_id,
+    ])->with('flash.toast', 'Registro guardado correctamente');
+}
     /**
      * Display the specified resource.
      */

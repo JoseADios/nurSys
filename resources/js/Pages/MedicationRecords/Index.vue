@@ -1,7 +1,7 @@
 <template>
     <AppLayout title="Ficha de Medicamentos">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 <BreadCrumb
                     :items="[
                         ...(form.admission_id ? [{
@@ -9,7 +9,10 @@
                             route: route('admissions.show', form.admission_id)
                         }] : []),
                         {
-                            text: 'Ficha de Medicamentos'
+                            text: 'Fichas de Medicamentos',
+                            route: form.admission_id
+                                ? route('medicationRecords.index', { admission_id: form.admission_id })
+                                : route('medicationRecords.index')
                         }
                     ]" />
             </h2>
@@ -189,10 +192,11 @@
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <Link class="text-primary-500 hover:text-primary-800"
-                                    :href="route('medicationRecords.show', record.id)" as="button">
-                                Ver
-                                </Link>
+                              <Link class="text-primary-500 hover:text-primary-800"
+                            :href="route('medicationRecords.show', { medicationRecord: record.id, ...(form.admission_id ? { admission_id: form.admission_id } : {}) })"
+                            as="button">
+                            Ver
+                        </Link>
                             </td>
 
                         </tr>
@@ -256,16 +260,15 @@
         },
         data() {
             return {
-
                 form: {
-                    search: this.filters.search || '',
-                    admission_id: this.filters.admission_id !== 0 ? this.filters.admission_id : null,
-                    in_process: this.filters.in_process || '',
-                    showDeleted: this.filters.show_deleted,
-                    sortField: this.filters.sortField || 'medication_records.updated_at',
-                    sortDirection: this.filters.sortDirection || 'asc',
-                    days: this.filters.days || '',
-                    myRecords: this.filters.myRecords || true
+                   search: this.filters.search || '',
+                admission_id: this.filters.admission_id !== 0 ? this.filters.admission_id : null,
+                in_process: this.filters.in_process || '',
+                showDeleted: this.filters.show_deleted,
+                sortField: this.filters.sortField || 'medication_records.updated_at',
+                sortDirection: this.filters.sortDirection || 'asc',
+                days: this.filters.days || '',
+                myRecords: this.filters.myRecords || true
                 },
                 timeout: 1000,
 
@@ -275,17 +278,15 @@
             formatDate(date) {
                 return moment(date).format('DD MMMM YYYY HH:mm');
             },
-            submitFilters() {
-                if (this.timeout) {
-                    clearTimeout(this.timeout);
-                }
-                this.timeout = setTimeout(() => {
-                    this.$inertia.get(route('medicationRecords.index'), this.form, {
-                        preserveState: true,
-                        preserveScroll: true,
-                        replace: true
-                    });
-                }, 300);
+           submitFilters() {
+            if (this.timeout) clearTimeout(this.timeout);
+            this.timeout = setTimeout(() => {
+                this.$inertia.get(route('medicationRecords.index'), this.form, {
+                    preserveState: true,
+                    preserveScroll: true,
+                    replace: true
+                });
+            }, 300);
             },
             toggleFilterMyRecords() {
                 this.form.myRecords = !this.form.myRecords;

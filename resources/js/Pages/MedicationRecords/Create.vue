@@ -156,7 +156,20 @@
             submit() {
                 this.recordBeingCreated = null;
                 this.error = null;
+
                 this.form.post(route('medicationRecords.store'), {
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        const medicationRecordId = page.props.flash
+                        ?.medicationRecordId; // opcional si lo pasas así
+                        const admissionId = this.form.admission_id;
+
+                        this.$inertia.visit(route('medicationRecords.show', {
+                            medication_record: this.form.id ||
+                            medicationRecordId, // según cómo se reciba
+                            admission_id: admissionId
+                        }));
+                    },
                     onError: (errors) => {
                         this.form.errors = errors;
                     }

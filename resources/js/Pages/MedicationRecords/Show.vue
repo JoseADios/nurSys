@@ -9,11 +9,11 @@
                         route: route('admissions.show', admission_id)
                     }] : []),
                     {
-                        text: 'Fichas de Medicamentos',
-                        route: medicationRecord.id
-                            ? route('medicationRecords.index', { id: medicationRecord.id })
+                       text: 'Ficha de Medicamentos',
+                        route: admission_id
+                            ? route('medicationRecords.index', { admission_id })
                             : route('medicationRecords.index')
-                    },
+                                        },
 
                     {
                         formattedId: { id: medicationRecord.id, prefix: 'FICH' }
@@ -28,10 +28,14 @@
                 class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
 
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('medicationRecords.index')"
-                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <BackIcon class="size-5" />Volver
-                    </Link>
+                      <Link
+                :href="admission_id ? route('admissions.show', admission_id) : route('medicationRecords.index')"
+                class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors"
+            >
+                <BackIcon class="size-5" />
+                Volver
+            </Link>
+
                     <div class="flex items-center gap-2">
                         <PersonalizableButton v-if="medicationRecord.active" @click="downloadRecordReport"
                             color="emerald">
@@ -721,9 +725,6 @@ export default {
                 diet: this.medicationRecord.diet,
             }),
 
-
-
-
         }
     },
     mounted() {
@@ -733,6 +734,10 @@ export default {
 
         currentTime() {
             return moment().format('HH:mm');
+        },
+
+        formattedId() {
+            return 'FICH' + this.medicationRecord.id;
         }
     },
 
@@ -741,14 +746,13 @@ export default {
         formatDate(date) {
             return moment(date).format('DD MMMM YYYY HH:mm');
         },
-        toggleShowDeleted() {
-            this.form.showDeleted = !this.form.showDeleted;
-            this.$inertia.get(route('medicationRecords.show', {
-                medicationRecord: this.medicationRecord
-            }), {
-                showDeleted: this.form.showDeleted
-            }, {
-                preserveState: true,
+       toggleShowDeleted() {
+            const params = {
+                medicationRecord: this.medicationRecord.id,
+                admission_id: this.admission_id,
+                showDeleted: !this.filters?.show_deleted
+            };
+            this.$inertia.get(route('medicationRecords.show', params), {}, {
                 preserveScroll: true
             });
         },
@@ -765,12 +769,31 @@ export default {
 
         },
         deleteDetail() {
-            this.detailBeingDeleted = false
-            this.isVisibleDetail = false
-            this.$inertia.delete(route('medicationRecordDetails.destroy', this.selectedDetail.id), {
-                preserveScroll: true,
-                preserveState: true
-            });
+            this.detailBeingDeleted = null;
+            this.isVisibleDetail = false;
+
+            this.$inertia.delete(
+                route('medicationRecordDetails.destroy', this.selectedDetail.id),
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => {
+                        // Redirigir para recargar los detalles con admission_id
+                        const params = {
+                            medicationRecord: this.medicationRecord.id,
+                            admission_id: this.admission_id,
+                        };
+
+                        if (this.filters?.show_deleted) {
+                            params.showDeleted = true;
+                        }
+
+                        this.$inertia.get(route('medicationRecords.show', params), {
+                            preserveScroll: true,
+                        });
+                    }
+                }
+            );
         },
         restoreRecord(record) {
             this.recordActiveChanging = true;

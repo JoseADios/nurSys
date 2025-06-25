@@ -300,7 +300,10 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             }
             // Si se cambia hora de inicio actualizar hora programada para todas las notificaciones relacionadas.
             $medicationRecordDetail->update($request->all());
-            return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->with('flash.toast', 'Detalle Ficha de Medicamento actualizada correctamente');
+            return Redirect::route('medicationRecords.show', [
+            'medicationRecord' => $medicationRecordDetail->medication_record_id,
+            'admission_id'     => $medicationRecordDetail->medicationRecord->admission_id,
+        ])->with('flash.toast', 'Detalle Ficha de Medicamento actualizado correctamente');
         }
     }
 
@@ -341,9 +344,14 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
         $medicationNotifications = $medicationRecordDetail->medicationNotification()->get();
         foreach ($medicationNotifications as $notification) {
             $notification->update(['active' => 0]);
+
+
         }
 
         $medicationRecordDetail->update(['active' => 0]);
-        return Redirect::route('medicationRecords.show', $medicationRecordDetail->medication_record_id)->with('flash.toast', 'Detalle Ficha de Medicamento eliminada correctamente');
+       return Redirect::route('medicationRecords.show', [
+            'medicationRecord' => $medicationRecordDetail->medication_record_id,
+            'admission_id'     => $medicationRecordDetail->medicationRecord->admission_id,
+        ])->with('flash.toast', 'Detalle Ficha de Medicamento eliminada correctamente');
     }
 }

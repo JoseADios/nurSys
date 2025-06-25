@@ -4,13 +4,13 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 <BreadCrumb :items="[
                     ...(admission_id ? [{
-                        formattedId: { id: admission_id, prefix: 'ING' },
-                        route: route('admissions.show', admission_id)
+                        formattedId: { id: temperatureRecord.admission_id, prefix: 'ING' },
+                        route: route('admissions.show', temperatureRecord.admission_id)
                     }] : []),
                     {
                         text: 'Hojas de temperatura',
                         route: admission_id
-                            ? route('temperatureRecords.index', { admission_id: admission_id })
+                            ? route('temperatureRecords.index', { admission_id: temperatureRecord.admission_id })
                             : route('temperatureRecords.index')
                     },
 

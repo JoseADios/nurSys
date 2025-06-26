@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('fc');
             $table->dateTime('start_time');
             $table->integer('interval_in_hours')->nullable();
-            $table->integer('interval_in_minutes')->nullable();
+            $table->integer('nebulization_time')->nullable();
             $table->boolean('nebulized')->default(false);
             $table->boolean('active')->default(true);
           $table->timestamp('suspended_at')->nullable()->default(null);

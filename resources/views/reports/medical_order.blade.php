@@ -220,13 +220,14 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    @if ($MedicalOrder->admission->bed)
                                     <td><span class="bold">Piso:</span> {{ $MedicalOrder->admission->bed->floor }}
                                        </td>
                                        <td><span class="bold"> Hab.: </span>
                                         {{ $MedicalOrder->admission->bed->room }}</td>
                                         <td><span class="bold"> Cama: </span>
                                             {{ $MedicalOrder->admission->bed->number}}</td>
-
+                                @endif
                                 </tr>
                             </table>
                         </td>

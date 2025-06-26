@@ -1,20 +1,22 @@
 <template>
-    <AppLayout>
+    <AppLayout title="Notificacion de Medicamentos">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
                 <BreadCrumb :items="[
+                    ...(admission_id ? [{
+                        formattedId: { id: admission_id, prefix: 'ING' },
+                        route: route('admissions.show', admission_id)
+                    }] : []),
                     {
                         text: 'Fichas de Medicamentos',
-                        route: details.medication_record_id
-                            ? route('medicationRecords.show', { id: details.medication_record_id })
-                            : route('medicationRecords.show')
+                        route: route('medicationRecords.index', {  admission_id: admission_id })
+
                     },
 
                     {
                         formattedId: { id: details.medication_record_id, prefix: 'FICH' },
-                        route: details.medication_record_id
-                            ? route('medicationRecords.show', { id: details.medication_record_id })
-                            : route('medicationRecords.show')
+                        route: route('medicationRecords.show', { medicationRecord: details.medication_record_id, admission_id: admission_id })
+
                     },
                     {
                         formattedId: { id: details.id, prefix: 'DET' }
@@ -30,12 +32,14 @@
                 class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
 
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('medicationRecords.show', details.medication_record_id)"
+                    <Link
+                        :href="route('medicationRecords.show', { medicationRecord: details.medication_record_id, admission_id: admission_id })"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <BackIcon class="size-5" />Volver
                     </Link>
                     <div class="flex items-center">
-                        <PersonalizableButton v-if="details.active" size="medium" @click="downloadRecordReport" color="emerald">
+                        <PersonalizableButton v-if="details.active" size="medium" @click="downloadRecordReport"
+                            color="emerald">
                             <ReportIcon class="size-5 mr-1" /> Crear Reporte
                         </PersonalizableButton>
 
@@ -47,30 +51,36 @@
                     class=' dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60  p-8   flex justify-between items-center transition-colors'>
                     <div class="flex-grow">
                         <div class="flex items-center space-x-20">
-                            <div class="font-semibold text-gray-900 dark:text-white mr-20">
+                            <div class="font-semibold text-gray-900 dark:text-white mr-20 ">
                                 <div v-if="notification.nurse" class="mb-2">
                                     Enfermero/a: {{ notification.nurse.name }} {{ notification.nurse.last_name }}
                                 </div>
                                 <div class="mb-2">Notificación - #{{ index + 1 }}</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Medicamento: {{ details.drug
-                                    }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300 ">Medicamento: {{ details.drug
+                                }}</div>
 
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1" v-if="!notification.applied"> Fecha programada:
+                                <div class="text-sm text-gray-600 dark:text-gray-300 " v-if="!notification.applied">
+                                    Fecha
+                                    programada:
                                     {{ formatDateFromNow(
                                         notification.scheduled_time) }} </div>
-                                        <div v-if="notification.administered_time && notification.applied"
-                                    class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Medicamento administrado:
+                                <div v-if="notification.administered_time && notification.applied"
+                                    class="text-sm text-gray-600 dark:text-gray-300 "> Medicamento administrado:
                                     {{ formatDateFromNow(
                                         notification.administered_time) }} </div>
-                                          <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Via: {{ details.route }}
+                                <div class="text-sm text-gray-600 dark:text-gray-300 ">Via: {{ details.route }}
                                 </div>
-                                       <div class="text-sm text-gray-600 dark:text-gray-300 mt-1"v-if="details.nebulized"> Nebulizado:   <Checkbox :checked="true" disabled></Checkbox></div>
+                                <div class="text-sm text-gray-600 dark:text-gray-300 " v-if="details.nebulized">
+                                    Nebulizado:
+                                    <Checkbox :checked="true" disabled></Checkbox>
+                                </div>
                             </div>
 
                             <div v-if="notification.applied"
                                 class=" flex flex-col  text-gray-500 dark:text-gray-400 p-6 pt-8 ">
                                 <div class=" font-medium mb-1">Firma</div>
-                                <img class="border rounded p-6" :src="`/storage/${notification.nurse_sign}`" width="250" alt="Firma">
+                                <img class="border rounded p-6" :src="`/storage/${notification.nurse_sign}`" width="250"
+                                    alt="Firma">
                             </div>
 
                         </div>
@@ -80,11 +90,12 @@
 
 
                         <div v-if="notification.applied">
-                            <div id="applied" class="text-sm text-green-500 dark:text-green-400">
+
+                            <div v-if="lastApplied(notification)" class="flex justify-between   items-center ">
+                                <div id="applied" class=" flex items-center gap-1 rounded-full bg-green-50 py-0.5 pl-2 pr-2.5 text-sm font-medium  dark:bg-green-500/15   text-green-500 ">
                                 APLICADO
                             </div>
-                            <div v-if="lastApplied(notification)" class="flex justify-end   items-center ">
-                                <AccessGate v-if="canUpdateNotification">
+                                <AccessGate v-if="canUpdateNotification" class="ml-auto">
                                     <PersonalizableButton color="red" size="medium" @click="revert(notification)">
                                         <BackIcon class="size-5 mr-1" />Revertir
                                     </PersonalizableButton>
@@ -94,14 +105,15 @@
                         </div>
 
                         <div v-else>
-                            <div id="no-applied" class="text-sm text-red-500 dark:text-red-400">
+
+                            <div v-if="Firstnoapplied(notification)" class="flex  justify-between items-center">
+                                  <div id="no-applied" class=" flex items-center gap-1 rounded-full bg-red-50 py-0.5 pl-2 pr-2.5 text-sm font-medium  dark:bg-red-500/15   text-red-500 ">
                                 NO APLICADO
                             </div>
-                            <div v-if="Firstnoapplied(notification)" class="flex justify-end  items-center">
-                                  <AccessGate :permission="['medicationNotification.update']">
-                                <PersonalizableButton color="green" size="medium" @click="openModal(notification)">
-                                    <CheckCircleIcon class="size-5 mr-1" /> Aplicar
-                                </PersonalizableButton>
+                                <AccessGate :permission="['medicationNotification.update']" class="ml-auto">
+                                    <PersonalizableButton color="green" size="medium" @click="openModal(notification)">
+                                        <CheckCircleIcon class="size-5 mr-1" /> Aplicar
+                                    </PersonalizableButton>
                                 </AccessGate>
                             </div>
 
@@ -182,6 +194,7 @@ export default {
         details: Object,
         notifications: Object,
         canUpdateNotification: Boolean,
+        admission_id: Number,
     },
     components: {
         AppLayout,

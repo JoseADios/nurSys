@@ -9,9 +9,9 @@
                         route: route('admissions.show', admission_id)
                     }] : []),
                     {
-                        text: 'Fichas de Medicamentos',
-                        route: medicationRecord.id
-                            ? route('medicationRecords.index', { id: medicationRecord.id })
+                        text: 'Ficha de Medicamentos',
+                        route: admission_id
+                            ? route('medicationRecords.index', { admission_id })
                             : route('medicationRecords.index')
                     },
 
@@ -27,22 +27,25 @@
             <div
                 class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
 
-                <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('medicationRecords.index')"
+                <div class="p-4 dark:bg-gray-900 flex justify-between items-center">
+                    <Link
+                        :href="admission_id ? route('admissions.show', admission_id) : route('medicationRecords.index')"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <BackIcon class="size-5" />Volver
+                    <BackIcon class="size-5" />
+                    Volver
                     </Link>
+
                     <div class="flex items-center gap-2">
                         <PersonalizableButton v-if="medicationRecord.active" @click="downloadRecordReport"
                             color="emerald">
                             <ReportIcon class="size-5 " />
-                            Crear Reporte
+                          <span class="hidden sm:inline-flex">Crear Reporte</span>
                         </PersonalizableButton>
                         <AccessGate :permission="['medicationRecord.delete']">
                             <DangerButton v-if="medicationRecord.active" @click="recordBeingDeleted = true">
 
                                 <TrashIcon class="size-5" />
-                                <span class="font-medium ">Eliminar</span>
+                                <span class="font-medium  hidden sm:inline-flex">Eliminar</span>
 
                             </DangerButton>
                             <PersonalizableButton v-else @click="restoreRecord(medicationRecord)" class="gap-2"
@@ -62,7 +65,7 @@
                     </div>
                 </div>
                 <!-- Información Principal -->
-                <div class="p-8 space-y-8">
+                <div class="p-8 space-y-8 bg-gray-50 dark:bg-gray-700">
                     <div class="grid md:grid-cols-2 gap-6">
                         <!-- Paciente -->
                         <div
@@ -151,18 +154,18 @@
                         </div>
                         <div v-else>
                             <PersonalizableButton @click="closeform" id="add_detail" size="large" class="w-full">
-                                Agregar Detalle
+                                Cerrar
                             </PersonalizableButton>
                         </div>
                     </AccessGate>
 
                     <div v-if="showCreateDetailForm"
-                        class="grid border grid-cols-1  lg:grid-cols-2 shadow-xl rounded-lg gap-4  lg:mx-2 mt-6 "
+                        class="grid border grid-cols-1  lg:grid-cols-2 shadow-xl rounded-lg gap-4   lg:mx-2 mt-6 "
                         id="formcreaterecord">
                         <!-- Tarjeta para información del Medical Order -->
                         <div class="relative overflow-hidden rounded-lg pb-auto   bg-white dark:bg-gray-800 mb-5">
 
-                            <div class="max-h-80 overflow-y-auto   shadow-md sm:rounded-lg mt-10 space-y-2 lg:mx-10">
+                            <div class="h-full overflow-y-auto    sm:rounded-lg mt-10 space-y-2 lg:mx-10">
                                 <div class="col w-full md:w-[100%] p-4 md:p-2 ">
                                     <h3 class="text-xl font-semibold text-gray-800 pl-2 dark:text-white mb-6">Órdenes
                                         médicas
@@ -177,7 +180,7 @@
 
 
                                     <!-- Acordeón de Órdenes Médicas -->
-                                    <div v-else class="space-y-4 max-h-72 overflow-y-auto">
+                                    <div v-else class="space-y-4 h-full overflow-y-auto">
                                         <div v-for="(order, index) in orders" :key="order.id">
                                             <div v-if="order.medical_order_detail.length !== 0"
                                                 class="accordion-item border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
@@ -206,11 +209,11 @@
                                                     class="accordion-content p-4 bg-white dark:bg-gray-900">
                                                     <div v-for="(detail, detailIndex) in order.medical_order_detail"
                                                         :key="detailIndex" @click="selectOrder(detail.id)" :class="{
-                                                            'bg-blue-500 text-white': selectedOrderId === detail.id && !detail.suspended_at,
+                                                            'bg-indigo-100 dark:bg-indigo-500  text-white': selectedOrderId === detail.id && !detail.suspended_at,
                                                             'bg-white dark:bg-gray-800': selectedOrderId !== detail.id && !detail.suspended_at,
 
                                                         }"
-                                                        class="border mb-2 rounded-lg p-4 m-2 shadow-md cursor-pointer transition duration-200">
+                                                        class="border mb-2 rounded-lg p-4 m-2  shadow-md cursor-pointer transition duration-200">
 
                                                         <div class="flex flex-col justify-between items-start">
                                                             <div class="w-full flex flex-col">
@@ -219,7 +222,7 @@
                                                                         class="text-sm font-semibold text-gray-800 dark:text-white">
                                                                         {{ detail.order }}
                                                                     </p>
-                                                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                                    <p class="text-xs text-gray-500 dark:text-gray-300">
                                                                         {{ formatDateFromNow(detail.created_at) }}
                                                                     </p>
                                                                 </div>
@@ -255,6 +258,7 @@
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Medicamento
                                         </label>
                                         <DrugSelector v-model:drug="form.drug" />
+                                        <InputError :message="form.errors.drug" class="mt-2" />
                                     </div>
                                 </div>
                                 <label for="drug"
@@ -267,7 +271,7 @@
                                 </label>
 
                                 <!-- Selector -->
-                                <div class="flex-1">
+                                <div class="flex-1" v-if="!form.nebulized">
                                     <label for="route-select"
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                         Via <span class="text-red-500">*</span>
@@ -278,6 +282,7 @@
                                             {{ routes.name }} - {{ routes.description }}
                                         </option>
                                     </select>
+                                    <InputError :message="form.errors.route" class="mt-2" />
                                 </div>
 
                                 <!-- Contenedor para la Dosis y el selector -->
@@ -291,9 +296,10 @@
                                         <input id="dose" required type="number" v-model="form.dose"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             placeholder="Escribe la Dosis asignada..." />
+                                        <InputError :message="form.errors.dose" class="mt-2" />
                                     </div>
                                     <!-- Selector -->
-                                    <div class="flex-1">
+                                    <div class="flex-1" v-if="!form.nebulized">
                                         <label for="dose-select"
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                             Métrica <span class="text-red-500">*</span>
@@ -304,7 +310,21 @@
                                                 {{ doses.name }} - {{ doses.description }}
                                             </option>
                                         </select>
+                                        <InputError :message="form.errors.dose_metric" class="mt-2" />
 
+                                    </div>
+                                    <div class="flex-1" v-else>
+                                        <label for="dose-select"
+                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            Métrica <span class="text-red-500">*</span>
+                                        </label>
+                                        <select id="dose-select" required v-model="form.dose_metric"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                            <option value="MG">Ml - Mililitro </option>
+                                            <option value="MG">MG - Miligramo </option>
+                                            <option value="MG">MCG - Microgramo </option>
+                                        </select>
+                                        <InputError :message="form.errors.dose_metric" class="mt-2" />
                                     </div>
                                 </div>
 
@@ -315,8 +335,8 @@
                                 </label>
                                 <input id="fc" rows="4" required type="number" v-model="form.fc"
                                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Escribe los estudios pendientes..."></input>
-
+                                    placeholder="Frecuencia de uso del medicamento..."></input>
+                                <InputError :message="form.errors.fc" class="mt-2" />
                                 <!-- Contenedor para la Intervalo en horas y minutos -->
                                 <div class="flex items-center space-x-4 mt-6">
                                     <!-- Dosis -->
@@ -330,19 +350,20 @@
                                             v-model="form.interval_in_hours"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             placeholder="Intervalo en Horas..." />
+                                        <InputError :message="form.errors.interval_in_hours" class="mt-2" />
                                     </div>
                                     <!-- Selector -->
                                     <div class="flex-1" v-if="form.nebulized">
                                         <!-- Intervalo en Horas -->
-                                        <label for="interval_in_minutes"
+                                        <label for="nebulization_time"
                                             class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                                            Intervalo en Minutos <span class="text-red-500">*</span>
+                                            Tiempo de Nebulización (min) <span class="text-red-500">*</span>
                                         </label>
-                                        <input required id="interval_in_minutes" type="number"
-                                            v-model="form.interval_in_minutes"
+                                        <input required id="nebulization_time" type="number"
+                                            v-model="form.nebulization_time"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                            placeholder="Intervalo en Minutos..." />
-
+                                            placeholder=" Tiempo de Nebulización..." />
+                                        <InputError :message="form.errors.nebulization_time" class="mt-2" />
                                     </div>
                                 </div>
 
@@ -354,19 +375,24 @@
                                 <input required id="start_time" type="time" v-model="form.start_time" :min="currentTime"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="Hora de Inicio..." />
+                                <InputError :message="form.errors.start_time" class="mt-2" />
 
-                                <!-- Botones -->
-                                <div class="flex justify-end mt-6 gap-2 mb-6">
-                                    <SecondaryButton @click="closeform">
-                                        Cerrar
-                                    </SecondaryButton>
 
-                                    <PrimaryButton type="submit" :class="{ 'opacity-25': form.processing }"
-                                        :is-loading="form.processing" :disabled="form.processing">
-                                        Guardar
-                                    </PrimaryButton>
-                                </div>
-                            </form>
+
+                            <!-- Botones -->
+                            <div class="flex justify-end mt-6 gap-2 mb-6">
+                                <SecondaryButton @click="closeform">
+                                    Cerrar
+                                </SecondaryButton>
+
+                                <PrimaryButton
+                                    :class="{ 'opacity-25': form.processing }" :is-loading="form.processing"
+                                    :disabled="form.processing">
+                                    Guardar
+                                </PrimaryButton>
+
+                            </div>
+                             </form>
                         </div>
 
                     </div>
@@ -405,9 +431,8 @@
                             <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                 Fecha de Creación: {{ formatDate(detail.created_at) }}
                             </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1"
-                                v-if="detail.interval_in_minutes">
-                                Intervalo de cada: {{ detail.interval_in_minutes }} minutos
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1" v-if="detail.nebulization_time">
+                                Intervalo de cada: {{ detail.nebulization_time }} minutos
                             </div>
                             <div class="text-sm text-gray-500 dark:text-gray-400 mt-1" v-if="detail.interval_in_hours">
                                 Intervalo de cada: {{ detail.interval_in_hours }} horas
@@ -424,7 +449,8 @@
                             <div v-if="detail.active && detail.suspended_at == null">
                                 <AccessGate :permission="['medicationNotification.view']">
                                     <!-- NOTIF -->
-                                    <Link :href="route('medicationNotification.show', detail.id)"
+                                    <Link
+                                        :href="route('medicationNotification.show', { medicationNotification: detail.id, admission_id: admission_id })"
                                         class="flex items-center space-x-2 space-y-2 text-blue-600 hover:text-blue-800 transition-colors">
                                     <NotificationIcon class="size-5 " />
                                     <span class="font-medium">Notificaciones</span>
@@ -433,7 +459,7 @@
                                 <AccessGate :permission="['medicationRecordDetail.update']">
                                     <!-- Editar -->
                                     <Link v-if="!hasApplied(detail)"
-                                        :href="route('medicationRecordDetails.edit', detail.id)"
+                                        :href="route('medicationRecordDetails.edit', { medicationRecordDetail: detail.id, admission_id: admission_id })"
                                         class="flex items-center space-x-2 space-y-2 text-yellow-600 hover:text-yellow-800 transition-colors">
                                     <EditIcon class="size-5" />
                                     <span class="font-medium">Editar</span>
@@ -517,6 +543,7 @@
                 </DangerButton>
             </template>
         </ConfirmationModal>
+
 
         <DialogModal :show="isVisible" @close="isVisible = false" class="">
 
@@ -607,6 +634,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import Checkbox from '@/Components/Checkbox.vue';
+import FormatRole from '@/Components/FormatRole.vue';
 export default {
 
     props: {
@@ -654,6 +682,11 @@ export default {
         CirclePlusIcon,
         CircleXIcon,
     },
+    watch: {
+        'form.nebulized'(newVal) {
+            this.form.fc = newVal ? 1 : '';
+        },
+    },
     data() {
         return {
             form: useForm({
@@ -663,7 +696,7 @@ export default {
                 route: '',
                 fc: '',
                 interval_in_hours: '',
-                interval_in_minutes: '',
+                nebulization_time: '',
                 start_time: '',
                 dose_metric: '',
                 selectedOrderId: null,
@@ -676,6 +709,7 @@ export default {
             recordActiveChanging: ref(false),
             recordDetailActiveChange: ref(false),
             recordDetailSupendChange: ref(false),
+
             selectedDetail: ref(null),
             errorMessage: "",
             detailBeingDeleted: ref(null),
@@ -686,9 +720,6 @@ export default {
                 diet: this.medicationRecord.diet,
             }),
 
-
-
-
         }
     },
     mounted() {
@@ -698,6 +729,10 @@ export default {
 
         currentTime() {
             return moment().format('HH:mm');
+        },
+
+        formattedId() {
+            return 'FICH' + this.medicationRecord.id;
         }
     },
 
@@ -707,13 +742,12 @@ export default {
             return moment(date).format('DD MMMM YYYY HH:mm');
         },
         toggleShowDeleted() {
-            this.form.showDeleted = !this.form.showDeleted;
-            this.$inertia.get(route('medicationRecords.show', {
-                medicationRecord: this.medicationRecord
-            }), {
-                showDeleted: this.form.showDeleted
-            }, {
-                preserveState: true,
+            const params = {
+                medicationRecord: this.medicationRecord.id,
+                admission_id: this.admission_id,
+                showDeleted: !this.filters?.show_deleted
+            };
+            this.$inertia.get(route('medicationRecords.show', params), {}, {
                 preserveScroll: true
             });
         },
@@ -730,12 +764,34 @@ export default {
 
         },
         deleteDetail() {
-            this.detailBeingDeleted = false
-            this.isVisibleDetail = false
-            this.$inertia.delete(route('medicationRecordDetails.destroy', this.selectedDetail.id), {
-                preserveScroll: true,
-                preserveState: true
-            });
+            this.detailBeingDeleted = null;
+            this.isVisibleDetail = false;
+
+            this.$inertia.delete(
+                route('medicationRecordDetails.destroy', this.selectedDetail.id),
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                    data: {
+                        admission_id: this.admission_id
+                    },
+                    onSuccess: () => {
+                        // Redirigir para recargar los detalles con admission_id
+                        const params = {
+                            medicationRecord: this.medicationRecord.id,
+                            admission_id: this.admission_id,
+                        };
+
+                        if (this.filters?.show_deleted) {
+                            params.showDeleted = true;
+                        }
+
+                        this.$inertia.get(route('medicationRecords.show', params), {
+                            preserveScroll: true,
+                        });
+                    }
+                }
+            );
         },
         restoreRecord(record) {
             this.recordActiveChanging = true;
@@ -761,37 +817,59 @@ export default {
             );
         },
         submit() {
+
+            this.errorMessage = "";
             if (!this.form.selectedOrderId) {
                 this.errorMessage = "Debe seleccionar una orden antes de guardar.";
                 return;
             }
+            if (!this.form.drug) {
+                this.form.errors.drug = "Debe seleccionar un medicamennto.";
+                return;
+            }
+            if (this.form.nebulized) {
+                this.form.route = 'inhalatoria';
+            }
+            if (!this.form.route && !this.form.nebulized) {
+                console.log("Debe seleccionar una vía.");
+                this.form.errors.route = "Debe seleccionar una vía.";
+                return;
+            }
             if (this.form.dose <= 0) {
-                this.errorMessage = "La Dosis debe ser mayor a 0";
+                this.form.errors.dose = "La Dosis debe ser mayor a 0";
                 return;
             }
-
+            if (!this.form.dose_metric) {
+                this.form.errors.dose_metric = "Debe seleccionar una métrica para la dosis.";
+                return;
+            }
             if (this.form.fc > 20) {
-                this.errorMessage = "Frecuencia debe ser menor de 20 veces";
-                return;
-            }
-            if (this.form.interval_in_hours > 24) {
-                this.errorMessage = "El Intervalo en horas debe ser menor de 24 horas (1 día)";
-                return;
-            }
-            if (this.form.interval_in_minutes > 59) {
-                this.errorMessage = "El Intervalo en horas debe ser menor a 60(1 hora)";
+                this.form.errors.fc = "Frecuencia debe ser menor de 20 veces";
                 return;
             }
             if (this.form.fc <= 0) {
-                this.errorMessage = "Frecuencia debe  ser mayor a 0";
+                this.form.errors.fc = "La frecuencia debe  ser mayor a 0";
                 return;
             }
-            if (this.form.interval_in_hours <= 0 && this.form.interval_in_minutes <= 0) {
-                this.errorMessage = "El Intervalo debe ser mayor a 0";
-                return;
+            if (this.form.fc > 1) {
+                if (this.form.interval_in_hours <= 0 && this.form.nebulization_time <= 0) {
+                    this.form.errors.interval_in_hours = "El Intervalo debe ser mayor a 0";
+                    return;
+                }
+                if (this.form.interval_in_hours > 24) {
+                    this.form.errors.interval_in_hours = "El Intervalo en horas debe ser menor de 24 horas (1 día)";
+                    return;
+                }
+                if (this.form.nebulization_time > 59) {
+                    this.form.errors.nebulization_time = "El Intervalo en horas debe ser menor a 60(1 hora)";
+                    return;
+                }
+            }
+            if (this.form.fc = 1) {
+                this.form.interval_in_hours = 0;
             }
 
-            this.errorMessage = "";
+
 
             this.form.post(route('medicationRecordDetails.store'), {
                 onSuccess: () => {

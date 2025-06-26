@@ -53,12 +53,13 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
         $MedicationRecordDetail = MedicationRecordDetail::find($id);
         $MedicationNotificacion = MedicationNotification::where('medication_record_detail_id', $id)->with('nurse')->get();
         $responseUpdateNotification = Gate::inspect('updateNurse', $MedicationNotificacion);
 
+        $admission_id = $request->integer('admission_id');
         if (Auth::user()->hasRole('admin')) {
             $canUpdateNotification = true;
         } else {
@@ -73,6 +74,7 @@ class MedicationNotificationController extends Controller implements HasMiddlewa
             'details' => $MedicationRecordDetail,
             'canUpdateNotification' => $canUpdateNotification,
             'notifications' => $MedicationNotificacion,
+            'admission_id' => $admission_id,
         ]);
     }
 

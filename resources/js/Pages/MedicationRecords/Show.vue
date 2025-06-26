@@ -65,7 +65,7 @@
                     </div>
                 </div>
                 <!-- Información Principal -->
-                <div class="p-8 space-y-8 bg-gray-50">
+                <div class="p-8 space-y-8 bg-gray-50 dark:bg-gray-700">
                     <div class="grid md:grid-cols-2 gap-6">
                         <!-- Paciente -->
                         <div

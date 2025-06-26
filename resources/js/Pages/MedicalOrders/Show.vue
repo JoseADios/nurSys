@@ -31,7 +31,7 @@
             <div
                 class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
                 <!-- Navigation -->
-                <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+                <div class="p-4 bg-white dark:bg-gray-900 flex justify-between items-center">
                     <div v-if="admission_id">
                         <Link :href="route('medicalOrders.index', { admission_id: admission_id })"
                             class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">

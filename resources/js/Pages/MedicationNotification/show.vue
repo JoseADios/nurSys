@@ -51,26 +51,26 @@
                     class=' dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60  p-8   flex justify-between items-center transition-colors'>
                     <div class="flex-grow">
                         <div class="flex items-center space-x-20">
-                            <div class="font-semibold text-gray-900 dark:text-white mr-20">
+                            <div class="font-semibold text-gray-900 dark:text-white mr-20 ">
                                 <div v-if="notification.nurse" class="mb-2">
                                     Enfermero/a: {{ notification.nurse.name }} {{ notification.nurse.last_name }}
                                 </div>
                                 <div class="mb-2">Notificación - #{{ index + 1 }}</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Medicamento: {{ details.drug
+                                <div class="text-sm text-gray-600 dark:text-gray-300 ">Medicamento: {{ details.drug
                                 }}</div>
 
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1" v-if="!notification.applied">
+                                <div class="text-sm text-gray-600 dark:text-gray-300 " v-if="!notification.applied">
                                     Fecha
                                     programada:
                                     {{ formatDateFromNow(
                                         notification.scheduled_time) }} </div>
                                 <div v-if="notification.administered_time && notification.applied"
-                                    class="text-sm text-gray-600 dark:text-gray-300 mt-1"> Medicamento administrado:
+                                    class="text-sm text-gray-600 dark:text-gray-300 "> Medicamento administrado:
                                     {{ formatDateFromNow(
                                         notification.administered_time) }} </div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Via: {{ details.route }}
+                                <div class="text-sm text-gray-600 dark:text-gray-300 ">Via: {{ details.route }}
                                 </div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1" v-if="details.nebulized">
+                                <div class="text-sm text-gray-600 dark:text-gray-300 " v-if="details.nebulized">
                                     Nebulizado:
                                     <Checkbox :checked="true" disabled></Checkbox>
                                 </div>
@@ -90,11 +90,12 @@
 
 
                         <div v-if="notification.applied">
-                            <div id="applied" class="text-sm text-green-500 dark:text-green-400">
+
+                            <div v-if="lastApplied(notification)" class="flex justify-between   items-center ">
+                                <div id="applied" class=" flex items-center gap-1 rounded-full bg-green-50 py-0.5 pl-2 pr-2.5 text-sm font-medium  dark:bg-green-500/15   text-green-500 ">
                                 APLICADO
                             </div>
-                            <div v-if="lastApplied(notification)" class="flex justify-end   items-center ">
-                                <AccessGate v-if="canUpdateNotification">
+                                <AccessGate v-if="canUpdateNotification" class="ml-auto">
                                     <PersonalizableButton color="red" size="medium" @click="revert(notification)">
                                         <BackIcon class="size-5 mr-1" />Revertir
                                     </PersonalizableButton>
@@ -104,11 +105,12 @@
                         </div>
 
                         <div v-else>
-                            <div id="no-applied" class="text-sm text-red-500 dark:text-red-400">
+
+                            <div v-if="Firstnoapplied(notification)" class="flex  justify-between items-center">
+                                  <div id="no-applied" class=" flex items-center gap-1 rounded-full bg-red-50 py-0.5 pl-2 pr-2.5 text-sm font-medium  dark:bg-red-500/15   text-red-500 ">
                                 NO APLICADO
                             </div>
-                            <div v-if="Firstnoapplied(notification)" class="flex justify-end  items-center">
-                                <AccessGate :permission="['medicationNotification.update']">
+                                <AccessGate :permission="['medicationNotification.update']" class="ml-auto">
                                     <PersonalizableButton color="green" size="medium" @click="openModal(notification)">
                                         <CheckCircleIcon class="size-5 mr-1" /> Aplicar
                                     </PersonalizableButton>

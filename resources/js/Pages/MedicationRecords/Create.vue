@@ -26,8 +26,8 @@
         </template>
 
         <!-- Formulario -->
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <form class="max-w-xl mx-auto">
+        <div class="relative overflow-hidden  sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4 mb-4">
+        <form class="max-w-3xl mx-auto">
                 <!-- Diagnóstico -->
                 <!-- Selector -->
 
@@ -44,7 +44,7 @@
 
                     <!-- Selector -->
                     <div class="flex-1">
-                        <label for="diet-select" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        <label for="diet-select" class="block  text-sm font-medium text-gray-900 dark:text-white">
                             Dieta <span class="text-red-500">*</span>
                         </label>
                         <select id="diet-select" v-model="form.diet" required
@@ -60,7 +60,7 @@
                 </div>
             </form>
             <!-- Botones -->
-            <div class="flex justify-end mt-6 mb-2 max-w-xl mx-auto">
+           <div class="flex justify-end mt-4 space-x-3">
                 <Link :href="cancelUrl">
                 <SecondaryButton class="py-2.5 px-5 me-2 mb-2">
                     Cancelar

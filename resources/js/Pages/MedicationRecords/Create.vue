@@ -27,7 +27,7 @@
 
         <!-- Formulario -->
         <div class="relative overflow-hidden  sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4 mb-4">
-        <form class="max-w-3xl mx-auto">
+        <form @submit.prevent="submit"  class="max-w-3xl mx-auto">
                 <!-- Diagnóstico -->
                 <!-- Selector -->
 
@@ -58,8 +58,7 @@
                     </div>
 
                 </div>
-            </form>
-            <!-- Botones -->
+                  <!-- Botones -->
            <div class="flex justify-end mt-4 space-x-3">
                 <Link :href="cancelUrl">
                 <SecondaryButton class="py-2.5 px-5 me-2 mb-2">
@@ -67,33 +66,16 @@
                 </SecondaryButton>
                 </Link>
 
-                <PrimaryButton @click="recordBeingCreated = true" class="py-2.5 px-5 me-2 mb-2"
+                <PrimaryButton class="py-2.5 px-5 me-2 mb-2"
                     :class="{ 'opacity-25': form.processing }" :is-loading="form.processing"
                     :disabled="form.processing">
                     Guardar
                 </PrimaryButton>
             </div>
+            </form>
+
         </div>
-        <!-- modal para crear -->
-        <ConfirmationModal :show="recordBeingCreated != null" @close="recordBeingCreated = null">
-            <template #title>
-                Crear Ficha de Medicamentos
-            </template>
 
-            <template #content>
-                ¿Estás seguro de que deseas crear esta ficha?
-            </template>
-
-            <template #footer>
-                <SecondaryButton @click="recordBeingCreated = null">
-                    Cancelar
-                </SecondaryButton>
-
-                <PrimaryButton class="ms-3" @click="submit()">
-                    Crear
-                </PrimaryButton>
-            </template>
-        </ConfirmationModal>
 
     </AppLayout>
 </template>
@@ -139,7 +121,7 @@
                     diet: '',
                     has_admission_id: this.admission_id ? true : false
                 }),
-                recordBeingCreated: ref(null),
+
                 error: ref(null)
             };
         },
@@ -154,7 +136,7 @@
         },
         methods: {
             submit() {
-                this.recordBeingCreated = null;
+
                 this.error = null;
 
                 this.form.post(route('medicationRecords.store'), {

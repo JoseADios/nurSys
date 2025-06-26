@@ -32,7 +32,7 @@
                     :selected-admission-id="admission_id" />
 
                <InputError :message="form.errors.admission_id" class="mt-2" />
-                 </form>
+
                 <!-- Botones -->
                 <div class="flex justify-end mt-4 space-x-3">
                     <div v-if="admission_id" class="self-center">
@@ -47,33 +47,16 @@
                             Cancelar
                         </SecondaryLink>
                     </div>
-                    <PrimaryButton @click="orderBeingCreated = true"
+                    <PrimaryButton
                         :class="{ 'opacity-25': form.processing }":is-loading="form.processing"
                         :disabled="form.processing">
                         Guardar
                     </PrimaryButton>
                 </div>
+                 </form>
 
         </div>
-         <ConfirmationModal :show="orderBeingCreated != null" @close="orderBeingCreated = null">
-            <template #title>
-                Crear Órden Médica
-            </template>
 
-            <template #content>
-                ¿Estás seguro de que deseas crear esta órden?
-            </template>
-
-            <template #footer>
-                <SecondaryButton @click="orderBeingCreated = null">
-                    Cancelar
-                </SecondaryButton>
-
-                <PrimaryButton class="ms-3" @click="submit()">
-                    Crear
-                </PrimaryButton>
-            </template>
-        </ConfirmationModal>
     </AppLayout>
 </template>
 
@@ -123,12 +106,12 @@ import ConfirmationModal from '@/Components/ConfirmationModal.vue'
                     has_admission_id: this.admission_id ? true : false
                 }),
                 errorMessage: this.error || null,
-                orderBeingCreated: ref(null)
+
             }
         },
         methods: {
             submit() {
-                this.orderBeingCreated =null;
+
                 if (!this.form.admission_id) {
                     this.form.errors.admission_id = 'Por favor, seleccione un ingreso.';
                     return;

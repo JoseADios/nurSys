@@ -33,7 +33,7 @@
 
                 <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
                     <Link
-                        :href="route('medicationRecords.show', { medicationRecord: details.id, admission_id: admission_id })"
+                        :href="route('medicationRecords.show', { medicationRecord: details.medication_record_id, admission_id: admission_id })"
                         class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
                     <BackIcon class="size-5" />Volver
                     </Link>

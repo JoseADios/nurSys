@@ -378,20 +378,21 @@
                                 <InputError :message="form.errors.start_time" class="mt-2" />
 
 
-                            </form>
+
                             <!-- Botones -->
                             <div class="flex justify-end mt-6 gap-2 mb-6">
                                 <SecondaryButton @click="closeform">
                                     Cerrar
                                 </SecondaryButton>
 
-                                <PrimaryButton @click="recordDetailBeingCreated = true"
+                                <PrimaryButton
                                     :class="{ 'opacity-25': form.processing }" :is-loading="form.processing"
                                     :disabled="form.processing">
                                     Guardar
                                 </PrimaryButton>
 
                             </div>
+                             </form>
                         </div>
 
                     </div>
@@ -542,26 +543,7 @@
                 </DangerButton>
             </template>
         </ConfirmationModal>
-        <!-- modal para crear -->
-        <ConfirmationModal :show="recordDetailBeingCreated != null" @close="recordDetailBeingCreated = null">
-            <template #title>
-                Crear Detalle Ficha de Medicamentos
-            </template>
 
-            <template #content>
-                ¿Estás seguro de que deseas crear este detalle ficha?
-            </template>
-
-            <template #footer>
-                <SecondaryButton @click="recordDetailBeingCreated = null">
-                    Cancelar
-                </SecondaryButton>
-
-                <PrimaryButton class="ms-3" @click="submit()">
-                    Crear
-                </PrimaryButton>
-            </template>
-        </ConfirmationModal>
 
         <DialogModal :show="isVisible" @close="isVisible = false" class="">
 
@@ -727,7 +709,7 @@ export default {
             recordActiveChanging: ref(false),
             recordDetailActiveChange: ref(false),
             recordDetailSupendChange: ref(false),
-            recordDetailBeingCreated: ref(null),
+
             selectedDetail: ref(null),
             errorMessage: "",
             detailBeingDeleted: ref(null),
@@ -835,7 +817,7 @@ export default {
             );
         },
         submit() {
-            this.recordDetailBeingCreated = null;
+
             this.errorMessage = "";
             if (!this.form.selectedOrderId) {
                 this.errorMessage = "Debe seleccionar una orden antes de guardar.";

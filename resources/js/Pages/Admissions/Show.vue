@@ -32,7 +32,7 @@
                 </div>
 
                 <!-- Estado de Ingreso -->
-                <div class="m-8 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md mb-6">
+                <div class="m-8 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg border   mb-6">
                     <div class="flex items-center justify-between space-x-2">
                         <div class="flex space-x-2 items-center">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Estado:</h3>
@@ -58,14 +58,14 @@
 
                 <div class="p-8 space-y-8">
                     <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border   ">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
                                     admission.patient.second_surname }}
                             </p>
                         </div>
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border   ">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Recepcionista</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ admission.receptionist.name }} {{ admission.receptionist.last_name }}
@@ -74,7 +74,7 @@
 
                         </div>
 
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border   ">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             <div v-if="admission.bed">
@@ -88,14 +88,14 @@
 
 
 
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border   ">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ admission.doctor.name }} {{ admission.doctor.last_name }}
                             </p>
                         </div>
 
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border   ">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Ingreso</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ formatDate(admission.created_at) }}
@@ -108,7 +108,7 @@
 
                 <div class="p-8 space-y-8">
                     <AccessGate :role="['doctor','admin']">
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border   ">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de Ingreso
                         </h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
@@ -118,21 +118,21 @@
                     </div>
                     </AccessGate>
 
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border   ">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico Final</h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
                             {{ admission.final_dx || 'No se ha proporcionado diagnóstico final' }}
                         </p>
                     </div>
 
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border   ">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Observaciones</h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
                             {{ admission.comment || 'No hay observaciones' }}
                         </p>
                     </div>
 
-                    <div v-if="admission.doctor_sign" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div v-if="admission.doctor_sign" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border  ">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Firma del Doctor/a</h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
                             <img :src="`/storage/${admission.doctor_sign}`" width="250" alt="Firma">
@@ -140,22 +140,20 @@
                     </div>
 
                     <AccessGate :except-role="['receptionist']"
-                        class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 shadow-md">
+                        class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 border   ">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Acciones Adicionales </h3>
                         <div class="grid md:grid-cols-2 sm:grid-cols-1 gap-4">
 
                             <div class="flex flex-col space-y-2 items-center">
 
                                   <div class=" w-full">
-                                    <Link :href="route('medicalOrders.index', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
+                                    <Link :href="route('medicalOrders.index', { admission_id: admission.id })"
                                     class="flex w-full items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg p-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                 <MedicalOrderIcon class="size-5 mr-1" />
                                 Órdenes Médicas
                                 </Link>
                                   </div>
-                                <Link v-if="can.createOrder" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
+                                <Link v-if="can.createOrder"
                                     :href="route('medicalOrders.create', { admission_id: admission.id })"
                                     class="flex w-24 items-center justify-center bg-blue-400 text-white font-semibold rounded-lg p-2 hover:bg-blue-500 transition duration-300 ease-in-out">
                                 Nuevo +
@@ -163,15 +161,13 @@
                             </div>
 
                             <div class="flex flex-col space-y-2 items-center">
-                                <Link :href="route('nurseRecords.index', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
+                                <Link :href="route('nurseRecords.index', { admission_id: admission.id })"
                                     class="flex w-full items-center justify-center bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg p-4 hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                 <NurseRecordIcon class="size-5 mr-1" />
                                 Hojas de Enfermería
                                 </Link>
                                 <AccessGate :role="['admin', 'nurse']">
-                                    <Link :href="route('nurseRecords.create', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
+                                    <Link :href="route('nurseRecords.create', { admission_id: admission.id })"
                                         class="flex w-24 items-center justify-center bg-green-400 text-white font-semibold rounded-lg p-2 hover:bg-green-500 transition duration-300 ease-in-out">
                                     Nuevo +
                                     </Link>
@@ -188,8 +184,7 @@
                                     </Link>
                                 </div>
                                 <div v-else class=" w-full">
-                                    <Link :href="route('temperatureRecords.create', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
+                                    <Link :href="route('temperatureRecords.create', { admission_id: admission.id })"
                                         class="flex w-full items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                     <ChartIcon class="size-5 mr-1" />
                                     Nueva hoja de Temperatura
@@ -201,16 +196,14 @@
                             <div>
                                 <div v-if="medicationRecordId !== null">
                                     <Link  :href="`${route('medicationRecords.show', medicationRecordId)}?admission_id=${admission.id}`"
-                                        :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
+
                                         class="flex w-full items-center justify-center bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                     <MedicationIcon class="size-5 mr-1" />
                                     Ficha de Medicamentos
                                     </Link>
                                 </div>
                                 <div v-else>
-                                    <Link :href="route('medicationRecords.create', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
+                                    <Link :href="route('medicationRecords.create', { admission_id: admission.id })"
                                         class="flex w-full items-center justify-center bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                     <MedicationIcon class="size-5 mr-1" />
                                     Ficha de Medicamentos

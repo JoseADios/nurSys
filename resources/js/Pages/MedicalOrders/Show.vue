@@ -1,16 +1,19 @@
 <template>
-    <AppLayout>
+    <AppLayout title="Órdenes Médicas">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
                 <BreadCrumb :items="[
+                    // Condicionar el primer elemento (solo se muestra si hay admission_id)
                     ...(admission_id ? [{
-                        formattedId: { id: admission_id, prefix: 'ING' },
-                        route: route('admissions.show', admission_id)
+                        formattedId: { id: medicalOrder.admission_id, prefix: 'ING' },
+                        route: route('admissions.show', medicalOrder.admission_id)
                     }] : []),
+
+                    // Segundo elemento (depende si hay admission_id o no)
                     {
                         text: 'Órdenes Médicas',
-                        route: medicalOrder.id
-                            ? route('medicalOrders.index', { id: medicalOrder.id })
+                        route: admission_id
+                            ? route('medicalOrders.index', { admission_id: admission_id })
                             : route('medicalOrders.index')
                     },
 
@@ -28,21 +31,31 @@
             <div
                 class="max-w-6xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
                 <!-- Navigation -->
-                <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
-                    <Link :href="route('medicalOrders.index')"
-                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <BackIcon class="size-5" />Volver
-                    </Link>
+                <div class="p-4 bg-white dark:bg-gray-900 flex justify-between items-center">
+                    <div v-if="admission_id">
+                        <Link :href="route('medicalOrders.index', { admission_id: admission_id })"
+                            class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                        <BackIcon class="size-5" />
+                        <span class="font-medium ">Volver</span>
+                        </Link>
+                    </div>
+                    <div v-else>
+                        <Link :href="route('medicalOrders.index')"
+                            class="flex px-4 sm:px-0 items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
+                        <BackIcon class="size-5" />
+                        <span class="font-medium">Volver</span>
+                        </Link>
+                    </div>
                    <div class="flex items-center gap-2">
                         <PersonalizableButton v-if="medicalOrder.active" @click="downloadRecordReport" color="emerald">
                         <ReportIcon class="size-5 " />
-                        Crear Reporte
+                        <span class="hidden sm:inline-flex">Crear Reporte</span>
                         </PersonalizableButton>
                           <AccessGate :permission="['medicalOrder.delete']">
                         <DangerButton v-if="medicalOrder.active" @click="recordBeingDeleted = true">
 
                             <TrashIcon class="size-5 mr-2" />
-                            <span class="font-medium ">Eliminar</span>
+                            <span class="hidden sm:inline-flex">Eliminar</span>
 
                         </DangerButton>
                             <PersonalizableButton v-else @click="restoreRecord" class="gap-2" color="green"
@@ -161,15 +174,15 @@
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Detalles
                     </h3>
 
-                    <form @submit.prevent="submit" class="space-y-4">
+                    <form @submit.prevent="submit"  class="space-y-4">
                         <div class="grid md:grid-cols-[2fr_1fr] gap-4">
                             <div>
                                 <label for="orden"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Órden <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="order" v-model="formDetail.order" required
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                                <TextInput type="text" id="order" maxlength="255" v-model="formDetail.order" required
+                                    class="w-full px-3 py-2 border  border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
                                     placeholder="Orden médica" />
                             </div>
 
@@ -179,20 +192,20 @@
                                     Régimen
                                 </label>
                                 <select id="regime" v-model="formDetail.regime"
-                                    class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    class="w-full text-gray-900 dark:text-white bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     <option :value="regime.name" v-for="regime in regimes" :key="regime.id">
                                         {{ regime.name }}
                                     </option>
                                 </select>
                             </div>
                         </div>
-
+</form>
                         <div class="pt-4">
-                             <PersonalizableButton   type="submit"  :class="{ 'opacity-25': formDetail.processing }" :loading="formDetail.processing"  :disabled="formDetail.processing"  size="large" class="w-full">
+                             <PersonalizableButton type=""   @click="medicalOrderDetailBeingCreated = true"  :class="{ 'opacity-25': formDetail.processing }" :loading="formDetail.processing"  :disabled="formDetail.processing"  size="large" class="w-full">
                             Agregar Detalle
                         </PersonalizableButton>
                         </div>
-                    </form>
+
                 </div>
                 </AccessGate>
 
@@ -202,11 +215,16 @@
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Detalles del Registro
                         </h3>
                             <AccessGate :permission="['medicalOrder.delete']">
-                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted" :color="showDeleted ? 'red' : 'gray'">
-                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                            <button @click="toggleShowDeleted"
+                                class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
+                                :class="{
+                                    'bg-red-500 hover:bg-red-600 text-white': showDeleted,
+                                    'bg-gray-200 hover:bg-gray-400 text-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200': !showDeleted
+                                }">
+                                {{ showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
                                 <CirclePlusIcon v-if="showDeleted" class="ml-1 h-5 w-5" />
                                 <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                            </PersonalizableButton>
+                            </button>
                             </AccessGate>
                     </div>
                     <div v-for="detail in details" :key="detail.id" :class="[
@@ -259,7 +277,7 @@
                 <div v-show="!isVisibleEditSign" class="my-4 flex items-center flex-col justify-center">
                     <div>
 
-                        <img v-if="medicalOrder.doctor_sign" :src="`/storage/${medicalOrder.doctor_sign}`" alt="Firma">
+                        <img v-if="medicalOrder.doctor_sign" :src="`/storage/${medicalOrder.doctor_sign}`"class="w-full max-w-md" alt="Firma">
                         <div v-else>
                             <div class="text-gray-500 dark:text-gray-400 my-16">
                                 No hay firma disponible
@@ -293,8 +311,6 @@
                                        >
                                        Aceptar
                                     </PrimaryButton>
-
-
                         </div>
                     </form>
                 </div>
@@ -407,6 +423,26 @@
                 </div>
             </template>
         </DialogModal>
+         <!-- modal para crear -->
+        <ConfirmationModal :show="medicalOrderDetailBeingCreated != null" @close="medicalOrderDetailBeingCreated = null">
+            <template #title>
+                Crear Detalle de Órden Médica
+            </template>
+
+            <template #content>
+                ¿Estás seguro de que deseas crear este detalle de órden médica?
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="medicalOrderDetailBeingCreated = null">
+                    Cancelar
+                </SecondaryButton>
+
+                <PrimaryButton class="ms-3" @click="submit">
+                    Crear
+                </PrimaryButton>
+            </template>
+        </ConfirmationModal>
 
         <ConfirmationModal :show="recordBeingDeleted != null || detailBeingDeleted != null"
             @close="recordBeingDeleted = null; detailBeingDeleted = null">
@@ -454,8 +490,7 @@
                                         :disabled="formRecord.processing"
                                        >
                                        Aceptar
-                                    </PrimaryButton>
-
+                            </PrimaryButton>
                     </div>
                 </form>
             </div>
@@ -495,10 +530,12 @@ import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
+import TextInput from '@/Components/TextInput.vue'
 export default {
     components: {
         AppLayout,
         Link,
+        TextInput,
         PersonalizableButton,
         DialogModal,
         SignaturePad,
@@ -541,6 +578,7 @@ export default {
                 selectedDetail: this.selectedDetail,
 
             }),
+            medicalOrderDetailBeingCreated: ref(null),
             isVisibleDetail: ref(false),
             originalSuspendedState: ref(null),
             isVisibleEditSign: ref(null),
@@ -572,13 +610,13 @@ export default {
         }
     },
     methods: {
-        toggleShowDeleted() {
+               toggleShowDeleted() {
             this.showDeleted = !this.showDeleted;
-            this.$inertia.get(route('medicalOrders.show', {
-                medicalOrder: this.medicalOrder.id
-            }), {
-                showDeleted: this.showDeleted
-            }, {
+            this.$inertia.get(route('medicalOrders.show', this.medicalOrder.id),
+                {
+                    showDeleted: this.showDeleted,
+                    admission_id: this.admission_id !== 0 ? this.admission_id : null
+                }, {
                 preserveState: true,
                 preserveScroll: true
             });
@@ -609,6 +647,7 @@ export default {
             }), '_blank');
         },
         submit() {
+            this.medicalOrderDetailBeingCreated = null;
             this.formDetail.post(route('medicalOrderDetails.store'),
 
                  {
@@ -681,7 +720,7 @@ export default {
             this.submitUpdateDetail()
         },
         restoreRecord() {
-            this.formAdmission.active = true
+            this.formRecord.active = true
             this.submitAdmission()
         }
     }

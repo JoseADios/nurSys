@@ -107,8 +107,8 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
     {
         $this->authorize('delete', [MedicalOrderDetail::class, $medicalOrderDetail]);
         $medicalOrderDetail->update(['active' => 0]);
-
-        return Redirect::route('medicalOrders.show', $medicalOrderDetail->medical_order_id)->with('flash.toast', 'Registro eliminado correctamente');
+        $admission_id = $medicalOrderDetail->medicalOrder()->first(['admission_id'])->admission_id;
+        return Redirect::route('medicalOrders.show', ['medicalOrder' => $medicalOrderDetail->medical_order_id, 'admission_id' => $admission_id])->with('flash.toast', 'Registro eliminado correctamente');
         ;
     }
 }

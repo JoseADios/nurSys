@@ -215,10 +215,13 @@
                                         {{ $medicationRecord->admission->patient->first_name }}
                                         {{ $medicationRecord->admission->patient->first_surname }}
                                         {{ $medicationRecord->admission->patient->second_surname }}</td>
-                                    <td><span class="bold"> Hab.: </span>
+                                        @if ($medicationRecord->admission->bed)
+                                                <td><span class="bold"> Hab.: </span>
                                         {{ $medicationRecord->admission->bed->room }}</td>
                                     <td><span class="bold"> Cama: </span>
                                         {{ $medicationRecord->admission->bed->number }}</td>
+                                        @endif
+
 
                                 </tr>
                                 <tr>
@@ -315,8 +318,10 @@
 
                             </tr>
                             <tr>
+                                 @if ($medicationRecord->admission->bed)
                                 <td><span class="bold"> Hab.: </span>
                                     {{ $medicationRecord->admission->bed->room }}</td>
+                                    @endif
                             </tr>
                         </table>
                     </td>

@@ -97,7 +97,9 @@ class AdmissionController extends Controller implements HasMiddleware
                 ->latest('admissions.created_at');
         }
         if ($days) {
-            $query->where('admissions.created_at', '>=', now()->subDays($days));
+            $query->where('admissions.created_at',
+            '>=', now()->subDays($days)->startOfDay()
+        );
         }
 
         if ($myRecords ) {
@@ -256,6 +258,7 @@ class AdmissionController extends Controller implements HasMiddleware
         $doctors = User::all();
         $beds = Bed::all()->filter->isAvailable()->values();
         $selectedBed = Bed::find($admission->bed_id);
+        $receptionist = User::where('id','=',$admission->receptionist_id)->first();
 
         if ($selectedBed) {
             $beds->add($selectedBed);
@@ -265,6 +268,7 @@ class AdmissionController extends Controller implements HasMiddleware
 
         return Inertia::render('Admissions/Edit', [
             'admission' => $admission,
+            'receptionist' =>$receptionist,
             'patients' => $patients,
             'doctors' => $doctors,
             'beds' => $beds,

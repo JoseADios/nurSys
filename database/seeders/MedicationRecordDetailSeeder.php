@@ -23,7 +23,7 @@ class MedicationRecordDetailSeeder extends Seeder
             'fc' => 2,
             'start_time' => now(),
             'interval_in_hours' => 8,
-             'interval_in_minutes' => 10,
+             'nebulization_time' => 10,
             'active' => true,
             'medical_order_detail_id'=>1
         ]);

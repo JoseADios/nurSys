@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AppLayout title="Ingresos">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
                 <BreadCrumb :items="[
@@ -32,7 +32,7 @@
                 </div>
 
                 <!-- Estado de Ingreso -->
-                <div class="m-8 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md mb-6">
+                <div class="m-8 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg border dark:border-gray-700/60   mb-6">
                     <div class="flex items-center justify-between space-x-2">
                         <div class="flex space-x-2 items-center">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Estado:</h3>
@@ -58,27 +58,23 @@
 
                 <div class="p-8 space-y-8">
                     <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border dark:border-gray-700/60   ">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
                                     admission.patient.second_surname }}
                             </p>
                         </div>
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Recepsionista</h3>
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border dark:border-gray-700/60   ">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Recepcionista</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ admission.receptionist.name }} {{ admission.receptionist.last_name }}
                             </p>
-                            <AccessGate :role="['admin']">
-                                <button @click="showEditReceptionist = true" class="text-blue-500 flex">
-                                    <EditIcon class="size-5" />
-                                </button>
-                            </AccessGate>
+
 
                         </div>
 
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border dark:border-gray-700/60   ">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                             <div v-if="admission.bed">
@@ -92,14 +88,14 @@
 
 
 
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border dark:border-gray-700/60   ">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ admission.doctor.name }} {{ admission.doctor.last_name }}
                             </p>
                         </div>
 
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border dark:border-gray-700/60   ">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Ingreso</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ formatDate(admission.created_at) }}
@@ -112,34 +108,31 @@
 
                 <div class="p-8 space-y-8">
                     <AccessGate :role="['doctor','admin']">
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 dark:border-gray-700/60   ">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de Ingreso
                         </h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
                             {{ admission.admission_dx || 'No se proporcionó diagnóstico de ingreso' }}
                         </p>
                         <div class="flex justify-end"></div>
-                        <button @click="showEditDiagnosis = true" class="text-blue-500 flex">
-                                    <EditIcon class="size-5" />
-                                </button>
                     </div>
                     </AccessGate>
 
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 dark:border-gray-700/60   ">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico Final</h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
                             {{ admission.final_dx || 'No se ha proporcionado diagnóstico final' }}
                         </p>
                     </div>
 
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 dark:border-gray-700/60   ">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Observaciones</h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
                             {{ admission.comment || 'No hay observaciones' }}
                         </p>
                     </div>
 
-                    <div v-if="admission.doctor_sign" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-md">
+                    <div v-if="admission.doctor_sign" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 dark:border-gray-700/60  ">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Firma del Doctor/a</h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
                             <img :src="`/storage/${admission.doctor_sign}`" width="250" alt="Firma">
@@ -147,110 +140,95 @@
                     </div>
 
                     <AccessGate :except-role="['receptionist']"
-                        class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 shadow-md">
+                        class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 border dark:border-gray-700/60  ">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Acciones Adicionales </h3>
                         <div class="grid md:grid-cols-2 sm:grid-cols-1 gap-4">
 
                             <div class="flex flex-col space-y-2 items-center">
-                                <div v-if="medicalOrderId !== null" class=" w-full">
-                                <Link :href="`${route('medicalOrders.show', medicalOrderId)}?admission_id=${admission.id}`"
-                                        :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
-                                    class="flex w-full items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg p-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                <MedicalOrderIcon class="size-5 mr-1" />
+
+                                  <div class=" w-full">
+                                    <PersonalizableLink :href="route('medicalOrders.index', { admission_id: admission.id })"
+                                    class="flex w-full items-center justify-center py-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg p-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                <MedicalOrderIcon class="size-5 mr-2" />
                                 Órdenes Médicas
-                                </Link>
-                                </div>
-                                  <div v-else class=" w-full">
-                                    <Link :href="route('medicalOrders.index')" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
-                                    class="flex w-full items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg p-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                <MedicalOrderIcon class="size-5 mr-1" />
-                                Órdenes Médicas
-                                </Link>
+                                </PersonalizableLink>
                                   </div>
-                                <Link v-if="can.createOrder" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
+                                <PersonalizableLink v-if="can.createOrder"
                                     :href="route('medicalOrders.create', { admission_id: admission.id })"
-                                    class="flex w-24 items-center justify-center bg-blue-400 text-white font-semibold rounded-lg p-2 hover:bg-blue-500 transition duration-300 ease-in-out">
+                                    class="flex w-24 items-center justify-center  bg-blue-400 text-white font-semibold rounded-lg p-2 hover:bg-blue-500 transition duration-300 ease-in-out">
                                 Nuevo +
-                                </Link>
+                                </PersonalizableLink>
                             </div>
 
                             <div class="flex flex-col space-y-2 items-center">
-                                <Link :href="route('nurseRecords.index', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
-                                    class="flex w-full items-center justify-center bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg p-4 hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                <NurseRecordIcon class="size-5 mr-1" />
+                                <PersonalizableLink :href="route('nurseRecords.index', { admission_id: admission.id })"
+                                    class="flex w-full items-center justify-center py-4 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg p-4 hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                <NurseRecordIcon class="size-5 mr-2" />
                                 Hojas de Enfermería
-                                </Link>
+                                </PersonalizableLink>
                                 <AccessGate :role="['admin', 'nurse']">
-                                    <Link :href="route('nurseRecords.create', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
-                                        class="flex w-24 items-center justify-center bg-green-400 text-white font-semibold rounded-lg p-2 hover:bg-green-500 transition duration-300 ease-in-out">
+                                    <PersonalizableLink :href="route('nurseRecords.create', { admission_id: admission.id })"
+                                        class="flex w-24 items-center justify-center  bg-green-400 text-white font-semibold rounded-lg p-2 hover:bg-green-500 transition duration-300 ease-in-out">
                                     Nuevo +
-                                    </Link>
+                                    </PersonalizableLink>
                                 </AccessGate>
                             </div>
 
                             <div class="flex flex-col space-y-2 items-center">
                                 <div v-if="temperatureRecordId !== null" class=" w-full">
-                                    <Link
+                                    <PersonalizableLink
                                         :href="`${route('temperatureRecords.show', temperatureRecordId)}?admission_id=${admission.id}`"
-                                        class="flex w-full items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                        class="flex w-full items-center text-center justify-center py-4 bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                                     <ChartIcon class="size-5 mr-1" />
                                     Hoja de Temperaturas
-                                    </Link>
+                                    </PersonalizableLink>
                                 </div>
                                 <div v-else class=" w-full">
-                                    <Link :href="route('temperatureRecords.create', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
-                                        class="flex w-full items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                    <ChartIcon class="size-5 mr-1" />
+                                    <PersonalizableLink :href="route('temperatureRecords.create', { admission_id: admission.id })"
+                                        class="flex w-full items-center text-center justify-center py-4 bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                    <ChartIcon class="size-5 " />
                                     Nueva hoja de Temperatura
-                                    </Link>
+                                    </PersonalizableLink>
                                 </div>
 
                             </div>
 
                             <div>
                                 <div v-if="medicationRecordId !== null">
-                                    <Link  :href="`${route('medicationRecords.show', medicationRecordId)}?admission_id=${admission.id}`"
-                                        :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
-                                        class="flex w-full items-center justify-center bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                    <MedicationIcon class="size-5 mr-1" />
+                                    <PersonalizableLink  :href="`${route('medicationRecords.show', medicationRecordId)}?admission_id=${admission.id}`"
+
+                                        class="flex w-full items-center text-center   justify-center py-4  bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                    <MedicationIcon class="size-5 mr-1 " />
                                     Ficha de Medicamentos
-                                    </Link>
+                                    </PersonalizableLink>
                                 </div>
                                 <div v-else>
-                                    <Link :href="route('medicationRecords.create', { admission_id: admission.id })" :class="{ 'opacity-25 pointer-events-none': processing }"
-                                    @click="processing = true"
-                                        class="flex w-full items-center justify-center bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                    <MedicationIcon class="size-5 mr-1" />
+                                    <PersonalizableLink :href="route('medicationRecords.create', { admission_id: admission.id })"
+                                        class="flex w-full items-center text-center justify-center py-4 bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                                    <MedicationIcon class="size-5 mr-1 " />
                                     Ficha de Medicamentos
-                                    </Link>
+                                    </PersonalizableLink>
                                 </div>
                             </div>
                         </div>
                     </AccessGate>
 
 
-                    <div class="flex justify-end space-x-2">
+                    <div class="flex flex-wrap justify-end gap-2 sm:flex-row flex-col text-center">
                         <AccessGate :role="['doctor', 'admin']">
                             <div v-if="can.update">
                                 <div v-if="admission.discharged_date == null">
-                                    <PersonalizableButton @click="admissionUpdateCharge = true" class="gap-2 "
+                                    <PersonalizableButton @click="admissionUpdateCharge = true"  :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing"
                                         color="green">
-                                        <CheckCircleIcon class="size-5" />
-                                        <span class="hidden sm:inline-flex">Dar de Alta</span>
+                                        <CheckCircleIcon class="size-5 mr-2 " />
+                                        <span class="">Dar de Alta </span>
                                     </PersonalizableButton>
                                 </div>
                                 <div v-if="admission.discharged_date != null">
-                                    <PersonalizableButton @click="admissionBeingPutInProgress = true" class="gap-2 "
+                                    <PersonalizableButton @click="admissionBeingPutInProgress = true"  :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing"
                                         color="yellow">
-                                        <RestoreIcon class="size-5" />
-                                        <span class="hidden sm:inline-flex">Poner en progreso</span>
+                                        <RestoreIcon class="size-5 mr-2" />
+                                        <span class="">Poner en progreso</span>
                                     </PersonalizableButton>
                                 </div>
                             </div>
@@ -259,22 +237,22 @@
                         <AccessGate :role="['admin']">
 
                             <Link v-if="can.update"  :href="route('admissions.edit', admission.id)">
-                            <PersonalizableButton class="gap-2 mr-2" color="yellow">
-                                <EditIcon class="size-5" />
-                                <span class="hidden sm:inline-flex">Editar</span>
+                            <PersonalizableButton class=" bg-primary-500 mr-2" :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing">
+                                <EditIcon class="size-5 mr-2" />
+                                <span class="">Editar</span>
                             </PersonalizableButton>
                             </Link>
 
 
-                        <DangerButton v-if="can.delete && admission.active" @click="admissionBeingDeleted = true"
+                        <DangerButton v-if="can.delete && admission.active" @click="admissionBeingDeleted = true" :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing"
                             class="gap-2" color="red">
                             <TrashIcon class="size-5" />
-                            <span class="hidden sm:inline-flex">Eliminar</span>
+                            <span class="">Eliminar</span>
                         </DangerButton>
                         <PersonalizableButton v-if="can.delete && !admission.active" @click="restoreAdmission"
                             class="gap-2" color="green">
-                            <RestoreIcon class="size-5" />
-                            <span class="hidden sm:inline-flex">Restaurar</span>
+                            <RestoreIcon class="size-5 " />
+                            <span class="">Restaurar</span>
                         </PersonalizableButton>
                           </AccessGate>
                     </div>
@@ -319,7 +297,7 @@
                     Cancelar
                 </SecondaryButton>
 
-                <PrimaryButton class="ms-3" @click="charge">
+                <PrimaryButton class="ms-3" @click="charge" :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing">
                     Aceptar
                 </PrimaryButton>
             </template>
@@ -335,8 +313,9 @@
                         class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico
                         final</label>
                     <textarea required id="final_dx" rows="4" v-model="formDischarge.final_dx"
-                        class="block p-2.5 mb-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="block p-2.5 mb-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Escribe el diagnóstico final..."></textarea>
+                        <InputError :message="formDischarge.errors.final_dx" class="mb-4"/>
 
                     <SignaturePad class="w-full max-w-lg lg:max-w-md" v-model="formDischarge.doctor_sign"
                         input-name="doctor_sign" />
@@ -358,12 +337,12 @@
                     Cancelar
                 </SecondaryButton>
 
-                <div v-if="admission.discharged_date == null">
+                <div v-if="admission.discharged_date == null"  :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing">
                     <PrimaryButton class="ms-3" @click="discharge">
                         Dar de alta
                     </PrimaryButton>
                 </div>
-                <div v-if="admission.discharged_date != null">
+                <div v-if="admission.discharged_date != null" :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing">
                     <PrimaryButton class="ms-3" @click="charge">
                         Poner en progreso
                     </PrimaryButton>
@@ -384,30 +363,6 @@
                             Cancelar
                         </SecondaryButton>
                         <PrimaryButton type="submit" :disabled="!formRecord.receptionist_id">
-                            Aceptar
-                        </PrimaryButton>
-                    </div>
-                </form>
-            </div>
-
-        </Modal>
-        <Modal :closeable="true" :show="showEditDiagnosis != null" @close="showEditDiagnosis == null">
-            <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
-                <form @submit.prevent="updateDiagnosis" class="max-w-3xl mx-auto">
-
-                  <label for="admission_dx"
-                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico de ingreso <span class="text-red-500">*</span></label>
-                <textarea required id="admission_dx" rows="4" v-model="modalform.admission_dx"
-                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Escribe el diagnóstico de ingreso..."></textarea>
-                <InputError :message="modalform.errors.admission_dx" class="mt-2" />
-                    <!-- Botones -->
-                    <div class="flex justify-end mt-4 space-x-3">
-                        <SecondaryButton type="button" @click="showEditDiagnosis = null"
-                            class="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 transition">
-                            Cancelar
-                        </SecondaryButton>
-                        <PrimaryButton type="submit" :disabled="!modalform.admission_dx" :loading="modalform.processing">
                             Aceptar
                         </PrimaryButton>
                     </div>
@@ -450,6 +405,7 @@ import {
 import SignaturePad from '@/Components/SignaturePad/SignaturePad.vue';
 import CheckCircleIcon from '@/Components/Icons/CheckCircleIcon.vue';
 import InputError from '@/Components/InputError.vue';
+import PersonalizableLink from '@/Components/PersonalizableLink.vue';
 export default {
     props: {
         admission: Object,
@@ -493,6 +449,7 @@ export default {
         FormatId,
         SignaturePad,
         BreadCrumb,
+        PersonalizableLink
     },
     data() {
         return {
@@ -502,12 +459,12 @@ export default {
             showEditReceptionist: ref(null),
             showEditDiagnosis: ref(null),
             admissionBeingPutInProgress: ref(null),
-            signatureError: false,
+
             signatureError: false,
             modalform: useForm({
                  admission_dx: this.admission.admission_dx,
             }),
-            form: {
+            form: useForm ({
                 charge: false,
                 patient_id: this.admission.patient_id,
                 bed_id: this.admission.bed_id,
@@ -517,13 +474,13 @@ export default {
                 final_dx: this.admission.final_dx,
                 comment: this.admission.comment,
                 discharged_date: this.admission.discharged_date
-            },
-            formDischarge: {
+            }),
+            formDischarge: useForm ({
                 discharge: true,
                 doctor_sign: this.admission.doctor_sign,
                 final_dx: this.admission.final_dx,
                 discharged_date: this.admission.discharged_date
-            },
+           }),
             formRecord: {
                 admission_id: this.admission.id,
                 receptionist_id: this.admission.receptionist_id,
@@ -533,7 +490,7 @@ export default {
     },
     methods: {
         submit() {
-            this.$inertia.put(route('admissions.update', this.admission.id), this.form, {
+            this.form.put(route('admissions.update', this.admission.id), {
                 preserveScroll: true
             })
         },
@@ -554,13 +511,23 @@ export default {
             this.submitDischarge();
         },
         submitDischarge() {
+                if (!this.formDischarge.final_dx) {
+                this.formDischarge.errors.final_dx = "Debe Ingresar un diagnóstico final."
+                return false
+            }
             if (!this.formDischarge.doctor_sign) {
                 this.signatureError = true;
                 return false
             }
+
             this.signatureError = false;
-            this.$inertia.put(route('admissions.update', this.admission.id), this.formDischarge, {
-                preserveScroll: true
+            this.formDischarge.put(route('admissions.update', this.admission.id), {
+                preserveScroll: true,
+                  onSuccess: () => {
+
+                        this.formDischarge.reset();
+                        this.formDischarge.errors = '';
+                    },
             });
             this.admissionUpdateCharge = null
         },

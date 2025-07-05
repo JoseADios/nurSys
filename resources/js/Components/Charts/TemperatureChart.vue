@@ -81,22 +81,19 @@ export default defineComponent({
                 },
             },
             xaxis: {
-                categories: [],
+                type: 'datetime',
                 labels: {
                     style: {
                         colors: isDarkMode.value ? '#e5e7eb' : '#1f2937',
                         fontSize: '11px',
                     },
-                    rotate: -45,
-                    rotateAlways: false,
+                    datetimeUTC: false,
                 },
-                xaxis: {
-                    axisBorder: {
-                        color: isDarkMode.value ? '#4b5563' : '#e5e7eb', // Gris más claro
-                    },
-                    axisTicks: {
-                        color: isDarkMode.value ? '#4b5563' : '#e5e7eb', // Gris más claro
-                    },
+                axisBorder: {
+                    color: isDarkMode.value ? '#4b5563' : '#e5e7eb',
+                },
+                axisTicks: {
+                    color: isDarkMode.value ? '#4b5563' : '#e5e7eb',
                 },
             },
             yaxis: {
@@ -146,13 +143,25 @@ export default defineComponent({
             },
             tooltip: {
                 theme: isDarkMode.value ? 'dark' : 'light',
+                intersect: true,
+                shared: false,
+                x: {
+                    formatter: function (val) {
+                        return moment(val).format('DD/MM/YYYY HH:mm');
+                    }
+                },
                 y: {
-                    formatter: (value, { dataPointIndex }) => {
-                        const evacuation = props.temperatureData[dataPointIndex].evacuations;
-                        const urination = props.temperatureData[dataPointIndex].urinations;
-                        const nurse = props.temperatureData[dataPointIndex].nurse;
-                        const nurseName = `${nurse.name} ${nurse.last_name}`;
-                        return `Temperatura: ${value} °C<br>Evacuaciones: ${evacuation}<br>Micciones: ${urination}<br>Enfermero: ${nurseName}`;
+                    formatter: (value, { series, seriesIndex, dataPointIndex, w }) => {
+                        // Because we added a null data point at the beginning, we need to adjust the index.
+                        const originalDataIndex = dataPointIndex - 1;
+                        if (props.temperatureData[originalDataIndex]) {
+                            const evacuation = props.temperatureData[originalDataIndex].evacuations;
+                            const urination = props.temperatureData[originalDataIndex].urinations;
+                            const nurse = props.temperatureData[originalDataIndex].nurse;
+                            const nurseName = `${nurse.name} ${nurse.last_name}`;
+                            return `Temperatura: ${value} °C<br>Evacuaciones: ${evacuation}<br>Micciones: ${urination}<br>Enfermero: ${nurseName}`;
+                        }
+                        return '';
                     }
                 }
             },
@@ -192,16 +201,17 @@ export default defineComponent({
         const processTemperatureData = () => {
             if (!props.temperatureData.length) return;
 
-            const dateObjects = props.temperatureData.map(item => new Date(item.updated_at));
+            const firstDate = moment(props.temperatureData[0].updated_at);
+            const seriesData = props.temperatureData.map(item => {
+                return [new Date(item.updated_at).getTime(), item.temperature];
+            });
 
-            chartOptions.value.xaxis.categories = dateObjects.map(date =>
-                date.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
-            );
+            // Add a null data point at the beginning of the day to force the axis to start there
+            seriesData.unshift([firstDate.startOf('day').valueOf(), null]);
 
-            chartSeries.value[0].data = props.temperatureData.map(item => item.temperature);
+            chartSeries.value[0].data = seriesData;
 
             const xAxisAnnotations = [];
-            const firstDate = moment(props.temperatureData[0].updated_at);
             let lastProcessedDayStr = '';
 
             props.temperatureData.forEach((item, index) => {
@@ -209,10 +219,10 @@ export default defineComponent({
                 const dayStr = date.format('YYYY-MM-DD');
 
                 if (dayStr !== lastProcessedDayStr) {
-                    const dayNumber = date.startOf('day').diff(firstDate.startOf('day'), 'days')-1;
+                    const dayNumber = date.startOf('day').diff(firstDate.startOf('day'), 'days') - 1;
 
                     xAxisAnnotations.push({
-                        x: chartOptions.value.xaxis.categories[index],
+                        x: moment(item.updated_at).startOf('day').valueOf(),
                         strokeDashArray: 0,
                         borderColor: isDarkMode.value ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
                         label: {
@@ -228,11 +238,9 @@ export default defineComponent({
                             offsetY: -15
                         }
                     });
-
                     lastProcessedDayStr = dayStr;
                 }
             });
-
             chartOptions.value.annotations.xaxis = xAxisAnnotations;
         };
 

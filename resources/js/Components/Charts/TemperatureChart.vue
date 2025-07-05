@@ -7,6 +7,8 @@
 <script>
 import { defineComponent, ref, computed, watchEffect } from 'vue';
 import ApexCharts from 'vue3-apexcharts';
+import moment from 'moment/moment';
+import 'moment/locale/es';
 
 export default defineComponent({
     components: {
@@ -199,16 +201,15 @@ export default defineComponent({
             chartSeries.value[0].data = props.temperatureData.map(item => item.temperature);
 
             const xAxisAnnotations = [];
-            const firstDate = new Date(props.temperatureData[0].updated_at);
+            const firstDate = moment(props.temperatureData[0].updated_at);
             let lastProcessedDayStr = '';
 
             props.temperatureData.forEach((item, index) => {
-                const date = new Date(item.updated_at);
-                const dayStr = date.toISOString().split('T')[0];
+                const date = moment(item.updated_at);
+                const dayStr = date.format('YYYY-MM-DD');
 
                 if (dayStr !== lastProcessedDayStr) {
-                    const diffTime = Math.abs(date - firstDate);
-                    const dayNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    const dayNumber = date.startOf('day').diff(firstDate.startOf('day'), 'days')-1;
 
                     xAxisAnnotations.push({
                         x: chartOptions.value.xaxis.categories[index],

@@ -114,7 +114,7 @@ const clearPhotoFileInput = () => {
 
 const hasErrorsInTab = (tabName) => {
     const errorFields = {
-        personal: ['name', 'last_name', 'email', 'photo', 'identification_card', 'birthdate'],
+        personal: ['name', 'last_name', 'email', 'identification_card', 'birthdate'],
         professional: ['exequatur', 'specialty', 'area', 'position'],
         contact: ['phone', 'address', 'comment']
     };

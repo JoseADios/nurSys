@@ -1,91 +1,103 @@
 <template>
     <AppLayout title="Crear Ingresos">
+        <!--BreadCrumb -->
         <template #header>
             <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
                 <BreadCrumb :items="[
-                     {
+                    {
                         text: 'Ingresos',
-                        route: route('admissions.index')
-
+                        route: route('admissions.index'),
                     },
                 ]" />
             </h2>
         </template>
 
-        <!-- Mostrar errores -->
-        <div v-if="errors.length > 0" class="mb-4 flex flex-col items-center">
-            <div class="mb-4 text-red-500" v-for="error in errors" :key="error">
+        <!--Errores -->
+        <div v-if="errors.length" class="px-3 sm:px-0 mb-4 flex flex-col items-center">
+            <p v-for="error in errors" :key="error" class="text-red-500 text-[13px] sm:text-sm mb-2 sm:mb-0">
                 {{ error }}
-            </div>
+            </p>
         </div>
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4 lg:mx-10">
-            <form class="max-w-xl mx-auto">
-
+        <!-- 📋 Formulario -->
+        <div class="relative overflow-x-auto shadow-none sm:shadow-md sm:rounded-lg mt-4 lg:mx-10 p-3 sm:p-0">
+            <form @submit.prevent="submit" class="max-w-md sm:max-w-xl mx-auto space-y-6">
+                <!-- Cama -->
                 <BedSelector :beds="beds" :errors="form.errors" :initialBedId="form.bed_id"
                     @update:bedId="updateBedId" />
 
-                <label for="patient"
-                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Paciente</label>
-                <PatientSelector @update:patient="form.patient_id = $event" :selectedPatientId="selectedPatient"/>
-                <InputError :message="form.errors.patient_id" class="mt-2" />
-
-                <label for="doctor"
-                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Doctor</label>
-                <UserSelector @update:user="form.doctor_id = $event" roles="doctor" />
-                <InputError :message="form.errors.doctor_id" class="mt-2" />
-
-                <label for="admission_dx"
-                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico de ingreso <span class="text-red-500">*</span></label>
-                <textarea required id="admission_dx" rows="4" v-model="form.admission_dx"
-                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Escribe el diagnóstico de ingreso..."></textarea>
-                <InputError :message="form.errors.admission_dx" class="mt-2" />
-
-                <label for="comment"
-                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Observaciones</label>
-                <textarea id="comment" rows="4" v-model="form.comment"
-                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Escribe las observaciones..."></textarea>
-                <InputError :message="form.errors.comment" class="mt-2" />
-  </form>
-                <div class="flex justify-end mt-6 mb-2 gap-2  max-w-xl mx-auto">
-                    <Link :href="route('admissions.index')" >
-                     <SecondaryButton         >
-                Cancelar</SecondaryButton>
-                    </Link>
-
-                    <PrimaryButton @click="admissionBeingCreated = true"
-                        >Guardar</PrimaryButton>
+                <!-- Paciente -->
+                <div>
+                    <label for="patient"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Paciente</label>
+                    <PatientSelector @update:patient="form.patient_id = $event" :selectedPatientId="selectedPatient" />
+                    <InputError :message="form.errors.patient_id" class="mt-2" />
                 </div>
 
+                <!-- Doctor -->
+                <div>
+                    <label for="doctor"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Doctor</label>
+                    <UserSelector @update:user="form.doctor_id = $event" roles="doctor" />
+                    <InputError :message="form.errors.doctor_id" class="mt-2" />
+                </div>
+
+                <!-- Dx ingreso -->
+                <div>
+                    <label for="admission_dx"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico
+                        de ingreso
+                        <span class="text-red-500">*</span></label>
+                    <textarea id="admission_dx" rows="4" required v-model="form.admission_dx"
+                        class="block w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Escribe el diagnóstico de ingreso..." />
+                    <InputError :message="form.errors.admission_dx" class="mt-2" />
+                </div>
+
+                <!-- Observaciones -->
+                <div>
+                    <label for="comment"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Observaciones</label>
+                    <textarea id="comment" rows="4" v-model="form.comment"
+                        class="block w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Escribe las observaciones..." />
+                    <InputError :message="form.errors.comment" class="mt-2" />
+                </div>
+
+                <!-- Botones -->
+                <div class="flex justify-end gap-2 sm:gap-4">
+                    <Link :href="route('admissions.index')">
+                    <SecondaryButton>Cancelar</SecondaryButton>
+                    </Link>
+
+                    <PrimaryButton @click="admissionBeingCreated = true" :class="{ 'opacity-25': form.processing }"
+                        :disabled="form.processing" :is-loading="form.processing">
+                        Guardar
+                    </PrimaryButton>
+                </div>
+            </form>
         </div>
-        <!-- modal para crear -->
+
+        <!-- Modal confirmación -->
         <ConfirmationModal :show="admissionBeingCreated != null" @close="admissionBeingCreated = null">
-            <template #title>
-                Crear Ingreso
-            </template>
+            <template #title>Crear Ingreso</template>
 
             <template #content>
-                ¿Estás seguro de que deseas crear este ingreso?
+                <p class="text-sm">
+                    ¿Estás seguro de que deseas crear este ingreso?
+                </p>
             </template>
 
             <template #footer>
-                <SecondaryButton @click="admissionBeingCreated = null">
-                    Cancelar
-                </SecondaryButton>
+                <SecondaryButton @click="admissionBeingCreated = null">Cancelar</SecondaryButton>
 
-                <PrimaryButton class="ms-3" @click="submit">
-                    Crear
-                </PrimaryButton>
+                <PrimaryButton class="ms-3" @click="submit">Crear</PrimaryButton>
             </template>
         </ConfirmationModal>
     </AppLayout>
-
 </template>
 
 <script>
-
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
@@ -146,3 +158,4 @@ export default {
     }
 }
 </script>
+

@@ -1,602 +1,632 @@
-<template>
-    <AppLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
+            <template>
+                <AppLayout>
+                    <template #header>
+                        <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
+                            <BreadCrumb :items="[
+                                ...(admission_id
+                                    ? [
+                                        {
+                                            formattedId: { id: admission_id, prefix: 'ING' },
+                                            route: route('admissions.show', admission_id),
+                                        },
+                                    ]
+                                    : []),
+                                {
+                                    text: 'Ficha de Medicamentos',
+                                    route: admission_id
+                                        ? route('medicationRecords.index', { admission_id })
+                                        : route('medicationRecords.index'),
+                                },
+                                {
+                                    formattedId: { id: medicationRecord.id, prefix: 'FICH' },
+                                },
+                            ]" />
+                        </h2>
+                    </template>
 
-                <BreadCrumb :items="[
-                    ...(admission_id ? [{
-                        formattedId: { id: admission_id, prefix: 'ING' },
-                        route: route('admissions.show', admission_id)
-                    }] : []),
-                    {
-                        text: 'Ficha de Medicamentos',
-                        route: admission_id
-                            ? route('medicationRecords.index', { admission_id })
-                            : route('medicationRecords.index')
-                    },
-
-                    {
-                        formattedId: { id: medicationRecord.id, prefix: 'FICH' }
-                    }
-                ]" />
-            </h2>
-
-        </template>
-        <div class="container mx-auto px-4   py-8">
-
-            <div
-                class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
-
-                <div class="p-4 dark:bg-gray-900 flex justify-between items-center">
-                    <Link
-                        :href="admission_id ? route('admissions.show', admission_id) : route('medicationRecords.index')"
-                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <BackIcon class="size-5" />
-                    Volver
-                    </Link>
-
-                    <div class="flex items-center gap-2">
-                        <PersonalizableButton v-if="medicationRecord.active" @click="downloadRecordReport"
-                            color="emerald">
-                            <ReportIcon class="size-5 " />
-                          <span class="hidden sm:inline-flex">Crear Reporte</span>
-                        </PersonalizableButton>
-                        <AccessGate :permission="['medicationRecord.delete']">
-                            <DangerButton v-if="medicationRecord.active" @click="recordBeingDeleted = true">
-
-                                <TrashIcon class="size-5" />
-                                <span class="font-medium  hidden sm:inline-flex">Eliminar</span>
-
-                            </DangerButton>
-                            <PersonalizableButton v-else @click="restoreRecord(medicationRecord)" class="gap-2"
-                                color="green" :loading="recordActiveChanging">
-                                <RestoreIcon class="size-5" />
-                                <span class="hidden sm:inline-flex">Restaurar</span>
-                            </PersonalizableButton>
-                        </AccessGate>
-                    </div>
-
-                </div>
-
-                <!-- Mostrar errores -->
-                <div v-if="errors.length > 0" class="bg-red-50 border-l-4 border-red-500 p-4 mx-8 my-4">
-                    <div class="text-red-700" v-for="error in errors" :key="error">
-                        {{ error }}
-                    </div>
-                </div>
-                <!-- Información Principal -->
-                <div class="p-8 space-y-8 bg-gray-50 dark:bg-gray-700">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Paciente -->
+                    <div class="container mx-auto px-4 py-8">
                         <div
-                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <Link :href="route('patients.show', medicationRecord.admission.patient.id)" as="button"
-                                class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
-                            {{ medicationRecord.admission.patient.first_name }}
-                            {{ medicationRecord.admission.patient.first_surname }}
-                            {{ medicationRecord.admission.patient.second_surname }}
-                            </Link>
-                        </div>
+                            class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
 
-                        <!-- Doctor -->
-                        <div
-                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                <!-- Verifica que la relación drug esté definida -->
-                                {{ medicationRecord.admission.doctor.name }} {{
-                                    medicationRecord.admission.doctor.last_name }}
-                            </p>
+                            <div class="p-4 dark:bg-gray-900
+                        flex items-center flex-nowrap gap-2"> <!-- fila fija, sin wrap -->
 
-                        </div>
+                                <!-- Volver (misma altura que los otros botones) -->
+                                <Link
+                                    :href="admission_id ? route('admissions.show', admission_id) : route('medicationRecords.index')"
+                                    class="inline-flex items-center gap-2
+                    px-3 py-2 rounded-md text-sm font-medium
+                    text-blue-600 hover:text-blue-800 transition-colors">
+                                <BackIcon class="size-5" />
+                                <span>Volver</span>
+                                </Link>
 
-                        <!-- Diagnostico -->
-                        <div
-                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnostico</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ medicationRecord.admission.admission_dx }}
-                            </p>
-                        </div>
+                                <!-- Botones de acción (derecha) -->
+                                <div class="ml-auto flex items-center gap-2"> <!-- empujado al borde derecho -->
+                                    <PersonalizableButton v-if="medicationRecord.active" @click="downloadRecordReport"
+                                        color="emerald">
+                                        <ReportIcon class="size-5" />
+                                        <span class="hidden sm:inline-flex">Crear Reporte</span>
+                                    </PersonalizableButton>
 
-                        <!-- bed -->
-                        <div
-                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                Cama {{ medicationRecord?.admission?.bed?.number || "N/A" }}
-                                Habitación {{ medicationRecord?.admission?.bed?.room || "N/A" }}
+                                    <AccessGate :permission="['medicationRecord.delete']">
+                                        <DangerButton v-if="medicationRecord.active" @click="recordBeingDeleted = true">
+                                            <TrashIcon class="size-5" />
+                                            <span class="font-medium hidden sm:inline-flex">Eliminar</span>
+                                        </DangerButton>
 
-                            </p>
-
-                        </div>
-
-                        <!-- Dieta -->
-                        <div
-                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 flex justify-between items-center">
-                            <div>
-                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Dieta</h3>
-                                <p class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
-                                    {{ medicationRecord.diet }}
-                                </p>
+                                        <PersonalizableButton v-else @click="restoreRecord(medicationRecord)"
+                                            class="gap-2" color="green" :loading="recordActiveChanging">
+                                            <RestoreIcon class="size-5" />
+                                            <span class="hidden sm:inline-flex">Restaurar</span>
+                                        </PersonalizableButton>
+                                    </AccessGate>
+                                </div>
                             </div>
-                            <AccessGate :permission="['medicationRecord.update']" class="mt-auto">
-                                <button class="text-blue-500 ml-2 hover:text-blue-800" @click="openCreateModal()">
-                                    <EditIcon class="size-5" />
-                                </button>
-                            </AccessGate>
-                        </div>
+                            <!-- Alerta de errores responsive -->
+                            <div v-if="errors.length > 0"
+                                class="bg-red-50 border-l-4 border-red-500 p-4 mx-4 sm:mx-8 my-4 rounded-md">
+                                <!-- Lista de errores -->
+                                <ul class="list-disc list-inside space-y-1 text-sm sm:text-base text-red-700">
+                                    <li v-for="error in errors" :key="error">
+                                        {{ error }}
+                                    </li>
+                                </ul>
+                            </div>
 
-                        <!-- Fecha Admission -->
-                        <div
-                            class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha
-                            </h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ formatDate(medicationRecord.created_at) }}
-                            </p>
-                        </div>
-                        <div v-if="$page.props.errors.message" class="alert alert-danger">
-                            {{ $page.props.errors.message }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="p-8">
-                    <AccessGate :permission="['medicationRecordDetail.create']">
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevo Detalle</h3>
-                        <div v-if="showCreateDetailForm == false">
-                            <PersonalizableButton @click="OpenFormCreateRecord" id="add_detail" size="large"
-                                class="w-full">
-                                Agregar Detalle
-                            </PersonalizableButton>
-                        </div>
-                        <div v-else>
-                            <PersonalizableButton @click="closeform" id="add_detail" size="large" class="w-full">
-                                Cerrar
-                            </PersonalizableButton>
-                        </div>
-                    </AccessGate>
-
-                    <div v-if="showCreateDetailForm"
-                        class="grid border grid-cols-1  lg:grid-cols-2 shadow-xl rounded-lg gap-4   lg:mx-2 mt-6 "
-                        id="formcreaterecord">
-                        <!-- Tarjeta para información del Medical Order -->
-                        <div class="relative overflow-hidden rounded-lg pb-auto   bg-white dark:bg-gray-800 mb-5">
-
-                            <div class="h-full overflow-y-auto    sm:rounded-lg mt-10 space-y-2 lg:mx-10">
-                                <div class="col w-full md:w-[100%] p-4 md:p-2 ">
-                                    <h3 class="text-xl font-semibold text-gray-800 pl-2 dark:text-white mb-6">Órdenes
-                                        médicas
-                                        <span class="text-red-500">*</span>
-                                    </h3>
-
-                                    <!-- Mensaje cuando no hay órdenes -->
-                                    <div v-if="!orders || orders.length === 0 || !orders.some(o => o.medical_order_detail && o.medical_order_detail.length > 0)"
-                                        class="text-center pb-4 text-sm text-gray-500 dark:text-gray-400">
-                                        No hay órdenes médicas disponibles.
+                            <!-- Información Principal -->
+                            <div class="p-8 space-y-8 bg-gray-50 dark:bg-gray-700">
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <!-- Paciente -->
+                                    <div
+                                        class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente
+                                        </h3>
+                                        <Link :href="route('patients.show', medicationRecord.admission.patient.id)"
+                                            as="button"
+                                            class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
+                                        {{ medicationRecord.admission.patient.first_name }}
+                                        {{ medicationRecord.admission.patient.first_surname }}
+                                        {{ medicationRecord.admission.patient.second_surname }}
+                                        </Link>
                                     </div>
 
+                                    <!-- Doctor -->
+                                    <div
+                                        class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor
+                                        </h3>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            <!-- Verifica que la relación drug esté definida -->
+                                            {{ medicationRecord.admission.doctor.name }} {{
+                                                medicationRecord.admission.doctor.last_name }}
+                                        </p>
 
-                                    <!-- Acordeón de Órdenes Médicas -->
-                                    <div v-else class="space-y-4 h-full overflow-y-auto">
-                                        <div v-for="(order, index) in orders" :key="order.id">
-                                            <div v-if="order.medical_order_detail.length !== 0"
-                                                class="accordion-item border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                                    </div>
 
-                                                <div @click="toggleAccordion(index)"
-                                                    class="accordion-header cursor-pointer flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                                                    <div class="flex items-center justify-between w-full space-x-2">
-                                                        <span class="font-semibold text-gray-800 dark:text-white">
-                                                            <Link :href="route('medicalOrders.show', order.id)">
-                                                            <FormatId :id="order.id" prefix="ORD" />
-                                                            </Link>
-                                                            <!-- - {{ order.doctor.name }} {{ order.doctor.last_name }} -->
-                                                        </span>
-                                                        <span
-                                                            class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
-                                                                formatDateFromNow(order.created_at)
-                                                            }}</span>
-                                                    </div>
-                                                    <ChevronDown
-                                                        class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white"
-                                                        :class="{ 'rotate-180': openAccordion === index }" />
+                                    <!-- Diagnostico -->
+                                    <div
+                                        class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
+                                            Diagnostico</h3>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            {{ medicationRecord.admission.admission_dx }}
+                                        </p>
+                                    </div>
+
+                                    <!-- bed -->
+                                    <div
+                                        class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación
+                                        </h3>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            Cama {{ medicationRecord?.admission?.bed?.number || "N/A" }}
+                                            Habitación {{ medicationRecord?.admission?.bed?.room || "N/A" }}
+
+                                        </p>
+
+                                    </div>
+
+                                    <!-- Dieta -->
+                                    <div
+                                        class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 flex justify-between items-center">
+                                        <div>
+                                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Dieta
+                                            </h3>
+                                            <p
+                                                class="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
+                                                {{ medicationRecord.diet }}
+                                            </p>
+                                        </div>
+                                        <AccessGate :permission="['medicationRecord.update']" class="mt-auto">
+                                            <button class="text-blue-500 ml-2 hover:text-blue-800"
+                                                @click="openCreateModal()">
+                                                <EditIcon class="size-5" />
+                                            </button>
+                                        </AccessGate>
+                                    </div>
+
+                                    <!-- Fecha Admission -->
+                                    <div
+                                        class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
+                                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha
+                                        </h3>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            {{ formatDate(medicationRecord.created_at) }}
+                                        </p>
+                                    </div>
+                                    <div v-if="$page.props.errors.message" class="alert alert-danger">
+                                        {{ $page.props.errors.message }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-2 sm:p-4">
+
+                                <AccessGate :permission="['medicationRecordDetail.create']">
+                                    <h3
+                                        class="text-lg sm:text-xl font-semibold text-gray-800 dark:text-white mb-2 sm:mb-3 px-2">
+                                        Agregar Nuevo Detalle
+                                    </h3>
+
+                                    <PersonalizableButton v-if="!showCreateDetailForm" @click="OpenFormCreateRecord"
+                                        id="add_detail" size="large" class="w-full px-2">
+                                        Agregar Detalle
+                                    </PersonalizableButton>
+
+                                    <PersonalizableButton v-else @click="closeform" id="add_detail" size="large"
+                                        class="w-full px-2">
+                                        Cerrar
+                                    </PersonalizableButton>
+                                     </AccessGate>
+
+                                    <!-- Formulario -->
+                                    <div
+                                    v-if="showCreateDetailForm"
+                                    class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 border shadow-xl rounded-2xl mt-3 sm:mt-4 mx-1 sm:mx-3"
+                                    >
+                                    <!-- Tarjeta Órdenes -->
+                                    <div class="rounded-2xl bg-white dark:bg-gray-800 overflow-hidden">
+
+                                        <!-- Contenedor scrollable -->
+                                        <div class="overflow-y-auto max-h-[70vh] sm:max-h-none space-y-2 sm:space-y-1 p-2 sm:p-4">
+                                        <h3 class="text-lg sm:text-xl font-semibold text-gray-800 dark:text-white mb-2 sm:mb-3 px-2">
+                                            Órdenes médicas <span class="text-red-500">*</span>
+                                        </h3>
+
+                                        <!-- Sin órdenes -->
+                                        <div
+                                            v-if="!orders || orders.length === 0 || !orders.some(o => o.medical_order_detail?.length)"
+                                            class="text-center text-sm sm:text-base text-gray-500 dark:text-gray-400 py-2 px-2"
+                                        >
+                                            No hay órdenes médicas disponibles.
+                                        </div>
+
+                                        <!-- Acordeón -->
+                                        <div v-else class="space-y-2">
+                                            <div v-for="(order, index) in orders" :key="order.id">
+                                            <div
+                                                v-if="order.medical_order_detail.length"
+                                                class="border border-gray-200 dark:border-gray-700 rounded-2xl sm:rounded-xl overflow-hidden"
+                                            >
+                                                <!-- Header acordeón -->
+                                                <div
+                                                @click="toggleAccordion(index)"
+                                                class="flex justify-between items-center p-2 sm:p-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                                                >
+                                                <div class="flex justify-between w-full gap-1 px-2">
+                                                    <span class="font-semibold text-gray-800 dark:text-white">
+                                                    <Link :href="route('medicalOrders.show', order.id)">
+                                                        <FormatId :id="order.id" prefix="ORD" />
+                                                    </Link>
+                                                    </span>
+                                                    <span class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                                    {{ formatDateFromNow(order.created_at) }}
+                                                    </span>
                                                 </div>
 
-                                                <!-- Contenido del Acordeón -->
-                                                <div v-if="openAccordion === index"
-                                                    class="accordion-content p-4 bg-white dark:bg-gray-900">
-                                                    <div v-for="(detail, detailIndex) in order.medical_order_detail"
-                                                        :key="detailIndex" @click="selectOrder(detail.id)" :class="{
-                                                            'bg-indigo-100 dark:bg-indigo-500  text-white': selectedOrderId === detail.id && !detail.suspended_at,
-                                                            'bg-white dark:bg-gray-800': selectedOrderId !== detail.id && !detail.suspended_at,
-
-                                                        }"
-                                                        class="border mb-2 rounded-lg p-4 m-2  shadow-md cursor-pointer transition duration-200">
-
-                                                        <div class="flex flex-col justify-between items-start">
-                                                            <div class="w-full flex flex-col">
-                                                                <div class="flex justify-between items-center w-full">
-                                                                    <p
-                                                                        class="text-sm font-semibold text-gray-800 dark:text-white">
-                                                                        {{ detail.order }}
-                                                                    </p>
-                                                                    <p class="text-xs text-gray-500 dark:text-gray-300">
-                                                                        {{ formatDateFromNow(detail.created_at) }}
-                                                                    </p>
-                                                                </div>
-                                                                <p
-                                                                    class="text-xs text-gray-600 dark:text-gray-300 mt-1">
-                                                                    {{ detail.regime }}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                <ChevronDown
+                                                    class="h-4 w-4 sm:h-5 sm:w-5 text-gray-800 dark:text-white transform transition-transform duration-300"
+                                                    :class="{ 'rotate-180': openAccordion === index }"
+                                                />
                                                 </div>
+
+                                                <!-- Contenido acordeón -->
+                                                <div
+                                                v-if="openAccordion === index"
+                                                class="p-2 sm:p-3 bg-white dark:bg-gray-900 rounded-b-2xl"
+                                                >
+                                                <div
+                                                    v-for="(detail, detailIndex) in order.medical_order_detail"
+                                                    :key="detailIndex"
+                                                    @click="selectOrder(detail.id)"
+                                                    :class="[
+                                                    'border rounded-xl p-2 sm:p-2.5 m-0.5 sm:m-1 shadow cursor-pointer transition',
+                                                    detail.suspended_at
+                                                        ? 'opacity-50 pointer-events-none'
+                                                        : selectedOrderId === detail.id
+                                                        ? 'bg-indigo-100 dark:bg-indigo-500 text-white'
+                                                        : 'bg-white dark:bg-gray-800'
+                                                    ]"
+                                                >
+                                                    <div class="flex justify-between items-start w-full px-2">
+                                                    <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                                        {{ detail.order }}
+                                                    </p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-300">
+                                                        {{ formatDateFromNow(detail.created_at) }}
+                                                    </p>
+                                                    </div>
+                                                    <p class="text-xs text-gray-600 dark:text-gray-300 mt-0.5 px-2">
+                                                    {{ detail.regime }}
+                                                    </p>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        <!-- /Acordeón -->
+                                        </div>
+                                        <!-- /Overflow -->
+
+                                        <!-- Espacio del detalle de Medical Orders -->
+
+                                    </div>
+                                    <div class="relative overflow-x-auto sm:rounded-lg mx-2 sm:mx-10">
+
+                                        <!-- Formulario -->
+                                        <form @submit.prevent="submit" class="w-full sm:max-w-sm mx-auto px-2 sm:px-0">
+
+                                            <!-- Medicamento -->
+                                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center mt-4">
+                                                <input type="hidden" v-model="form.selectedOrderId" />
+
+                                                <div class="w-full">
+                                                    <label for="drug"
+                                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white px-2">
+                                                        Medicamento
+                                                    </label>
+                                                    <DrugSelector v-model:drug="form.drug" />
+                                                    <InputError :message="form.errors.drug" class="mt-2 px-2" />
+                                                </div>
+                                            </div>
+
+                                            <!-- Nebulizado -->
+                                            <label
+                                                class="flex items-center justify-between mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white px-2">
+                                                Nebulizado:
+                                                <Checkbox class="ml-2" v-model:checked="form.nebulized" />
+                                            </label>
+
+                                            <!-- Vía (solo cuando NO nebulizado) -->
+                                            <div v-if="!form.nebulized" class="mt-2">
+                                                <label for="route-select"
+                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white px-2">
+                                                    Vía <span class="text-red-500">*</span>
+                                                </label>
+                                                <select id="route-select" v-model="form.route" required
+                                                    class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500">
+                                                    <option v-for="r in routeOptions" :key="r.id" :value="r.name">
+                                                        {{ r.name }} - {{ r.description }}
+                                                    </option>
+                                                </select>
+                                                <InputError :message="form.errors.route" class="mt-2 px-2" />
+                                            </div>
+
+                                            <!-- Dosis + Métrica -->
+                                            <div class="flex flex-col gap-4 sm:flex-row sm:space-x-4 mt-6">
+                                                <!-- Dosis -->
+                                                <div class="flex-1">
+                                                    <label for="dose"
+                                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white px-2">
+                                                        Dosis <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <input id="dose" type="number" required v-model="form.dose"
+                                                        placeholder="Escribe la dosis…"
+                                                        class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500" />
+                                                    <InputError :message="form.errors.dose" class="mt-2 px-2" />
+                                                </div>
+
+                                                <!-- Métrica -->
+                                                <div class="flex-1">
+                                                    <label for="dose-select"
+                                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white px-2">
+                                                        Métrica <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <select id="dose-select" v-model="form.dose_metric" required
+                                                        class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500">
+                                                        <template v-if="!form.nebulized">
+                                                            <option v-for="d in dose" :key="d.id" :value="d.name">
+                                                                {{ d.name }} - {{ d.description }}
+                                                            </option>
+                                                        </template>
+                                                        <template v-else>
+                                                            <option value="ML">Ml – Mililitro</option>
+                                                            <option value="MG">MG – Miligramo</option>
+                                                            <option value="MCG">MCG – Microgramo</option>
+                                                        </template>
+                                                    </select>
+                                                    <InputError :message="form.errors.dose_metric" class="mt-2 px-2" />
+                                                </div>
+                                            </div>
+
+                                            <!-- Frecuencia -->
+                                            <div class="mt-6">
+                                                <label for="fc"
+                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white px-2">
+                                                    Frecuencia <span class="text-red-500">*</span>
+                                                </label>
+                                                <input id="fc" type="number" required v-model="form.fc"
+                                                    placeholder="Frecuencia de uso…"
+                                                    class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500" />
+                                                <InputError :message="form.errors.fc" class="mt-2 px-2" />
+                                            </div>
+
+                                            <!-- Intervalo o Tiempo de nebulización -->
+                                            <div class="flex flex-col gap-4 sm:flex-row sm:space-x-4 mt-6">
+                                                <!-- Intervalo -->
+                                                <div v-if="!form.nebulized" class="flex-1">
+                                                    <label for="interval_in_hours"
+                                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white px-2">
+                                                        Intervalo (horas) <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <input id="interval_in_hours" type="number" required
+                                                        v-model="form.interval_in_hours" placeholder="Intervalo…"
+                                                        class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500" />
+                                                    <InputError :message="form.errors.interval_in_hours"
+                                                        class="mt-2 px-2" />
+                                                </div>
+
+                                                <!-- Tiempo nebulización -->
+                                                <div v-else class="flex-1">
+                                                    <label for="nebulization_time"
+                                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white px-2">
+                                                        Tiempo de Nebulización (min) <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <input id="nebulization_time" type="number" required
+                                                        v-model="form.nebulization_time" placeholder="Tiempo…"
+                                                        class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500" />
+                                                    <InputError :message="form.errors.nebulization_time"
+                                                        class="mt-2 px-2" />
+                                                </div>
+                                            </div>
+
+                                            <!-- Hora de inicio -->
+                                            <div class="mt-6">
+                                                <label for="start_time"
+                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white px-2">
+                                                    Hora de Inicio <span class="text-red-500">*</span>
+                                                </label>
+                                                <input id="start_time" type="time" :min="currentTime" required
+                                                    v-model="form.start_time"
+                                                    class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500" />
+                                                <InputError :message="form.errors.start_time" class="mt-2 px-2" />
+                                            </div>
+
+                                            <!-- Botones -->
+                                            <div class="flex items-center justify-end gap-3 mt-6 mb-6 px-2">
+                                                <SecondaryButton @click="closeform">
+                                                    Cerrar
+                                                </SecondaryButton>
+                                                <PrimaryButton :class="{ 'opacity-25': form.processing }"
+                                                    :is-loading="form.processing" :disabled="form.processing">
+                                                    Guardar
+                                                </PrimaryButton>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mensaje de error global -->
+                            <div v-if="errorMessage"
+                                class="bg-red-100 text-red-700 text-center p-2 mx-2 sm:mx-0 rounded-md mb-2">
+                                {{ errorMessage }}
+                            </div>
+
+
+                            <!-- 🔄 Detalles Ficha de medicamentos -->
+                            <div class="p-4 sm:p-8 space-y-4 bg-gray-50 dark:bg-gray-700">
+                                <!-- Encabezado + botón de eliminados -->
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white">
+                                        Detalles del Registro
+                                    </h3>
+
+                                    <AccessGate :permission="['medicationRecord.delete']">
+                                        <!-- 100 % de ancho en móvil  /  auto en desktop -->
+                                        <PersonalizableButton custom-class="whitespace-nowrap w-full sm:w-auto"
+                                            @click="toggleShowDeleted" :color="form.showDeleted ? 'red' : 'gray'">
+                                            {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                                            <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                                            <CircleXIcon v-else class="ml-1 h-5 w-5" />
+                                        </PersonalizableButton>
+                                    </AccessGate>
+                                </div>
+
+                                <!-- Tarjetas de detalle -->
+                                <div v-for="detail in details" :key="detail.id" :class="[
+                                    'rounded-lg p-4 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors',
+                                    detail.suspended_at
+                                        ? 'bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-900/30'
+                                        : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900'
+                                ]">
+                                    <!-- Info principal -->
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-gray-900 dark:text-white">
+                                            Medicamento: {{ detail.drug }}
+                                        </div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                            Fecha de Creación: {{ formatDate(detail.created_at) }}
+                                        </div>
+
+                                        <div v-if="detail.nebulization_time"
+                                            class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                            Intervalo de cada: {{ detail.nebulization_time }} minutos
+                                        </div>
+                                        <div v-if="detail.interval_in_hours"
+                                            class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                            Intervalo de cada: {{ detail.interval_in_hours }} horas
+                                        </div>
+
+                                        <div v-for="notifications in detail.medication_notification"
+                                            :key="notifications.id"
+                                            class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                            <div v-if="Firstnoapplied(notifications)">
+                                                Siguiente: {{ formatDate(notifications.scheduled_time) }}
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <!-- Espacio del detalle de Medical Orders -->
+                                    <!-- Acciones: todos en paralelo con espacio para dedos -->
+                                    <div class="flex flex-row flex-wrap items-center gap-3 text-sm">
+                                        <!-- NOTIFICACIONES -->
+                                        <AccessGate :permission="['medicationNotification.view']">
+                                            <Link v-if="detail.active && detail.suspended_at === null"
+                                                :href="route('medicationNotification.show', { medicationNotification: detail.id, admission_id: admission_id })"
+                                                class="inline-flex items-center px-3 py-2 rounded-md text-blue-600 hover:text-blue-800 transition-colors">
+                                            <NotificationIcon class="size-5 mr-1" />
+                                            Notificaciones
+                                            </Link>
+                                        </AccessGate>
 
-                        </div>
+                                        <!-- EDITAR -->
+                                        <AccessGate :permission="['medicationRecordDetail.update']">
+                                            <Link v-if="detail.active && !detail.suspended_at && !hasApplied(detail)"
+                                                :href="route('medicationRecordDetails.edit', { medicationRecordDetail: detail.id, admission_id: admission_id })"
+                                                class="inline-flex items-center px-3 py-2 rounded-md text-yellow-600 hover:text-yellow-800 transition-colors">
+                                            <EditIcon class="size-5 mr-1" />
+                                            Editar
+                                            </Link>
+                                        </AccessGate>
 
-                        <div class="relative overflow-x-auto   sm:rounded-lg   lg:mx-10">
-                            <form @submit.prevent="submit" class="max-w-sm mx-auto">
+                                        <!-- SUSPENDER / HABILITAR -->
+                                        <AccessGate :permission="['medicationRecord.update']">
+                                            <button v-if="medicationRecord.active" @click="ToggleSuspend(detail)"
+                                                :disabled="recordDetailSupendChange" :class="[
+                                                    'inline-flex items-center px-3 py-2 rounded-md transition-colors',
+                                                    detail.suspended_at ? 'text-green-500 hover:text-green-700' : 'text-indigo-500',
+                                                    { 'opacity-25': recordDetailSupendChange }
+                                                ]">
+                                               <component
+                                                :is="detail.suspended_at ? 'RestoreIcon' : 'SuspendIcon'"
+                                                class="size-5 mr-1"/>
+                                                {{ detail.suspended_at ? 'Habilitar' : 'Suspender' }}
+                                            </button>
+                                        </AccessGate>
 
-                                <!-- Contenedor para la Medicamento y el selector -->
-                                <div class="flex justify-between items-center mt-6">
+                                        <!-- ELIMINAR / RESTAURAR -->
+                                        <AccessGate :permission="['medicationRecord.delete']">
+                                            <button v-if="detail.active"
+                                                @click="detailBeingDeleted = true; selectedDetail = detail"
+                                                class="inline-flex items-center px-3 py-2 rounded-md text-red-500 hover:text-red-700 transition-colors">
+                                                <TrashIcon class="size-5 mr-1" /> Eliminar
+                                            </button>
 
-                                    <input type="hidden" v-model="form.selectedOrderId" />
-
-                                    <!-- Selector de Medicamento -->
-                                    <div class="w-full mb-2">
-                                        <label for="drug"
-                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Medicamento
-                                        </label>
-                                        <DrugSelector v-model:drug="form.drug" />
-                                        <InputError :message="form.errors.drug" class="mt-2" />
-                                    </div>
-                                </div>
-                                <label for="drug"
-                                    class="flex justify-between ml-1 pb-2 items-center mb-2 text-sm font-medium text-gray-900 dark:text-white">
-
-                                    <span class="flex">
-                                        Nebulizado:
-                                        <Checkbox class="ml-2 mt-1" v-model:checked="form.nebulized" />
-                                    </span>
-                                </label>
-
-                                <!-- Selector -->
-                                <div class="flex-1" v-if="!form.nebulized">
-                                    <label for="route-select"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        Via <span class="text-red-500">*</span>
-                                    </label>
-                                    <select id="route-select" required v-model="form.route"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                        <option v-for="routes in routeOptions" :key="routes.id" :value="routes.name">
-                                            {{ routes.name }} - {{ routes.description }}
-                                        </option>
-                                    </select>
-                                    <InputError :message="form.errors.route" class="mt-2" />
-                                </div>
-
-                                <!-- Contenedor para la Dosis y el selector -->
-                                <div class="flex items-center space-x-4 mt-6">
-                                    <!-- Dosis -->
-                                    <div class="flex-1">
-                                        <label for="dose"
-                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            Dosis <span class="text-red-500">*</span>
-                                        </label>
-                                        <input id="dose" required type="number" v-model="form.dose"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                            placeholder="Escribe la Dosis asignada..." />
-                                        <InputError :message="form.errors.dose" class="mt-2" />
-                                    </div>
-                                    <!-- Selector -->
-                                    <div class="flex-1" v-if="!form.nebulized">
-                                        <label for="dose-select"
-                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            Métrica <span class="text-red-500">*</span>
-                                        </label>
-                                        <select id="dose-select" required v-model="form.dose_metric"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                            <option v-for="doses in dose" :key="doses.id" :value="doses.name">
-                                                {{ doses.name }} - {{ doses.description }}
-                                            </option>
-                                        </select>
-                                        <InputError :message="form.errors.dose_metric" class="mt-2" />
-
-                                    </div>
-                                    <div class="flex-1" v-else>
-                                        <label for="dose-select"
-                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                            Métrica <span class="text-red-500">*</span>
-                                        </label>
-                                        <select id="dose-select" required v-model="form.dose_metric"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                            <option value="MG">Ml - Mililitro </option>
-                                            <option value="MG">MG - Miligramo </option>
-                                            <option value="MG">MCG - Microgramo </option>
-                                        </select>
-                                        <InputError :message="form.errors.dose_metric" class="mt-2" />
+                                            <button v-else @click="selectedDetail = detail; restoreDetail()"
+                                                class="inline-flex items-center px-3 py-2 rounded-md text-green-500 hover:text-green-700 transition-colors">
+                                                <RestoreIcon class="size-5 mr-1" /> Restaurar
+                                            </button>
+                                        </AccessGate>
                                     </div>
                                 </div>
 
-                                <!-- Estudios Pendientes -->
-                                <label for="fc"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                                    Frecuencia <span class="text-red-500">*</span>
-                                </label>
-                                <input id="fc" rows="4" required type="number" v-model="form.fc"
-                                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Frecuencia de uso del medicamento..."></input>
-                                <InputError :message="form.errors.fc" class="mt-2" />
-                                <!-- Contenedor para la Intervalo en horas y minutos -->
-                                <div class="flex items-center space-x-4 mt-6">
-                                    <!-- Dosis -->
-                                    <div class="flex-1" v-if="!form.nebulized">
-                                        <!-- Intervalo en Horas -->
-                                        <label for="interval_in_hours"
-                                            class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                                            Intervalo en Horas <span class="text-red-500">*</span>
-                                        </label>
-                                        <input required id="interval_in_hours" type="number"
-                                            v-model="form.interval_in_hours"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                            placeholder="Intervalo en Horas..." />
-                                        <InputError :message="form.errors.interval_in_hours" class="mt-2" />
+                                <!-- Sin detalles -->
+                                <div v-if="details.length === 0"
+                                    class="text-center text-gray-500 dark:text-gray-400 py-4">
+                                    No hay detalles de registro disponibles.
+                                </div>
+                            </div>
+
+
+
+                            <!-- Confirmación de eliminación -->
+                            <ConfirmationModal :show="recordBeingDeleted !== null || detailBeingDeleted !== null"
+                                @close="recordBeingDeleted = null; detailBeingDeleted = null"
+                                class="w-[92vw] max-w-sm sm:max-w-md">
+                                <!-- Título -->
+                                <template #title>Eliminar registro</template>
+
+                                <!-- Contenido -->
+                                <template v-if="recordBeingDeleted" #content>
+                                    ¿Estás seguro de que deseas eliminar este registro?
+                                </template>
+                                <template v-else #content>
+                                    ¿Estás seguro de que deseas eliminar este detalle?
+                                </template>
+
+                                <!-- Acciones -->
+                                <template #footer>
+                                    <div class="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3">
+                                        <SecondaryButton @click="recordBeingDeleted = null; detailBeingDeleted = null"
+                                            class="w-full sm:w-auto">
+                                            Cancelar
+                                        </SecondaryButton>
+
+                                        <DangerButton v-if="recordBeingDeleted" class="w-full sm:w-auto"
+                                            @click="deleteRecord">
+                                            <TrashIcon class="size-5 mr-2" />
+                                            Eliminar registro
+                                        </DangerButton>
+
+                                        <DangerButton v-else class="w-full sm:w-auto"
+                                            @click="deleteDetail(); detailBeingDeleted = null">
+                                            <TrashIcon class="size-5 mr-2" />
+                                            Eliminar detalle
+                                        </DangerButton>
                                     </div>
-                                    <!-- Selector -->
-                                    <div class="flex-1" v-if="form.nebulized">
-                                        <!-- Intervalo en Horas -->
-                                        <label for="nebulization_time"
-                                            class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                                            Tiempo de Nebulización (min) <span class="text-red-500">*</span>
-                                        </label>
-                                        <input required id="nebulization_time" type="number"
-                                            v-model="form.nebulization_time"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                            placeholder=" Tiempo de Nebulización..." />
-                                        <InputError :message="form.errors.nebulization_time" class="mt-2" />
-                                    </div>
-                                </div>
+                                </template>
+                            </ConfirmationModal>
 
-                                <!-- Hora de Inicio -->
-                                <label for="start_time"
-                                    class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">
-                                    Hora de Inicio <span class="text-red-500">*</span>
-                                </label>
-                                <input required id="start_time" type="time" v-model="form.start_time" :min="currentTime"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Hora de Inicio..." />
-                                <InputError :message="form.errors.start_time" class="mt-2" />
+                            <!--Modal de edición de dieta -->
+                            <DialogModal :show="isVisible" @close="isVisible = false"
+                                class="w-[92vw] max-w-sm sm:max-w-lg">
+                                <!-- Título -->
+                                <template #title>Editar Dieta</template>
 
+                                <!-- Formulario -->
+                                <template #content>
+                                    <form class="space-y-4">
+                                        <!-- Campo Dieta -->
+                                        <div>
+                                            <label for="diet-select"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Dieta <span class="text-red-500">*</span>
+                                            </label>
 
-
-                            <!-- Botones -->
-                            <div class="flex justify-end mt-6 gap-2 mb-6">
-                                <SecondaryButton @click="closeform">
-                                    Cerrar
-                                </SecondaryButton>
-
-                                <PrimaryButton
-                                    :class="{ 'opacity-25': form.processing }" :is-loading="form.processing"
-                                    :disabled="form.processing">
-                                    Guardar
-                                </PrimaryButton>
-
-                            </div>
-                             </form>
-                        </div>
-
-                    </div>
-                    <div id="errorMessage" v-if="errorMessage"
-                        class="bg-red-100 text-red-700 text-center p-2 w-full rounded-md mb-2">
-                        {{ errorMessage }}
-                    </div>
-                </div>
-
-                <div class="p-8 space-y-4  bg-gray-50 dark:bg-gray-700">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                            Detalles del Registro
-                        </h3>
-                        <AccessGate :permission="['medicationRecord.delete']">
-                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted"
-                                :color="form.showDeleted ? 'red' : 'gray'">
-                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                                <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
-                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                            </PersonalizableButton>
-                        </AccessGate>
-
-                    </div>
-
-                    <div v-for="detail in details" :key="detail.id" :class="[
-                        'rounded-lg p-4 shadow-md flex justify-between items-center transition-colors',
-                        detail.suspended_at
-                            ? 'bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-900/30'
-                            : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900'
-                    ]">
-                        <div class="flex-grow">
-                            <div class="font-semibold text-gray-900 dark:text-white">
-                                Medicamento: {{ detail.drug }}
-                            </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                Fecha de Creación: {{ formatDate(detail.created_at) }}
-                            </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1" v-if="detail.nebulization_time">
-                                Intervalo de cada: {{ detail.nebulization_time }} minutos
-                            </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1" v-if="detail.interval_in_hours">
-                                Intervalo de cada: {{ detail.interval_in_hours }} horas
-                            </div>
-
-                            <div v-for="notifications in detail.medication_notification" :key=notifications.id
-                                class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                <div v-if="Firstnoapplied(notifications)">
-                                    Siguiente: {{ formatDate(notifications.scheduled_time) }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1 ">
-                            <div v-if="detail.active && detail.suspended_at == null">
-                                <AccessGate :permission="['medicationNotification.view']">
-                                    <!-- NOTIF -->
-                                    <Link
-                                        :href="route('medicationNotification.show', { medicationNotification: detail.id, admission_id: admission_id })"
-                                        class="flex items-center space-x-2 space-y-2 text-blue-600 hover:text-blue-800 transition-colors">
-                                    <NotificationIcon class="size-5 " />
-                                    <span class="font-medium">Notificaciones</span>
-                                    </Link>
-                                </AccessGate>
-                                <AccessGate :permission="['medicationRecordDetail.update']">
-                                    <!-- Editar -->
-                                    <Link v-if="!hasApplied(detail)"
-                                        :href="route('medicationRecordDetails.edit', { medicationRecordDetail: detail.id, admission_id: admission_id })"
-                                        class="flex items-center space-x-2 space-y-2 text-yellow-600 hover:text-yellow-800 transition-colors">
-                                    <EditIcon class="size-5" />
-                                    <span class="font-medium">Editar</span>
-                                    </Link>
-                                </AccessGate>
-
-                            </div>
-                            <AccessGate :permission="['medicationRecord.delete']">
-                                <div v-if="detail.active" class="mt-1">
-                                    <button v-if="detail.active"
-                                        @click="detailBeingDeleted = true, selectedDetail = detail"
-                                        class="flex items-center space-x-2 space-y-2   text-red-500 hover:text-red-70">
-                                        <TrashIcon class="size-5 mr-2" /> Eliminar
-                                    </button>
-
-                                </div>
-                                <div v-else>
-                                    <button @click="selectedDetail = detail, restoreDetail()"
-                                        class="flex items-center space-x-2 space-y-2   text-green-500 hover:text-green-700">
-                                        <RestoreIcon class="size-5 mr-2" />Restarurar
-                                    </button>
-
-                                </div>
-                            </AccessGate>
-                            <AccessGate :permission="['medicationRecord.update']">
-                                <div v-if="medicationRecord.active">
-                                    <!-- Disable -->
-                                    <button @click="ToggleSuspend(detail)"
-                                        :class="[!detail.suspended_at ? 'text-indigo-500 ' : 'text-green-500 hover:text-green-700'], { 'opacity-25': recordDetailSupendChange }"
-                                        class="flex items-center space-x-2 space-y-2  transition-colors"
-                                        :disabled="recordDetailSupendChange">
-
-                                        <div v-if="detail.suspended_at">
-                                            <RestoreIcon class="size-5" />
+                                            <select id="diet-select" v-model="modalform.diet" required class="w-full text-sm rounded-lg border-gray-200 dark:border-gray-600
+                                                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-400
+                                                focus:outline-none p-2.5 hover:bg-gray-100 dark:hover:bg-gray-700
+                                                hover:text-blue-700 dark:hover:text-white focus:ring-4
+                                                focus:ring-gray-100 dark:focus:ring-gray-700">
+                                                        <option v-for="diets in diet" :key="diets.id" :value="diets.name">
+                                                    {{ diets.name }} - {{ diets.description }}
+                                                </option>
+                                            </select>
                                         </div>
-                                        <div v-else>
-                                            <SuspendIcon class="size-5" />
-                                        </div>
-                                        <span>{{ !detail.suspended_at ? 'Suspender' : 'Habilitar' }}</span>
-                                    </button>
-                                </div>
-                            </AccessGate>
+                                    </form>
+                                </template>
 
+                                <!-- Acciones -->
+                                <template #footer>
+                                    <div class="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3">
+                                        <SecondaryButton @click="isVisible = false" class="w-full sm:w-auto">
+                                            Cerrar
+                                        </SecondaryButton>
+
+                                        <PrimaryButton @click="submitModal"
+                                            :class="{ 'opacity-25': modalform.processing }"
+                                            :disabled="modalform.processing" :is-loading="modalform.processing"
+                                            class="w-full sm:w-auto">
+                                            Aceptar
+                                        </PrimaryButton>
+                                    </div>
+                                </template>
+                            </DialogModal>
                         </div>
                     </div>
-
-                    <div v-if="details.length === 0" class="text-center text-gray-500 dark:text-gray-400 py-4">
-                        No hay detalles de registro disponibles.
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-
-        <ConfirmationModal :show="recordBeingDeleted != null || detailBeingDeleted != null"
-            @close="recordBeingDeleted = null; detailBeingDeleted = null">
-            <template #title>
-                Eliminar registro
+                </AppLayout>
             </template>
-
-            <template v-if="recordBeingDeleted" #content>
-                ¿Estás seguro de que deseas eliminar este registro?
-            </template>
-            <template v-else #content>
-                ¿Estás seguro de que deseas eliminar este detalle?
-            </template>
-
-            <template #footer>
-                <SecondaryButton @click="recordBeingDeleted = null; detailBeingDeleted = null">
-                    Cancelar
-                </SecondaryButton>
-
-                <DangerButton v-if="recordBeingDeleted" class="ms-3" @click="deleteRecord">
-                    <TrashIcon class="size-5 mr-2" />
-                    Eliminar registro
-                </DangerButton>
-                <DangerButton v-else class="ms-3" @click="deleteDetail(); detailBeingDeleted = null;">
-                    <TrashIcon class="size-5 mr-2" />
-                    Eliminar detalle
-                </DangerButton>
-            </template>
-        </ConfirmationModal>
-
-
-        <DialogModal :show="isVisible" @close="isVisible = false" class="">
-
-            <!-- Header del modal -->
-            <template #title>
-                Editar Dieta
-            </template>
-            <!-- Contenido del modal -->
-            <template #content>
-                <div>
-                    <form>
-                        <div class="grid gap-4">
-                            <!-- Campo Nombre -->
-                            <div>
-                                <label for="diet"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Dieta <span class="text-red-500">*</span>
-                                </label>
-                                <select id="diet-select" v-model="modalform.diet" required
-                                    class="text-sm font-medium w-full text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100  p-2.5 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                                    <option v-for="diets in diet" :key="diets.id" :value="diets.name">
-                                        {{ diets.name }} - {{ diets.description }}
-                                    </option>
-                                </select>
-                            </div>
-
-
-                        </div>
-                    </form>
-                </div>
-            </template>
-            <!-- Footer del modal -->
-            <template #footer>
-                <div class="flex justify-end  space-x-3">
-
-                    <SecondaryButton @click="isVisible = false">
-                        Cerrar
-                    </SecondaryButton>
-
-                    <PrimaryButton @click="submitModal" :class="{ 'opacity-25': modalform.processing }"
-                        :disabled="modalform.processing" :is-loading="modalform.processing">
-                        Aceptar
-                    </PrimaryButton>
-
-                </div>
-
-
-            </template>
-        </DialogModal>
-
-
-    </AppLayout>
-</template>
 
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -868,7 +898,6 @@ export default {
             if (this.form.fc = 1) {
                 this.form.interval_in_hours = 0;
             }
-
 
 
             this.form.post(route('medicationRecordDetails.store'), {

@@ -140,11 +140,12 @@ export default defineComponent({
                 },
                 y: {
                     formatter: (value, { series, seriesIndex, dataPointIndex, w }) => {
-                        // Sin el punto null, el índice coincide directamente
-                        if (props.temperatureData[dataPointIndex]) {
-                            const evacuation = props.temperatureData[dataPointIndex].evacuations;
-                            const urination = props.temperatureData[dataPointIndex].urinations;
-                            const nurse = props.temperatureData[dataPointIndex].nurse;
+                        // Because we added a null data point at the beginning, we need to adjust the index.
+                        const originalDataIndex = dataPointIndex - 1;
+                        if (props.temperatureData[originalDataIndex]) {
+                            const evacuation = props.temperatureData[originalDataIndex].evacuations;
+                            const urination = props.temperatureData[originalDataIndex].urinations;
+                            const nurse = props.temperatureData[originalDataIndex].nurse;
                             const nurseName = `${nurse.name} ${nurse.last_name}`;
                             return `Temperatura: ${value} °C<br>Evacuaciones: ${evacuation}<br>Micciones: ${urination}<br>Enfermero: ${nurseName}`;
                         }
@@ -199,8 +200,8 @@ export default defineComponent({
                 return [new Date(item.updated_at).getTime(), item.temperature];
             });
 
-            // REMOVIDO: No agregar punto null al inicio
-            // seriesData.unshift([firstDate.startOf('day').valueOf(), null]);
+            // Add a null data point at the beginning of the day to force the axis to start there
+            seriesData.unshift([firstDate.startOf('day').valueOf(), null]);
 
             chartSeries.value[0].data = seriesData;
 
@@ -212,7 +213,7 @@ export default defineComponent({
                 const dayStr = date.format('YYYY-MM-DD');
 
                 if (dayStr !== lastProcessedDayStr) {
-                    const dayNumber = date.startOf('day').diff(firstDate.startOf('day'), 'days');
+                    const dayNumber = date.startOf('day').diff(firstDate.startOf('day'), 'days') - 1;
 
                     xAxisAnnotations.push({
                         x: moment(item.updated_at).startOf('day').valueOf(),

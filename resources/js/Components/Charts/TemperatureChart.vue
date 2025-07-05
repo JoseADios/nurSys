@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, watchEffect } from 'vue';
+import { defineComponent, ref, computed, watchEffect, nextTick } from 'vue';
 import ApexCharts from 'vue3-apexcharts';
 import moment from 'moment/moment';
 import 'moment/locale/es';
@@ -53,7 +53,7 @@ export default defineComponent({
                 redrawOnWindowResize: true,
                 redrawOnParentResize: true,
                 animations: {
-                    enabled: false
+                    enabled: true
                 }
             },
             title: {
@@ -127,19 +127,7 @@ export default defineComponent({
                         }
                     }
                 ],
-                xaxis: [
-                    {
-                        borderColor: isDarkMode.value ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
-                        label: {
-                            style: {
-                                color: isDarkMode.value ? '#e5e7eb' : '#1f2937',
-                                background: isDarkMode.value ? '#374151' : '#ffffff',
-                                border: '1px solid #e5e7eb',
-                                padding: { left: 10, right: 10, top: 4, bottom: 4 }
-                            }
-                        }
-                    }
-                ]
+                xaxis: []
             },
             tooltip: {
                 theme: isDarkMode.value ? 'dark' : 'light',
@@ -152,12 +140,11 @@ export default defineComponent({
                 },
                 y: {
                     formatter: (value, { series, seriesIndex, dataPointIndex, w }) => {
-                        // Because we added a null data point at the beginning, we need to adjust the index.
-                        const originalDataIndex = dataPointIndex - 1;
-                        if (props.temperatureData[originalDataIndex]) {
-                            const evacuation = props.temperatureData[originalDataIndex].evacuations;
-                            const urination = props.temperatureData[originalDataIndex].urinations;
-                            const nurse = props.temperatureData[originalDataIndex].nurse;
+                        // Sin el punto null, el índice coincide directamente
+                        if (props.temperatureData[dataPointIndex]) {
+                            const evacuation = props.temperatureData[dataPointIndex].evacuations;
+                            const urination = props.temperatureData[dataPointIndex].urinations;
+                            const nurse = props.temperatureData[dataPointIndex].nurse;
                             const nurseName = `${nurse.name} ${nurse.last_name}`;
                             return `Temperatura: ${value} °C<br>Evacuaciones: ${evacuation}<br>Micciones: ${urination}<br>Enfermero: ${nurseName}`;
                         }
@@ -166,10 +153,16 @@ export default defineComponent({
                 }
             },
             markers: {
-                size: 4,
+                size: 6, // Aumenté el tamaño
                 colors: ['#3b82f6'],
                 strokeColors: isDarkMode.value ? '#fff' : '#e5e7eb',
                 strokeWidth: 2,
+                fillOpacity: 1,
+                strokeOpacity: 0.9,
+                shape: "circle",
+                radius: 2,
+                discrete: [], // Esto fuerza que los markers siempre se muestren
+                showNullDataPoints: false
             },
             responsive: [
                 {
@@ -184,7 +177,7 @@ export default defineComponent({
                             }
                         },
                         markers: {
-                            size: 2,
+                            size: 4,
                         },
                     },
                 },
@@ -206,8 +199,8 @@ export default defineComponent({
                 return [new Date(item.updated_at).getTime(), item.temperature];
             });
 
-            // Add a null data point at the beginning of the day to force the axis to start there
-            seriesData.unshift([firstDate.startOf('day').valueOf(), null]);
+            // REMOVIDO: No agregar punto null al inicio
+            // seriesData.unshift([firstDate.startOf('day').valueOf(), null]);
 
             chartSeries.value[0].data = seriesData;
 
@@ -219,7 +212,7 @@ export default defineComponent({
                 const dayStr = date.format('YYYY-MM-DD');
 
                 if (dayStr !== lastProcessedDayStr) {
-                    const dayNumber = date.startOf('day').diff(firstDate.startOf('day'), 'days') - 1;
+                    const dayNumber = date.startOf('day').diff(firstDate.startOf('day'), 'days');
 
                     xAxisAnnotations.push({
                         x: moment(item.updated_at).startOf('day').valueOf(),
@@ -242,6 +235,13 @@ export default defineComponent({
                 }
             });
             chartOptions.value.annotations.xaxis = xAxisAnnotations;
+
+            // Forzar actualización del gráfico después de procesar los datos
+            nextTick(() => {
+                if (chart.value?.chart) {
+                    chart.value.chart.updateSeries(chartSeries.value, true);
+                }
+            });
         };
 
         watchEffect(() => {

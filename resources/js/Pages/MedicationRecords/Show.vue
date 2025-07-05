@@ -895,7 +895,7 @@ export default {
                     return;
                 }
             }
-            if (this.form.fc = 1) {
+            if (this.form.fc === 1) {
                 this.form.interval_in_hours = 0;
             }
 

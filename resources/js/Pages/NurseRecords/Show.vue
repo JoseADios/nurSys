@@ -189,7 +189,7 @@
                                             <div class="flex flex-col justify-between items-start">
                                                 <div class="w-full flex flex-col">
                                                     <div class="flex justify-between items-center w-full gap-2">
-                                                        <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                                        <p class="text-sm font-semibold text-gray-800 dark:text-white break-all">
                                                             {{ detail.order }}
                                                         </p>
                                                         <p class="text-xs text-gray-500 dark:text-gray-400 text-end">
@@ -291,10 +291,10 @@
                         <div v-for="detail in details" :key="detail.id"
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 backdrop-blur-sm flex flex-col sm:flex-row justify-between items-start sm:items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
                             <div class="flex-grow pr-4 w-full sm:w-auto">
-                                <div class="font-semibold text-gray-900 dark:text-white">
+                                <div class="font-semibold text-gray-900 dark:text-white text-wrap break-all">
                                     {{ detail.medication }}
                                 </div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1 break-all">
                                     {{ detail.comment }}
                                 </div>
                                 <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">

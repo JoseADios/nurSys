@@ -244,7 +244,7 @@
                         <form @submit.prevent="submitCreateEliminations" :class="['space-y-4', {
                             'md:grid-cols-1 place-items-center': !lastEliminations
                         }]">
-                            <div class="grid md:grid-cols-2 gap-4">
+                            <div class=" w-full md:w-auto grid md:grid-cols-2 gap-4">
                                 <div>
                                     <InputLabel for="evacuations" value="Evacuaciones" :required="true" class="mb-2" />
                                     <input type="number" id="evacuations" min="0" v-model="formEliminations.evacuations"

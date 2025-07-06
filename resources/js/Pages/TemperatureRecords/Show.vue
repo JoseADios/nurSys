@@ -147,7 +147,7 @@
                 </div>
 
                 <!-- forms temperatura -->
-                <div class="flex flex-col md:flex-row justify-center items-center">
+                <div v-if="canCreateElimination || canUpdateElimination" class="flex flex-col md:flex-row justify-center items-center">
 
                     <!-- Formulario para actualizar ultimo detalle -->
                     <AccessGate :permission="['temperatureDetail.update']" v-if="lastTemperature"
@@ -274,9 +274,11 @@
 
                     <!-- si no puede crear ni actualizar mostrar que ya otro enfermero ha registrado una firma en este turno que no puede hacer nada -->
                     <div v-if="!lastTemperature && !canCreateElimination && !canUpdateElimination" class="p-8">
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Información</h3>
-                        <p class="text-lg text-gray-700 dark:text-gray-300">
-                            No puede realizar ninguna acción.
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center">Información
+                        </h3>
+                        <p class="text-lg italic text-gray-700 dark:text-gray-300 ">
+                            No puede realizar ninguna acción. Ya el/la enfermero/a {{ lastEliminations.nurse.name }} {{
+                            lastEliminations.nurse.last_name }} está trabajando este registro en el turno actual.
                         </p>
                     </div>
 

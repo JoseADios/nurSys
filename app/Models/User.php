@@ -163,6 +163,11 @@ class User extends Authenticatable
         return $this->hasMany(TemperatureDetail::class);
     }
 
+    public function eliminationRecord(): HasMany
+    {
+        return $this->hasMany(EliminationRecord::class);
+    }
+
     public function medicationNotification(): HasMany
     {
         return $this->hasMany(MedicationNotification::class);

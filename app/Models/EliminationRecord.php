@@ -36,4 +36,9 @@ class EliminationRecord extends Model
     {
         return $this->belongsTo(TemperatureRecord::class);
     }
+
+    public function nurse(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

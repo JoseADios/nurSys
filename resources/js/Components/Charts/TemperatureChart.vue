@@ -131,8 +131,14 @@ export default defineComponent({
             },
             tooltip: {
                 theme: isDarkMode.value ? 'dark' : 'light',
-                intersect: true,
+                // CAMBIO 1: Configuración más permisiva para el tooltip
+                intersect: true, // Cambiado a false para mejor detección
                 shared: false,
+                followCursor: false, // Hace que el tooltip siga el cursor
+                // CAMBIO 2: Configuración específica para markers
+                marker: {
+                    show: true,
+                },
                 x: {
                     formatter: function (val) {
                         return moment(val).format('DD/MM/YYYY HH:mm');
@@ -140,30 +146,49 @@ export default defineComponent({
                 },
                 y: {
                     formatter: (value, { series, seriesIndex, dataPointIndex, w }) => {
-                        // Because we added a null data point at the beginning, we need to adjust the index.
-                        const originalDataIndex = dataPointIndex - 1;
-                        if (props.temperatureData[originalDataIndex]) {
-                            const evacuation = props.temperatureData[originalDataIndex].evacuations;
-                            const urination = props.temperatureData[originalDataIndex].urinations;
-                            const nurse = props.temperatureData[originalDataIndex].nurse;
+                        // CAMBIO 3: Lógica mejorada para manejar índices
+                        let originalDataIndex = dataPointIndex;
+
+                        // Si hay más de un punto y agregamos el punto null inicial
+                        if (props.temperatureData.length > 1) {
+                            originalDataIndex = dataPointIndex - 1;
+                        }
+
+                        // Verificar que el índice sea válido
+                        if (originalDataIndex >= 0 && originalDataIndex < props.temperatureData.length) {
+                            const item = props.temperatureData[originalDataIndex];
+                            const evacuation = item.evacuations;
+                            const urination = item.urinations;
+                            const nurse = item.nurse;
                             const nurseName = `${nurse.name} ${nurse.last_name}`;
                             return `Temperatura: ${value} °C<br>Evacuaciones: ${evacuation}<br>Micciones: ${urination}<br>Enfermero: ${nurseName}`;
                         }
-                        return '';
+                        return `Temperatura: ${value} °C`;
                     }
                 }
             },
             markers: {
-                size: 6, // Aumenté el tamaño
-                colors: ['#3b82f6'],
+                size: 8, // Aumenté el tamaño
+                colors: ['#696CFF'],
                 strokeColors: isDarkMode.value ? '#fff' : '#e5e7eb',
                 strokeWidth: 2,
                 fillOpacity: 1,
                 strokeOpacity: 0.9,
                 shape: "circle",
                 radius: 2,
-                discrete: [], // Esto fuerza que los markers siempre se muestren
-                showNullDataPoints: false
+                discrete: [],
+                showNullDataPoints: false,
+                // CAMBIO 5: Configuración adicional para hover
+                // hover: {
+                //     size: props.temperatureData.length === 1 ? 12 : 8, // Más grande en hover
+                //     sizeOffset: 3
+                // }
+            },
+            // CAMBIO 6: Configuración adicional para un solo punto
+            plotOptions: {
+                line: {
+                    isSlopeChart: false,
+                }
             },
             responsive: [
                 {
@@ -200,7 +225,7 @@ export default defineComponent({
                 return [new Date(item.updated_at).getTime(), item.temperature];
             });
 
-            // Solo agregar el punto null si hay más de un punto de datos
+            // CAMBIO 7: Solo agregar el punto null si hay más de un punto de datos
             if (props.temperatureData.length > 1) {
                 seriesData.unshift([firstDate.startOf('day').valueOf(), null]);
             }

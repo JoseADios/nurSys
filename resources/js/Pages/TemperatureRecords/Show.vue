@@ -488,7 +488,6 @@ export default {
             showEditUser: ref(null),
             isVisibleEditSign: ref(null),
             recordActiveChanging: ref(false),
-            isVisibleEditDiagnosis: false,
             signatureError: false,
             chartKey: 0,
 
@@ -583,9 +582,9 @@ export default {
             this.formRecord.put(route('temperatureRecords.update', this.temperatureRecord.id), {
                 onFinish: () => {
                     this.recordActiveChanging = false;
-                }
+                },
+                preserveScroll: true,
             })
-            this.isVisibleEditDiagnosis = false
         },
         submitSignature() {
             if (!this.formSignature.nurse_sign) {
@@ -597,9 +596,6 @@ export default {
                 preserveScroll: true
             });
             this.isVisibleEditSign = false
-        },
-        toggleEditRecord() {
-            this.isVisibleEditDiagnosis = !this.isVisibleEditDiagnosis
         },
         deleteRecord() {
             this.recordActiveChanging = true;

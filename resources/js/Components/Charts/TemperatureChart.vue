@@ -200,41 +200,48 @@ export default defineComponent({
                 return [new Date(item.updated_at).getTime(), item.temperature];
             });
 
-            // Add a null data point at the beginning of the day to force the axis to start there
-            seriesData.unshift([firstDate.startOf('day').valueOf(), null]);
+            // Solo agregar el punto null si hay más de un punto de datos
+            if (props.temperatureData.length > 1) {
+                seriesData.unshift([firstDate.startOf('day').valueOf(), null]);
+            }
 
             chartSeries.value[0].data = seriesData;
 
             const xAxisAnnotations = [];
-            let lastProcessedDayStr = '';
 
-            props.temperatureData.forEach((item, index) => {
-                const date = moment(item.updated_at);
-                const dayStr = date.format('YYYY-MM-DD');
+            // Solo mostrar etiquetas de días si hay más de un punto
+            if (props.temperatureData.length > 1) {
+                let lastProcessedDayStr = '';
 
-                if (dayStr !== lastProcessedDayStr) {
-                    const dayNumber = date.startOf('day').diff(firstDate.startOf('day'), 'days') - 1;
+                props.temperatureData.forEach((item, index) => {
+                    const date = moment(item.updated_at);
+                    const dayStr = date.format('YYYY-MM-DD');
 
-                    xAxisAnnotations.push({
-                        x: moment(item.updated_at).startOf('day').valueOf(),
-                        strokeDashArray: 0,
-                        borderColor: isDarkMode.value ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
-                        label: {
-                            borderColor: 'transparent',
-                            style: {
-                                color: isDarkMode.value ? '#e5e7eb' : '#374151',
-                                background: isDarkMode.value ? '#374151' : '#e5e7eb',
-                                padding: { left: 10, right: 10, top: 2, bottom: 2 }
-                            },
-                            text: index === 0 ? 'I N G' : `Día ${dayNumber + 1}`,
-                            position: 'top',
-                            orientation: 'horizontal',
-                            offsetY: -15
-                        }
-                    });
-                    lastProcessedDayStr = dayStr;
-                }
-            });
+                    if (dayStr !== lastProcessedDayStr) {
+                        const dayNumber = date.startOf('day').diff(firstDate.startOf('day'), 'days') - 1;
+
+                        xAxisAnnotations.push({
+                            x: moment(item.updated_at).startOf('day').valueOf(),
+                            strokeDashArray: 0,
+                            borderColor: isDarkMode.value ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
+                            label: {
+                                borderColor: 'transparent',
+                                style: {
+                                    color: isDarkMode.value ? '#e5e7eb' : '#374151',
+                                    background: isDarkMode.value ? '#374151' : '#e5e7eb',
+                                    padding: { left: 10, right: 10, top: 2, bottom: 2 }
+                                },
+                                text: index === 0 ? 'I N G' : `Día ${dayNumber + 1}`,
+                                position: 'top',
+                                orientation: 'horizontal',
+                                offsetY: -15
+                            }
+                        });
+                        lastProcessedDayStr = dayStr;
+                    }
+                });
+            }
+
             chartOptions.value.annotations.xaxis = xAxisAnnotations;
 
             // Forzar actualización del gráfico después de procesar los datos

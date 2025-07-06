@@ -216,7 +216,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
                     'name' => $temperature->nurse->name,
                     'last_name' => $temperature->nurse->last_name,
                 ],
-                'updated_at' => $temperature->created_at
+                'updated_at' => $temperature->updated_at
             ];
         }
 

@@ -143,7 +143,7 @@
 
                 <!-- Chart -->
                 <div class="p-4 sm:p-8 my-4">
-                    <TemperatureChart ref="chart" :temperatureData="details" :key="chartKey" :height="100" />
+                    <TemperatureChart ref="chart" :temperatureData="details" :start-date="temperatureRecord.admission.created_at" :key="chartKey" :height="100" />
                 </div>
 
                 <!-- forms temperatura -->

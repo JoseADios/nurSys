@@ -19,6 +19,10 @@ export default defineComponent({
             type: Array,
             required: true,
         },
+        startDate: {
+            type: String,
+            required: true
+        },
         height: {
             type: Number,
             default: 250,
@@ -220,7 +224,7 @@ export default defineComponent({
         const processTemperatureData = () => {
             if (!props.temperatureData.length) return;
 
-            const firstDate = moment(props.temperatureData[0].updated_at);
+            const firstDate = moment(props.startDate);
             const seriesData = props.temperatureData.map(item => {
                 return [new Date(item.updated_at).getTime(), item.temperature];
             });
@@ -236,34 +240,37 @@ export default defineComponent({
 
             // Solo mostrar etiquetas de días si hay más de un punto
             if (props.temperatureData.length > 1) {
-                let lastProcessedDayStr = '';
 
-                props.temperatureData.forEach((item, index) => {
-                    const date = moment(item.updated_at);
-                    const dayStr = date.format('YYYY-MM-DD');
+                const startD = moment(props.startDate).startOf('day');
+                let endD = moment(props.temperatureData[props.temperatureData.length - 1].updated_at).startOf('day');
+                let numberOfDays = endD.diff(startD, 'days');
 
-                    if (dayStr !== lastProcessedDayStr) {
-                        const dayNumber = date.startOf('day').diff(firstDate.startOf('day'), 'days') - 1;
+                // crear un array de fechas desde el dia de inicio hasta la ultima temperatura
+                let arrayOfDays = [];
 
-                        xAxisAnnotations.push({
-                            x: moment(item.updated_at).startOf('day').valueOf(),
-                            strokeDashArray: 0,
-                            borderColor: isDarkMode.value ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
-                            label: {
-                                borderColor: 'transparent',
-                                style: {
-                                    color: isDarkMode.value ? '#e5e7eb' : '#374151',
-                                    background: isDarkMode.value ? '#374151' : '#e5e7eb',
-                                    padding: { left: 10, right: 10, top: 2, bottom: 2 }
-                                },
-                                text: index === 0 ? 'I N G' : `Día ${dayNumber + 1}`,
-                                position: 'top',
-                                orientation: 'horizontal',
-                                offsetY: -15
-                            }
-                        });
-                        lastProcessedDayStr = dayStr;
-                    }
+                for (let i = 0; i <= numberOfDays; i++) {
+                    let day = startD.clone(0);
+                    arrayOfDays.push(day.add(i, 'days').clone());
+                }
+
+                arrayOfDays.forEach(function(ele, dayNumber ) {
+                    xAxisAnnotations.push({
+                        x: ele.startOf('day').valueOf(),
+                        strokeDashArray: 0,
+                        borderColor: isDarkMode.value ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
+                        label: {
+                            borderColor: 'transparent',
+                            style: {
+                                color: isDarkMode.value ? '#e5e7eb' : '#374151',
+                                background: isDarkMode.value ? '#374151' : '#e5e7eb',
+                                padding: { left: 10, right: 10, top: 2, bottom: 2 }
+                            },
+                            text: dayNumber === 0 ? 'I N G' : `Día ${dayNumber}`,
+                            position: 'top',
+                            orientation: 'horizontal',
+                            offsetY: -15
+                        }
+                    });
                 });
             }
 

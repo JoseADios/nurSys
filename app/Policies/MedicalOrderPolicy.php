@@ -31,11 +31,8 @@ class MedicalOrderPolicy
      */
     public function view(User $user, MedicalOrder $medicalOrder): Response
     {
-        if ($user->hasRole('doctor')) {
+        if ($user->hasRole(['doctor', 'nurse'])) {
             return Response::allow();
-        }
-        if ($medicalOrder->doctor_id !== $user->id) {
-            return Response::deny('No tienes permiso para ver este registro');
         }
 
         return Response::allow();

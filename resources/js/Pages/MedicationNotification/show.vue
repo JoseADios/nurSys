@@ -68,6 +68,10 @@
                             Medicamento: {{ details.drug }}
                         </p>
 
+                        <p class="text-[13px] sm:text-sm text-gray-600 dark:text-gray-300">
+                            Dosis: {{ details.dose }} {{ details.dose_metric }}
+                        </p>
+
                         <p v-if="!notification.applied" class="text-[13px] sm:text-sm text-gray-600 dark:text-gray-300">
                             Programada: {{ formatDateFromNow(notification.scheduled_time) }}
                         </p>
@@ -82,6 +86,17 @@
                         <p v-if="details.nebulized" class="text-[13px] sm:text-sm text-gray-600 dark:text-gray-300">
                             Nebulizado:
                             <Checkbox :checked="true" disabled />
+                        </p>
+                        <p v-if="details.nebulized && details.interval_in_hours"
+                        class="text-[13px] sm:text-sm text-gray-600 dark:text-gray-300">
+                        Aplicar cada: {{ details.interval_in_hours }} horas
+                        </p>
+
+                        <p
+                        v-if="details.nebulized && details.nebulization_time"
+                        class="text-[13px] sm:text-sm text-gray-600 dark:text-gray-300"
+                        >
+                        Tiempo de aplicación: {{ details.nebulization_time }} minutos
                         </p>
 
                         <!-- Estado aplicado/no aplicado -->

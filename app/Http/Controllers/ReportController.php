@@ -162,10 +162,10 @@ class ReportController extends Controller
         $details = MedicalOrderDetail::where('medical_order_id', $id)->get();
 
         if ($details) {
-            return Redirect::route('MedicalOrders.index')->with('flash.toast', 'Esta Orden Medica no tiene detalles')->with('flash.toastStyle', 'danger');
+            return Redirect::route('medicalOrders.index')->with('flash.toast', 'Esta Orden Medica no tiene detalles')->with('flash.toastStyle', 'danger');
         }
         if ($MedicalOrder->active != true) {
-            return Redirect::route('MedicalOrders.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
+            return Redirect::route('medicalOrders.index')->with('flash.toast', 'Este registro ha sido eliminado')->with('flash.toastStyle', 'danger');
         }
 
         $pdf = Pdf::loadView('reports.medical_order', [

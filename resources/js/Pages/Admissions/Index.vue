@@ -7,64 +7,79 @@
                         text: 'Ingresos',
                         route: route('admissions.index')
 
-                    },
-                ]" />
-            </h2>
-        </template>
+                        },
+                    ]" />
+                </h2>
+            </template>
 
-        <div class="flex my-2 px-4 sm:px-0 items-center justify-end">
-            <button v-if="form.admission_id" @click="form.admission_id = null; submitFilters()"
-                class="mr-2 sm:mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
-                Remover filtro de <FormatId :id="form.admission_id" prefix="ING" class="ml-1"></FormatId>
-            </button>
-        </div>
-        <div class="px-4 lg:px-10 mt-4">
-            <div class="mb-4">
-
-                <div class="flex flex-col sm:flex-row gap-3 mb-3">
-                    <!-- Búsqueda general - siempre visible -->
-                    <div class="relative flex-grow">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
-                        </div>
-
-                        <input @input="submitFilters()"
-                            class="pl-10 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                            type="text" name="search" id="search" v-model="form.search" placeholder="Buscar..." />
-
-                        <button v-if="form.search" @click="form.search = ''; submitFilters()"
-                            class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200">
-                            <XIcon class="h-5 w-5" />
+                    <div class="flex my-2 px-4 sm:px-0 items-center justify-end">
+                        <button v-if="form.admission_id" @click="form.admission_id = null; submitFilters()"
+                            class="mr-2 sm:mr-6 inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-500 self-end">
+                            Remover filtro de <FormatId :id="form.admission_id" prefix="ING" class="ml-1"></FormatId>
                         </button>
                     </div>
-
-                    <!-- Filtros y botones - Reorganizados para mejor responsividad -->
-                    <div class="flex justify-center items-center whitespace-nowrap md:flex-wrap gap-2">
-                        <!-- Botón para ver registros eliminados -->
-                        <AccessGate :permission="['admission.delete']">
-                            <!-- Filtro para mostrar registros eliminados -->
-                            <PersonalizableButton custom-class="whitespace-nowrap" @click="toggleShowDeleted"
-                                :color="form.showDeleted ? 'red' : 'gray'">
-                                {{ filters.show_deleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
-                                <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
-                                <CircleXIcon v-else class="ml-1 h-5 w-5" />
-                            </PersonalizableButton>
-                        </AccessGate>
-
-                        <AccessGate :permission="['admission.create']">
-
-                            <PrimaryLink v-if="!form.admission_id" :href="route('admissions.create')">
-                                <PlusIcon class="size-5" />
-                                <span class="">Nuevo Registro</span>
-                            </PrimaryLink>
-                            <PrimaryLink v-else :href="route('admissions.create', { admission_id: form.admission_id })">
-                                <PlusIcon class="size-5" />
-                                <span class="">Nuevo Registro</span>
-                            </PrimaryLink>
-
-                        </AccessGate>
-
+                <div class="px-4 lg:px-10 mt-4">
+            <div class="mb-4">
+                <!-- Fila principal: barra + botones -->
+                <div class="flex flex-col sm:flex-row gap-3 mb-3">
+                <!-- Barra de búsqueda -->
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <SearchIcon class="size-4 text-gray-500 dark:text-gray-400" />
                     </div>
+
+                    <input
+                    id="search"
+                    name="search"
+                    v-model="form.search"
+                    type="text"
+                    placeholder="Buscar..."
+                    @input="submitFilters()"
+                    class="w-full pl-10 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300
+                            focus:border-indigo-500 focus:ring-indigo-500 dark:focus:border-indigo-600 dark:focus:ring-indigo-600
+                            rounded-md shadow-sm"
+                    />
+
+                    <button
+                    v-if="form.search"
+                    @click="form.search = ''; submitFilters()"
+                    class="absolute inset-y-0 end-0 flex items-center pe-3 text-gray-500 dark:text-gray-400
+                            hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                    >
+                    <XIcon class="h-5 w-5" />
+                    </button>
+                </div>
+
+                <!-- Botones (apilan y ocupan ancho completo en móvil) -->
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 w-full sm:w-auto">
+                    <!-- Mostrar/Ocultar eliminados -->
+                    <AccessGate :permission="['admission.delete']">
+                    <PersonalizableButton
+                        @click="toggleShowDeleted"
+                        :color="form.showDeleted ? 'red' : 'gray'"
+                        class="w-full sm:w-auto flex justify-center whitespace-nowrap"
+                    >
+                        {{ form.showDeleted ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+                        <CirclePlusIcon v-if="form.showDeleted" class="ml-1 h-5 w-5" />
+                        <CircleXIcon   v-else                 class="ml-1 h-5 w-5" />
+                    </PersonalizableButton>
+                    </AccessGate>
+
+                    <!-- Nuevo Registro -->
+                    <AccessGate :permission="['admission.create']">
+                    <PrimaryLink
+                        :href="
+                        !form.admission_id
+                            ? route('admissions.create')
+                            : route('admissions.create', { admission_id: form.admission_id })
+                        "
+                        class="w-full sm:w-auto flex justify-center whitespace-nowrap"
+                    >
+                        <PlusIcon class="size-5" />
+                        <span>Nuevo Registro</span>
+                    </PrimaryLink>
+                    </AccessGate>
+                </div>
                 </div>
 
                 <!-- Primera fila en dispositivos medianos -->
@@ -102,8 +117,6 @@
                             <option value="365">Último año</option>
                         </select>
 
-
-
                         <AccessGate :permission="['admission.create']" class="sm:w-fit">
                             <PersonalizableButton @click="toggleFilterMyRecords" title="Mostrar solo mis registros"
                                 variant="outline" custom-class="relative" :color="form.myRecords ? 'indigo' : 'gray'">
@@ -118,15 +131,9 @@
                                 </div>
                             </PersonalizableButton>
                         </AccessGate>
-
-
-
                     </div>
 
                 </div>
-
-
-
             </div>
         </div>
         <div
@@ -206,18 +213,20 @@
                             <td class="px-6 py-4">
                                 {{ admission.days_admitted }}
                             </td>
+                           <!-- Estado -->
                             <td class="px-6 py-4">
-                                <div v-if="admission.discharged_date == null">
-                                    <span
-                                        class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Ingresado</span>
-                                </div>
-                                <div v-else>
-                                    <span
-                                        class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">Dado
-                                        de alta</span>
-                                </div>
+                            <span
+                                v-if="admission.discharged_date == null"
+                                class="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap dark:bg-green-900 dark:text-green-300">
+                                Ingresado
+                            </span>
+                            <span
+                                v-else
+                                class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap dark:bg-gray-700 dark:text-gray-300">
+                                Dado&nbsp;de&nbsp;alta
+                            </span>
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 whitespace-nowrap text-xs sm:text-sm">
                                 {{ formatDate(admission.created_at) }}
                             </td>
                             <td class="px-6 py-4 flex items-center space-x-4">
@@ -264,11 +273,6 @@ import BedIcon from '@/Components/Icons/BedIcon.vue';
 import PrimaryLink from '@/Components/PrimaryLink.vue';
 import PersonalizableButton from '@/Components/PersonalizableButton.vue';
 export default {
-    props: {
-        admissions: Object,
-        can: [Array, Object],
-        filters: Object,
-    },
     components: {
         AppLayout,
         Link,
@@ -286,6 +290,11 @@ export default {
         XIcon,
         CirclePlusIcon,
         CircleXIcon,
+    },
+    props: {
+        admissions: Object,
+        can: [Array, Object],
+        filters: Object,
     },
     data() {
         return {
@@ -340,3 +349,4 @@ export default {
 
 }
 </script>
+

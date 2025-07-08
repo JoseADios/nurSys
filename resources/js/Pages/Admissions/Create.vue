@@ -19,7 +19,7 @@
             </p>
         </div>
 
-        <!-- 📋 Formulario -->
+        <!-- Formulario -->
         <div class="relative overflow-x-auto shadow-none sm:shadow-md sm:rounded-lg mt-4 lg:mx-10 p-3 sm:p-0">
             <form @submit.prevent="submit" class="max-w-md sm:max-w-xl mx-auto space-y-6">
                 <!-- Cama -->

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Amenadiel\JpGraph\Graph\Axis;
 use App\Models\EliminationRecord;
+use App\Models\TemperatureRecord;
 use Illuminate\Http\Request;
 use App\Models\TemperatureDetail;
 use Amenadiel\JpGraph\Graph\Graph;
@@ -20,6 +21,13 @@ class GraphController extends Controller
     {
         $details = $this->getTemperatureDetails($id);
         $eliminations = $this->getTemperatureEliminations($id);
+
+        // Obtener la fecha de admisión
+        $admissionDate = $this->getAdmissionDate($id);
+
+        if (!$admissionDate) {
+            return $this->jsonResponse('No se pudo obtener la fecha de admisión.', null, 400);
+        }
 
         if ($details->isEmpty()) {
             return $this->jsonResponse('No hay datos disponibles para generar el gráfico.', null, 400);
@@ -41,7 +49,7 @@ class GraphController extends Controller
         $graph = $this->createGraph($timestamps, $dataY);
 
         $this->addVerticalLines($graph, $timestamps);
-        $this->drawTopTable($graph, $timestamps);
+        $this->drawTopTable($graph, $timestamps, $admissionDate); // Pasar fecha de admisión
         $this->drawTable($graph, $eliminations, $timestamps);
 
         return $this->saveGraph($graph, $graphPath);
@@ -59,6 +67,18 @@ class GraphController extends Controller
         return EliminationRecord::where('temperature_record_id', $id)
             ->orderBy('updated_at', 'asc')
             ->get(['id', 'urinations', 'evacuations', 'updated_at']);
+    }
+
+    private function getAdmissionDate($temperatureRecordId)
+    {
+        // Asumiendo que TemperatureRecord tiene una relación con Admission
+        $temperatureRecord = TemperatureRecord::with('admission')->find($temperatureRecordId);
+
+        if (!$temperatureRecord || !$temperatureRecord->admission) {
+            return null;
+        }
+
+        return $temperatureRecord->admission->created_at;
     }
 
     private function jsonResponse($message, $path, $status)
@@ -332,7 +352,7 @@ class GraphController extends Controller
         return $turnTimestamps;
     }
 
-    private function drawTopTable($graph, $timestamps)
+    private function drawTopTable($graph, $timestamps, $admissionDate)
     {
         $tableHeight = 40;
         $rowHeight = 20;
@@ -366,24 +386,30 @@ class GraphController extends Controller
 
         $timestampRange = max($timestamps) - min($timestamps);
 
+        // Convertir la fecha de admisión a formato de fecha para comparar
+        $admissionDateFormatted = $admissionDate->format('Y-m-d');
+
         // si solo hay un registro
         if ($timestampRange == 0) {
             $centerXPos = $graph->img->left_margin + ($graph->img->plotwidth / 2);
             $graph->img->Line($graph->img->left_margin + $graph->img->plotwidth, $yTableTop, $graph->img->left_margin + $graph->img->plotwidth, $yTableBottom);
 
-            // $this->addTableText($graph, $currentTurnData, $centerXPos, $yTableTop, $yTableBottom, $rowHeight);
             $graph->img->Line($graph->img->left_margin, $yTableTop, $graph->img->left_margin, $yTableBottom);
             $graph->img->SetColor('black');
             $textDay = new Text($allDays[0], $centerXPos, $yTableTop + ($rowHeight / 2));
             $textDay->SetAlign('center', 'center');
             $graph->AddText($textDay);
-            $textDay = new Text('ADM', $centerXPos, $yTableBottom - ($rowHeight / 2));
+
+            // Calcular días desde la admisión
+            $daysSinceAdmission = $this->calculateDaysFromAdmission($allDays[0], $admissionDateFormatted);
+            $dayText = $daysSinceAdmission == 0 ? 'ADM' : strval($daysSinceAdmission);
+
+            $textDay = new Text($dayText, $centerXPos, $yTableBottom - ($rowHeight / 2));
             $textDay->SetAlign('center', 'center');
             $graph->AddText($textDay);
 
         } else {
 
-            $j = 0;
             foreach ($allDays as $i => $day) {
                 $firstLowSpace = false;
                 $xPos = $this->calculateXPos($graph, $timestamps, strtotime($day . ' 00:00:00'));
@@ -405,7 +431,6 @@ class GraphController extends Controller
                         $graph->img->SetColor('white');
                         $graph->img->Line($graph->img->left_margin, $yTableTop, $graph->img->left_margin, $yTableBottom);
                         $graph->img->SetColor('black');
-                        // $graph->img->Line($nextXPos, $yTableTop, $nextXPos, $yTableBottom);
                     } else {
                         $graph->img->SetColor('black');
                         $cellCenter += 45;
@@ -438,20 +463,25 @@ class GraphController extends Controller
                     $graph->AddText($textDay);
                 }
 
-                // Mostrar el día de hospitalización
-                if ($j == 0) {
-                    $textDay = new Text('ADM', $cellCenter, $yTableMiddle + ($rowHeight / 2));
-                    $textDay->SetAlign('center', 'center');
-                    $graph->AddText($textDay);
-                } else {
-                    $textDay = new Text(strval($j), $cellCenter, $yTableMiddle + ($rowHeight / 2));
-                    $textDay->SetAlign('center', 'center');
-                    $graph->AddText($textDay);
-                }
+                // Calcular días desde la admisión y mostrar el día de hospitalización
+                $daysSinceAdmission = $this->calculateDaysFromAdmission($day, $admissionDateFormatted);
+                $dayText = $daysSinceAdmission == 0 ? 'ADM' : strval($daysSinceAdmission);
 
-                $j += 1;
+                $textDay = new Text($dayText, $cellCenter, $yTableMiddle + ($rowHeight / 2));
+                $textDay->SetAlign('center', 'center');
+                $graph->AddText($textDay);
             }
         }
+    }
+
+    private function calculateDaysFromAdmission($currentDay, $admissionDate)
+    {
+        $currentTimestamp = strtotime($currentDay);
+        $admissionTimestamp = strtotime($admissionDate);
+
+        $daysDifference = floor(($currentTimestamp - $admissionTimestamp) / (24 * 60 * 60));
+
+        return max(0, $daysDifference); // Asegurar que no sea negativo
     }
 
     private function drawTopTableBorders($graph, $yTableTop, $yTableMiddle, $yTableBottom)

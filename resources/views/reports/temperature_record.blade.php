@@ -149,7 +149,7 @@
                     </div>
                 </td>
                 <td style="width: 45%; vertical-align: middle; padding: 2px 0 2px 100px;">
-                    <p>Generado a las {{now()->locale('es')->isoFormat('h:mm A [del] d [de] MMMM [de] YYYY')}} </p>
+                    <p>Generado a las {{now()->locale('es')->isoFormat('h:mm A [del] D [de] MMMM [de] YYYY')}} </p>
                 </td>
             </tr>
         </table>

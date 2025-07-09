@@ -24,19 +24,26 @@ class BedController extends Controller implements HasMiddleware
      */
     public function index()
     {
-        $beds = Bed::with('admission.patient')
-            ->with('admission.doctor')
-            ->with([
-                'admission' => function ($query) {
-                    $query->active();
-                }
-            ])
+        $beds = Bed::with([
+            'admission' => function ($query) {
+                $query->active()->with(['patient', 'doctor']);
+            }
+        ])
             ->orderBy('room', 'asc')
             ->orderBy('number', 'asc')
             ->get();
 
+        // Calcular el recuento de camas por estado
+        $bedStatusCounts = [
+            'available' => $beds->where('status', 'available')->whereNull('admission')->count(),
+            'occupied' => $beds->whereNotNull('admission')->count(),
+            'cleaning' => $beds->where('status', 'cleaning')->count(),
+            'out_of_service' => $beds->where('status', 'out_of_service')->count(),
+        ];
+
         return Inertia::render('Beds/Index', [
             'beds' => $beds,
+            'bedStatusCounts' => $bedStatusCounts,
         ]);
     }
 

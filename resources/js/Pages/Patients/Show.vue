@@ -91,7 +91,7 @@
                             <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                                 <PhoneIcon class="w-5 h-5 text-gray-800 dark:text-white" />
                                 <span class="ml-3 text-gray-800 dark:text-gray-200 font-medium">{{ patient.phone
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                                 <AtIcon class="w-5 h-5 text-gray-800 dark:text-white" />
@@ -103,7 +103,7 @@
                             <div class="flex items-start p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                                 <MapPinIcon class="w-5 h-5 text-gray-800 dark:text-white mt-1" />
                                 <span class="ml-3 text-gray-800 dark:text-gray-200 font-medium">{{ patient.address
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -185,7 +185,8 @@
                                 <HistoryIcon class="w-5 h-5 mr-2" />
                                 Historial de ingresos
                             </PersonalizableButton>
-                            <PersonalizableLink color="green" shade="600" :href="route('admissions.show', inProcessAdmssion)">
+                            <PersonalizableLink color="green" shade="600"
+                                :href="route('admissions.show', inProcessAdmssion)">
                                 <EyeIcon class="w-5 h-5 mr-2" />
                                 Ir al ingreso
                             </PersonalizableLink>
@@ -203,18 +204,18 @@
                                     actualmente</p>
                             </div>
                         </div>
-                        <AccessGate :permission="['admission.create']" v-if="patient.active == 1">
-                            <div class="flex flex-col lg:flex-row gap-2">
-                                <PersonalizableButton shade="600" color="blue" @click="showAdmissions = true">
-                                    <HistoryIcon class="w-5 h-5 mr-2" />
-                                    Historial de ingresos
-                                </PersonalizableButton>
+                        <div class="flex flex-col lg:flex-row gap-2">
+                            <PersonalizableButton shade="600" color="blue" @click="showAdmissions = true">
+                                <HistoryIcon class="w-5 h-5 mr-2" />
+                                Historial de ingresos
+                            </PersonalizableButton>
+                            <AccessGate :permission="['admission.create']" v-if="patient.active == 1">
                                 <PersonalizableLink :href="route('admissions.create', { patient_id: patient.id })">
                                     <PlusIcon class="w-5 h-5 mr-2" />
                                     Crear ingreso
                                 </PersonalizableLink>
-                            </div>
-                        </AccessGate>
+                            </AccessGate>
+                        </div>
                     </div>
                 </div>
 

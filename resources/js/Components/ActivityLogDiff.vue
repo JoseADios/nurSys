@@ -192,7 +192,7 @@
                             class="py-3 px-4 font-medium text-gray-800 dark:text-gray-200 border-b border-white dark:border-gray-700">
                             {{ formatFieldName(field) }}</td>
                         <td class="py-3 px-4 text-red-500 dark:text-red-400 border-b border-white dark:border-gray-700">
-                            <span v-if="change.old !== null && change.old !== undefined">{{ formatValue(change.old,
+                            <span v-if="change.new !== null && change.new !== undefined">{{ formatValue(change.new,
                                 field) }}</span>
                             <span v-else class="text-gray-400 dark:text-gray-500 italic">No especificado</span>
                         </td>

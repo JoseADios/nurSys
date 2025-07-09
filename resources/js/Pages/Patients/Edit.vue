@@ -161,7 +161,7 @@
                         <DangerButton type="button" v-if="patient.active == 1" @click="patientBeingDeleted = true">
                             Desactivar
                         </DangerButton>
-                        <PersonalizableButton type="button" v-else @click="restorePatient"
+                        <PersonalizableButton color="green" type="button" v-else @click="restorePatient"
                             :loading="isProcessingActive">
                             Activar
                         </PersonalizableButton>

@@ -161,6 +161,7 @@ class ReportController extends Controller
 
         $details = MedicalOrderDetail::where('medical_order_id', $id)->get();
 
+
         if ($details->isEmpty()) {
             return Redirect::route('medicalOrders.show', $id)->with('flash.toast', 'Esta Orden Medica no tiene detalles')->with('flash.toastStyle', 'danger');
         }

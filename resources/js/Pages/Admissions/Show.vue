@@ -17,198 +17,211 @@
                 ]" />
             </h2>
         </template>
-        <div class="container mx-auto px-4 py-8">
-
+        <div class="px-4 sm:px-6 lg:px-10 py-6">
             <div
                 class="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700/60 rounded-2xl overflow-hidden">
-
-                <div class="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+                <!-- Barra superior: botón volver -->
+                <div class="p-4 bg-gray-100 dark:bg-gray-900 flex items-center justify-between">
                     <Link :href="route('admissions.index')"
-                        class="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors">
-                    <BackIcon class="size-5" />Volver
+                        class="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors">
+                    <BackIcon class="size-5" />
+                    <span>Volver</span>
                     </Link>
-
-
                 </div>
 
-                <!-- Estado de Ingreso -->
-                <div class="m-8 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg border dark:border-gray-700/60   mb-6">
-                    <div class="flex items-center justify-between space-x-2">
-                        <div class="flex space-x-2 items-center">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Estado:</h3>
-                            <span v-bind:class="admission.discharged_date == null ? 'bg-green-500' : 'bg-gray-500'"
+                <!-- Estado de ingreso -->
+                <div
+                    class="mx-4 sm:mx-8 my-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg border dark:border-gray-700/60">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <!-- Estado -->
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                                Estado:
+                            </h3>
+                            <span :class="admission.discharged_date ? 'bg-gray-500' : 'bg-green-500'"
                                 class="text-white text-sm font-semibold px-2 py-1 rounded-full">
-                                {{ admission.discharged_date == null ? 'Ingresado' : 'Dado de alta' }}
+                                {{ admission.discharged_date ? 'Dado de alta' : 'Ingresado' }}
                             </span>
                         </div>
-                        <div v-if="admission.discharged_date == null" class="flex space-x-2 items-center">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Días ingresado:</h3>
-                            <span class="text-gray-900 dark:text-white text-sm font-semibold">
+
+                        <!-- Días o fecha -->
+                        <div v-if="!admission.discharged_date" class="flex items-center gap-2">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                                Días ingresado:
+                            </h3>
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">
                                 {{ daysIngressed }}
                             </span>
                         </div>
-                        <div v-else class="flex space-x-2 items-center">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">Fecha:</h3>
-                            <span class="text-gray-900 dark:text-white text-sm font-semibold">
+                        <div v-else class="flex items-center gap-2">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                                Fecha:
+                            </h3>
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">
                                 {{ formatDate(admission.discharged_date) }}
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <div class="p-8 space-y-8">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border dark:border-gray-700/60   ">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Paciente</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ admission.patient.first_name }} {{ admission.patient.first_surname }} {{
-                                    admission.patient.second_surname }}
+                <!-- Información principal -->
+                <div class="px-4 sm:px-8 py-6 space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                        <!-- Paciente -->
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 sm:p-6 border dark:border-gray-700/60">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
+                                Paciente
+                            </h3>
+                            <p class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ admission.patient.first_name }}
+                                {{ admission.patient.first_surname }}
+                                {{ admission.patient.second_surname }}
                             </p>
                         </div>
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border dark:border-gray-700/60   ">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Recepcionista</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+
+                        <!-- Recepcionista -->
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 sm:p-6 border dark:border-gray-700/60">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
+                                Recepcionista
+                            </h3>
+                            <p class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ admission.receptionist.name }} {{ admission.receptionist.last_name }}
                             </p>
-
-
                         </div>
 
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border dark:border-gray-700/60   ">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ubicación</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                            <div v-if="admission.bed">
-                                Sala: {{ admission.bed.room }}, Cama: {{ admission.bed.number }}
-                            </div>
-                            <div v-else>
-                                No asignada
-                            </div>
+                        <!-- Ubicación -->
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 sm:p-6 border dark:border-gray-700/60">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
+                                Ubicación
+                            </h3>
+                            <p class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                                <span v-if="admission.bed">
+                                    Sala: {{ admission.bed.room }}, Cama: {{ admission.bed.number }}
+                                </span>
+                                <span v-else>No asignada</span>
                             </p>
                         </div>
 
-
-
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border dark:border-gray-700/60   ">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Doctor</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <!-- Doctor -->
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 sm:p-6 border dark:border-gray-700/60">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
+                                Doctor
+                            </h3>
+                            <p class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ admission.doctor.name }} {{ admission.doctor.last_name }}
                             </p>
                         </div>
 
-                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border dark:border-gray-700/60   ">
-                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Fecha de Ingreso</h3>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <!-- Fecha ingreso -->
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 sm:p-6 border dark:border-gray-700/60">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
+                                Fecha de Ingreso
+                            </h3>
+                            <p class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ formatDate(admission.created_at) }}
                             </p>
                         </div>
-
-
                     </div>
                 </div>
 
-                <div class="p-8 space-y-8">
-                    <AccessGate :role="['doctor','admin']">
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 dark:border-gray-700/60   ">
-                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico de Ingreso
-                        </h3>
-                        <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
-                            {{ admission.admission_dx || 'No se proporcionó diagnóstico de ingreso' }}
-                        </p>
-                        <div class="flex justify-end"></div>
-                    </div>
+                <!-- Diagnósticos y observaciones -->
+                <div class="px-4 sm:px-8 pb-8 space-y-8">
+                    <AccessGate :role="['doctor', 'admin']">
+                        <!-- Diagnóstico de ingreso -->
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 sm:p-6 border dark:border-gray-700/60">
+                            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
+                                Diagnóstico de Ingreso
+                            </h3>
+                            <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
+                                {{ admission.admission_dx || 'No se proporcionó diagnóstico de ingreso' }}
+                            </p>
+                        </div>
                     </AccessGate>
 
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 dark:border-gray-700/60   ">
-                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Diagnóstico Final</h3>
+                    <!-- Diagnóstico final -->
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 sm:p-6 border dark:border-gray-700/60">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
+                            Diagnóstico Final
+                        </h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
                             {{ admission.final_dx || 'No se ha proporcionado diagnóstico final' }}
                         </p>
                     </div>
 
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 dark:border-gray-700/60   ">
-                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Observaciones</h3>
+                    <!-- Observaciones -->
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 sm:p-6 border dark:border-gray-700/60">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">
+                            Observaciones
+                        </h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
                             {{ admission.comment || 'No hay observaciones' }}
                         </p>
                     </div>
 
-                    <div v-if="admission.doctor_sign" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 dark:border-gray-700/60  ">
+                    <div v-if="admission.doctor_sign"
+                        class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 dark:border-gray-700/60  ">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Firma del Doctor/a</h3>
                         <p class="text-base text-gray-800 dark:text-gray-200 min-h-[100px]">
                             <img :src="`/storage/${admission.doctor_sign}`" width="250" alt="Firma">
                         </p>
                     </div>
-
                     <AccessGate :except-role="['receptionist']"
-                        class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 border dark:border-gray-700/60  ">
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Acciones Adicionales </h3>
-                        <div class="grid md:grid-cols-2 sm:grid-cols-1 gap-4">
+                        class="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 border dark:border-gray-700/60">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                            Acciones Adicionales
+                        </h3>
 
-                            <div class="flex flex-col space-y-2 items-center">
-
-                                  <div class=" w-full">
-                                    <PersonalizableLink :href="route('medicalOrders.index', { admission_id: admission.id })"
-                                    class="flex w-full items-center justify-center py-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg p-4 hover:from-blue-600 hover:to-blue-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                <MedicalOrderIcon class="size-5 mr-2" />
-                                Órdenes Médicas
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Órdenes Médicas -->
+                            <div class="flex flex-col items-center space-y-2">
+                                <PersonalizableLink :href="route('medicalOrders.index', { admission_id: admission.id })"
+                                    class= "w-full py-3 px-4" color="blue">
+                                    <MedicalOrderIcon class="size-5 mr-2" />
+                                    Órdenes Médicas
                                 </PersonalizableLink>
-                                  </div>
+
                                 <PersonalizableLink v-if="can.createOrder"
-                                    :href="route('medicalOrders.create', { admission_id: admission.id })"
-                                    class="flex w-24 items-center justify-center  bg-blue-400 text-white font-semibold rounded-lg p-2 hover:bg-blue-500 transition duration-300 ease-in-out">
-                                Nuevo +
+                                    :href="route('medicalOrders.create', { admission_id: admission.id })" class="flex items-center justify-center w-fit mx-auto py-1.5 px-3 text-sm
+               bg-green-500 text-white rounded-lg">
+                                    Nuevo&nbsp;+
                                 </PersonalizableLink>
                             </div>
 
-                            <div class="flex flex-col space-y-2 items-center">
+                            <!-- Hojas de Enfermería -->
+                            <div class="flex flex-col items-center space-y-2">
                                 <PersonalizableLink :href="route('nurseRecords.index', { admission_id: admission.id })"
-                                    class="flex w-full items-center justify-center py-4 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg p-4 hover:from-green-600 hover:to-green-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                <NurseRecordIcon class="size-5 mr-2" />
-                                Hojas de Enfermería
+                                    class=" w-full py-3 px-4" color="sky">
+                                    <NurseRecordIcon class="size-5 mr-2" />
+                                    Hojas de Enfermería
                                 </PersonalizableLink>
+
                                 <AccessGate :role="['admin', 'nurse']">
-                                    <PersonalizableLink :href="route('nurseRecords.create', { admission_id: admission.id })"
-                                        class="flex w-24 items-center justify-center  bg-green-400 text-white font-semibold rounded-lg p-2 hover:bg-green-500 transition duration-300 ease-in-out">
-                                    Nuevo +
+                                    <PersonalizableLink
+                                        :href="route('nurseRecords.create', { admission_id: admission.id })" class="flex items-center justify-center w-fit mx-auto py-1.5 px-3 text-sm
+                 bg-green-500 text-white rounded-lg">
+                                        Nuevo&nbsp;+
                                     </PersonalizableLink>
                                 </AccessGate>
                             </div>
 
-                            <div class="flex flex-col space-y-2 items-center">
-                                <div v-if="temperatureRecordId !== null" class=" w-full">
-                                    <PersonalizableLink
-                                        :href="`${route('temperatureRecords.show', temperatureRecordId)}?admission_id=${admission.id}`"
-                                        class="flex w-full items-center text-center justify-center py-4 bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                    <ChartIcon class="size-5 mr-1" />
-                                    Hoja de Temperaturas
-                                    </PersonalizableLink>
-                                </div>
-                                <div v-else class=" w-full">
-                                    <PersonalizableLink :href="route('temperatureRecords.create', { admission_id: admission.id })"
-                                        class="flex w-full items-center text-center justify-center py-4 bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold rounded-lg p-4 hover:from-purple-600 hover:to-purple-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                    <ChartIcon class="size-5 " />
-                                    Nueva hoja de Temperatura
-                                    </PersonalizableLink>
-                                </div>
-
+                            <!-- Hoja de Temperaturas -->
+                            <div class="flex flex-col items-center space-y-2">
+                                <PersonalizableLink :href="temperatureRecordId !== null
+                                    ? `${route('temperatureRecords.show', temperatureRecordId)}?admission_id=${admission.id}`
+                                    : route('temperatureRecords.create', { admission_id: admission.id })" class="w-full py-3 px-4" color="violet">
+                                    <ChartIcon class="size-5 mr-2" />
+                                    {{ temperatureRecordId !== null ? 'Hoja de Temperaturas' : 'Nueva Hoja de Temperatura' }}
+                                </PersonalizableLink>
                             </div>
 
-                            <div>
-                                <div v-if="medicationRecordId !== null">
-                                    <PersonalizableLink  :href="`${route('medicationRecords.show', medicationRecordId)}?admission_id=${admission.id}`"
-
-                                        class="flex w-full items-center text-center   justify-center py-4  bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                    <MedicationIcon class="size-5 mr-1 " />
+                            <!-- Ficha de Medicamentos -->
+                            <div class="flex flex-col items-center space-y-2">
+                                <PersonalizableLink :href="medicationRecordId !== null
+                                    ? `${route('medicationRecords.show', medicationRecordId)}?admission_id=${admission.id}`
+                                    : route('medicationRecords.create', { admission_id: admission.id })" class="w-full py-3 px-4" color="purple">
+                                    <MedicationIcon class="size-5 mr-2" />
                                     Ficha de Medicamentos
-                                    </PersonalizableLink>
-                                </div>
-                                <div v-else>
-                                    <PersonalizableLink :href="route('medicationRecords.create', { admission_id: admission.id })"
-                                        class="flex w-full items-center text-center justify-center py-4 bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold rounded-lg p-4 hover:from-yellow-600 hover:to-yellow-800 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                                    <MedicationIcon class="size-5 mr-1 " />
-                                    Ficha de Medicamentos
-                                    </PersonalizableLink>
-                                </div>
+                                </PersonalizableLink>
                             </div>
                         </div>
                     </AccessGate>
@@ -218,15 +231,18 @@
                         <AccessGate :role="['doctor', 'admin']">
                             <div v-if="can.update">
                                 <div v-if="admission.discharged_date == null">
-                                    <PersonalizableButton @click="admissionUpdateCharge = true"  :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing"
+                                    <PersonalizableButton @click="admissionUpdateCharge = true"
+                                        :class="{ 'opacity-25': formDischarge.processing }"
+                                        :is-loading="formDischarge.processing" :disabled="formDischarge.processing"
                                         color="green">
                                         <CheckCircleIcon class="size-5 mr-2 " />
                                         <span class="">Dar de Alta </span>
                                     </PersonalizableButton>
                                 </div>
                                 <div v-if="admission.discharged_date != null">
-                                    <PersonalizableButton @click="admissionBeingPutInProgress = true"  :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing"
-                                        color="yellow">
+                                    <PersonalizableButton @click="admissionBeingPutInProgress = true"
+                                        :class="{ 'opacity-25': form.processing }" :is-loading="form.processing"
+                                        :disabled="form.processing" color="yellow">
                                         <RestoreIcon class="size-5 mr-2" />
                                         <span class="">Poner en progreso</span>
                                     </PersonalizableButton>
@@ -236,25 +252,29 @@
 
                         <AccessGate :role="['admin']">
 
-                            <Link v-if="can.update"  :href="route('admissions.edit', admission.id)">
-                            <PersonalizableButton class=" bg-primary-500 mr-2" :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing">
+                            <Link v-if="can.update" :href="route('admissions.edit', admission.id)">
+                            <PersonalizableButton class=" bg-primary-500 mr-2"
+                                :class="{ 'opacity-25': formDischarge.processing }"
+                                :is-loading="formDischarge.processing" :disabled="formDischarge.processing">
                                 <EditIcon class="size-5 mr-2" />
                                 <span class="">Editar</span>
                             </PersonalizableButton>
                             </Link>
 
 
-                        <DangerButton v-if="can.delete && admission.active" @click="admissionBeingDeleted = true" :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing"
-                            class="gap-2" color="red">
-                            <TrashIcon class="size-5" />
-                            <span class="">Eliminar</span>
-                        </DangerButton>
-                        <PersonalizableButton v-if="can.delete && !admission.active" @click="restoreAdmission"
-                            class="gap-2" color="green">
-                            <RestoreIcon class="size-5 " />
-                            <span class="">Restaurar</span>
-                        </PersonalizableButton>
-                          </AccessGate>
+                            <DangerButton v-if="can.delete && admission.active" @click="admissionBeingDeleted = true"
+                                :class="{ 'opacity-25': formDischarge.processing }"
+                                :is-loading="formDischarge.processing" :disabled="formDischarge.processing"
+                                class="gap-2" color="red">
+                                <TrashIcon class="size-5" />
+                                <span class="">Eliminar</span>
+                            </DangerButton>
+                            <PersonalizableButton v-if="can.delete && !admission.active" @click="restoreAdmission"
+                                class="gap-2" color="green">
+                                <RestoreIcon class="size-5 " />
+                                <span class="">Restaurar</span>
+                            </PersonalizableButton>
+                        </AccessGate>
                     </div>
                 </div>
 
@@ -297,7 +317,8 @@
                     Cancelar
                 </SecondaryButton>
 
-                <PrimaryButton class="ms-3" @click="charge" :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing">
+                <PrimaryButton class="ms-3" @click="charge" :class="{ 'opacity-25': form.processing }"
+                    :is-loading="form.processing" :disabled="form.processing">
                     Aceptar
                 </PrimaryButton>
             </template>
@@ -315,7 +336,7 @@
                     <textarea required id="final_dx" rows="4" v-model="formDischarge.final_dx"
                         class="block p-2.5 mb-2 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Escribe el diagnóstico final..."></textarea>
-                        <InputError :message="formDischarge.errors.final_dx" class="mb-4"/>
+                    <InputError :message="formDischarge.errors.final_dx" class="mb-4" />
 
                     <SignaturePad class="w-full max-w-lg lg:max-w-md" v-model="formDischarge.doctor_sign"
                         input-name="doctor_sign" />
@@ -337,12 +358,14 @@
                     Cancelar
                 </SecondaryButton>
 
-                <div v-if="admission.discharged_date == null"  :class="{ 'opacity-25': formDischarge.processing }":is-loading="formDischarge.processing"  :disabled="formDischarge.processing">
+                <div v-if="admission.discharged_date == null" :class="{ 'opacity-25': formDischarge.processing }"
+                    :is-loading="formDischarge.processing" :disabled="formDischarge.processing">
                     <PrimaryButton class="ms-3" @click="discharge">
                         Dar de alta
                     </PrimaryButton>
                 </div>
-                <div v-if="admission.discharged_date != null" :class="{ 'opacity-25': form.processing }":is-loading="form.processing"  :disabled="form.processing">
+                <div v-if="admission.discharged_date != null" :class="{ 'opacity-25': form.processing }"
+                    :is-loading="form.processing" :disabled="form.processing">
                     <PrimaryButton class="ms-3" @click="charge">
                         Poner en progreso
                     </PrimaryButton>
@@ -407,23 +430,6 @@ import CheckCircleIcon from '@/Components/Icons/CheckCircleIcon.vue';
 import InputError from '@/Components/InputError.vue';
 import PersonalizableLink from '@/Components/PersonalizableLink.vue';
 export default {
-    props: {
-        admission: Object,
-        daysIngressed: Number,
-        temperatureRecordId: {
-            type: [Number, Object],
-            default: null
-        },
-        can: [Array, Object],
-        medicationRecordId: {
-            type: [Number, Object],
-            default: null
-        },
-        medicalOrderId:{
-            type: [Number, Object],
-            default: null
-        },
-    },
     components: {
         AppLayout,
         Link,
@@ -451,6 +457,23 @@ export default {
         BreadCrumb,
         PersonalizableLink
     },
+    props: {
+        admission: Object,
+        daysIngressed: Number,
+        temperatureRecordId: {
+            type: [Number, Object],
+            default: null
+        },
+        can: [Array, Object],
+        medicationRecordId: {
+            type: [Number, Object],
+            default: null
+        },
+        medicalOrderId: {
+            type: [Number, Object],
+            default: null
+        },
+    },
     data() {
         return {
             admissionBeingDeleted: ref(null),
@@ -462,9 +485,9 @@ export default {
 
             signatureError: false,
             modalform: useForm({
-                 admission_dx: this.admission.admission_dx,
+                admission_dx: this.admission.admission_dx,
             }),
-            form: useForm ({
+            form: useForm({
                 charge: false,
                 patient_id: this.admission.patient_id,
                 bed_id: this.admission.bed_id,
@@ -475,12 +498,12 @@ export default {
                 comment: this.admission.comment,
                 discharged_date: this.admission.discharged_date
             }),
-            formDischarge: useForm ({
+            formDischarge: useForm({
                 discharge: true,
                 doctor_sign: this.admission.doctor_sign,
                 final_dx: this.admission.final_dx,
                 discharged_date: this.admission.discharged_date
-           }),
+            }),
             formRecord: {
                 admission_id: this.admission.id,
                 receptionist_id: this.admission.receptionist_id,
@@ -494,11 +517,11 @@ export default {
                 preserveScroll: true
             })
         },
-        updateDiagnosis(){
-             this.modalform.put(route('admissions.update', this.admission.id), {
+        updateDiagnosis() {
+            this.modalform.put(route('admissions.update', this.admission.id), {
                 preserveScroll: true
             })
-             this.showEditDiagnosis = null;
+            this.showEditDiagnosis = null;
         },
         submitAdmission() {
             this.$inertia.put(route('admissions.update', this.admission.id), this.formRecord, {
@@ -511,7 +534,7 @@ export default {
             this.submitDischarge();
         },
         submitDischarge() {
-                if (!this.formDischarge.final_dx) {
+            if (!this.formDischarge.final_dx) {
                 this.formDischarge.errors.final_dx = "Debe Ingresar un diagnóstico final."
                 return false
             }
@@ -523,11 +546,11 @@ export default {
             this.signatureError = false;
             this.formDischarge.put(route('admissions.update', this.admission.id), {
                 preserveScroll: true,
-                  onSuccess: () => {
+                onSuccess: () => {
 
-                        this.formDischarge.reset();
-                        this.formDischarge.errors = '';
-                    },
+                    this.formDischarge.reset();
+                    this.formDischarge.errors = '';
+                },
             });
             this.admissionUpdateCharge = null
         },
@@ -560,3 +583,4 @@ export default {
     }
 }
 </script>
+

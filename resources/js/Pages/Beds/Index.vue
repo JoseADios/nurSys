@@ -7,43 +7,73 @@
         </template>
 
         <div class="mx-4 lg:mx-10">
-            <div class="flex items-center justify-end mb-4">
-                <!-- Botón para mostrar/ocultar leyenda en móviles -->
-                <button @click="showLegend = !showLegend"
-                    class="md:hidden mr-4 p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                    aria-label="Mostrar/ocultar leyenda">
-                    <InformationCircleIcon class="w-5 h-5" />
-                </button>
-            </div>
+            <div class="py-2">
+                <div class="">
+                <!-- Fila de Tarjetas de Estadísticas -->
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 ">
+                    <!-- Tarjeta Disponibles -->
+                    <div
+                        class="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg border border-gray-200/60 dark:border-gray-700/60 flex flex-col sm:flex-row items-center">
+                        <div class="p-2 sm:p-3 rounded-full bg-[#71DD37]/20 mb-2 sm:mb-0 sm:mr-4">
+                            <Bed2Icon class="w-5 h-5 sm:w-6 sm:h-6 text-[#71DD37]" />
+                        </div>
+                        <div class="overflow-hidden text-center sm:text-start">
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">Disponibles</p>
+                            <p class="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-white">
+                                {{ bedStatusCounts.available }}
+                            </p>
+                        </div>
+                    </div>
 
-            <!-- Leyenda de colores - Visible siempre en desktop, condicional en móvil -->
-            <div :class="{ 'hidden': !showLegend && isMobile, 'block': showLegend || !isMobile }"
-                class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-sm">
-                <div class="flex flex-wrap gap-x-4 gap-y-2 items-center">
-                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Estado de camas:</h4>
-                    <div class="flex items-center">
-                        <div class="w-4 h-4 rounded-full bg-[#71DD37] mr-1.5"></div>
-                        <span class="text-xs text-gray-600 dark:text-gray-400">Disponible</span>
+                    <!-- Tarjeta Ocupadas -->
+                    <div
+                        class="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg border border-gray-200/60 dark:border-gray-700/60 flex flex-col sm:flex-row items-center">
+                        <div class="p-2 sm:p-3 rounded-full bg-[#696CFF]/20 mb-2 sm:mb-0 sm:mr-4">
+                            <BedIcon class="w-5 h-5 sm:w-6 sm:h-6 text-[#696CFF]" />
+                        </div>
+                        <div class="overflow-hidden text-center sm:text-start">
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">Ocupadas</p>
+                            <p class="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-white">
+                                {{ bedStatusCounts.occupied }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex items-center">
-                        <div class="w-4 h-4 rounded-full bg-[#696CFF] mr-1.5"></div>
-                        <span class="text-xs text-gray-600 dark:text-gray-400">Ocupada</span>
+
+                    <!-- Tarjeta Limpieza -->
+                    <div
+                        class="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg border border-gray-200/60 dark:border-gray-700/60 flex flex-col sm:flex-row items-center">
+                        <div class="p-2 sm:p-3 rounded-full bg-[#FFAB00]/20 mb-2 sm:mb-0 sm:mr-4">
+                            <BroomIcon class="w-5 h-5 sm:w-6 sm:h-6 text-[#FFAB00]" />
+                        </div>
+                        <div class="overflow-hidden text-center sm:text-start">
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">Limpieza</p>
+                            <p class="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-white">
+                                {{ bedStatusCounts.cleaning }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex items-center">
-                        <div class="w-4 h-4 rounded-full bg-[#FFAB00] mr-1.5"></div>
-                        <span class="text-xs text-gray-600 dark:text-gray-400">Limpieza</span>
+
+                    <!-- Tarjeta Fuera de Servicio -->
+                    <div
+                        class="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg border border-gray-200/60 dark:border-gray-700/60 flex flex-col sm:flex-row items-center">
+                        <div class="p-2 sm:p-3 rounded-full bg-[#FC4C51]/20 mb-2 sm:mb-0 sm:mr-4">
+                            <BanIcon class="w-5 h-5 sm:w-6 sm:h-6 text-[#FC4C51]" />
+                        </div>
+                        <div class="overflow-hidden text-center sm:text-start">
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">Fuera de Servicio</p>
+                            <p class="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-white">
+                                {{ bedStatusCounts.out_of_service }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex items-center">
-                        <div class="w-4 h-4 rounded-full bg-[#FC4C51] mr-1.5"></div>
-                        <span class="text-xs text-gray-600 dark:text-gray-400">Fuera de servicio</span>
-                    </div>
+                </div>
                 </div>
             </div>
 
-            <div class="container py-2 sm:py-6">
+            <div class="container py-2">
                 <!-- Selector de pisos -->
                 <div
-                    class="mb-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-sm p-4 flex flex-col sm:flex-row items-center justify-between">
+                    class="mb-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200/60 dark:border-gray-700/60 backdrop-blur-sm p-2 px-4 flex flex-col sm:flex-row items-center justify-between">
                     <div class="flex items-center mb-4 sm:mb-0">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2"
                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -350,7 +380,6 @@ import ClipBoardIcon from '@/Components/Icons/ClipBoardIcon.vue';
 import Bed2Icon from '@/Components/Icons/Bed2Icon.vue';
 import BroomIcon from '@/Components/Icons/BroomIcon.vue';
 import BanIcon from '@/Components/Icons/BanIcon.vue';
-import InformationCircleIcon from '@/Components/Icons/InformationCircleIcon.vue';
 
 export default {
     components: {
@@ -371,13 +400,21 @@ export default {
         PlusIcon,
         EditIcon,
         BanIcon,
-        InformationCircleIcon,
     },
     props: {
         beds: Object,
         floors: Object,
         rooms: Object,
         admissions: Object,
+        bedStatusCounts: {
+            type: Object,
+            default: () => ({
+                available: 0,
+                occupied: 0,
+                cleaning: 0,
+                out_of_service: 0,
+            }),
+        },
     },
     data() {
         return {
@@ -389,8 +426,6 @@ export default {
 
             }),
             showTooltip: null,
-            showLegend: false,
-            isMobile: window.innerWidth < 768,
             form: {
                 status: '',
             },

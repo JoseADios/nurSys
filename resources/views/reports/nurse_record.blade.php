@@ -269,7 +269,7 @@
         </div>
     </div>
     <div style="width: 100%; padding: 2px; text-align: right;">
-        <p>Generado a las {{now()->locale('es')->isoFormat('h:mm A [del] d [de] MMMM [de] YYYY')}} </p>
+        <p>Generado a las {{now()->locale('es')->isoFormat('h:mm A [del] D [de] MMMM [de] YYYY')}} </p>
     </div>
 </body>
 

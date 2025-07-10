@@ -18,7 +18,7 @@ class TemperatureDetailSeeder extends Seeder
         ];
 
         $numberOfDays = 5;
-        $startDate = Carbon::now()->subDays($numberOfDays);
+        $startDate = Carbon::now()->addDays(1);
 
         for ($day = 0; $day < $numberOfDays; $day++) {
             $currentDate = $startDate->copy()->addDays($day);

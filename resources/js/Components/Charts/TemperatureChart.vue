@@ -5,8 +5,10 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, watchEffect } from 'vue';
+import { defineComponent, ref, computed, watchEffect, nextTick } from 'vue';
 import ApexCharts from 'vue3-apexcharts';
+import moment from 'moment/moment';
+import 'moment/locale/es';
 
 export default defineComponent({
     components: {
@@ -16,6 +18,10 @@ export default defineComponent({
         temperatureData: {
             type: Array,
             required: true,
+        },
+        startDate: {
+            type: String,
+            required: true
         },
         height: {
             type: Number,
@@ -51,7 +57,7 @@ export default defineComponent({
                 redrawOnWindowResize: true,
                 redrawOnParentResize: true,
                 animations: {
-                    enabled: false
+                    enabled: true
                 }
             },
             title: {
@@ -79,22 +85,19 @@ export default defineComponent({
                 },
             },
             xaxis: {
-                categories: [],
+                type: 'datetime',
                 labels: {
                     style: {
                         colors: isDarkMode.value ? '#e5e7eb' : '#1f2937',
                         fontSize: '11px',
                     },
-                    rotate: -45,
-                    rotateAlways: false,
+                    datetimeUTC: false,
                 },
-                xaxis: {
-                    axisBorder: {
-                        color: isDarkMode.value ? '#4b5563' : '#e5e7eb', // Gris más claro
-                    },
-                    axisTicks: {
-                        color: isDarkMode.value ? '#4b5563' : '#e5e7eb', // Gris más claro
-                    },
+                axisBorder: {
+                    color: isDarkMode.value ? '#4b5563' : '#e5e7eb',
+                },
+                axisTicks: {
+                    color: isDarkMode.value ? '#4b5563' : '#e5e7eb',
                 },
             },
             yaxis: {
@@ -128,37 +131,68 @@ export default defineComponent({
                         }
                     }
                 ],
-                xaxis: [
-                    {
-                        borderColor: isDarkMode.value ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.1)',
-                        label: {
-                            style: {
-                                color: isDarkMode.value ? '#e5e7eb' : '#1f2937',
-                                background: isDarkMode.value ? '#374151' : '#ffffff',
-                                border: '1px solid #e5e7eb',
-                                padding: { left: 10, right: 10, top: 4, bottom: 4 }
-                            }
-                        }
-                    }
-                ]
+                xaxis: []
             },
             tooltip: {
                 theme: isDarkMode.value ? 'dark' : 'light',
+                // CAMBIO 1: Configuración más permisiva para el tooltip
+                intersect: true, // Cambiado a false para mejor detección
+                shared: false,
+                followCursor: false, // Hace que el tooltip siga el cursor
+                // CAMBIO 2: Configuración específica para markers
+                marker: {
+                    show: true,
+                },
+                x: {
+                    formatter: function (val) {
+                        return moment(val).format('DD/MM/YYYY HH:mm');
+                    }
+                },
                 y: {
-                    formatter: (value, { dataPointIndex }) => {
-                        const evacuation = props.temperatureData[dataPointIndex].evacuations;
-                        const urination = props.temperatureData[dataPointIndex].urinations;
-                        const nurse = props.temperatureData[dataPointIndex].nurse;
-                        const nurseName = `${nurse.name} ${nurse.last_name}`;
-                        return `Temperatura: ${value} °C<br>Evacuaciones: ${evacuation}<br>Micciones: ${urination}<br>Enfermero: ${nurseName}`;
+                    formatter: (value, { series, seriesIndex, dataPointIndex, w }) => {
+                        // CAMBIO 3: Lógica mejorada para manejar índices
+                        let originalDataIndex = dataPointIndex;
+
+                        // Si hay más de un punto y agregamos el punto null inicial
+                        if (props.temperatureData.length > 1) {
+                            originalDataIndex = dataPointIndex - 1;
+                        }
+
+                        // Verificar que el índice sea válido
+                        if (originalDataIndex >= 0 && originalDataIndex < props.temperatureData.length) {
+                            const item = props.temperatureData[originalDataIndex];
+                            const evacuation = item.evacuations;
+                            const urination = item.urinations;
+                            const nurse = item.nurse;
+                            const nurseName = `${nurse.name} ${nurse.last_name}`;
+                            return `Temperatura: ${value} °C<br>Evacuaciones: ${evacuation}<br>Micciones: ${urination}<br>Enfermero: ${nurseName}`;
+                        }
+                        return `Temperatura: ${value} °C`;
                     }
                 }
             },
             markers: {
-                size: 4,
-                colors: ['#3b82f6'],
+                size: 8, // Aumenté el tamaño
+                colors: ['#696CFF'],
                 strokeColors: isDarkMode.value ? '#fff' : '#e5e7eb',
                 strokeWidth: 2,
+                fillOpacity: 1,
+                strokeOpacity: 0.9,
+                shape: "circle",
+                radius: 2,
+                discrete: [],
+                showNullDataPoints: false,
+                // CAMBIO 5: Configuración adicional para hover
+                // hover: {
+                //     size: props.temperatureData.length === 1 ? 12 : 8, // Más grande en hover
+                //     sizeOffset: 3
+                // }
+            },
+            // CAMBIO 6: Configuración adicional para un solo punto
+            plotOptions: {
+                line: {
+                    isSlopeChart: false,
+                }
             },
             responsive: [
                 {
@@ -173,7 +207,7 @@ export default defineComponent({
                             }
                         },
                         markers: {
-                            size: 2,
+                            size: 4,
                         },
                     },
                 },
@@ -190,28 +224,38 @@ export default defineComponent({
         const processTemperatureData = () => {
             if (!props.temperatureData.length) return;
 
-            const dateObjects = props.temperatureData.map(item => new Date(item.updated_at));
+            const firstDate = moment(props.startDate);
+            const seriesData = props.temperatureData.map(item => {
+                return [new Date(item.updated_at).getTime(), item.temperature];
+            });
 
-            chartOptions.value.xaxis.categories = dateObjects.map(date =>
-                date.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
-            );
+            // CAMBIO 7: Solo agregar el punto null si hay más de un punto de datos
+            if (props.temperatureData.length > 1) {
+                seriesData.unshift([firstDate.startOf('day').valueOf(), null]);
+            }
 
-            chartSeries.value[0].data = props.temperatureData.map(item => item.temperature);
+            chartSeries.value[0].data = seriesData;
 
             const xAxisAnnotations = [];
-            const firstDate = new Date(props.temperatureData[0].updated_at);
-            let lastProcessedDayStr = '';
 
-            props.temperatureData.forEach((item, index) => {
-                const date = new Date(item.updated_at);
-                const dayStr = date.toISOString().split('T')[0];
+            // Solo mostrar etiquetas de días si hay más de un punto
+            if (props.temperatureData.length > 1) {
 
-                if (dayStr !== lastProcessedDayStr) {
-                    const diffTime = Math.abs(date - firstDate);
-                    const dayNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const startD = moment(props.startDate).startOf('day');
+                let endD = moment(props.temperatureData[props.temperatureData.length - 1].updated_at).startOf('day');
+                let numberOfDays = endD.diff(startD, 'days');
 
+                // crear un array de fechas desde el dia de inicio hasta la ultima temperatura
+                let arrayOfDays = [];
+
+                for (let i = 0; i <= numberOfDays; i++) {
+                    let day = startD.clone(0);
+                    arrayOfDays.push(day.add(i, 'days').clone());
+                }
+
+                arrayOfDays.forEach(function(ele, dayNumber ) {
                     xAxisAnnotations.push({
-                        x: chartOptions.value.xaxis.categories[index],
+                        x: ele.startOf('day').valueOf(),
                         strokeDashArray: 0,
                         borderColor: isDarkMode.value ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)',
                         label: {
@@ -221,18 +265,23 @@ export default defineComponent({
                                 background: isDarkMode.value ? '#374151' : '#e5e7eb',
                                 padding: { left: 10, right: 10, top: 2, bottom: 2 }
                             },
-                            text: index === 0 ? 'I N G' : `Día ${dayNumber + 1}`,
+                            text: dayNumber === 0 ? 'I N G' : `Día ${dayNumber}`,
                             position: 'top',
                             orientation: 'horizontal',
                             offsetY: -15
                         }
                     });
-
-                    lastProcessedDayStr = dayStr;
-                }
-            });
+                });
+            }
 
             chartOptions.value.annotations.xaxis = xAxisAnnotations;
+
+            // Forzar actualización del gráfico después de procesar los datos
+            nextTick(() => {
+                if (chart.value?.chart) {
+                    chart.value.chart.updateSeries(chartSeries.value, true);
+                }
+            });
         };
 
         watchEffect(() => {

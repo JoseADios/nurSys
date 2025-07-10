@@ -54,11 +54,11 @@ class AdmissionPolicy
             return Response::deny('El usuario no tiene los permisos necesarios para crear ingresos');
         }
 
-        if (!$user->hasRole('doctor')) {
+        if (!$user->hasRole(['doctor', 'nurse'])) {
             return Response::deny('No tienes el rol necesario para modificar este registro');
         }
 
-        if ($user->id !== $admission->doctor_id) {
+        if ($user->hasRole('doctor') && $user->id !== $admission->doctor_id) {
             return Response::deny('No eres el doctor asignado a este ingreso, no puedes modificarlo');
         }
 

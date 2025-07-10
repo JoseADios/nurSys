@@ -1,7 +1,7 @@
 <template>
     <AppLayout title="Registros de Actividades">
         <template #header>
-            <h2 class="font-semibold text-xl text-white leading-tight text-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Registros de Actividades
             </h2>
         </template>

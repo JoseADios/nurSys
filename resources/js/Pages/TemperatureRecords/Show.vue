@@ -60,7 +60,7 @@
                 </div>
 
                 <!-- Patient and Record Information -->
-                <div class="grid md:grid-cols-2 gap-6 p-8 bg-gray-50 dark:bg-gray-700">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 p-4 sm:p-8 bg-gray-50 dark:bg-gray-700">
                     <div class="space-y-4">
                         <!-- admission -->
                         <div
@@ -142,15 +142,18 @@
                 </div>
 
                 <!-- Chart -->
-                <div class="p-4 mx-8 my-4">
-                    <TemperatureChart ref="chart" :temperatureData="details" :key="chartKey" :height="100" />
+                <div class="p-4 sm:p-8 my-4">
+                    <TemperatureChart ref="chart" :temperatureData="details" :start-date="temperatureRecord.admission.created_at" :key="chartKey" :height="100" />
                 </div>
 
                 <!-- forms temperatura -->
-                <div class="flex flex-col md:flex-row justify-center items-center">
+                <div v-if="canCreateElimination || canUpdateElimination" class="flex flex-col md:flex-row justify-center items-center">
+
                     <!-- Formulario para actualizar ultimo detalle -->
-                    <AccessGate :permission="['temperatureDetail.update']" v-if="lastTemperature" class="w-full p-8">
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Ultima temperatura</h3>
+                    <AccessGate :permission="['temperatureDetail.update']" v-if="lastTemperature"
+                        class="w-full lg:w-auto p-4 sm:p-8">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center">Ultima
+                            temperatura</h3>
                         <form @submit.prevent="updateDetail" class="space-y-4">
                             <div>
                                 <InputLabel for="temperature" value="Temperatura" :required="true" class="mb-2" />
@@ -171,9 +174,11 @@
 
                     <!-- Formulario para agregar nuevo detalle -->
                     <AccessGate :permission="['temperatureDetail.create']"
-                        :class="['w-full p-8', { 'w-[50%]': !lastTemperature }]">
+                        :class="['w-full lg:w-auto p-4 sm:p-8', { 'w-[50%]': !lastTemperature }]">
 
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Temperatura</h3>
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center">Agregar
+                            Temperatura
+                        </h3>
                         <form @submit.prevent="submitCreateDetail" :class="['space-y-4', {
                             'md:grid-cols-1 place-items-center': !lastTemperature
                         }]">
@@ -195,9 +200,9 @@
                 </div>
 
                 <!-- forms eliminaciones -->
-                <div class="flex justify-center">
+                <div class="flex flex-col md:flex-row justify-center items-center">
                     <!-- formulario para actualizar ultimas eliminaciones -->
-                    <div v-if="lastEliminations && canUpdateElimination" class="p-8 ">
+                    <div v-if="lastEliminations && canUpdateElimination" class="w-full md:w-auto p-4 sm:p-8">
                         <h3 class="text-xl text-center font-semibold text-gray-800 dark:text-white mb-6">Actualizar
                             eliminaciones</h3>
                         <form @submit.prevent="updateEliminations" class="space-y-4">
@@ -230,48 +235,50 @@
                     </div>
 
                     <!-- formulario para crear elimination records -->
-                    <AccessGate v-if="canCreateElimination" :permission="['temperatureDetail.create']">
-                        <div class="p-8 ">
-                            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar registro de
-                                eliminación
-                            </h3>
+                    <AccessGate v-if="canCreateElimination" :permission="['temperatureDetail.create']"
+                        :class="['w-full md:w-auto p-4 sm:p-8', { 'w-[50%]': !lastEliminations }]">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
+                            Agregar registro de eliminación
+                        </h3>
 
-                            <form @submit.prevent="submitCreateEliminations" class="space-y-4">
-                                <div class="grid md:grid-cols-2 gap-4">
-                                    <div>
-                                        <InputLabel for="evacuations" value="Evacuaciones" :required="true"
-                                            class="mb-2" />
-                                        <input type="number" id="evacuations" min="0"
-                                            v-model="formEliminations.evacuations" required
-                                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                                            placeholder="Num. de evacuaciones del paciente" />
-                                        <InputError :message="formEliminations.errors.evacuations" class="mt-2" />
-                                    </div>
-                                    <div>
-                                        <InputLabel for="urinations" value="Micciones" :required="true" class="mb-2" />
-                                        <input type="text" id="urinations" v-model="formEliminations.urinations"
-                                            required maxlength="2"
-                                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                                            placeholder="Num. de micciones del paciente" />
-                                        <InputError :message="formEliminations.errors.urinations" class="mt-2" />
-                                    </div>
+                        <form @submit.prevent="submitCreateEliminations" :class="['space-y-4', {
+                            'md:grid-cols-1 place-items-center': !lastEliminations
+                        }]">
+                            <div class=" w-full md:w-auto grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <InputLabel for="evacuations" value="Evacuaciones" :required="true" class="mb-2" />
+                                    <input type="number" id="evacuations" min="0" v-model="formEliminations.evacuations"
+                                        required
+                                        class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                        placeholder="Num. de evacuaciones del paciente" />
+                                    <InputError :message="formEliminations.errors.evacuations" class="mt-2" />
                                 </div>
+                                <div>
+                                    <InputLabel for="urinations" value="Micciones" :required="true" class="mb-2" />
+                                    <input type="text" id="urinations" v-model="formEliminations.urinations" required
+                                        maxlength="2"
+                                        class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                        placeholder="Num. de micciones del paciente" />
+                                    <InputError :message="formEliminations.errors.urinations" class="mt-2" />
+                                </div>
+                            </div>
 
-                                <div class="pt-4">
-                                    <PersonalizableButton size="large" class="w-full"
-                                        :loading="formEliminations.processing">
-                                        Guardar
-                                    </PersonalizableButton>
-                                </div>
-                            </form>
-                        </div>
+                            <div class="pt-4 w-full">
+                                <PersonalizableButton size="large" class="w-full"
+                                    :loading="formEliminations.processing">
+                                    Guardar
+                                </PersonalizableButton>
+                            </div>
+                        </form>
                     </AccessGate>
 
                     <!-- si no puede crear ni actualizar mostrar que ya otro enfermero ha registrado una firma en este turno que no puede hacer nada -->
                     <div v-if="!lastTemperature && !canCreateElimination && !canUpdateElimination" class="p-8">
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Información</h3>
-                        <p class="text-lg text-gray-700 dark:text-gray-300">
-                            No puede realizar ninguna acción.
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center">Información
+                        </h3>
+                        <p class="text-lg italic text-gray-700 dark:text-gray-300 ">
+                            No puede realizar ninguna acción. Ya el/la enfermero/a {{ lastEliminations.nurse.name }} {{
+                            lastEliminations.nurse.last_name }} está trabajando este registro en el turno actual.
                         </p>
                     </div>
 
@@ -481,7 +488,6 @@ export default {
             showEditUser: ref(null),
             isVisibleEditSign: ref(null),
             recordActiveChanging: ref(false),
-            isVisibleEditDiagnosis: false,
             signatureError: false,
             chartKey: 0,
 
@@ -576,9 +582,9 @@ export default {
             this.formRecord.put(route('temperatureRecords.update', this.temperatureRecord.id), {
                 onFinish: () => {
                     this.recordActiveChanging = false;
-                }
+                },
+                preserveScroll: true,
             })
-            this.isVisibleEditDiagnosis = false
         },
         submitSignature() {
             if (!this.formSignature.nurse_sign) {
@@ -590,9 +596,6 @@ export default {
                 preserveScroll: true
             });
             this.isVisibleEditSign = false
-        },
-        toggleEditRecord() {
-            this.isVisibleEditDiagnosis = !this.isVisibleEditDiagnosis
         },
         deleteRecord() {
             this.recordActiveChanging = true;

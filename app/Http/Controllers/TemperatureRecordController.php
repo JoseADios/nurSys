@@ -46,7 +46,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
         $search = $request->input('search');
         $showDeleted = $request->boolean('showDeleted');
         $admissionId = $request->integer('admission_id');
-        $myRecords = $request->boolean('myRecords', Auth::user()->hasRole(['nurse', 'admin']));
+        $myRecords = $request->boolean('myRecords', false);
         $days = $request->integer('days');
         $in_process = $request->input('in_process', 'true');
         $sortField = $request->input('sortField');
@@ -205,9 +205,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             $dateRange = $turnService->getDateRangeForTurn($temperatureTurn, $temperature->updated_at);
 
             // Buscar el registro de eliminación dentro del mismo turno
-            $elimination = $eliminationsRecords->first(function ($el) use ($dateRange) {
-                return Carbon::parse($el->updated_at)->between($dateRange['start'], $dateRange['end']);
-            });
+            $elimination = $eliminationsRecords->whereBetween('updated_at', [$dateRange['start'], $dateRange['end']])->first();
 
             // Agregar los datos combinados
             $details[] = [
@@ -218,7 +216,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
                     'name' => $temperature->nurse->name,
                     'last_name' => $temperature->nurse->last_name,
                 ],
-                'updated_at' => $temperature->created_at
+                'updated_at' => $temperature->updated_at
             ];
         }
 
@@ -234,6 +232,7 @@ class TemperatureRecordController extends Controller implements HasMiddleware
             ->first();
 
         $lastEliminations = EliminationRecord::where('temperature_record_id', $temperatureRecord->id)
+            ->with('nurse')
             ->orderBy('updated_at', 'desc')
             ->first();
 

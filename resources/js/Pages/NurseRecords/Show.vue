@@ -146,7 +146,8 @@
                     </div>
                 </div>
 
-                <AccessGate :permission="['nurseRecord.update']" class="flex flex-col md:flex-row">
+                <AccessGate v-if="canUpdateRecord" :permission="['nurseRecord.update']"
+                    class="flex flex-col md:flex-row">
                     <div class="col w-full md:w-[50%] p-4 md:p-8">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Órdenes médicas</h3>
                         <!-- Mensaje cuando no hay órdenes -->
@@ -172,7 +173,7 @@
                                             </span>
                                             <span class="font-normal pr-1 text-sm text-gray-500 dark:text-gray-400">{{
                                                 formatDateFromNow(order.created_at)
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <ChevronDown
                                             class="h-5 w-5 transform transition-transform duration-300 text-gray-800 dark:text-white"
@@ -188,7 +189,7 @@
                                             <div class="flex flex-col justify-between items-start">
                                                 <div class="w-full flex flex-col">
                                                     <div class="flex justify-between items-center w-full gap-2">
-                                                        <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                                        <p class="text-sm font-semibold text-gray-800 dark:text-white break-all">
                                                             {{ detail.order }}
                                                         </p>
                                                         <p class="text-xs text-gray-500 dark:text-gray-400 text-end">
@@ -255,8 +256,13 @@
                     </AccessGate>
                 </AccessGate>
 
-                <AccessGate :except-permission="['nurseRecordDetail.create']">
+                <div v-if="!canUpdateRecord">
                     <hr class="my-2 border-transparent dark:border-transparent">
+                </div>
+                <AccessGate :except-permission="['nurseRecordDetail.create']">
+                    <div v-if="canUpdateRecord">
+                        <hr class="my-2 border-transparent dark:border-transparent">
+                    </div>
                 </AccessGate>
 
                 <!-- Nurse Record Details: Mejorar controles -->
@@ -266,7 +272,7 @@
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2 sm:mb-0">Eventos del
                             Registro</h3>
 
-                        <AccessGate :permission="['nurseRecord.update']">
+                        <div v-if="canUpdateRecord">
                             <button @click="toggleShowDeleted"
                                 class="flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap w-full sm:w-auto justify-center sm:justify-start"
                                 :class="{
@@ -278,17 +284,17 @@
                                 <CircleXIcon v-else class="ml-1 h-5 w-5" />
                             </button>
 
-                        </AccessGate>
+                        </div>
                     </div>
 
                     <div class="max-h-[50rem] overflow-y-auto space-y-4">
                         <div v-for="detail in details" :key="detail.id"
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60 backdrop-blur-sm flex flex-col sm:flex-row justify-between items-start sm:items-center hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors">
                             <div class="flex-grow pr-4 w-full sm:w-auto">
-                                <div class="font-semibold text-gray-900 dark:text-white">
+                                <div class="font-semibold text-gray-900 dark:text-white text-wrap break-all">
                                     {{ detail.medication }}
                                 </div>
-                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                <div class="text-sm text-gray-600 dark:text-gray-300 mt-1 break-all">
                                     {{ detail.comment }}
                                 </div>
                                 <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">

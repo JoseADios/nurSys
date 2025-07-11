@@ -42,7 +42,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
         $sortDirection = $request->input('sortDirection', 'asc');
         $showDeleted = $request->boolean('showDeleted');
         $days = $request->integer('days');
-        $myRecords = $request->boolean('myRecords', Auth::user()->hasRole(['nurse', 'admin']));
+        $myRecords = $request->boolean('myRecords', false);
         $in_process = $request->input('in_process', 'true');
 
         // si se filtra por ingreso mostrar los registros aunque esten dados de alta

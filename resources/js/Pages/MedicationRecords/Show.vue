@@ -246,7 +246,7 @@
 
                                                         <!-- Contenido acordeón -->
                                                         <div v-if="openAccordion === index"
-                                                            class="p-2 sm:p-3 bg-white dark:bg-gray-900 rounded-b-2xl">
+                                                            class="p-2 sm:p-3 bg-white dark:bg-gray-900 rounded-b-2xl accordion-content">
                                                             <div v-for="(detail, detailIndex) in order.medical_order_detail"
                                                                 :key="detailIndex" @click="selectOrder(detail.id)"
                                                                 :class="[
@@ -257,20 +257,33 @@
                                                                             ? 'bg-indigo-100 dark:bg-indigo-500 text-white'
                                                                             : 'bg-white dark:bg-gray-800'
                                                                 ]">
-                                                                <div
-                                                                    class="flex justify-between items-start w-full px-2">
-                                                                    <p
-                                                                        class="text-sm font-semibold text-gray-800 dark:text-white">
-                                                                        {{ detail.order }}
-                                                                    </p>
-                                                                    <p class="text-xs text-gray-500 dark:text-gray-300">
-                                                                        {{ formatDateFromNow(detail.created_at) }}
-                                                                    </p>
+                                                                <div class="flex flex-col justify-between items-start">
+                                                                    <div class="w-full flex flex-col">
+                                                                        <div
+                                                                            class="flex justify-between items-center w-full gap-2">
+                                                                            <p
+                                                                                class="text-sm font-semibold text-gray-800 dark:text-white break-words w-full">
+                                                                                {{ detail.order }} </p>
+
+                                                                        </div>
+                                                                        <div
+                                                                            class="flex justify-between items-center mt-2 w-full gap-2">
+                                                                              <p
+                                                                                class="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                                                                                {{ detail.regime }}
+                                                                            </p>
+                                                                            <p
+                                                                                class="text-xs text-gray-500 dark:text-gray-400 text-end">
+                                                                                {{ formatDateFromNow(detail.created_at)
+                                                                                }}
+                                                                            </p>
+
+
+                                                                        </div>
+
+                                                                    </div>
                                                                 </div>
-                                                                <p
-                                                                    class="text-xs text-gray-600 dark:text-gray-300 mt-0.5 px-2">
-                                                                    {{ detail.regime }}
-                                                                </p>
+
                                                             </div>
                                                         </div>
                                                     </div>

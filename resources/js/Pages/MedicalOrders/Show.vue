@@ -274,7 +274,7 @@
                     ]">
                         <!-- Columna 1: toda la información de texto -->
                         <div class="min-w-0 break-words">
-                            <p class="font-semibold text-gray-900 dark:text-white">
+                            <p class="font-semibold text-gray-900 dark:text-white break-all">
                                 {{ detail.order }}
                             </p>
 

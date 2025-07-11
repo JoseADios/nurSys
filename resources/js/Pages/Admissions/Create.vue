@@ -20,7 +20,8 @@
         </div>
 
         <!-- Formulario -->
-        <div class="relative overflow-x-auto shadow-none sm:shadow-md sm:rounded-lg mt-4 lg:mx-10 p-3 sm:p-0">
+       <div
+            class="relative overflow-hidden border-gray-200 dark:border-gray-700/60 sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
             <form @submit.prevent="submit" class="max-w-md sm:max-w-xl mx-auto space-y-6">
                 <!-- Cama -->
                 <BedSelector :beds="beds" :errors="form.errors" :initialBedId="form.bed_id"

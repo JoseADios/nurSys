@@ -250,7 +250,7 @@
                             </div>
                         </AccessGate>
 
-                        <AccessGate :role="['admin']">
+                        <AccessGate :role="['admin','nurse']">
 
                             <Link v-if="can.update" :href="route('admissions.edit', admission.id)">
                             <PersonalizableButton class=" bg-primary-500 mr-2"

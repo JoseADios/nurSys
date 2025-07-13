@@ -9,6 +9,7 @@ use App\Models\Diet;
 use App\Models\User;
 use App\Models\Drug;
 use App\Models\DrugRoute;
+use Gate;
 use App\Models\DrugDose;
 use App\Models\MedicalOrderDetail;
 use App\Models\MedicalOrder;
@@ -144,6 +145,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
         $medicationRecord = MedicationRecord::create([
             'admission_id' => $request->admission_id,
             'diet' => $request->diet,
+            'nurse_id' => Auth::id(),
         ]);
 
         return redirect()->route('medicationRecords.show', [
@@ -172,6 +174,9 @@ class MedicationRecordController extends Controller implements HasMiddleware
             $admission_id = $request->integer('admission_id');
             $diet = Diet::all();
 
+            $response = Gate::inspect('update', $medicationRecord);
+            $canUpdateRecord = $response->allowed();
+
             if ($showDeleted || !$medicationRecord->active) {
                 $details = MedicationRecordDetail::where('medication_record_id', $medicationRecord->id)->where('active', false)->with('medicationNotification')->orderBy('created_at', 'desc')->get();
             } else {
@@ -180,6 +185,7 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
             return Inertia::render('MedicationRecords/Show', [
                 'medicationRecord' => $medicationRecord,
+                'canUpdateRecord' => $canUpdateRecord,
                 'details' => $details,
                 'admission_id' => $admission_id,
                 'orders' => $allMedicalOrders,

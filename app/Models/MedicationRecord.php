@@ -17,7 +17,7 @@ class MedicationRecord extends Model
 
     protected $fillable = [
         'admission_id',
-
+        'nurse_id',
 
         'diet',
         'referrals',
@@ -60,6 +60,10 @@ class MedicationRecord extends Model
         return $this->hasMany(MedicationRecordDetail::class);
     }
     public function doctor(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+     public function nurse(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

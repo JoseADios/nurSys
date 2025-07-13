@@ -15,20 +15,24 @@ class DietSeeder extends Seeder
     {
         Diet::create([
             'name' => 'Corriente',
-            'description' => 'Esta es una descripcion de la corriente',
+            'description' => 'Pacientes sin restricciones alimentarias específicas. ',
         ]);
 
         Diet::create([
             'name' => 'Suave',
-            'description' => 'Esta es una descripcion de la Suave',
+            'description' => 'Pacientes con molestias gastrointestinales leves. ',
         ]);
+
         Diet::create([
-            'name' => 'Hiposodica',
-            'description' => 'Esta es una descripcion de la Hiposodica',
+            'name' => 'Hiposódica',
+            'description' => 'Pacientes con hipertensión, insuficiencia renal o cardíaca.',
         ]);
+
         Diet::create([
-            'name' => 'Liquida',
-            'description' => 'Esta es una descripcion de la Liquida',
+            'name' => 'Líquida',
+            'description' => 'Usada antes o después de cirugías o cuando el paciente no puede masticar.',
         ]);
+
+
     }
 }

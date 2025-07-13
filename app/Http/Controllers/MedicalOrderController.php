@@ -50,6 +50,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
             $in_process = false;
         }
 
+
         $query = MedicalOrder::with('admission.patient', 'admission.bed', 'admission.doctor')
             ->select([
                 'medical_orders.created_at',
@@ -173,6 +174,8 @@ class MedicalOrderController extends Controller implements HasMiddleware
         $medicalOrder = $query->latest()->firstOrFail();
         Log::info($medicalOrder);
         $admissions = Admission::where('active', true)->with('patient', 'bed')->get();
+        $response = Gate::inspect('update', $medicalOrder);
+        $canUpdateRecord = $response->allowed();
 
 
         $doctor = User::find($medicalOrder->doctor_id);
@@ -196,6 +199,7 @@ class MedicalOrderController extends Controller implements HasMiddleware
 
         return Inertia::render('MedicalOrders/Show', [
             'medicalOrder' => $medicalOrder,
+            'canUpdateRecord' => $canUpdateRecord,
             'details' => $details,
             'admissions' => $admissions,
             'doctor' => $doctor,

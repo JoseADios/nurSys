@@ -51,7 +51,7 @@
                             <ReportIcon class="size-5 " />
                             <span class="hidden sm:inline-flex">Crear Reporte</span>
                         </PersonalizableButton>
-                        <AccessGate :permission="['medicalOrder.delete']">
+                        <AccessGate :permission="['medicalOrder.delete']" v-if="canUpdateRecord">
                             <DangerButton v-if="medicalOrder.active" @click="recordBeingDeleted = true">
                                 <TrashIcon class="size-5" />
                                 <span class="font-medium hidden sm:inline-flex">Eliminar</span>
@@ -197,7 +197,7 @@
                 </div>
 
                 <!-- Formulario para agregar nuevo detalle -->
-                <AccessGate :permission="['medicalOrder.delete']">
+                <AccessGate :permission="['medicalOrder.delete']" v-if="canUpdateRecord">
                     <div class="p-8 ">
                         <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Agregar Nuevos Detalles
                         </h3>
@@ -230,7 +230,7 @@
                             </div>
                         </form>
                         <div class="pt-4">
-                            <PersonalizableButton type="" @click="medicalOrderDetailBeingCreated = true"
+                            <PersonalizableButton type="submit" @click="submit"
                                 :class="{ 'opacity-25': formDetail.processing }" :loading="formDetail.processing"
                                 :disabled="formDetail.processing" size="large" class="w-full">
                                 Agregar Detalle
@@ -247,7 +247,7 @@
                             Detalles del Registro
                         </h3>
 
-                        <AccessGate :permission="['medicalOrder.delete']">
+                        <AccessGate :permission="['medicalOrder.delete']" v-if="canUpdateRecord">
                             <button @click="toggleShowDeleted"
                                 class="flex items-center justify-center w-full sm:w-auto px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
                                 :class="{
@@ -299,7 +299,7 @@
                         </div>
 
                         <!-- Columna 2: botón Editar → verticalmente centrado por Grid -->
-                        <AccessGate :permission="['medicalOrder.update']">
+                        <AccessGate :permission="['medicalOrder.update']" v-if="canUpdateRecord">
                             <button @click="openEditModal(detail)" class="flex items-center justify-center text-blue-600 hover:text-blue-800 transition-colors
                w-10 h-10 sm:w-auto sm:h-auto">
                                 <EditIcon class="size-5" />
@@ -327,7 +327,7 @@
                                 No hay firma disponible
                             </div>
 
-                            <PersonalizableButton @click="isVisibleEditSign = true">
+                            <PersonalizableButton @click="isVisibleEditSign = true" v-if="canUpdateRecord">
                                 Editar
                             </PersonalizableButton>
                         </div>
@@ -518,27 +518,7 @@
   </template>
 </DialogModal>
 
-        <!-- modal para crear -->
-        <ConfirmationModal :show="medicalOrderDetailBeingCreated != null"
-            @close="medicalOrderDetailBeingCreated = null">
-            <template #title>
-                Crear Detalle de Órden Médica
-            </template>
 
-            <template #content>
-                ¿Estás seguro de que deseas crear este detalle de órden médica?
-            </template>
-
-            <template #footer>
-                <SecondaryButton @click="medicalOrderDetailBeingCreated = null">
-                    Cancelar
-                </SecondaryButton>
-
-                <PrimaryButton class="ms-3" @click="submit">
-                    Crear
-                </PrimaryButton>
-            </template>
-        </ConfirmationModal>
 
         <ConfirmationModal :show="recordBeingDeleted != null || detailBeingDeleted != null"
             @close="recordBeingDeleted = null; detailBeingDeleted = null">
@@ -661,7 +641,7 @@ export default {
         filters: Object,
         doctor: Object,
         admission_id: Number,
-
+        canUpdateRecord: Boolean,
     },
     data() {
         return {
@@ -672,7 +652,7 @@ export default {
                 selectedDetail: this.selectedDetail,
 
             }),
-            medicalOrderDetailBeingCreated: ref(null),
+
             isVisibleDetail: ref(false),
             originalSuspendedState: ref(null),
             isVisibleEditSign: ref(null),
@@ -741,7 +721,7 @@ export default {
             }), '_blank');
         },
         submit() {
-            this.medicalOrderDetailBeingCreated = null;
+
             this.formDetail.post(route('medicalOrderDetails.store'),
 
                 {

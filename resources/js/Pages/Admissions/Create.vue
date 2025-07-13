@@ -12,17 +12,11 @@
             </h2>
         </template>
 
-        <!--Errores -->
-        <div v-if="errors.length" class="px-3 sm:px-0 mb-4 flex flex-col items-center">
-            <p v-for="error in errors" :key="error" class="text-red-500 text-[13px] sm:text-sm mb-2 sm:mb-0">
-                {{ error }}
-            </p>
-        </div>
 
         <!-- Formulario -->
-       <div
+        <div
             class="relative overflow-hidden border-gray-200 dark:border-gray-700/60 sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
-            <form @submit.prevent="submit" class="max-w-md sm:max-w-xl mx-auto space-y-6">
+            <form @submit.prevent="submit" class="max-w-3xl mx-auto">
                 <!-- Cama -->
                 <BedSelector :beds="beds" :errors="form.errors" :initialBedId="form.bed_id"
                     @update:bedId="updateBedId" />
@@ -66,7 +60,7 @@
                 </div>
 
                 <!-- Botones -->
-                <div class="flex justify-end gap-2 sm:gap-4">
+                <div class="flex justify-end gap-2 sm:gap-4 mt-4">
                     <Link :href="route('admissions.index')">
                     <SecondaryButton>Cancelar</SecondaryButton>
                     </Link>

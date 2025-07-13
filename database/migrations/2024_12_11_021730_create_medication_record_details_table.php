@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('drug');
             $table->integer('dose');
             $table->string('dose_metric');
+            $table->integer('saline_solution')->nullable()->default(null);
             $table->string('route');
             $table->integer('fc');
             $table->dateTime('start_time');

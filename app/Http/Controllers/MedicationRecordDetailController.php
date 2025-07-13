@@ -91,6 +91,7 @@ class MedicationRecordDetailController extends Controller implements HasMiddlewa
             'drug' => $request->drug,
             'dose' => $request->dose,
             'dose_metric' => $request->dose_metric,
+            'saline_solution' => $request->saline_solution,
             'route' => $request->route,
             'fc' => $request->fc,
             'interval_in_hours' => $request->interval_in_hours,

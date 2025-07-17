@@ -224,6 +224,13 @@ class MedicationRecordController extends Controller implements HasMiddleware
 
         if ($request->has('active')) {
             $this->restore($medicationRecord->id);
+        }
+        if ($request->has('admission_id')) {
+            $validated = $request->validate([
+                'admission_id' => 'required|exists:admissions,id|max:255',
+            ]);
+            $medicationRecord->update($validated);
+            return back()->with('flash.toast', 'Registro actualizado correctamente');
         } else {
             $validated = $request->validate([
                 'diet' => 'required|string|max:255',

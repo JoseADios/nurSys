@@ -78,6 +78,26 @@
                             <div class="p-4 sm:p-8 space-y-6 sm:space-y-8 bg-gray-50 dark:bg-gray-700">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 
+                                    <div
+                                        class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700/60">
+                                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Ingreso
+                                        </h3>
+
+                                        <div class="flex items-center justify-between">
+                                            <Link :href="route('admissions.show', medicationRecord.admission_id)"
+                                                as="button"
+                                                class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-400">
+                                            <FormatId :id="medicationRecord.admission_id" prefix="ING" />
+                                            </Link>
+
+                                            <AccessGate :role="['admin']">
+                                                <button @click="showEditAdmission = true"
+                                                    class="text-blue-500 hover:text-blue-800">
+                                                    <EditIcon class="size-5" />
+                                                </button>
+                                            </AccessGate>
+                                        </div>
+                                    </div>
                                     <!-- Paciente -->
                                     <div
                                         class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700/60">
@@ -376,11 +396,11 @@
                                                 <label class="text-sm font-medium text-gray-900 dark:text-white">
                                                     Solución Salina (ml) <span class="text-red-500">*</span>
                                                 </label>
-                                                 <input type="text" v-model="form.saline_solution"
+                                                <input type="text" v-model="form.saline_solution"
                                                     class="w-full p-2.5 bg-gray-50 dark:bg-gray-700 border
                                                 border-gray-300 dark:border-gray-600 rounded-lg
                                                 text-sm text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500" />
-
+                                                <InputError :message="form.errors.saline_solution" />
                                             </div>
                                             <!-- Frecuencia -->
                                             <div class="flex flex-col space-y-1">
@@ -435,8 +455,8 @@
                                             <!-- Botones -->
                                             <div class="flex justify-end gap-3 px-4 py-4 !mt-0">
                                                 <SecondaryButton @click="closeform">Cerrar</SecondaryButton>
-                                                <PrimaryButton :disabled="form.processing"
-                                                    :is-loading="form.processing">
+                                                <PrimaryButton type="submit" @click="submit()"
+                                                    :disabled="form.processing" :is-loading="form.processing">
                                                     Guardar
                                                 </PrimaryButton>
                                             </div>
@@ -485,7 +505,7 @@
                                             <span>Nebulizado</span>
 
                                         </div>
-                                         <div v-if="detail.nebulized" class="text-sm text-gray-500 dark:text-gray-400">
+                                        <div v-if="detail.nebulized" class="text-sm text-gray-500 dark:text-gray-400">
                                             Solución Salina: {{ detail.saline_solution }} ml
                                         </div>
                                         <div class="text-sm text-gray-500 dark:text-gray-400">
@@ -659,6 +679,32 @@
                                     </div>
                                 </template>
                             </DialogModal>
+                            <Modal :closeable="true" :show="showEditAdmission != null"
+                                @close="showEditAdmission == null">
+                                <div
+                                    class="relative overflow-hidden shadow-lg sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
+                                    <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
+
+                                        <AdmissionSelector @update:admission="formRecord.admission_id = $event"
+                                            :selected-admission-id="medicationRecord.admission_id"
+                                            :doesnt-have-medical-order="true" />
+
+                                        <!-- Botones -->
+                                        <div class="flex justify-end mt-4 space-x-3">
+
+                                            <SecondaryButton @click="showEditAdmission = null">
+                                                Cerrar
+                                            </SecondaryButton>
+
+                                            <PrimaryButton type="submit"
+                                                :class="{ 'opacity-25': formRecord.processing }"
+                                                :is-loading="formRecord.processing" :disabled="formRecord.processing">
+                                                Aceptar
+                                            </PrimaryButton>
+                                        </div>
+                                    </form>
+                                </div>
+                            </Modal>
                         </div>
                     </div>
                 </AppLayout>
@@ -701,6 +747,7 @@ import CircleXIcon from '@/Components/Icons/CircleXIcon.vue';
 import CirclePlusIcon from '@/Components/Icons/CirclePlusIcon.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import FormatRole from '@/Components/FormatRole.vue';
+import AdmissionSelector from '@/Components/AdmissionSelector.vue';
 export default {
 
     props: {
@@ -748,6 +795,7 @@ export default {
         SuspendIcon,
         CirclePlusIcon,
         CircleXIcon,
+        AdmissionSelector
     },
     watch: {
         'form.nebulized'(newVal) {
@@ -772,6 +820,11 @@ export default {
                 showDeleted: this.filters.show_deleted,
                 nebulized: false,
             }),
+            formRecord: useForm({
+                admission_id: this.medicationRecord.admission_id,
+                active: this.medicationRecord.active
+            }),
+            showEditAdmission: ref(null),
             showCreateDetailForm: ref(false),
             recordBeingDeleted: ref(null),
             selectedOrderId: null,
@@ -885,13 +938,23 @@ export default {
             }
             );
         },
+        submitAdmission() {
+
+            this.formRecord.put(route('medicationRecords.update', this.medicationRecord.id), {
+                preserveScroll: true
+            })
+           this.showEditAdmission = null;
+
+        },
         submit() {
+
 
             this.errorMessage = "";
             if (!this.form.selectedOrderId) {
                 this.errorMessage = "Debe seleccionar una orden antes de guardar.";
                 return;
             }
+
             if (!this.form.drug) {
                 this.form.errors.drug = "Debe seleccionar un medicamennto.";
                 return;
@@ -912,7 +975,7 @@ export default {
                 this.form.errors.dose_metric = "Debe seleccionar una métrica para la dosis.";
                 return;
             }
-             if (!this.form.saline_solution) {
+            if (!this.form.saline_solution && this.form.nebulized && this.form.saline_solution <= 0) {
                 this.form.errors.saline_solution = "Debe ingresar  una solucion salina para la dosis.";
                 return;
             }
@@ -941,7 +1004,6 @@ export default {
             if (this.form.fc === 1 && !this.form.nebulized) {
                 this.form.interval_in_hours = 0;
             }
-
 
             this.form.post(route('medicationRecordDetails.store'), {
                 onSuccess: () => {

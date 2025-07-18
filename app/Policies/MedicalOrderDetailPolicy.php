@@ -38,8 +38,7 @@ class MedicalOrderDetailPolicy
         if (!$responseRecord->allowed()) {
             return Response::deny($responseRecord->message());
         }
-        if ($medicalOrder->doctor_id !== $user->id) {
-            Log::info('Doctor', [$medicalOrder->doctor_id, $user->id] );
+        if ($medicalOrder->admission->doctor_id !== $user->id) {
             return Response::deny('No tienes permiso para crear este registro');
         }
 

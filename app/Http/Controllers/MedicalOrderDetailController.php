@@ -83,7 +83,9 @@ class MedicalOrderDetailController extends Controller implements HasMiddleware
     {
         $this->authorize('update', [MedicalOrderDetail::class, $medicalOrderDetail]);
 
-
+        if ($medicalOrderDetail->medicationRecordDetail()->exists()) {
+            return back()->with('flash.toast', 'No se puede actualizar el detalle porque ya tiene un ficha de medicamentos asociado.')->with('flash.toastStyle', 'danger');
+        }
 
         $medicationRecordDetail = MedicationRecordDetail::where('medical_order_detail_id', $medicalOrderDetail->id)->first();
         if ($request->suspended_at == null) {

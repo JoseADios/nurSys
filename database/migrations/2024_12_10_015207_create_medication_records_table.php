@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use PHPUnit\Framework\Constraint\Constraint;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -17,6 +16,8 @@ return new class extends Migration
             $table->foreignId('admission_id')->constrained()->onDelete('restrict');
 
             $table->string('diet');
+            $table->foreignId('nurse_id')->constrained(table: 'users');
+
 
             $table->boolean('active')->default(true);
             $table->timestamps();

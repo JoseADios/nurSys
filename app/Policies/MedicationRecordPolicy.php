@@ -32,8 +32,11 @@ class MedicationRecordPolicy
      */
     public function view(User $user, MedicationRecord $medicationRecord): Response
     {
-      if ($user->hasRole('nurse')) {
+        if ($user->hasRole('nurse')) {
             return Response::allow();
+        }
+        if (!$medicationRecord->active && $medicationRecord->nurse_id !== $user->id) {
+            return Response::deny('No tienes permiso para ver este registro');
         }
 
         return Response::allow();
@@ -62,11 +65,15 @@ class MedicationRecordPolicy
      */
     public function update(User $user, MedicationRecord $medicationRecord): Response
     {
+
         if (!$user->hasRole('nurse')) {
             return Response::deny('No tienes el rol necesario para actualizar este registro');
         }
 
         $admission = $medicationRecord->admission;
+        if ($medicationRecord->nurse_id !== $user->id) {
+            return Response::deny('No tienes permiso para ver este registro');
+        }
 
         if ($admission->discharged_date !== null) {
             return Response::deny('No se pueden actualizar registros en un ingreso que ya ha sido dado de alta');

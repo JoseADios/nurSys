@@ -102,7 +102,8 @@
                             class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700/60">
                             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-300 mb-2">Sala</h3>
                             <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                Sala {{ bed.room }}, Cama {{ bed.number }}
+                                Sala {{ nurseRecord.admission.bed?.room || 'N/A' }},
+                                    Cama {{ nurseRecord.admission.bed?.number || 'N/A' }}
                             </p>
                         </div>
 
@@ -309,25 +310,6 @@
                                             class="flex items-center space-x-2 text-primary-500 hover:text-primary-600 transition-colors">
                                             <EditIcon class="size-5" />
                                             <span class="font-medium sm:hidden md:inline-flex">Editar</span>
-                                        </button>
-                                    </div>
-                                </AccessGate>
-                                <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
-                                    <div class="sm:text-right">
-                                        <!-- eliminar -->
-                                        <div v-if="detail.active === 1">
-                                            <button @click="selectedDetail = detail; detailBeingDeleted = true"
-                                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                                                <TrashIcon class="size-5" />
-                                                <span class="font-medium sm:hidden md:inline-flex">Eliminar</span>
-                                            </button>
-                                        </div>
-
-                                        <!-- restaurar -->
-                                        <button @click="restoreDetail(detail)" v-else
-                                            class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
-                                            <RestoreIcon class="size-5" />
-                                            <span class="font-medium sm:hidden md:inline-flex">Restaurar</span>
                                         </button>
                                     </div>
                                 </AccessGate>

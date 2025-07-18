@@ -184,7 +184,7 @@
                                     </div>
                                     <div v-else>
                                         <FormatId :id="nurseRecord.admission.id" prefix="ING"></FormatId>,
-                                        {{ nurseRecord.admission.created_at }} N/A
+                                         N/A
                                     </div>
                                 </div>
                             </td>

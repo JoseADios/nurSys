@@ -313,25 +313,6 @@
                                         </button>
                                     </div>
                                 </AccessGate>
-                                <AccessGate :permission="['nurseRecordDetail.edit']" v-if="canUpdateRecord">
-                                    <div class="sm:text-right">
-                                        <!-- eliminar -->
-                                        <div v-if="detail.active === 1">
-                                            <button @click="selectedDetail = detail; detailBeingDeleted = true"
-                                                class="flex items-center space-x-2 text-red-600 hover:text-red-800 transition-colors">
-                                                <TrashIcon class="size-5" />
-                                                <span class="font-medium sm:hidden md:inline-flex">Eliminar</span>
-                                            </button>
-                                        </div>
-
-                                        <!-- restaurar -->
-                                        <button @click="restoreDetail(detail)" v-else
-                                            class="flex items-center space-x-2 text-green-600 hover:text-green-800 transition-colors">
-                                            <RestoreIcon class="size-5" />
-                                            <span class="font-medium sm:hidden md:inline-flex">Restaurar</span>
-                                        </button>
-                                    </div>
-                                </AccessGate>
                             </div>
                         </div>
                     </div>

@@ -15,7 +15,9 @@ use Inertia\Inertia;
 use App\Http\Controllers\Controller;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Log;
 use Validator;
+use function Laravel\Prompts\select;
 
 class PatientController extends Controller implements HasMiddleware
 {
@@ -290,7 +292,10 @@ class PatientController extends Controller implements HasMiddleware
 
     public function filterPatients(Request $request)
     {
-        $query = Patient::query();
+        $selectedPatient = null;
+        $patient_id = $request->input('patient_id');
+
+        $query = Patient::query()->Available();
 
         if ($request->filled('filters.name')) {
             $query->whereRaw(
@@ -299,7 +304,19 @@ class PatientController extends Controller implements HasMiddleware
             );
         }
 
-        // Usar el scope
-        return $query->Available()->paginate(10);
+        if ($patient_id) {
+            $selectedPatient = Patient::find($patient_id);
+        }
+
+        $patients = $query->paginate(10);
+
+        if ($selectedPatient && !$patients->contains('id', $selectedPatient->id)) {
+            $patientsCollection = $patients->getCollection();
+            $patientsCollection->add($selectedPatient);
+            $sortedPatients = $patientsCollection->sortByDesc('id')->values();
+            $patients->setCollection($sortedPatients);
+        }
+
+        return $patients;
     }
 }

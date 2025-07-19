@@ -117,7 +117,7 @@
                             <option value="365">Último año</option>
                         </select>
 
-                        <AccessGate :permission="['admission.create']" class="sm:w-fit">
+                        <AccessGate :except-role="['nurse']" class="sm:w-fit">
                             <PersonalizableButton @click="toggleFilterMyRecords" title="Mostrar solo mis registros"
                                 variant="outline" custom-class="relative" :color="form.myRecords ? 'indigo' : 'gray'">
                                 Mis registros

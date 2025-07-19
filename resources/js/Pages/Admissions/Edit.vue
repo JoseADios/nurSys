@@ -2,24 +2,23 @@
     <AppLayout title="Editar Ingresos">
         <template #header>
             <h2 class="font-semibold text-xl text-white leading-tight text-center">
-                <BreadCrumb
-                    :items="[
-                        ...(admission.id ? [{
-                            text: 'Ingresos',
-                            route: admission.id ?
-                                route('admissions.index', { id: admission.id }) :
-                                route('admissions.index')
-                        }] : []),
+                <BreadCrumb :items="[
+                    ...(admission.id ? [{
+                        text: 'Ingresos',
+                        route: admission.id ?
+                            route('admissions.index', { id: admission.id }) :
+                            route('admissions.index')
+                    }] : []),
 
 
-                        {
-                            formattedId: { id: admission.id, prefix: 'ING' },
-                            route: route('admissions.show', admission.id)
-                        },
-                        {
-                            text: 'Edit',
-                        }
-                    ]" />
+                    {
+                        formattedId: { id: admission.id, prefix: 'ING' },
+                        route: route('admissions.show', admission.id)
+                    },
+                    {
+                        text: 'Edit',
+                    }
+                ]" />
             </h2>
         </template>
 
@@ -33,34 +32,24 @@
                 <AccessGate :except-role="['nurse']">
                     <label for="patient"
                         class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Paciente</label>
-                    <select required id="patient" v-model="form.patient_id"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-
-                        <option :value="patient.id" v-for="patient in patients" :key="patient.id"
-                            :selected="patient.id === admission.patient_id">
-                            {{ patient . first_name }} {{ patient . first_surname }} {{ patient . second_surname }}
-                        </option>
-                    </select>
+                    <PatientSelector @update:patient="form.patient_id = $event"
+                        :selected-patient-id="admission.patient_id" />
                     <InputError :message="form.errors.patient_id" class="mt-2" />
 
                     <label for="doctor"
                         class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Doctor</label>
-                    <select required id="doctor" v-model="form.doctor_id"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <UserSelector @update:user="form.doctor_id = $event" roles="doctor"
+                        :selected-user-id="admission.doctor_id" />
 
-                        <option :value="doctor.id" v-for="doctor in doctors" :key="doctor.id"
-                            :selected="doctor.id === admission.doctor_id">
-                            {{ doctor . name }} {{ doctor . last_name }}
-                        </option>
-                    </select>
                     <InputError :message="form.errors.doctor_id" class="mt-2" />
 
-                       <AccessGate :role="['admin']">
+                    <AccessGate :role="['admin']">
 
-                                <div @click="showEditReceptionist = true" class=" mt-4 cursor-pointer text-white  flex">
-                                  Recepcionista {{receptionist.name }} {{receptionist.last_name}}  <EditIcon class=" text-blue-500 ml-2 size-5" />
-                                </div>
-                            </AccessGate>
+                        <div @click="showEditReceptionist = true" class=" mt-4 cursor-pointer text-white  flex">
+                            Recepcionista {{ receptionist.name }} {{ receptionist.last_name }}
+                            <EditIcon class=" text-blue-500 ml-2 size-5" />
+                        </div>
+                    </AccessGate>
                     <label for="admission_dx"
                         class="block mb-2 mt-6 text-sm font-medium text-gray-900 dark:text-white">Diagnóstico
                         de
@@ -108,7 +97,7 @@
             </form>
 
         </div>
-            <Modal :closeable="true" :show="showEditReceptionist != null" @close="showEditReceptionist == null">
+        <Modal :closeable="true" :show="showEditReceptionist != null" @close="showEditReceptionist == null">
             <div class="relative overflow-hidden sm:rounded-xl mt-4 lg:mx-10 bg-white dark:bg-gray-800 p-4">
                 <form @submit.prevent="submitAdmission" class="max-w-3xl mx-auto">
 
@@ -152,121 +141,123 @@
 </template>
 
 <script>
-    import AccessGate from '@/Components/Access/AccessGate.vue';
-    import AppLayout from '@/Layouts/AppLayout.vue';
-    import {
-        Link,
-        useForm
-    } from '@inertiajs/vue3';
+import AccessGate from '@/Components/Access/AccessGate.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import {
+    Link,
+    useForm
+} from '@inertiajs/vue3';
 
-    import InputError from '@/Components/InputError.vue';
-    import BedSelector from '@/Components/BedSelector.vue';
-    import {
-        ref
-    } from "vue";
-    import ConfirmationModal from '@/Components/ConfirmationModal.vue';
-    import DangerButton from '@/Components/DangerButton.vue';
-    import SecondaryButton from '@/Components/SecondaryButton.vue';
-    import BreadCrumb from '@/Components/BreadCrumb.vue';
-    import PersonalizableButton from '@/Components/PersonalizableButton.vue';
-    import PrimaryButton from '@/Components/PrimaryButton.vue';
-    import CheckCircleIcon from '@/Components/Icons/CheckCircleIcon.vue';
-    import TrashIcon from '@/Components/Icons/TrashIcon.vue';
-    import EditIcon from '@/Components/Icons/EditIcon.vue';
-    import UserSelector from '@/Components/UserSelector.vue';
-    import Modal from '@/Components/Modal.vue';
-    export default {
-        props: {
-            admission: [ Object],
-            receptionist: Object,
-            patients: [Array, Object],
-            doctors: [Array, Object],
-            beds: Array,
-            previousUrl: String,
-        },
-        components: {
-            AppLayout,
-            Link,
-            AccessGate,
-            PrimaryButton,
-            InputError,
-            BedSelector,
-            ConfirmationModal,
-            DangerButton,
-            CheckCircleIcon,
-            SecondaryButton,
-            PersonalizableButton,
-            TrashIcon,
-            EditIcon,
-            BreadCrumb,
-            UserSelector,
-            Modal
-        },
-        data() {
-            return {
-                form: useForm({
-                    bed_id: this.admission.bed_id,
-                    patient_id: this.admission.patient_id,
-                    doctor_id: this.admission.doctor_id,
-                    admission_dx: this.admission.admission_dx,
-                    final_dx: this.admission.final_dx,
-                    comment: this.admission.comment,
-                }),
-                   formRecord: useForm ({
+import InputError from '@/Components/InputError.vue';
+import BedSelector from '@/Components/BedSelector.vue';
+import {
+    ref
+} from "vue";
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import BreadCrumb from '@/Components/BreadCrumb.vue';
+import PersonalizableButton from '@/Components/PersonalizableButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import CheckCircleIcon from '@/Components/Icons/CheckCircleIcon.vue';
+import TrashIcon from '@/Components/Icons/TrashIcon.vue';
+import EditIcon from '@/Components/Icons/EditIcon.vue';
+import UserSelector from '@/Components/UserSelector.vue';
+import Modal from '@/Components/Modal.vue';
+import PatientSelector from '@/Components/PatientSelector.vue';
+export default {
+    props: {
+        admission: [Object],
+        receptionist: Object,
+        patients: [Array, Object],
+        doctors: [Array, Object],
+        beds: Array,
+        previousUrl: String,
+    },
+    components: {
+        AppLayout,
+        Link,
+        AccessGate,
+        PrimaryButton,
+        InputError,
+        BedSelector,
+        ConfirmationModal,
+        DangerButton,
+        CheckCircleIcon,
+        SecondaryButton,
+        PersonalizableButton,
+        TrashIcon,
+        EditIcon,
+        BreadCrumb,
+        UserSelector,
+        Modal,
+        PatientSelector
+    },
+    data() {
+        return {
+            form: useForm({
+                bed_id: this.admission.bed_id,
+                patient_id: this.admission.patient_id,
+                doctor_id: this.admission.doctor_id,
+                admission_dx: this.admission.admission_dx,
+                final_dx: this.admission.final_dx,
+                comment: this.admission.comment,
+            }),
+            formRecord: useForm({
                 admission_id: this.admission.id,
                 receptionist_id: this.admission.receptionist_id,
                 active: this.admission.active,
             }),
-                admissionBeingDeleted: ref(null),
-                isVisible: false,
-                showEditReceptionist: ref(null),
+            admissionBeingDeleted: ref(null),
+            isVisible: false,
+            showEditReceptionist: ref(null),
 
-            }
+        }
+    },
+    methods: {
+        submit() {
+            this.form.put(route('admissions.update', this.admission.id), {
+                onError: (errors) => {
+                    this.form.errors = errors;
+                }
+            })
         },
-        methods: {
-            submit() {
-                this.form.put(route('admissions.update', this.admission.id), {
-                    onError: (errors) => {
-                        this.form.errors = errors;
-                    }
-                })
-            },
-             submitAdmission() {
-            this.formRecord.put(route('admissions.update', this.admission.id),  {
+        submitAdmission() {
+            this.formRecord.put(route('admissions.update', this.admission.id), {
                 preserveScroll: true
             })
             this.showEditReceptionist = null;
         },
 
-            submitProcess(value) {
-                this.$inertia.put(route('admissions.update', this.admission.id), {
-                    patient_id: this.admission.patient_id,
-                    discharged_date: value
-                }, {
-                    onError: (errors) => {
-                        this.form.errors = errors;
-                    }
-                })
-            },
-            discharge() {
-                this.submitProcess(new Date().toISOString())
-            },
-            charge() {
-                this.submitProcess(null)
-            },
-            deleteAdmission() {
-                this.admissionbeingDeleted = null;
-                this.$inertia.delete(route('admissions.destroy', this.admission.id), {
-                    onSuccess: (response) => {
-
-                        this.admissionbeingDeleted = null;
-                    },
-                    preserveScroll: true
-                });
-            },
-            restoreAdmission() {
-                this.$inertia.put(route('admissions.restore', this.admission.id));
-            }
+        submitProcess(value) {
+            this.$inertia.put(route('admissions.update', this.admission.id), {
+                patient_id: this.admission.patient_id,
+                discharged_date: value
+            }, {
+                onError: (errors) => {
+                    this.form.errors = errors;
+                }
+            })
         },
-    }
+        discharge() {
+            this.submitProcess(new Date().toISOString())
+        },
+        charge() {
+            this.submitProcess(null)
+        },
+        deleteAdmission() {
+            this.admissionbeingDeleted = null;
+            this.$inertia.delete(route('admissions.destroy', this.admission.id), {
+                onSuccess: (response) => {
+
+                    this.admissionbeingDeleted = null;
+                },
+                preserveScroll: true
+            });
+        },
+        restoreAdmission() {
+            this.$inertia.put(route('admissions.restore', this.admission.id));
+        }
+    },
+}
 </script>

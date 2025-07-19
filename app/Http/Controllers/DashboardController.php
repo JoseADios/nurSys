@@ -225,7 +225,7 @@ class DashboardController extends Controller
                 'n.medication_record_detail_id as detail_id',
                 'n.scheduled_time as scheduled',
                 'd.medication_record_id as medication_record_id',
-                DB::raw("CONCAT_WS(' ', d.drug, d.dose, d.route) as medication"),
+                DB::raw("CONCAT_WS(' ', d.drug, d.dose, d.dose_metric, d.route) as medication"),
                 DB::raw("ROW_NUMBER() OVER (PARTITION BY n.medication_record_detail_id) as rank_notifications")
             )
             ->whereRaw('n.applied IS NOT TRUE')

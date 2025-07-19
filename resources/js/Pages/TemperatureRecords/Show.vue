@@ -143,11 +143,13 @@
 
                 <!-- Chart -->
                 <div class="p-4 sm:p-8 my-4">
-                    <TemperatureChart ref="chart" :temperatureData="details" :start-date="temperatureRecord.admission.created_at" :key="chartKey" :height="100" />
+                    <TemperatureChart ref="chart" :temperatureData="details"
+                        :start-date="temperatureRecord.admission.created_at" :key="chartKey" :height="100" />
                 </div>
 
                 <!-- forms temperatura -->
-                <div v-if="canCreateElimination || canUpdateElimination" class="flex flex-col md:flex-row justify-center items-center">
+                <div v-if="canCreateElimination || canUpdateElimination"
+                    class="flex flex-col md:flex-row justify-center items-center">
 
                     <!-- Formulario para actualizar ultimo detalle -->
                     <AccessGate :permission="['temperatureDetail.update']" v-if="lastTemperature"
@@ -278,7 +280,7 @@
                         </h3>
                         <p class="text-lg italic text-gray-700 dark:text-gray-300 ">
                             No puede realizar ninguna acción. Ya el/la enfermero/a {{ lastEliminations.nurse.name }} {{
-                            lastEliminations.nurse.last_name }} está trabajando este registro en el turno actual.
+                                lastEliminations.nurse.last_name }} está trabajando este registro en el turno actual.
                         </p>
                     </div>
 
